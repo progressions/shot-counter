@@ -27,6 +27,12 @@ class Api::V1::FightsController < ApplicationController
     end
   end
 
+  def destroy
+    @fight = Fight.find(params[:id])
+    @fight.destroy
+    render :ok
+  end
+
   private
 
   def fight_params
