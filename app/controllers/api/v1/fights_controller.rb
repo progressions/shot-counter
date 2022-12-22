@@ -4,10 +4,26 @@ class Api::V1::FightsController < ApplicationController
     render json: @fights
   end
 
+  def show
+    @fight = Fight.new(params[:id])
+    render json: @fight
+  end
+
+  def update
+    @fight = Fight.new(params[:id])
+    if @fight.update(fight_params)
+      render json: @fight
+    else
+      render @fight.errors, status: 400
+    end
+  end
+
   def create
     @fight = Fight.new(fight_params)
     if @fight.save
       render json: @fight
+    else
+      render status: 400
     end
   end
 
