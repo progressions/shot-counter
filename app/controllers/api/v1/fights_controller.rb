@@ -5,12 +5,12 @@ class Api::V1::FightsController < ApplicationController
   end
 
   def show
-    @fight = Fight.new(params[:id])
+    @fight = Fight.find(params[:id])
     render json: @fight
   end
 
   def update
-    @fight = Fight.new(params[:id])
+    @fight = Fight.find(params[:id])
     if @fight.update(fight_params)
       render json: @fight
     else
