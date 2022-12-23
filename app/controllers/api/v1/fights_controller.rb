@@ -21,6 +21,7 @@ class Api::V1::FightsController < ApplicationController
   def create
     @fight = Fight.new(fight_params)
     if @fight.save
+      post_to_discord(@fight)
       render json: @fight
     else
       render status: 400
@@ -34,6 +35,11 @@ class Api::V1::FightsController < ApplicationController
   end
 
   private
+
+  def post_to_discord(fight)
+    message = "A new fight has been created, called #{fight.name}"
+    Bot.send_message(ChannelID, message)
+  end
 
   def fight_params
     params.require(:fight).permit(:name)
