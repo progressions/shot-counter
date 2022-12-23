@@ -1,3 +1,17 @@
+GIT
+  remote: https://github.com/shardlab/discordrb
+  revision: 413cd095d41706814179a257129e24560afdbc9d
+  branch: main
+  specs:
+    discordrb (3.4.2)
+      discordrb-webhooks (~> 3.4.2)
+      ffi (>= 1.9.24)
+      opus-ruby
+      rest-client (>= 2.0.0)
+      websocket-client-simple (>= 0.3.0)
+    discordrb-webhooks (3.4.2)
+      rest-client (>= 2.0.0)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -76,14 +90,6 @@ GEM
     debug (1.7.0)
       irb (>= 1.5.0)
       reline (>= 0.3.1)
-    discordrb (3.4.0)
-      discordrb-webhooks (~> 3.3.0)
-      ffi (>= 1.9.24)
-      opus-ruby
-      rest-client (>= 2.0.0)
-      websocket-client-simple (>= 0.3.0)
-    discordrb-webhooks (3.3.0)
-      rest-client (>= 2.1.0.rc1)
     domain_name (0.5.20190701)
       unf (>= 0.0.5, < 1.0.0)
     erubi (1.11.0)
@@ -201,7 +207,7 @@ PLATFORMS
 DEPENDENCIES
   bootsnap
   debug
-  discordrb
+  discordrb!
   pg (~> 1.1)
   pry-rails
   puma (~> 5.0)
