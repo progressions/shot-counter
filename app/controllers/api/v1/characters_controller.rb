@@ -1,20 +1,13 @@
 class Api::V1::CharactersController < ApplicationController
   before_action :set_fight
 
-  DEFAULT_SHOT_COUNT = 3
-
   def index
     render json: @fight.characters
   end
 
   def act
     @character = @fight.characters.find(params[:id])
-    shots = params[:shots] || DEFAULT_SHOT_COUNT
-    @character.current_shot ||= 0
-    if @character.current_shot > 0
-      @character.current_shot -= shots
-    end
-    if @character.save
+    if @character.act!(params[:shots])
       render json: @character
     else
       render json: @character.errors, status: 400
