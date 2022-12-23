@@ -1,21 +1,12 @@
 class Api::V1::FightsController < ApplicationController
   def index
-    @fights = Fight.all
+    @fights = Fight.all.includes(:characters)
     render json: @fights
   end
 
   def show
     @fight = Fight.find(params[:id])
     render json: @fight
-  end
-
-  def update
-    @fight = Fight.find(params[:id])
-    if @fight.update(fight_params)
-      render json: @fight
-    else
-      render @fight.errors, status: 400
-    end
   end
 
   def create
@@ -25,6 +16,15 @@ class Api::V1::FightsController < ApplicationController
       render json: @fight
     else
       render status: 400
+    end
+  end
+
+  def update
+    @fight = Fight.find(params[:id])
+    if @fight.update(fight_params)
+      render json: @fight
+    else
+      render @fight.errors, status: 400
     end
   end
 

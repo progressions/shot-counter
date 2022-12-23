@@ -10,9 +10,20 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_12_22_150959) do
+ActiveRecord::Schema[7.0].define(version: 2022_12_23_141417) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "characters", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.string "name", null: false
+    t.uuid "fight_id", null: false
+    t.integer "current_shot"
+    t.integer "defense"
+    t.integer "impairments"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["fight_id"], name: "index_characters_on_fight_id"
+  end
 
   create_table "fights", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.string "name"
@@ -20,4 +31,5 @@ ActiveRecord::Schema[7.0].define(version: 2022_12_22_150959) do
     t.datetime "updated_at", null: false
   end
 
+  add_foreign_key "characters", "fights"
 end
