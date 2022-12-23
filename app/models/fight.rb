@@ -15,6 +15,6 @@ class Fight < ApplicationRecord
   def shot_order
     characters
       .group_by { |char| char.current_shot }
-      .sort_by { |shot, chars| -shot }
+      .sort_by { |shot, chars| -shot.to_i }
   end
 end
