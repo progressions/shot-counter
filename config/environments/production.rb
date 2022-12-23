@@ -66,7 +66,8 @@ Rails.application.configure do
   config.i18n.fallbacks = true
 
   config.action_mailer.default_url_options = {
-    host: 'https://shot-client.fly.dev/'
+    host: 'shot-client.fly.dev/',
+    protocol: 'https'
   }
 
   # Don't log any deprecations.

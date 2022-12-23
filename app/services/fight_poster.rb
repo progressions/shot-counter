@@ -17,7 +17,9 @@ TEXT
     end
 
     def url(fight)
-      api_v1_fight_url(fight, host: Rails.application.config.action_mailer.default_url_options[:host], protocol: 'https')
+      opts = Rails.application.config.action_mailer.default_url_options
+      port = opts[:port] ? ":#{opts[:port]}" : nil
+      "#{opts[:protocol]}://#{opts[:host]}#{port}/fights/#{fight.id}"
     end
 
   end
