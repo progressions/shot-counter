@@ -37,8 +37,7 @@ class Api::V1::FightsController < ApplicationController
   private
 
   def post_to_discord(fight)
-    message = "A new fight has been created, called #{fight.name}"
-    Bot.send_message(ChannelID, message)
+    FightPoster.post_to_discord(fight)
   end
 
   def fight_params
