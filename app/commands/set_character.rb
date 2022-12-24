@@ -1,7 +1,7 @@
-module Act
+module SetCharacter
   extend Discordrb::Commands::CommandContainer
 
-  Bot.command(:act) do |event|
+  Bot.command(:set) do |event|
     fight = CurrentFight.get
     if fight.nil?
       event.respond("There is no current fight. /start a fight first!")
@@ -9,22 +9,22 @@ module Act
     end
 
     args = event.content.split(" ")[1..]
-    shots = 3
     if args.last =~ /\A\d+\Z/
       name = args[0...-1].join(" ")
-      shots = args.last
+      shot = args.last
     else
-      name = args[0..].join(" ")
+      event.respond("End your command with a number!")
+      return
     end
 
     character = fight.characters.where("name ILIKE ?", name.downcase).first
 
-    if character.nil?
+    if fight.nil?
       event.respond("Can't find that character!")
       return
     end
 
-    character.act!(shots)
+    character.update(current_shot: shot)
     FightPoster.post_shots(fight)
 
     event.respond(FightPoster.shots(fight))
