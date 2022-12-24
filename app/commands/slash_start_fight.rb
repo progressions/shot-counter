@@ -15,7 +15,7 @@ module SlashStartFight
     end
 
     CurrentFight.set(fight)
-    event.respond("Starting fight: #{fight.name}")
-    event.respond(FightPoster.shots(fight))
+    event.respond(content: "Starting fight: #{fight.name}")
+    event.respond(content: FightPoster.shots(fight))
   end
 end
