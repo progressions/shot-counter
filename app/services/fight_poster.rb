@@ -30,10 +30,11 @@ TEXT
 
       message << "FIGHT"
       message << ""
-      message << fight.name
+      message << "**#{fight.name}**"
       message << url(fight)
-      message << "(sequence 1)"
-      message << "================="
+      message << "```diff"
+      message << "- (sequence 1)"
+      message << "```"
 
       fight.shot_order.each do |shot, characters|
         shot_msg = []
