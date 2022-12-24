@@ -8,7 +8,7 @@ module Act
       /reset                        - Reset everyone's current shot to start a new sequence
       /add <Character> <num>        - Add a character to the fight on shot [num]
       /act <Character> [shots]      - The character acts, specify a number of shots (default is 3)
-      /update                       - Show the current shot counter
+      /show                         - Show the current shot counter
     TEXT
     event.respond(message)
   end
@@ -93,15 +93,6 @@ module Act
     end
   end
 
-  Bot.command(:current) do |event|
-    fight = get_current_fight
-    if fight
-      event.respond("Current fight is #{fight.name}")
-    else
-      event.respond("There is no current fight.")
-    end
-  end
-
   Bot.command(:reset) do |event|
     fight = get_current_fight
     if fight.nil?
@@ -113,7 +104,7 @@ module Act
     event.respond(FightPoster.shots(fight))
   end
 
-  Bot.command(:update) do |event|
+  Bot.command(:show) do |event|
     fight = get_current_fight
     if fight
       FightPoster.post_shots(fight)
