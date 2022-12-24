@@ -1,8 +1,8 @@
-module SetCharacter
+module SetImpairment
   extend Discordrb::Commands::CommandContainer
 
-  Bot.command(:set) do |event|
-    key = :current_shot
+  Bot.command(:imp) do |event|
+    key = :impairments
 
     fight = CurrentFight.get
     if fight.nil?

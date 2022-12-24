@@ -1,8 +1,8 @@
-module SetCharacter
+module SetDefense
   extend Discordrb::Commands::CommandContainer
 
-  Bot.command(:set) do |event|
-    key = :current_shot
+  Bot.command(:defense) do |event|
+    key = :defense
 
     fight = CurrentFight.get
     if fight.nil?
