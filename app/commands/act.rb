@@ -1,6 +1,18 @@
 module Act
   extend Discordrb::Commands::CommandContainer
 
+  Bot.command(:commands) do |event|
+    message = <<-TEXT
+      /start <Fight name>           - Start a fight
+      /stop                         - Stop the current fight
+      /reset                        - Reset everyone's current shot to start a new sequence
+      /add <Character> <num>        - Add a character to the fight on shot [num]
+      /act <Character> [shots]      - The character acts, specify a number of shots (default is 3)
+      /update                       - Show the current shot counter
+    TEXT
+    event.respond(message)
+  end
+
   Bot.command(:act) do |event|
     fight = get_current_fight
     if fight.nil?
@@ -17,9 +29,9 @@ module Act
       name = args[0..].join(" ")
     end
 
-    character = fight.characters.find_by(name: name)
+    character = fight.characters.where("name ILIKE ?", name.downcase).first
 
-    if fight.nil?
+    if character.nil?
       event.respond("Can't find that character!")
       return
     end
@@ -46,7 +58,7 @@ module Act
       return
     end
 
-    character = fight.characters.find_by(name: name)
+    character = fight.characters.where("name ILIKE ?", name.downcase).first
 
     if fight.nil?
       event.respond("Can't find that character!")
