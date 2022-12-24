@@ -18,13 +18,17 @@ module SlashAddCharacter
 
     character = fight.characters.where("name ILIKE ?", name.downcase).first
 
+    message = []
+
     if character.nil?
       fight.characters.create!(name: name, current_shot: shot)
-      event.respond(content: "Added #{name} to the current fight.")
+      message << "Added #{name} to the current fight."
     else
-      event.respond(content: "Character #{name} is already in the fight!")
+      message << "Character #{name} is already in the fight!"
     end
 
-    event.respond(content: FightPoster.shots(fight))
+    message << FightPoster.shots(fight)
+
+    event.respond(content: message.join("\n"))
   end
 end
