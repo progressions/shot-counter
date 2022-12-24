@@ -5,7 +5,7 @@ class Character < ApplicationRecord
 
   def act!(shots=DEFAULT_SHOT_COUNT)
     self.current_shot ||= 0
-    self.current_shot -= shots
+    self.current_shot -= shots.to_i
     save!
   end
 end
