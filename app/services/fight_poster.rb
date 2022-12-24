@@ -31,6 +31,7 @@ TEXT
       message << "FIGHT"
       message << ""
       message << fight.name
+      message << url(fight)
       message << "(sequence 1)"
       message << "================="
 
