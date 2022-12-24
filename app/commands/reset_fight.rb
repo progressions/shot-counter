@@ -9,6 +9,7 @@ module ResetFight
     end
 
     fight.characters.update_all(current_shot: nil)
+    CurrentSequence.set(1)
     event.respond(FightPoster.shots(fight))
   end
 end

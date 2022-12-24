@@ -33,7 +33,7 @@ TEXT
       message << "**#{fight.name}**"
       message << url(fight)
       message << "```diff"
-      message << "- (sequence 1)"
+      message << "- (sequence #{CurrentSequence.get})"
       message << "```"
 
       fight.shot_order.each do |shot, characters|
