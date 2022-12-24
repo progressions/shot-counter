@@ -1,6 +1,4 @@
 module FightPoster
-  include Rails.application.routes.url_helpers
-
   class << self
     include Rails.application.routes.url_helpers
 
@@ -27,7 +25,15 @@ TEXT
 
     def shots(fight)
       message = []
+      message << header(fight)
+      # message << terse_shots(fight)
+      message << verbose_shots(fight)
 
+      message.join("\n")
+    end
+
+    def header(fight)
+      message = []
       message << "FIGHT"
       message << ""
       message << "**#{fight.name}**"
@@ -35,10 +41,14 @@ TEXT
       message << "```diff"
       message << "- (sequence #{CurrentSequence.get})"
       message << "```"
+      message.join("\n")
+    end
 
+    def terse_shots(fight)
+      message = []
       fight.shot_order.each do |shot, characters|
         shot_msg = []
-        shot_msg << "Shot #{shot}"
+        shot_msg << "Shot #{shot.to_i}"
         shot_msg << characters.map do |character|
           char_msg = []
           char_msg << "**#{character.name}**"
@@ -49,8 +59,30 @@ TEXT
             char_msg << "(-#{character.impairments})"
           end
           char_msg.join(" ")
-        end.join(", ")
+        end.join(",")
         message << shot_msg.join(" ")
+      end
+
+      message.join("\n")
+    end
+
+    def verbose_shots(fight)
+      message = []
+      fight.shot_order.each do |shot, characters|
+        shot_msg = []
+        shot_msg << "Shot #{shot.to_i}"
+        shot_msg << characters.map do |character|
+          char_msg = ["-"]
+          char_msg << "**#{character.name}**"
+          if character.defense
+            char_msg << "(D#{character.defense.to_i - character.impairments.to_i})"
+          end
+          if character.impairments.to_i > 0
+            char_msg << "(-#{character.impairments})"
+          end
+          char_msg.join(" ")
+        end.join("\n")
+        message << shot_msg
       end
 
       message.join("\n")
