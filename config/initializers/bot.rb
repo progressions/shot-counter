@@ -10,5 +10,17 @@ Bot = Discordrb::Commands::CommandBot.new(
 
 Dir["#{Rails.root}/app/commands/*.rb"].each { |file| require file }
 
+Bot.register_application_command(:show, 'Show current fight') do |cmd|
+end
+
+Bot.application_command(:show) do |event|
+  fight = CurrentFight.get
+  if fight
+    event.respond(content: FightPoster.shots(fight))
+  else
+    event.respond(content: "There is no current fight.")
+  end
+end
+
 Bot.run(true)
 puts "Invite URL: #{Bot.invite_url}"
