@@ -1,5 +1,5 @@
 class Fight < ApplicationRecord
-  has_many :characters
+  has_many :characters, dependent: :destroy
 
   def as_json(args)
     {

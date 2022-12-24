@@ -3,7 +3,7 @@ module CurrentFight
 
     def get
       current_fight_id = redis.get("current_fight_id")
-      Fight.find_by(id: current_fight_id)
+      fight = Fight.find_by(id: current_fight_id)
     end
 
     def set(fight=nil)

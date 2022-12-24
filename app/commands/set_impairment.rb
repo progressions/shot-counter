@@ -1,6 +1,35 @@
 module SetImpairment
   extend Discordrb::Commands::CommandContainer
 
+  class << self
+    def description
+      "Set the Impairment value of a character."
+    end
+
+    def aliases
+      [:impairment]
+    end
+
+    def usage
+      <<-TEXT
+'/imp Brick Manly 1' to add 1 Impairment to Brick.
+      TEXT
+    end
+
+    def rescue_message
+      "There was a problem."
+    end
+
+    def attributes
+      {
+        aliases: aliases,
+        description: description,
+        usage: usage,
+        rescue: rescue_message
+      }
+    end
+  end
+
   Bot.command(:imp) do |event|
     key = :impairments
 

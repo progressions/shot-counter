@@ -1,7 +1,36 @@
 module SetDefense
   extend Discordrb::Commands::CommandContainer
 
-  Bot.command(:defense) do |event|
+  class << self
+    def description
+      "Set the defense attribute of a character."
+    end
+
+    def aliases
+      [:def]
+    end
+
+    def usage
+      <<-TEXT
+'/defense Brick Manly 13' to set Brick's Defense to 13.
+      TEXT
+    end
+
+    def rescue_message
+      "There was a problem."
+    end
+
+    def attributes
+      {
+        aliases: aliases,
+        description: description,
+        usage: usage,
+        rescue: rescue_message
+      }
+    end
+  end
+
+  Bot.command(:defense, attributes) do |event|
     key = :defense
 
     fight = CurrentFight.get

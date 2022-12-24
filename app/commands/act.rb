@@ -1,7 +1,37 @@
 module Act
   extend Discordrb::Commands::CommandContainer
 
-  Bot.command(:act) do |event|
+  class << self
+    def description
+      "Specify a character to take an action. Actions are 3 shots by default."
+    end
+
+    def aliases
+      [:int, :interrupt]
+    end
+
+    def usage
+      <<-TEXT
+'/act Brick Manly' to take a normal 3-shot action.
+'/act Brick Manly 1' to spend 1 shot.
+      TEXT
+    end
+
+    def rescue_message
+      "There was a problem."
+    end
+
+    def attributes
+      {
+        aliases: aliases,
+        description: description,
+        usage: usage,
+        rescue: rescue_message
+      }
+    end
+  end
+
+  Bot.command(:act, attributes) do |event|
     fight = CurrentFight.get
     if fight.nil?
       event.respond("There is no current fight. /start a fight first!")

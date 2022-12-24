@@ -1,7 +1,36 @@
 module CommandList
   extend Discordrb::Commands::CommandContainer
 
-  Bot.command(:commands) do |event|
+  class << self
+    def description
+      "Show a detailed list of commands."
+    end
+
+    def aliases
+      [:cmds]
+    end
+
+    def usage
+      <<-TEXT
+'/commands'
+      TEXT
+    end
+
+    def rescue_message
+      "There was a problem."
+    end
+
+    def attributes
+      {
+        aliases: aliases,
+        description: description,
+        usage: usage,
+        rescue: rescue_message
+      }
+    end
+  end
+
+  Bot.command(:commands, attributes) do |event|
     message = <<-TEXT
       /start <Fight name>           - Start a fight
       /stop                         - Stop the current fight

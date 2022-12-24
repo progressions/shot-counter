@@ -1,7 +1,36 @@
 module AddCharacter
   extend Discordrb::Commands::CommandContainer
 
-  Bot.command(:add) do |event|
+  class << self
+    def description
+      "Add a new character to the current fight."
+    end
+
+    def aliases
+      [:add_character]
+    end
+
+    def usage
+      <<-TEXT
+'/add Brick Manly'
+      TEXT
+    end
+
+    def rescue_message
+      "There was a problem."
+    end
+
+    def attributes
+      {
+        aliases: aliases,
+        description: description,
+        usage: usage,
+        rescue: rescue_message
+      }
+    end
+  end
+
+  Bot.command(:add, attributes) do |event|
     fight = CurrentFight.get
 
     if fight.nil?
