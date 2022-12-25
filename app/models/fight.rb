@@ -16,5 +16,6 @@ class Fight < ApplicationRecord
     characters
       .group_by { |char| char.current_shot }
       .sort_by { |shot, chars| -shot.to_i }
+      .map { |shot, chars| [shot, chars.sort_by(&:name)] }
   end
 end
