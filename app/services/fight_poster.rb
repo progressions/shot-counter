@@ -37,7 +37,6 @@ TEXT
       message << "FIGHT"
       message << ""
       message << "**#{fight.name}**"
-      message << url(fight)
       message << "```diff"
       message << "- (sequence #{CurrentSequence.get})"
       message << "```"
