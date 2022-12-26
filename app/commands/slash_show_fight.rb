@@ -2,7 +2,7 @@ module SlashShowFight
   extend Discordrb::Commands::CommandContainer
 
   Bot.register_application_command(:show, 'Show current fight') do |cmd|
-    cmd.string(:url, "Show url")
+    cmd.boolean(:url, "Show url")
   end
 
   Bot.application_command(:show) do |event|
