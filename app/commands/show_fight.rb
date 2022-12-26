@@ -7,7 +7,7 @@ module ShowFight
     end
 
     def aliases
-      [:shots, :display]
+      [:fight, :shots, :display]
     end
 
     def usage
@@ -33,7 +33,6 @@ module ShowFight
   Bot.command(:show, attributes) do |event|
     fight = CurrentFight.get
     if fight
-      FightPoster.post_shots(fight)
       event.respond(FightPoster.shots(fight))
     else
       event.respond("There is no current fight.")
