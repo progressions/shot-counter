@@ -1,4 +1,5 @@
 class Api::V1::CharactersController < ApplicationController
+  before_action :authenticate_user!
   before_action :set_fight
 
   def index
