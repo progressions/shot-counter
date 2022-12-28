@@ -1,4 +1,6 @@
 class Api::V1::FightsController < ApplicationController
+  before_action :authenticate_user!
+
   def index
     @fights = Fight.all.includes(:characters)
     render json: @fights
