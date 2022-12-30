@@ -7,11 +7,10 @@ class Users::SessionsController < Devise::SessionsController
 
   def respond_with(resource, options={})
     render json: {
-      status: {
-        code: 200,
-        message: 'User signed in successfully',
-        data: current_user,
-      }, status: :ok
+      code: 200,
+      message: 'User signed in successfully',
+      data: current_user,
+      payload: current_user.jwt_payload
     }
   end
 
@@ -21,14 +20,12 @@ class Users::SessionsController < Devise::SessionsController
       Rails.application.credentials.devise_jwt_secret_key!
     ).first
 
-    binding.pry
-
     current_user = User.find(jwt_payload['sub'])
     if current_user
       render json: {
         status: 200,
         message: 'Signed out successfully'
-      }, status: :ok
+      }
     else
       render json: {
         status: 401,

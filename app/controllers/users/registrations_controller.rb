@@ -18,7 +18,7 @@ class Users::RegistrationsController < Devise::RegistrationsController
     if resource.persisted?
       render json: {
         status: { code: 200, message: 'Signed up successfully', data: resource }
-      }, status: :ok
+      }
     else
       render json: {
         status: { message: 'User could not be created successfully', errors: resource.errors.full_messages }
