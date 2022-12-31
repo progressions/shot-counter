@@ -50,6 +50,6 @@ class Api::V1::CharactersController < ApplicationController
   end
 
   def character_params
-    params.require(:character).permit(:name, :current_shot, :defense, :impairments)
+    params.require(:character).permit(:name, :current_shot, :defense, :impairments, :color)
   end
 end
