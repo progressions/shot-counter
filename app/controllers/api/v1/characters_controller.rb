@@ -8,7 +8,7 @@ class Api::V1::CharactersController < ApplicationController
 
   def act
     @character = @fight.characters.find(params[:id])
-    if @character.act!(params[:shots])
+    if @character.act!(params[:shots] || 3)
       render json: @character
     else
       render json: @character.errors, status: 400
