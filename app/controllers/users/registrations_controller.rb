@@ -11,7 +11,7 @@ class Users::RegistrationsController < Devise::RegistrationsController
   private
 
   def user_params
-    params.require(:user).permit(:first_name, :last_name, :email, :avatar_url, :admin)
+    params.require(:user).permit(:first_name, :last_name, :email, :avatar_url, :admin, :gamemaster)
   end
 
   def respond_with(resource, options={})
