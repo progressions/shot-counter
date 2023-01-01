@@ -13,7 +13,8 @@ class Character < ApplicationRecord
     "Max Fortune" => 6,
     "FortuneType" => "Fortune",
     "MainAttack" => "Guns",
-    "SecondaryAttack" => "Martial Arts"
+    "SecondaryAttack" => "Martial Arts",
+    "Wounds" => 0,
   }
 
   belongs_to :fight
