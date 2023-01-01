@@ -6,6 +6,8 @@ class User < ApplicationRecord
   devise :database_authenticatable, :registerable,
          :jwt_authenticatable, jwt_revocation_strategy: self
 
+  has_many :characters
+
   def jwt_payload
     super.merge(
       "something" => "nothing"
