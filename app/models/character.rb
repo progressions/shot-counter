@@ -15,7 +15,15 @@ class Character < ApplicationRecord
     "MainAttack" => "Guns",
     "SecondaryAttack" => "Martial Arts",
     "Wounds" => 0,
+    "Type" => ""
   }
+  CHARACTER_TYPES=[
+    "PC",
+    "Mook",
+    "Featured Foe",
+    "Boss",
+    "Uber-Boss"
+  ]
 
   belongs_to :fight
   belongs_to :user, optional: true
