@@ -20,7 +20,6 @@ class Character < ApplicationRecord
   belongs_to :fight
   belongs_to :user, optional: true
 
-  after_initialize :ensure_default_action_values
   before_save :ensure_default_action_values
 
   def act!(shots=DEFAULT_SHOT_COUNT)
