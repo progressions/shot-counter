@@ -54,7 +54,9 @@ module Act
       return
     end
 
-    character.act!(shots)
+    fight_character = fight.fight_characters.find_by(character_id: character.id)
+
+    fight_character.act!(shots)
     FightPoster.post_shots(fight)
 
     event.respond(FightPoster.shots(fight))
