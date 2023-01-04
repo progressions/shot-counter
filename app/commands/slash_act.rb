@@ -23,7 +23,9 @@ module SlashAct
       return
     end
 
-    character.act!(shots)
+    fight_character = fight.fight_characters.find_by(character_id: character.id)
+
+    fight_character.act!(shot_cost: shots)
 
     event.respond(content: FightPoster.shots(fight))
   end
