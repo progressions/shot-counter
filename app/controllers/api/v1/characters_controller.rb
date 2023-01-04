@@ -16,6 +16,17 @@ class Api::V1::CharactersController < ApplicationController
     end
   end
 
+  def add
+    @character = Character.find(params[:id])
+    @fight_character = @fight.fight_characters.build(character_id: @character.id, shot: shot_params[:current_shot])
+
+    if @fight_character.save
+      render json: @character
+    else
+      render status: 400
+    end
+  end
+
   def show
     @character = @fight.characters.find(params[:id])
     render json: @character
@@ -53,7 +64,7 @@ class Api::V1::CharactersController < ApplicationController
   end
 
   def set_fight_character
-    @fight_character = @fight.fight_characters.find_by(character_id: @character.id)
+    @fight_character = @fight.fight_characters.find_or_create_by(character_id: @character.id)
   end
 
   def set_fight
