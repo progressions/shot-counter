@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_01_04_152752) do
+ActiveRecord::Schema[7.0].define(version: 2023_01_04_152852) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -43,7 +43,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_01_04_152752) do
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
   end
 
-  create_table "characters", force: :cascade do |t|
+  create_table "characters", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.string "name", null: false
     t.uuid "fight_id", null: false
     t.integer "current_shot"
@@ -54,6 +54,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_01_04_152752) do
     t.string "color"
     t.uuid "user_id"
     t.jsonb "action_values"
+    t.index ["created_at"], name: "index_characters_on_created_at"
     t.index ["fight_id"], name: "index_characters_on_fight_id"
     t.index ["user_id"], name: "index_characters_on_user_id"
   end
