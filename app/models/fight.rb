@@ -14,6 +14,19 @@ class Fight < ApplicationRecord
   end
 
   def shot_order
+    fight_characters
+      .joins(:character)
+      .group_by { |fc| fc.shot }
+      .sort_by { |shot, fight_chars| -shot.to_i }
+      .map { |shot, fight_chars|
+        [shot, fight_chars
+                 .map { |fc| fc.character }
+                 .sort_by { |char| char.name }
+        ]
+      }
+  end
+
+  def old_shot_order
     characters
       .group_by { |char| char.current_shot }
       .sort_by { |shot, chars| -shot.to_i }

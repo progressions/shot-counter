@@ -1,15 +1,15 @@
 class Api::V1::CharactersController < ApplicationController
   before_action :authenticate_user!
   before_action :set_fight
-  before_action :set_character, only: [:update, :destroy]
+  before_action :set_character, only: [:update, :destroy, :act]
+  before_action :set_fight_character, only: [:update, :destroy, :act]
 
   def index
     render json: @fight.characters
   end
 
   def act
-    @character = @fight.characters.find(params[:id])
-    if @character.act!(params[:shots] || 3)
+    if @fight_character.act!(shot_cost: params[:shots] || 3)
       render json: @character
     else
       render json: @character.errors, status: 400
@@ -22,9 +22,11 @@ class Api::V1::CharactersController < ApplicationController
   end
 
   def create
-    @character = @fight.characters.build(character_params)
+    @character = Character.create!(character_params)
     @character.user = current_user
-    if @character.save && @fight.characters << @character
+    @fight_character = @fight.fight_characters.build(character_id: @character.id, shot: character_params[:current_shot])
+
+    if @fight_character.save
       render json: @character
     else
       render status: 400
@@ -32,7 +34,7 @@ class Api::V1::CharactersController < ApplicationController
   end
 
   def update
-    if @character.update(character_params)
+    if @character.update(character_params) && @fight_character.update(shot: character_params[:current_shot])
       render json: @character
     else
       render @character.errors, status: 400
@@ -40,7 +42,6 @@ class Api::V1::CharactersController < ApplicationController
   end
 
   def destroy
-    @fight_character = FightCharacter.find_by(fight_id: @fight.id, character_id: @character.id)
     @fight_character.destroy!
     render :ok
   end
@@ -49,6 +50,10 @@ class Api::V1::CharactersController < ApplicationController
 
   def set_character
     @character = @fight.characters.find(params[:id])
+  end
+
+  def set_fight_character
+    @fight_character = @fight.fight_characters.find_by(character_id: @character.id)
   end
 
   def set_fight

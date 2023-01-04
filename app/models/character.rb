@@ -31,9 +31,9 @@ class Character < ApplicationRecord
 
   before_save :ensure_default_action_values
 
-  def act!(shots=DEFAULT_SHOT_COUNT)
+  def act!(fight:, shot_cost: DEFAULT_SHOT_COUNT)
     self.current_shot ||= 0
-    self.current_shot -= shots.to_i
+    self.current_shot -= shot_cost.to_i
     save!
   end
 
