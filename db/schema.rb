@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_01_04_160010) do
+ActiveRecord::Schema[7.0].define(version: 2023_01_04_161525) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -45,7 +45,6 @@ ActiveRecord::Schema[7.0].define(version: 2023_01_04_160010) do
 
   create_table "characters", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.string "name", null: false
-    t.uuid "fight_id", null: false
     t.integer "current_shot"
     t.integer "defense"
     t.integer "impairments"
@@ -55,18 +54,17 @@ ActiveRecord::Schema[7.0].define(version: 2023_01_04_160010) do
     t.uuid "user_id"
     t.jsonb "action_values"
     t.index ["created_at"], name: "index_characters_on_created_at"
-    t.index ["fight_id"], name: "index_characters_on_fight_id"
     t.index ["user_id"], name: "index_characters_on_user_id"
   end
 
   create_table "fight_characters", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
-    t.uuid "user_id", null: false
+    t.uuid "character_id", null: false
     t.uuid "fight_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "shot"
+    t.index ["character_id"], name: "index_fight_characters_on_character_id"
     t.index ["fight_id"], name: "index_fight_characters_on_fight_id"
-    t.index ["user_id"], name: "index_fight_characters_on_user_id"
   end
 
   create_table "fights", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -96,8 +94,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_01_04_160010) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
-  add_foreign_key "characters", "fights"
   add_foreign_key "characters", "users"
+  add_foreign_key "fight_characters", "characters"
   add_foreign_key "fight_characters", "fights"
-  add_foreign_key "fight_characters", "users"
 end
