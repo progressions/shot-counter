@@ -24,7 +24,7 @@ class Api::V1::CharactersController < ApplicationController
   def create
     @character = @fight.characters.build(character_params)
     @character.user = current_user
-    if @character.save
+    if @character.save && @fight.characters << @character
       render json: @character
     else
       render status: 400
@@ -40,7 +40,8 @@ class Api::V1::CharactersController < ApplicationController
   end
 
   def destroy
-    @character.destroy!
+    @fight_character = FightCharacter.find_by(fight_id: @fight.id, character_id: @character.id)
+    @fight_character.destroy!
     render :ok
   end
 
