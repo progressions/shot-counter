@@ -45,7 +45,8 @@ class Api::V1::CharactersController < ApplicationController
   end
 
   def update
-    if @character.update(character_params) && @fight_character.update(shot: shot_params[:current_shot])
+    @fight_character.update(shot: shot_params[:current_shot]) if shot_params[:current_shot]
+    if @character.update(character_params)
       render json: @character
     else
       render @character.errors, status: 400
