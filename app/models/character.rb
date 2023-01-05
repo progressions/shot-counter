@@ -19,6 +19,7 @@ class Character < ApplicationRecord
   }
   CHARACTER_TYPES=[
     "PC",
+    "Ally",
     "Mook",
     "Featured Foe",
     "Boss",
@@ -35,6 +36,18 @@ class Character < ApplicationRecord
     self.current_shot ||= 0
     self.current_shot -= shot_cost.to_i
     save!
+  end
+
+  def as_json(args=nil)
+    {
+      id: id,
+      name: name,
+      created_at: created_at,
+      updated_at: updated_at,
+      user: user,
+      action_values: action_values,
+      color: color,
+    }
   end
 
   private
