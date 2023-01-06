@@ -4,7 +4,7 @@ class Api::V1::AllCharactersController < ApplicationController
   before_action :set_character, only: [:update, :destroy, :show]
 
   def index
-    @characters = @scoped_characters.includes(:user).all
+    @characters = @scoped_characters.includes(:user).order(:name).all
     render json: @characters
   end
 
