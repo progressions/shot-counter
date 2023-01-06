@@ -1,13 +1,13 @@
 class Api::V1::FightsController < ApplicationController
   before_action :authenticate_user!
+  before_action :set_fight, only: [:show, :update, :destroy]
 
   def index
-    @fights = Fight.all.includes(:characters)
+    @fights = Fight.all.includes(:characters).includes(characters: :user)
     render json: @fights
   end
 
   def show
-    @fight = Fight.find(params[:id])
     render json: @fight
   end
 
@@ -22,7 +22,6 @@ class Api::V1::FightsController < ApplicationController
   end
 
   def update
-    @fight = Fight.find(params[:id])
     if @fight.update(fight_params)
       render json: @fight
     else
@@ -31,12 +30,15 @@ class Api::V1::FightsController < ApplicationController
   end
 
   def destroy
-    @fight = Fight.find(params[:id])
     @fight.destroy
     render :ok
   end
 
   private
+
+  def set_fight
+    @fight = Fight.includes(:characters).includes(characters: :user).find(params[:id])
+  end
 
   def post_to_discord(fight)
     FightPoster.post_to_discord(fight)

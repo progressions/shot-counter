@@ -16,6 +16,7 @@ class Fight < ApplicationRecord
   def shot_order
     fight_characters
       .includes(:character)
+      .includes(character: :user)
       .group_by { |fc| fc.shot }
       .sort_by { |shot, fight_chars| -shot.to_i }
       .map { |shot, fight_chars|
