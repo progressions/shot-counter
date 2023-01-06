@@ -12,7 +12,7 @@ class Api::V1::AllCharactersController < ApplicationController
     @character = Character.create!(character_params)
     @character.user = current_user
 
-    if @fight_character.save
+    if @character.save
       render json: @character
     else
       render status: 400
