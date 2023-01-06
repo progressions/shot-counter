@@ -47,6 +47,7 @@ class Character < ApplicationRecord
       user: user,
       action_values: action_values,
       color: color,
+      impairments: impairments,
     }
   end
 
