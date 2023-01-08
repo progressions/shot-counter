@@ -3,6 +3,7 @@ module FightPoster
     include Rails.application.routes.url_helpers
 
     def post_to_discord(fight)
+      return unless defined?(Bot)
       Bot.send_message(ChannelID, message(fight))
     end
 
