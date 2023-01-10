@@ -25,6 +25,7 @@ class Character < ApplicationRecord
     "Boss",
     "Uber-Boss"
   ]
+  SORT_ORDER = ["Uber-Boss", "PC", "Boss", "Featured Foe", "Ally", "Mook"]
 
   has_many :fight_characters, dependent: :destroy
   has_many :fights, through: :fight_characters
@@ -54,7 +55,7 @@ class Character < ApplicationRecord
   def sort_order
     character_type = action_values.fetch("Type")
     speed = action_values.fetch("Speed", 0).to_i - impairments.to_i
-    [Fight::SORT_ORDER.index(character_type), speed * -1, name]
+    [SORT_ORDER.index(character_type), speed * -1, name]
   end
 
   private

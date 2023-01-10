@@ -27,16 +27,4 @@ class Fight < ApplicationRecord
       }
   end
 
-  private
-
-  SORT_ORDER = ["Uber-Boss", "PC", "Boss", "Featured Foe", "Ally", "Mook"]
-
-  # Sort order for characters types:
-  # Uber-Boss
-  # PC
-  # Boss
-  # Featured Foe
-  # Ally
-  # Mook
-
 end
