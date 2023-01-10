@@ -10,11 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-<<<<<<< Updated upstream
 ActiveRecord::Schema[7.0].define(version: 2023_01_04_195522) do
-=======
-ActiveRecord::Schema[7.0].define(version: 2023_01_04_141620) do
->>>>>>> Stashed changes
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -60,7 +56,6 @@ ActiveRecord::Schema[7.0].define(version: 2023_01_04_141620) do
     t.index ["user_id"], name: "index_characters_on_user_id"
   end
 
-<<<<<<< Updated upstream
   create_table "fight_characters", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.uuid "character_id", null: false
     t.uuid "fight_id", null: false
@@ -71,8 +66,6 @@ ActiveRecord::Schema[7.0].define(version: 2023_01_04_141620) do
     t.index ["fight_id"], name: "index_fight_characters_on_fight_id"
   end
 
-=======
->>>>>>> Stashed changes
   create_table "fights", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.string "name"
     t.datetime "created_at", null: false
