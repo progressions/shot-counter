@@ -22,8 +22,21 @@ class Fight < ApplicationRecord
       .map { |shot, fight_chars|
         [shot, fight_chars
                  .map { |fc| fc.character }
-                 .sort_by { |char| char.name }
+                 .sort_by(&:sort_order)
         ]
       }
   end
+
+  private
+
+  SORT_ORDER = ["Uber-Boss", "PC", "Boss", "Featured Foe", "Ally", "Mook"]
+
+  # Sort order for characters types:
+  # Uber-Boss
+  # PC
+  # Boss
+  # Featured Foe
+  # Ally
+  # Mook
+
 end
