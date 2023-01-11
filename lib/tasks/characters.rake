@@ -14,6 +14,13 @@ namespace :characters do
       end
       character.save!
     end
+
+    Vehicle.find_each do |vehicle|
+      ["Acceleration", "Handling", "Squeal", "Frame", "Crunch", "Condition Points", "Chase Points"].each do |value|
+        vehicle.action_values[value] = vehicle.action_values[value].to_i
+      end
+      vehicle.save!
+    end
   end
 
   task update_all: :environment do

@@ -22,7 +22,7 @@ class Vehicle < ApplicationRecord
 
   def sort_order
     character_type = action_values.fetch("Type")
-    speed = action_values.fetch("Acceleration", 0) - impairments.to_i
+    speed = action_values.fetch("Acceleration", 0).to_i - impairments.to_i
     [1, Fight::SORT_ORDER.index(character_type), speed * -1, name]
   end
 
