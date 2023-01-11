@@ -39,6 +39,7 @@ class Vehicle < ApplicationRecord
       action_values: action_values,
       color: color,
       impairments: impairments,
+      category: "vehicle"
     }
   end
 
