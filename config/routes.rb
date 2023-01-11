@@ -1,5 +1,4 @@
 Rails.application.routes.draw do
-  resources :vehicles
   devise_for :users, controllers: {
     sessions: 'users/sessions',
     registrations: 'users/registrations'
@@ -9,6 +8,12 @@ Rails.application.routes.draw do
       resources :all_characters
       resources :users, only: [:index, :show, :update, :destroy]
       resources :fights do
+        resources :vehicles do
+          member do
+            patch :act
+            post :add
+          end
+        end
         resources :characters do
           member do
             patch :act

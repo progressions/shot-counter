@@ -13,6 +13,7 @@ class Fight < ApplicationRecord
       created_at: created_at,
       updated_at: updated_at,
       characters: characters,
+      vehicles: vehicles,
       shot_order: shot_order,
     }
   end
@@ -27,7 +28,7 @@ class Fight < ApplicationRecord
       .sort_by { |shot, fight_chars| -shot.to_i }
       .map { |shot, fight_chars|
         [shot, fight_chars
-            .map { |fc| fc.character || fc.vehicle }
+                 .map { |fc| fc.character || fc.vehicle }
                  .compact
                  .sort_by(&:sort_order)
         ]

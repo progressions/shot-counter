@@ -15,8 +15,8 @@ class Character < ApplicationRecord
     "SecondaryAttack" => "Martial Arts",
     "Wounds" => 0,
     "Type" => "PC",
-    "Vehicle" => false,
-    "Marks of Death" => 0
+    "Marks of Death" => 0,
+    "Archetype" => ""
   }
   CHARACTER_TYPES=[
     "PC",
@@ -49,6 +49,7 @@ class Character < ApplicationRecord
       action_values: action_values,
       color: color,
       impairments: impairments,
+      category: "character"
     }
   end
 
