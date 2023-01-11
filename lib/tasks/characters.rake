@@ -15,4 +15,14 @@ namespace :characters do
       character.save!
     end
   end
+
+  task update_all: :environment do
+    Character.find_each do |character|
+      character.save!
+    end
+
+    Vehicle.find_each do |vehicle|
+      vehicle.save!
+    end
+  end
 end
