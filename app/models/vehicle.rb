@@ -29,6 +29,19 @@ class Vehicle < ApplicationRecord
     save!
   end
 
+  def as_json(args=nil)
+    {
+      id: id,
+      name: name,
+      created_at: created_at,
+      updated_at: updated_at,
+      user: user,
+      action_values: action_values,
+      color: color,
+      impairments: impairments,
+    }
+  end
+
   private
 
   def ensure_default_action_values
