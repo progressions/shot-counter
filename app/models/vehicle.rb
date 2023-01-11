@@ -12,8 +12,11 @@ class Vehicle < ApplicationRecord
     "Condition Points" => 0,
     "Chase Points" => 0,
     "Pursuer" => true,
+    "Position" => "Far",
     "Type" => "PC"
   }
+
+  POSITIONS = ["Near", "Far"]
 
   before_save :ensure_default_action_values
 
