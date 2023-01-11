@@ -1,21 +1,23 @@
 class Character < ApplicationRecord
   DEFAULT_SHOT_COUNT = 3
   DEFAULT_ACTION_VALUES = {
-    "Guns" => nil,
-    "Martial Arts" => nil,
-    "Sorcery" => nil,
-    "Scroungetech" => nil,
-    "Genome" => nil,
-    "Defense" => nil,
-    "Toughness" => nil,
-    "Speed" => nil,
-    "Fortune" => nil,
-    "Max Fortune" => nil,
+    "Guns" => 0,
+    "Martial Arts" => 0,
+    "Sorcery" => 0,
+    "Scroungetech" => 0,
+    "Genome" => 0,
+    "Defense" => 0,
+    "Toughness" => 0,
+    "Speed" => 0,
+    "Fortune" => 0,
+    "Max Fortune" => 0,
     "FortuneType" => "Fortune",
     "MainAttack" => "Guns",
     "SecondaryAttack" => "Martial Arts",
     "Wounds" => 0,
-    "Type" => ""
+    "Type" => "PC",
+    "Vehicle" => false,
+    "Marks of Death" => 0
   }
   CHARACTER_TYPES=[
     "PC",
