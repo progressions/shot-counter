@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_01_04_195522) do
+ActiveRecord::Schema[7.0].define(version: 2023_01_11_162829) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -43,7 +43,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_01_04_195522) do
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
   end
 
-  create_table "characters", force: :cascade do |t|
+  create_table "characters", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.string "name", null: false
     t.integer "defense"
     t.integer "impairments"
@@ -57,13 +57,15 @@ ActiveRecord::Schema[7.0].define(version: 2023_01_04_195522) do
   end
 
   create_table "fight_characters", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
-    t.uuid "character_id", null: false
+    t.uuid "character_id"
     t.uuid "fight_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "shot"
+    t.uuid "vehicle_id"
     t.index ["character_id"], name: "index_fight_characters_on_character_id"
     t.index ["fight_id"], name: "index_fight_characters_on_fight_id"
+    t.index ["vehicle_id"], name: "index_fight_characters_on_vehicle_id"
   end
 
   create_table "fights", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -91,7 +93,19 @@ ActiveRecord::Schema[7.0].define(version: 2023_01_04_195522) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
+  create_table "vehicles", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.string "name", null: false
+    t.jsonb "action_values", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.uuid "user_id"
+    t.index ["user_id"], name: "index_vehicles_on_user_id"
+  end
+
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "characters", "users"
+  add_foreign_key "fight_characters", "characters"
+  add_foreign_key "fight_characters", "fights"
+  add_foreign_key "vehicles", "users"
 end

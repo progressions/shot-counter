@@ -1,5 +1,4 @@
 class Character < ApplicationRecord
-  DEFAULT_SHOT_COUNT = 3
   DEFAULT_ACTION_VALUES = {
     "Guns" => 0,
     "Martial Arts" => 0,
@@ -27,7 +26,6 @@ class Character < ApplicationRecord
     "Boss",
     "Uber-Boss"
   ]
-  SORT_ORDER = ["Uber-Boss", "PC", "Boss", "Featured Foe", "Ally", "Mook"]
 
   has_many :fight_characters, dependent: :destroy
   has_many :fights, through: :fight_characters
@@ -35,7 +33,7 @@ class Character < ApplicationRecord
 
   before_save :ensure_default_action_values
 
-  def act!(fight:, shot_cost: DEFAULT_SHOT_COUNT)
+  def act!(fight:, shot_cost: Fight::DEFAULT_SHOT_COUNT)
     self.current_shot ||= 0
     self.current_shot -= shot_cost.to_i
     save!
@@ -57,7 +55,7 @@ class Character < ApplicationRecord
   def sort_order
     character_type = action_values.fetch("Type")
     speed = action_values.fetch("Speed", 0).to_i - impairments.to_i
-    [SORT_ORDER.index(character_type), speed * -1, name]
+    [0, Fight::SORT_ORDER.index(character_type), speed * -1, name]
   end
 
   private
