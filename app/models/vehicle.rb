@@ -51,5 +51,14 @@ class Vehicle < ApplicationRecord
   def ensure_default_action_values
     self.action_values ||= {}
     self.action_values = DEFAULT_ACTION_VALUES.merge(self.action_values)
+    ensure_integer_values
+  end
+
+  def ensure_integer_values
+    DEFAULT_ACTION_VALUES.keys.each do |key|
+      if (DEFAULT_ACTION_VALUES[key] == 0)
+        self.action_values[key] = self.action_values[key].to_i
+      end
+    end
   end
 end
