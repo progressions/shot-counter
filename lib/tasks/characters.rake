@@ -9,16 +9,10 @@ namespace :characters do
 
   task convert_action_values: :environment do
     Character.find_each do |character|
-      ["Guns", "Martial Arts", "Sorcery", "Scroungetech", "Genome", "Defense", "Toughness", "Speed", "Fortune", "Max Fortune", "Wounds"].each do |value|
-        character.action_values[value] = character.action_values[value].to_i
-      end
       character.save!
     end
 
     Vehicle.find_each do |vehicle|
-      ["Acceleration", "Handling", "Squeal", "Frame", "Crunch", "Condition Points", "Chase Points"].each do |value|
-        vehicle.action_values[value] = vehicle.action_values[value].to_i
-      end
       vehicle.save!
     end
   end

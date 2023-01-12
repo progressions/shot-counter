@@ -33,6 +33,7 @@ class Character < ApplicationRecord
 
   before_save :ensure_default_action_values
   before_save :ensure_integer_values
+  before_save :ensure_non_integer_values
 
   def act!(fight:, shot_cost: Fight::DEFAULT_SHOT_COUNT)
     self.current_shot ||= 0
@@ -72,6 +73,16 @@ class Character < ApplicationRecord
       value == 0
     end.each do |key, value|
       self.action_values[key] = self.action_values[key].to_i
+    end
+  end
+
+  def ensure_non_integer_values
+    DEFAULT_ACTION_VALUES.reject do |key, value|
+      value == 0
+    end.each do |key, value|
+      if self.action_values[key] == 0
+        self.action_values[key] = DEFAULT_ACTION_VALUES[key]
+      end
     end
   end
 end

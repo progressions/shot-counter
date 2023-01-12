@@ -11,5 +11,6 @@ RSpec.describe Character, type: :model do
     brick.action_values["Guns"] = "14"
     brick.save!
     expect(brick.action_values["Guns"]).to eq(14)
+    expect(brick.action_values["MainAttack"]).to eq("Guns")
   end
 end
