@@ -2,6 +2,7 @@ class FightCharacter < ApplicationRecord
   belongs_to :fight
   belongs_to :character, optional: true
   belongs_to :vehicle, optional: true
+  belongs_to :effect, optional: true
 
   def act!(shot_cost: Fight::DEFAULT_SHOT_COUNT)
     self.shot ||= 0

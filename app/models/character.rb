@@ -5,6 +5,8 @@ class Character < ApplicationRecord
     "Sorcery" => 0,
     "Scroungetech" => 0,
     "Genome" => 0,
+    "Mutant" => 0,
+    "Creature" => 0,
     "Defense" => 0,
     "Toughness" => 0,
     "Speed" => 0,
@@ -58,7 +60,7 @@ class Character < ApplicationRecord
   def sort_order
     character_type = action_values.fetch("Type")
     speed = action_values.fetch("Speed", 0).to_i - impairments.to_i
-    [0, Fight::SORT_ORDER.index(character_type), speed * -1, name]
+    [1, Fight::SORT_ORDER.index(character_type), speed * -1, name]
   end
 
   private
