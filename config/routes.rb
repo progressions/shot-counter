@@ -8,6 +8,7 @@ Rails.application.routes.draw do
       resources :all_characters
       resources :users, only: [:index, :show, :update, :destroy]
       resources :fights do
+        resources :effects
         resources :vehicles do
           member do
             patch :act
