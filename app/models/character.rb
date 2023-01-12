@@ -68,10 +68,10 @@ class Character < ApplicationRecord
   end
 
   def ensure_integer_values
-    DEFAULT_ACTION_VALUES.keys.each do |key|
-      if (DEFAULT_ACTION_VALUES[key] == 0)
-        self.action_values[key] = self.action_values[key].to_i
-      end
+    DEFAULT_ACTION_VALUES.select do |key, value|
+      value == 0
+    end.each do |key, value|
+      self.action_values[key] = self.action_values[key].to_i
     end
   end
 end
