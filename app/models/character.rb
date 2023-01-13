@@ -5,6 +5,7 @@ class Character < ApplicationRecord
     "Sorcery" => 0,
     "Scroungetech" => 0,
     "Genome" => 0,
+    "Mutant" => 0,
     "Defense" => 0,
     "Toughness" => 0,
     "Speed" => 0,
