@@ -45,6 +45,6 @@ class Api::V1::FightsController < ApplicationController
   end
 
   def fight_params
-    params.require(:fight).permit(:name)
+    params.require(:fight).permit(:name, :sequence)
   end
 end
