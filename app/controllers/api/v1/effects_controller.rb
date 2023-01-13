@@ -2,7 +2,6 @@ class Api::V1::EffectsController < ApplicationController
   before_action :authenticate_user!
   before_action :set_fight
   before_action :set_effect, only: [:update, :destroy, :act]
-  before_action :set_fight_effect, only: [:update, :destroy, :act]
 
   def index
     render json: @fight.effects
@@ -30,7 +29,7 @@ class Api::V1::EffectsController < ApplicationController
   end
 
   def destroy
-    @fight_effect.destroy!
+    @effect.destroy!
     render :ok
   end
 
