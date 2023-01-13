@@ -6,6 +6,7 @@ Rails.application.routes.draw do
   namespace :api do
     namespace :v1 do
       resources :all_characters
+      resources :all_vehicles
       resources :users, only: [:index, :show, :update, :destroy]
       resources :fights do
         resources :effects
