@@ -1,5 +1,6 @@
 class Api::V1::CharactersController < ApplicationController
   before_action :authenticate_user!
+  before_action :require_current_campaign
   before_action :set_fight
   before_action :set_character, only: [:update, :destroy, :act]
   before_action :set_fight_character, only: [:update, :destroy, :act]
@@ -17,7 +18,7 @@ class Api::V1::CharactersController < ApplicationController
   end
 
   def add
-    @character = Character.find(params[:id])
+    @character = current_campaign.characters.find(params[:id])
     @fight_character = @fight.fight_characters.build(character_id: @character.id, shot: shot_params[:current_shot])
 
     if @fight_character.save

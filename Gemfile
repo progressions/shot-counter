@@ -45,10 +45,10 @@ group :development, :test do
   gem "debug", platforms: %i[ mri mingw x64_mingw ]
   gem "rspec-rails"
   gem "letter_opener"
+  gem "pry-rails"
 end
 
 group :development do
-  gem "pry-rails"
   # Speed up commands on slow machines / big apps [https://github.com/rails/spring]
   # gem "spring"
 end

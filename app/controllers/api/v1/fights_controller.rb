@@ -1,9 +1,11 @@
 class Api::V1::FightsController < ApplicationController
   before_action :authenticate_user!
   before_action :set_fight, only: [:show, :update, :destroy]
+  before_action :require_current_campaign
 
   def index
-    @fights = Fight.order(name: :asc).includes(:characters).includes(characters: :user)
+    Rails.logger.info("@campaign: #{current_campaign}")
+    @fights = current_campaign.fights.order(name: :asc).includes(:characters).includes(characters: :user)
     render json: @fights
   end
 
@@ -12,7 +14,7 @@ class Api::V1::FightsController < ApplicationController
   end
 
   def create
-    @fight = Fight.new(fight_params)
+    @fight = current_campaign.fights.new(fight_params)
     if @fight.save
       post_to_discord(@fight)
       render json: @fight
@@ -37,7 +39,7 @@ class Api::V1::FightsController < ApplicationController
   private
 
   def set_fight
-    @fight = Fight.includes(:characters).includes(characters: :user).find(params[:id])
+    @fight = current_campaign.fights.includes(:characters).includes(characters: :user).find(params[:id])
   end
 
   def post_to_discord(fight)

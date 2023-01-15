@@ -2,6 +2,7 @@ class Vehicle < ApplicationRecord
   has_many :fight_characters, dependent: :destroy
   has_many :fights, through: :fight_characters
   belongs_to :user, optional: true
+  belongs_to :campaign
 
   DEFAULT_ACTION_VALUES = {
     "Acceleration" => 0,

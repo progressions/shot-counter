@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_01_12_201215) do
+ActiveRecord::Schema[7.0].define(version: 2023_01_15_231139) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -43,6 +43,15 @@ ActiveRecord::Schema[7.0].define(version: 2023_01_12_201215) do
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
   end
 
+  create_table "campaigns", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "user_id", null: false
+    t.string "title", null: false
+    t.string "description"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_campaigns_on_user_id"
+  end
+
   create_table "characters", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.string "name", null: false
     t.integer "defense"
@@ -52,6 +61,8 @@ ActiveRecord::Schema[7.0].define(version: 2023_01_12_201215) do
     t.string "color"
     t.uuid "user_id"
     t.jsonb "action_values"
+    t.uuid "campaign_id"
+    t.index ["campaign_id"], name: "index_characters_on_campaign_id"
     t.index ["created_at"], name: "index_characters_on_created_at"
     t.index ["user_id"], name: "index_characters_on_user_id"
   end
@@ -89,6 +100,8 @@ ActiveRecord::Schema[7.0].define(version: 2023_01_12_201215) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "sequence", default: 1, null: false
+    t.uuid "campaign_id"
+    t.index ["campaign_id"], name: "index_fights_on_campaign_id"
   end
 
   create_table "users", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -118,15 +131,21 @@ ActiveRecord::Schema[7.0].define(version: 2023_01_12_201215) do
     t.uuid "user_id"
     t.string "color"
     t.integer "impairments"
+    t.uuid "campaign_id"
+    t.index ["campaign_id"], name: "index_vehicles_on_campaign_id"
     t.index ["user_id"], name: "index_vehicles_on_user_id"
   end
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "campaigns", "users"
+  add_foreign_key "characters", "campaigns"
   add_foreign_key "characters", "users"
   add_foreign_key "effects", "fights"
   add_foreign_key "effects", "users"
   add_foreign_key "fight_characters", "characters"
   add_foreign_key "fight_characters", "fights"
+  add_foreign_key "fights", "campaigns"
+  add_foreign_key "vehicles", "campaigns"
   add_foreign_key "vehicles", "users"
 end
