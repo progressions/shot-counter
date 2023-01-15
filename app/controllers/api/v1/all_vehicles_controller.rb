@@ -1,5 +1,6 @@
 class Api::V1::AllVehiclesController < ApplicationController
   before_action :authenticate_user!
+  before_action :require_current_campaign
   before_action :set_scoped_vehicles
   before_action :set_vehicle, only: [:update, :destroy, :show]
 
@@ -9,8 +10,9 @@ class Api::V1::AllVehiclesController < ApplicationController
   end
 
   def create
-    @vehicle = Vehicle.create!(vehicle_params)
+    @vehicle = current_campaign.vehicles.create!(vehicle_params)
     @vehicle.user = current_user
+    @vehicle.campaign = current_campaign
 
     if @vehicle.save
       render json: @vehicle
@@ -44,7 +46,7 @@ class Api::V1::AllVehiclesController < ApplicationController
 
   def set_scoped_vehicles
     if current_user.gamemaster?
-      @scoped_vehicles = Vehicle
+      @scoped_vehicles = current_campaign.vehicles
     else
       @scoped_vehicles = current_user.vehicles
     end

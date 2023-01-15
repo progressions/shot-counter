@@ -1,5 +1,6 @@
 class Api::V1::AllCharactersController < ApplicationController
   before_action :authenticate_user!
+  before_action :require_current_campaign
   before_action :set_scoped_characters
   before_action :set_character, only: [:update, :destroy, :show]
 
@@ -9,8 +10,9 @@ class Api::V1::AllCharactersController < ApplicationController
   end
 
   def create
-    @character = Character.create!(character_params)
+    @character = current_campaign.characters.create!(character_params)
     @character.user = current_user
+    @character.campaign = current_campaign
 
     if @character.save
       render json: @character
@@ -44,7 +46,7 @@ class Api::V1::AllCharactersController < ApplicationController
 
   def set_scoped_characters
     if current_user.gamemaster?
-      @scoped_characters = Character
+      @scoped_characters = current_campaign.characters
     else
       @scoped_characters = current_user.characters
     end
