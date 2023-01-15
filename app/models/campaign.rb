@@ -1,7 +1,7 @@
 class Campaign < ApplicationRecord
   belongs_to :user
 
-  validates :title, presence: true
+  validates :title, presence: true, allow_blank: false
 
   def as_json(args={})
     {

@@ -8,6 +8,30 @@ RSpec.describe "Api::V1::Campaigns", type: :request do
     @headers = Devise::JWT::TestHelpers.auth_headers({}, @user)
   end
 
+  describe "POST /campaigns" do
+    it "creates campaign" do
+      post "/api/v1/campaigns", headers: @headers, params: {
+        campaign: {
+          title: "Hard to Kill"
+        }
+      }
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["title"]).to eq("Hard to Kill")
+    end
+
+    it "returns errors" do
+      post "/api/v1/campaigns", headers: @headers, params: {
+        campaign: {
+          title: ""
+        }
+      }
+      expect(response).to have_http_status(400)
+      body = JSON.parse(response.body)
+      expect(body).to eq({"title" => ["can't be blank"]})
+    end
+  end
+
   describe "POST /set" do
     it "returns http success" do
       @campaign = @user.campaigns.create!(title: "Action Movie")
