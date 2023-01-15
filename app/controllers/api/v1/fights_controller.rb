@@ -38,12 +38,6 @@ class Api::V1::FightsController < ApplicationController
 
   private
 
-  def require_current_campaign
-    if !current_campaign
-      render status: 500
-    end
-  end
-
   def set_fight
     @fight = current_campaign.fights.includes(:characters).includes(characters: :user).find(params[:id])
   end

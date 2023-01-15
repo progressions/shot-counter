@@ -24,6 +24,12 @@ class ApplicationController < ActionController::API
 
   private
 
+  def require_current_campaign
+    if !current_campaign
+      render status: 500
+    end
+  end
+
   def redis
     @redis ||= Redis.new
   end

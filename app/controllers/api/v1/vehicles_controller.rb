@@ -1,5 +1,6 @@
 class Api::V1::VehiclesController < ApplicationController
   before_action :authenticate_user!
+  before_action :require_current_campaign
   before_action :set_fight
   before_action :set_vehicle, only: [:update, :destroy, :act]
   before_action :set_fight_vehicle, only: [:update, :destroy, :act]
@@ -17,7 +18,7 @@ class Api::V1::VehiclesController < ApplicationController
   end
 
   def add
-    @vehicle = Vehicle.find(params[:id])
+    @vehicle = current_campaign.vehicles.find(params[:id])
     @fight_vehicle = @fight.fight_characters.build(vehicle_id: @vehicle.id, shot: shot_params[:current_shot])
 
     if @fight_vehicle.save
@@ -35,6 +36,7 @@ class Api::V1::VehiclesController < ApplicationController
   def create
     @vehicle = Vehicle.create!(vehicle_params)
     @vehicle.user = current_user
+    @vehicle.campaign = current_campaign
     @fight_vehicle = @fight.fight_characters.build(vehicle_id: @vehicle.id, shot: shot_params[:current_shot])
 
     if @fight_vehicle.save
@@ -69,7 +71,7 @@ class Api::V1::VehiclesController < ApplicationController
   end
 
   def set_fight
-    @fight = Fight.find(params[:fight_id])
+    @fight = current_campaign.fights.find(params[:fight_id])
   end
 
   def shot_params
