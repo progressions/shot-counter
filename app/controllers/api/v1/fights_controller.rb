@@ -3,6 +3,7 @@ class Api::V1::FightsController < ApplicationController
   before_action :set_fight, only: [:show, :update, :destroy]
 
   def index
+    Rails.logger.info("@campaign: #{campaign}")
     @fights = Fight.order(name: :asc).includes(:characters).includes(characters: :user)
     render json: @fights
   end
