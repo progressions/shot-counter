@@ -18,12 +18,16 @@ class Api::V1::CampaignsController < ApplicationController
   end
 
   def show
-    @campaign = current_user.campaigns.find_by(id: params[:id])
-
-    if @campaign
-      render json: @campaign
+    if params[:id] == "current"
+      render json: current_campaign
     else
-      render status: 404
+      @campaign = current_user.campaigns.find_by(id: params[:id])
+
+      if @campaign
+        render json: @campaign
+      else
+        render status: 404
+      end
     end
   end
 
@@ -57,10 +61,6 @@ class Api::V1::CampaignsController < ApplicationController
     else
       render json: @campaign
     end
-  end
-
-  def current
-    render json: campaign
   end
 
   private
