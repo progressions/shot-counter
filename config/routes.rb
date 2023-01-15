@@ -6,10 +6,8 @@ Rails.application.routes.draw do
   namespace :api do
     namespace :v1 do
       get "campaigns/current", to: "campaigns#current"
+      post "campaigns/current", to: "campaigns#set"
       resources :campaigns, only: [] do
-        member do
-          post :set
-        end
       end
       resources :all_characters
       resources :all_vehicles
