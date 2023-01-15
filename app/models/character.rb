@@ -31,6 +31,7 @@ class Character < ApplicationRecord
   has_many :fight_characters, dependent: :destroy
   has_many :fights, through: :fight_characters
   belongs_to :user, optional: true
+  belongs_to :campaign
 
   before_save :ensure_default_action_values
   before_save :ensure_integer_values

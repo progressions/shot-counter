@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_01_15_230424) do
+ActiveRecord::Schema[7.0].define(version: 2023_01_15_231139) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -61,6 +61,8 @@ ActiveRecord::Schema[7.0].define(version: 2023_01_15_230424) do
     t.string "color"
     t.uuid "user_id"
     t.jsonb "action_values"
+    t.uuid "campaign_id"
+    t.index ["campaign_id"], name: "index_characters_on_campaign_id"
     t.index ["created_at"], name: "index_characters_on_created_at"
     t.index ["user_id"], name: "index_characters_on_user_id"
   end
@@ -129,17 +131,21 @@ ActiveRecord::Schema[7.0].define(version: 2023_01_15_230424) do
     t.uuid "user_id"
     t.string "color"
     t.integer "impairments"
+    t.uuid "campaign_id"
+    t.index ["campaign_id"], name: "index_vehicles_on_campaign_id"
     t.index ["user_id"], name: "index_vehicles_on_user_id"
   end
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "campaigns", "users"
+  add_foreign_key "characters", "campaigns"
   add_foreign_key "characters", "users"
   add_foreign_key "effects", "fights"
   add_foreign_key "effects", "users"
   add_foreign_key "fight_characters", "characters"
   add_foreign_key "fight_characters", "fights"
   add_foreign_key "fights", "campaigns"
+  add_foreign_key "vehicles", "campaigns"
   add_foreign_key "vehicles", "users"
 end
