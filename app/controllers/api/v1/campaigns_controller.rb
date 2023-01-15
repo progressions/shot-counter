@@ -9,7 +9,11 @@ class Api::V1::CampaignsController < ApplicationController
     }
     redis.set("user_#{current_user.id}", user_info.to_json)
 
-    render json: @campaign
+    if params[:id] && @campaign.nil?
+      render status: 401
+    else
+      render json: @campaign
+    end
   end
 
   def current
