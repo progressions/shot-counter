@@ -4,7 +4,13 @@ class ApplicationController < ActionController::API
   private
 
   def set_campaign
-    @campaign = Campaign.find_by(id: params[:campaign_id])
+    return unless current_user
+
+    redis = Redis.new
+    campaign_id = redis.get("user_#{current_user.id}")
+
+    @campaign = Campaign.find_by(id: campaign_id)
+    Rails.logger.info("@campaign: #{@campaign.inspect}")
   end
 
   def campaign
