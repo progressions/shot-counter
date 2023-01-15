@@ -1,6 +1,12 @@
 class Api::V1::CampaignsController < ApplicationController
   before_action :authenticate_user!
 
+  def index
+    @campaigns = current_user.campaigns.order(:title)
+
+    render json: @campaigns
+  end
+
   def create
     @campaign = current_user.campaigns.new(campaign_params)
 
