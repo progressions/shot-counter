@@ -1,4 +1,5 @@
 class Fight < ApplicationRecord
+  belongs_to :campaign
   has_many :fight_characters, dependent: :destroy
   has_many :characters, through: :fight_characters
   has_many :vehicles, through: :fight_characters

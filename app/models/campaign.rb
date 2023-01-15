@@ -1,5 +1,6 @@
 class Campaign < ApplicationRecord
   belongs_to :user
+  has_many :fights
 
   validates :title, presence: true, allow_blank: false
 
