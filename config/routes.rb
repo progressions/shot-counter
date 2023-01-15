@@ -5,6 +5,7 @@ Rails.application.routes.draw do
   }
   namespace :api do
     namespace :v1 do
+      get "campaigns/current", to: "campaigns#current"
       resources :campaigns, only: [] do
         member do
           post :set

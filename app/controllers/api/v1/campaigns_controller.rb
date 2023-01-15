@@ -2,8 +2,6 @@ class Api::V1::CampaignsController < ApplicationController
   before_action :authenticate_user!
 
   def set
-    redis = Redis.new
-
     @campaign = current_user.campaigns.find_by(id: params[:id])
 
     user_info = {
@@ -12,5 +10,9 @@ class Api::V1::CampaignsController < ApplicationController
     redis.set("user_#{current_user.id}", user_info.to_json)
 
     render json: @campaign
+  end
+
+  def current
+    render json: campaign
   end
 end
