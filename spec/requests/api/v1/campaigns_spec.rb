@@ -32,6 +32,45 @@ RSpec.describe "Api::V1::Campaigns", type: :request do
     end
   end
 
+  describe "GET /campaigns/:id" do
+    it "fetches campaign" do
+      @campaign = @user.campaigns.create!(title: "Action Movie")
+
+      get "/api/v1/campaigns/#{@campaign.id}", headers: @headers
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["title"]).to eq("Action Movie")
+    end
+
+    it "returns 404" do
+      get "/api/v1/campaigns/12345", headers: @headers
+      expect(response).to have_http_status(404)
+    end
+  end
+
+  describe "PATCH /campaigns:id" do
+    it "updates campaign" do
+      @campaign = @user.campaigns.create!(title: "Action Movie")
+      patch "/api/v1/campaigns/#{@campaign.id}", headers: @headers, params: {
+        campaign: {
+          title: "Hard to Kill"
+        }
+      }
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["title"]).to eq("Hard to Kill")
+    end
+  end
+
+  describe "DESTROY /campaigns/:id" do
+    it "destroys campaign" do
+      @campaign = @user.campaigns.create!(title: "Action Movie")
+      delete "/api/v1/campaigns/#{@campaign.id}", headers: @headers
+      expect(response).to have_http_status(:success)
+      expect(Campaign.find_by(id: @campaign.id)).to be_nil
+    end
+  end
+
   describe "POST /set" do
     it "returns http success" do
       @campaign = @user.campaigns.create!(title: "Action Movie")
