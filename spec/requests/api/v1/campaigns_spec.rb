@@ -12,12 +12,29 @@ RSpec.describe "Api::V1::Campaigns", type: :request do
     it "returns http success" do
       @campaign = @user.campaigns.create!(title: "Action Movie")
 
-      post "/api/v1/campaigns/#{@campaign.id}/set", headers: @headers
+      post "/api/v1/campaigns/current", params: { id: @campaign.id }, headers: @headers
       expect(response).to have_http_status(:success)
 
       redis = Redis.new
       user_info = JSON.parse(redis.get("user_#{@user.id}"))
       expect(user_info["campaign_id"]).to eq(@campaign.id)
+    end
+
+    it "clears current campaign" do
+      post "/api/v1/campaigns/current", params: { id: nil }, headers: @headers
+      expect(response).to have_http_status(:success)
+
+      redis = Redis.new
+      user_info = JSON.parse(redis.get("user_#{@user.id}"))
+      expect(user_info["campaign_id"]).to eq(nil)
+    end
+
+    it "can't set other users' campaigns" do
+      @user = User.create!(email: "someone@else.com")
+      @campaign = @user.campaigns.create!(title: "Adventure")
+
+      post "/api/v1/campaigns/current", params: { id: @campaign.id }, headers: @headers
+      expect(response).to have_http_status(:unauthorized)
     end
   end
 
