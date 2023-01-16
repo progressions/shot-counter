@@ -6,6 +6,8 @@ class CreateInvitations < ActiveRecord::Migration[7.0]
       t.string :email, null: true
 
       t.timestamps
+
+      t.index ["campaign_id", "email"], name: "index_invitations_on_campaign_email", unique: true
     end
   end
 end

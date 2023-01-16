@@ -15,7 +15,8 @@ class Campaign < ApplicationRecord
       title: title,
       description: description,
       gamemaster: user,
-      players: players
+      players: players,
+      invitations: invitations,
     }
   end
 end

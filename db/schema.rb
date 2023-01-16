@@ -119,6 +119,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_01_16_144133) do
     t.string "email"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["campaign_id", "email"], name: "index_invitations_on_campaign_email", unique: true
     t.index ["campaign_id"], name: "index_invitations_on_campaign_id"
     t.index ["user_id"], name: "index_invitations_on_user_id"
   end
