@@ -25,6 +25,7 @@ class Api::V1::CampaignMembershipsController < ApplicationController
     end
     @campaign_membership = @scoped_memberships.find_by(campaign_id: params[:campaign_id], user_id: params[:user_id])
 
+    binding.pry
     if @campaign_membership
       @campaign_membership.destroy!
       render :ok

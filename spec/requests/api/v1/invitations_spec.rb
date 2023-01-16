@@ -36,7 +36,7 @@ RSpec.describe "Invitations", type: :request do
       }
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
-      expect(body["campaign_id"]).to eq(@campaign.id)
+      expect(body["campaign"]["id"]).to eq(@campaign.id)
     end
 
     it "creates an invitation for an existing user" do
@@ -49,7 +49,7 @@ RSpec.describe "Invitations", type: :request do
       }
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
-      expect(body["campaign_id"]).to eq(@campaign.id)
+      expect(body["campaign"]["id"]).to eq(@campaign.id)
     end
 
     it "returns an error" do
