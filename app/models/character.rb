@@ -6,6 +6,7 @@ class Character < ApplicationRecord
     "Scroungetech" => 0,
     "Genome" => 0,
     "Mutant" => 0,
+    "Creature" => 0,
     "Defense" => 0,
     "Toughness" => 0,
     "Speed" => 0,
