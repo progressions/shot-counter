@@ -15,7 +15,6 @@ class Vehicle < ApplicationRecord
     "Pursuer" => true,
     "Position" => "Far",
     "Type" => "PC",
-    "Damage" => 0,
     "Faction" => ""
   }
 
