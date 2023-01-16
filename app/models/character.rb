@@ -18,7 +18,9 @@ class Character < ApplicationRecord
     "Wounds" => 0,
     "Type" => "PC",
     "Marks of Death" => 0,
-    "Archetype" => ""
+    "Archetype" => "",
+    "Damage" => 0,
+    "Faction" => ""
   }
   CHARACTER_TYPES=[
     "PC",
