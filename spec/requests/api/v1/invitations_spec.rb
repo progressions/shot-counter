@@ -77,7 +77,10 @@ RSpec.describe "Invitations", type: :request do
       @ginny = User.create!(email: "ginny@email.com")
       @headers = Devise::JWT::TestHelpers.auth_headers({}, @ginny)
       @invitation = @gamemaster.invitations.create!(campaign_id: @campaign.id, email: @ginny.email)
+
+      # User doesn't need to be signed in
       patch "/api/v1/invitations/#{@invitation.id}/redeem"
+
       expect(response).to have_http_status(200)
       body = JSON.parse(response.body)
       expect(body["email"]).to eq("ginny@email.com")
