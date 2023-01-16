@@ -15,6 +15,10 @@ class Invitation < ApplicationRecord
       campaign: {
         id: campaign.id,
         title: campaign.title
+      },
+      pending_user: {
+        id: pending_user&.id,
+        email: pending_user&.id
       }
     }
   end
