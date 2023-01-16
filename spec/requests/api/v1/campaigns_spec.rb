@@ -1,8 +1,6 @@
 require 'rails_helper'
 
 RSpec.describe "Api::V1::Campaigns", type: :request do
-  include ApiHelper
-
   before(:each) do
     @user = User.create!(email: "email@example.com")
     @headers = Devise::JWT::TestHelpers.auth_headers({}, @user)
