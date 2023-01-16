@@ -13,7 +13,7 @@ class Campaign < ApplicationRecord
       id: id,
       title: title,
       description: description,
-      user: user,
+      gamemaster: user,
       players: players
     }
   end

@@ -5,7 +5,7 @@ Rails.application.routes.draw do
   }
   namespace :api do
     namespace :v1 do
-      resources :campaign_memberships, only: [:index, :create]
+      resources :campaign_memberships, only: [:create]
       delete "campaign_memberships", to: "campaign_memberships#destroy"
       post "campaigns/current", to: "campaigns#set"
       resources :campaigns
