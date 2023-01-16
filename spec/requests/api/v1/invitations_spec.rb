@@ -52,6 +52,49 @@ RSpec.describe "Invitations", type: :request do
       body = JSON.parse(response.body)
       expect(body["campaign"]).to eq(["must exist"])
     end
+
+    it "can't create a new invitation for the gamemaster" do
+      post "/api/v1/invitations", headers: @headers, params: {
+        invitation: {
+          email: @gamemaster.email,
+          campaign_id: @campaign.id
+        }
+      }
+      expect(response).to have_http_status(400)
+      body = JSON.parse(response.body)
+      expect(body["email"]).to eq(["is the gamemaster"])
+
+      expect(Invitation.count).to eq(0)
+    end
+
+    it "can't create a new invitation for an existing member" do
+      @ginny = User.create!(email: "ginny@email.com")
+      @campaign.players << @ginny
+      post "/api/v1/invitations", headers: @headers, params: {
+        invitation: {
+          email: "ginny@email.com",
+          campaign_id: @campaign.id
+        }
+      }
+      expect(response).to have_http_status(400)
+      body = JSON.parse(response.body)
+      expect(body["email"]).to eq(["is already a player"])
+
+      expect(Invitation.count).to eq(0)
+    end
+
+    it "can't create a duplicate invitation for the same email" do
+      @invitation = @gamemaster.invitations.create!(campaign_id: @campaign.id, email: "ginny@email.com")
+      post "/api/v1/invitations", headers: @headers, params: {
+        invitation: {
+          email: "ginny@email.com",
+          campaign_id: @campaign.id
+        }
+      }
+      expect(response).to have_http_status(400)
+      body = JSON.parse(response.body)
+      expect(body["email"]).to eq(["has already been taken"])
+    end
   end
 
   describe "GET /api/v1/invitations/:id/redeem" do
