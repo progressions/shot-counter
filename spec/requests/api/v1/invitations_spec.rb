@@ -56,12 +56,12 @@ RSpec.describe "Invitations", type: :request do
 
   describe "GET /api/v1/invitations/:id/redeem" do
     it "redeems an invitation and creates a new user" do
-      @invitation = @gamemaster.invitations.create!(campaign_id: @campaign.id)
+      @invitation = @gamemaster.invitations.create!(campaign_id: @campaign.id, email: "ginny@email.com")
       patch "/api/v1/invitations/#{@invitation.id}/redeem", params: {
         user: {
-          email: "ginny@email.com",
           first_name: "Ginny",
-          last_name: "Field"
+          last_name: "Field",
+          password: "Mother"
         }
       }
       expect(response).to have_http_status(200)
@@ -77,7 +77,7 @@ RSpec.describe "Invitations", type: :request do
       @ginny = User.create!(email: "ginny@email.com")
       @headers = Devise::JWT::TestHelpers.auth_headers({}, @ginny)
       @invitation = @gamemaster.invitations.create!(campaign_id: @campaign.id, email: @ginny.email)
-      patch "/api/v1/invitations/#{@invitation.id}/redeem", headers: @headers
+      patch "/api/v1/invitations/#{@invitation.id}/redeem"
       expect(response).to have_http_status(200)
       body = JSON.parse(response.body)
       expect(body["email"]).to eq("ginny@email.com")
