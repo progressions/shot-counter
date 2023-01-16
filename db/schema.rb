@@ -115,9 +115,11 @@ ActiveRecord::Schema[7.0].define(version: 2023_01_16_144133) do
 
   create_table "invitations", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.uuid "campaign_id", null: false
+    t.uuid "user_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["campaign_id"], name: "index_invitations_on_campaign_id"
+    t.index ["user_id"], name: "index_invitations_on_user_id"
   end
 
   create_table "users", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -165,6 +167,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_01_16_144133) do
   add_foreign_key "fight_characters", "fights"
   add_foreign_key "fights", "campaigns"
   add_foreign_key "invitations", "campaigns"
+  add_foreign_key "invitations", "users"
   add_foreign_key "vehicles", "campaigns"
   add_foreign_key "vehicles", "users"
 end
