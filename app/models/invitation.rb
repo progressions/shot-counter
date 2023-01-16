@@ -6,6 +6,19 @@ class Invitation < ApplicationRecord
 
   validate :ensure_new_player
 
+  def as_json(args={})
+    {
+      id: id,
+      email: email,
+      campaign: {
+        id: campaign.id,
+        title: campaign.title
+      }
+    }
+  end
+
+  private
+
   def ensure_new_player
     if (campaign&.players&.find_by(email: email))
       errors.add(:email, "is already a player")
