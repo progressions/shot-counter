@@ -77,13 +77,7 @@ RSpec.describe "Invitations", type: :request do
       @ginny = User.create!(email: "ginny@email.com")
       @headers = Devise::JWT::TestHelpers.auth_headers({}, @ginny)
       @invitation = @gamemaster.invitations.create!(campaign_id: @campaign.id, email: @ginny.email)
-      patch "/api/v1/invitations/#{@invitation.id}/redeem", headers: @headers, params: {
-        user: {
-          email: "ginny@email.com",
-          first_name: "Ginny",
-          last_name: "Field"
-        }
-      }
+      patch "/api/v1/invitations/#{@invitation.id}/redeem", headers: @headers
       expect(response).to have_http_status(200)
       body = JSON.parse(response.body)
       expect(body["email"]).to eq("ginny@email.com")
