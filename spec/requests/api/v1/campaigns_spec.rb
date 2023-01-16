@@ -46,10 +46,17 @@ RSpec.describe "Api::V1::Campaigns", type: :request do
     it "fetches campaign" do
       @campaign = @user.campaigns.create!(title: "Action Movie")
 
+      @alice = User.create!(email: "alice@example.com")
+      @marcie = User.create!(email: "marcie@example.com")
+
+      @campaign.players << @alice
+      @campaign.players << @marcie
+
       get "/api/v1/campaigns/#{@campaign.id}", headers: @headers
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
       expect(body["title"]).to eq("Action Movie")
+      expect(body["players"].map { |u| u["email"] }).to eq(["alice@example.com", "marcie@example.com"])
     end
 
     it "returns 404" do

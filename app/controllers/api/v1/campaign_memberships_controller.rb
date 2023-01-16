@@ -1,14 +1,9 @@
 class Api::V1::CampaignMembershipsController < ApplicationController
   before_action :authenticate_user!
 
-  def index
-    @campaigns = current_user.player_campaigns
-
-    render json: @campaigns
-  end
-
   def create
-    @campaign_membership = current_user.campaign_memberships.new(membership_params)
+    @campaign = current_user.campaigns.find(membership_params[:campaign_id])
+    @campaign_membership = @campaign.campaign_memberships.new(membership_params)
 
     if @campaign_membership.save
       render json: @campaign_membership.campaign
@@ -31,6 +26,6 @@ class Api::V1::CampaignMembershipsController < ApplicationController
   private
 
   def membership_params
-    params.require(:membership).permit(:campaign_id)
+    params.require(:membership).permit(:campaign_id, :user_id)
   end
 end
