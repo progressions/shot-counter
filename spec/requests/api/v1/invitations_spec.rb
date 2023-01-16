@@ -28,5 +28,45 @@ RSpec.describe "Invitations", type: :request do
       body = JSON.parse(response.body)
       expect(body["campaign_id"]).to eq(@campaign.id)
     end
+
+    it "returns an error" do
+      post "/api/v1/invitations", headers: @headers, params: {
+        invitation: {
+          campaign_id: nil
+        }
+      }
+      expect(response).to have_http_status(400)
+      body = JSON.parse(response.body)
+      expect(body["campaign"]).to eq(["must exist"])
+    end
+  end
+
+  describe "GET /api/v1/invitations/:id/redeem" do
+    it "redeems an invitation and creates a new user" do
+      @invitation = @gamemaster.invitations.create!(campaign_id: @campaign.id)
+      patch "/api/v1/invitations/#{@invitation.id}/redeem", params: {
+        user: {
+          email: "ginny@email.com",
+          first_name: "Ginny",
+          last_name: "Field"
+        }
+      }
+      expect(response).to have_http_status(200)
+      body = JSON.parse(response.body)
+      expect(body["email"]).to eq("ginny@email.com")
+      expect(Invitation.find_by(id: @invitation.id)).to be_nil
+
+      ginny = User.find_by(email: "ginny@email.com")
+      expect(ginny.player_campaigns).to include(@campaign)
+    end
+  end
+
+  describe "DELETE /api/v1/invitations/:id" do
+    it "deletes an invitation" do
+      @invitation = @gamemaster.invitations.create!(campaign_id: @campaign.id)
+      delete "/api/v1/invitations/#{@invitation.id}", headers: @headers
+      expect(response).to have_http_status(:success)
+      expect(Invitation.find_by(id: @invitation.id)).to be_nil
+    end
   end
 end

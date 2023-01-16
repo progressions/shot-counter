@@ -7,7 +7,7 @@ Rails.application.routes.draw do
     namespace :v1 do
       resources :invitations do
         member do
-          get :redeem
+          patch :redeem
         end
       end
       resources :campaign_memberships, only: [:create]
