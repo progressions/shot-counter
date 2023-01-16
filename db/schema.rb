@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_01_16_001213) do
+ActiveRecord::Schema[7.0].define(version: 2023_01_16_144133) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -113,6 +113,13 @@ ActiveRecord::Schema[7.0].define(version: 2023_01_16_001213) do
     t.index ["campaign_id"], name: "index_fights_on_campaign_id"
   end
 
+  create_table "invitations", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "campaign_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["campaign_id"], name: "index_invitations_on_campaign_id"
+  end
+
   create_table "users", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.string "first_name", default: "", null: false
     t.string "last_name", default: "", null: false
@@ -157,6 +164,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_01_16_001213) do
   add_foreign_key "fight_characters", "characters"
   add_foreign_key "fight_characters", "fights"
   add_foreign_key "fights", "campaigns"
+  add_foreign_key "invitations", "campaigns"
   add_foreign_key "vehicles", "campaigns"
   add_foreign_key "vehicles", "users"
 end
