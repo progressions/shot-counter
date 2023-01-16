@@ -29,7 +29,7 @@ RSpec.describe "Api::V1::CampaignMemberships", type: :request do
     it "lets me remove a player's membership from a campaign I control" do
       @action_movie.players << @alice
 
-      delete "/api/v1/campaign_memberships?player_id=#{@alice.id}&campaign_id=#{@action_movie.id}", headers: @headers
+      delete "/api/v1/campaign_memberships?user_id=#{@alice.id}&campaign_id=#{@action_movie.id}", headers: @headers
       expect(response).to have_http_status(:success)
       expect(@alice.player_campaigns).to eq([])
     end
@@ -38,7 +38,7 @@ RSpec.describe "Api::V1::CampaignMemberships", type: :request do
       @action_movie.players << @alice
 
       @headers = Devise::JWT::TestHelpers.auth_headers({}, @alice)
-      delete "/api/v1/campaign_memberships?player_id=#{@alice.id}&campaign_id=#{@action_movie.id}", headers: @headers
+      delete "/api/v1/campaign_memberships?user_id=#{@alice.id}&campaign_id=#{@action_movie.id}", headers: @headers
       expect(response).to have_http_status(:success)
       expect(@alice.player_campaigns).to eq([])
     end
