@@ -14,7 +14,17 @@ class Api::V1::CampaignMembershipsController < ApplicationController
 
   # Fetch by Campaign :id, not the CampaignMembership
   def destroy
-    @campaign_membership = current_user.campaign_memberships.find_by(campaign_id: params[:id])
+    @campaign = current_user.campaigns.find_by(id: params[:campaign_id])
+
+    if @campaign
+      # Current user is the Gamemaster, removing a player from their campaign
+      @scoped_memberships = @campaign.campaign_memberships
+    else
+      # Current user is a player, removing their own membership from a campaign
+      @scoped_memberships = current_user.campaign_memberships
+    end
+    @campaign_membership = @scoped_memberships.find_by(campaign_id: params[:campaign_id], user_id: params[:player_id])
+
     if @campaign_membership
       @campaign_membership.destroy!
       render :ok
