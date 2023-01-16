@@ -34,9 +34,7 @@ class Api::V1::VehiclesController < ApplicationController
   end
 
   def create
-    @vehicle = Vehicle.create!(vehicle_params)
-    @vehicle.user = current_user
-    @vehicle.campaign = current_campaign
+    @vehicle = current_campaign.vehicles.create!(vehicle_params.merge(user: current_user))
     @fight_vehicle = @fight.fight_characters.build(vehicle_id: @vehicle.id, shot: shot_params[:current_shot])
 
     if @fight_vehicle.save
