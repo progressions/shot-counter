@@ -15,6 +15,8 @@ class Api::V1::InvitationsController < ApplicationController
 
   def create
     @invitation = current_user.invitations.new(invitation_params)
+    @user = User.find_by(email: @invitation.email)
+    @invitation.pending_user = @user
     if @invitation.save
       render json: @invitation
     else

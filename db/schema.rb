@@ -117,10 +117,13 @@ ActiveRecord::Schema[7.0].define(version: 2023_01_16_144133) do
     t.uuid "campaign_id", null: false
     t.uuid "user_id", null: false
     t.string "email"
+    t.uuid "pending_user_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["campaign_id", "email"], name: "index_invitations_on_campaign_email", unique: true
+    t.index ["campaign_id", "pending_user_id"], name: "index_invitations_on_campaign_and_pending_user", unique: true
     t.index ["campaign_id"], name: "index_invitations_on_campaign_id"
+    t.index ["pending_user_id"], name: "index_invitations_on_pending_user_id"
     t.index ["user_id"], name: "index_invitations_on_user_id"
   end
 
@@ -170,6 +173,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_01_16_144133) do
   add_foreign_key "fights", "campaigns"
   add_foreign_key "invitations", "campaigns"
   add_foreign_key "invitations", "users"
+  add_foreign_key "invitations", "users", column: "pending_user_id"
   add_foreign_key "vehicles", "campaigns"
   add_foreign_key "vehicles", "users"
 end

@@ -50,6 +50,9 @@ RSpec.describe "Invitations", type: :request do
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
       expect(body["campaign"]["id"]).to eq(@campaign.id)
+
+      @invitation = @campaign.invitations.first
+      expect(@invitation.pending_user).to eq(@alice)
     end
 
     it "returns an error" do

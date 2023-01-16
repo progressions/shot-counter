@@ -1,6 +1,7 @@
 class Invitation < ApplicationRecord
   belongs_to :campaign
   belongs_to :user
+  belongs_to :pending_user, class_name: "User", optional: true
 
   validates :email, uniqueness: { scope: :campaign_id }, allow_nil: true
 
@@ -10,6 +11,7 @@ class Invitation < ApplicationRecord
     {
       id: id,
       email: email,
+      gamemaster: user,
       campaign: {
         id: campaign.id,
         title: campaign.title
