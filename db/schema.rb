@@ -116,6 +116,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_01_16_144133) do
   create_table "invitations", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.uuid "campaign_id", null: false
     t.uuid "user_id", null: false
+    t.string "email"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["campaign_id"], name: "index_invitations_on_campaign_id"

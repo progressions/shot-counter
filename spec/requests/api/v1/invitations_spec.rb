@@ -29,6 +29,19 @@ RSpec.describe "Invitations", type: :request do
       expect(body["campaign_id"]).to eq(@campaign.id)
     end
 
+    it "creates an invitation for an existing user" do
+      @alice = User.create!(email: "alice@email.com")
+      post "/api/v1/invitations", headers: @headers, params: {
+        invitation: {
+          campaign_id: @campaign.id,
+          email: @alice.email
+        }
+      }
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["campaign_id"]).to eq(@campaign.id)
+    end
+
     it "returns an error" do
       post "/api/v1/invitations", headers: @headers, params: {
         invitation: {
@@ -45,6 +58,26 @@ RSpec.describe "Invitations", type: :request do
     it "redeems an invitation and creates a new user" do
       @invitation = @gamemaster.invitations.create!(campaign_id: @campaign.id)
       patch "/api/v1/invitations/#{@invitation.id}/redeem", params: {
+        user: {
+          email: "ginny@email.com",
+          first_name: "Ginny",
+          last_name: "Field"
+        }
+      }
+      expect(response).to have_http_status(200)
+      body = JSON.parse(response.body)
+      expect(body["email"]).to eq("ginny@email.com")
+      expect(Invitation.find_by(id: @invitation.id)).to be_nil
+
+      ginny = User.find_by(email: "ginny@email.com")
+      expect(ginny.player_campaigns).to include(@campaign)
+    end
+
+    it "redeems an invitation for an existing user" do
+      @ginny = User.create!(email: "ginny@email.com")
+      @headers = Devise::JWT::TestHelpers.auth_headers({}, @ginny)
+      @invitation = @gamemaster.invitations.create!(campaign_id: @campaign.id, email: @ginny.email)
+      patch "/api/v1/invitations/#{@invitation.id}/redeem", headers: @headers, params: {
         user: {
           email: "ginny@email.com",
           first_name: "Ginny",

@@ -18,7 +18,11 @@ class Api::V1::InvitationsController < ApplicationController
 
   def redeem
     @invitation = Invitation.find(params[:id])
-    @user = User.new(user_params)
+    if @invitation.email && current_user.email == @invitation.email
+      @user = current_user
+    else
+      @user = User.new(user_params)
+    end
     if @invitation.campaign.players << @user
       @invitation.destroy!
       render json: @user
@@ -36,7 +40,7 @@ class Api::V1::InvitationsController < ApplicationController
   private
 
   def invitation_params
-    params.require(:invitation).permit(:campaign_id)
+    params.require(:invitation).permit(:campaign_id, :email)
   end
 
   def user_params
