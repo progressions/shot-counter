@@ -14,7 +14,9 @@ class Vehicle < ApplicationRecord
     "Chase Points" => 0,
     "Pursuer" => true,
     "Position" => "Far",
-    "Type" => "PC"
+    "Type" => "PC",
+    "Damage" => 0,
+    "Faction" => ""
   }
 
   POSITIONS = ["Near", "Far"]
