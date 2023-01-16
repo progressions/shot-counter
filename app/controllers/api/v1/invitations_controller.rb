@@ -1,10 +1,16 @@
 class Api::V1::InvitationsController < ApplicationController
-  before_action :authenticate_user!, except: [:redeem]
+  before_action :authenticate_user!, except: [:redeem, :show]
 
   def index
     @invitations = current_user.invitations
 
     render json: @invitations
+  end
+
+  def show
+    @invitation = Invitation.find(params[:id])
+
+    render json: @invitation
   end
 
   def create

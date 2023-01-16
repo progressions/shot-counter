@@ -17,6 +17,16 @@ RSpec.describe "Invitations", type: :request do
     end
   end
 
+  describe "GET /api/v1/invitations/:id" do
+    it "returns an existing invitation" do
+      @invitation = @gamemaster.invitations.create!(campaign_id: @campaign.id, email: "ginny@email.com")
+      get "/api/v1/invitations/#{@invitation.id}"
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["email"]).to eq("ginny@email.com")
+    end
+  end
+
   describe "POST /api/v1/invitations" do
     it "creates an invitation for the given campaign" do
       post "/api/v1/invitations", headers: @headers, params: {
