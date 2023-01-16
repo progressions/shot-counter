@@ -1,17 +1,15 @@
 require 'rails_helper'
 
 RSpec.describe "Api::V1::Campaigns", type: :request do
-  include ApiHelper
-
   before(:each) do
-    @user = User.create!(email: "email@example.com")
-    @headers = Devise::JWT::TestHelpers.auth_headers({}, @user)
+    @gamemaster = User.create!(email: "email@example.com", gamemaster: true)
+    @headers = Devise::JWT::TestHelpers.auth_headers({}, @gamemaster)
   end
 
   describe "GET /campaigns" do
     it "returns campaigns" do
-      @action_movie = @user.campaigns.create!(title: "Action Movie")
-      @adventure = @user.campaigns.create!(title: "Adventure")
+      @action_movie = @gamemaster.campaigns.create!(title: "Action Movie")
+      @adventure = @gamemaster.campaigns.create!(title: "Adventure")
 
       get "/api/v1/campaigns", headers: @headers
       expect(response).to have_http_status(:success)
@@ -46,12 +44,19 @@ RSpec.describe "Api::V1::Campaigns", type: :request do
 
   describe "GET /campaigns/:id" do
     it "fetches campaign" do
-      @campaign = @user.campaigns.create!(title: "Action Movie")
+      @campaign = @gamemaster.campaigns.create!(title: "Action Movie")
+
+      @alice = User.create!(email: "alice@example.com")
+      @marcie = User.create!(email: "marcie@example.com")
+
+      @campaign.players << @alice
+      @campaign.players << @marcie
 
       get "/api/v1/campaigns/#{@campaign.id}", headers: @headers
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
       expect(body["title"]).to eq("Action Movie")
+      expect(body["players"].map { |u| u["email"] }).to eq(["alice@example.com", "marcie@example.com"])
     end
 
     it "returns 404" do
@@ -62,7 +67,7 @@ RSpec.describe "Api::V1::Campaigns", type: :request do
 
   describe "PATCH /campaigns:id" do
     it "updates campaign" do
-      @campaign = @user.campaigns.create!(title: "Action Movie")
+      @campaign = @gamemaster.campaigns.create!(title: "Action Movie")
       patch "/api/v1/campaigns/#{@campaign.id}", headers: @headers, params: {
         campaign: {
           title: "Hard to Kill"
@@ -76,7 +81,7 @@ RSpec.describe "Api::V1::Campaigns", type: :request do
 
   describe "DESTROY /campaigns/:id" do
     it "destroys campaign" do
-      @campaign = @user.campaigns.create!(title: "Action Movie")
+      @campaign = @gamemaster.campaigns.create!(title: "Action Movie")
       delete "/api/v1/campaigns/#{@campaign.id}", headers: @headers
       expect(response).to have_http_status(:success)
       expect(Campaign.find_by(id: @campaign.id)).to be_nil
@@ -85,13 +90,13 @@ RSpec.describe "Api::V1::Campaigns", type: :request do
 
   describe "POST /set" do
     it "returns http success" do
-      @campaign = @user.campaigns.create!(title: "Action Movie")
+      @campaign = @gamemaster.campaigns.create!(title: "Action Movie")
 
       post "/api/v1/campaigns/current", params: { id: @campaign.id }, headers: @headers
       expect(response).to have_http_status(:success)
 
       redis = Redis.new
-      user_info = JSON.parse(redis.get("user_#{@user.id}"))
+      user_info = JSON.parse(redis.get("user_#{@gamemaster.id}"))
       expect(user_info["campaign_id"]).to eq(@campaign.id)
     end
 
@@ -100,13 +105,13 @@ RSpec.describe "Api::V1::Campaigns", type: :request do
       expect(response).to have_http_status(:success)
 
       redis = Redis.new
-      user_info = JSON.parse(redis.get("user_#{@user.id}"))
+      user_info = JSON.parse(redis.get("user_#{@gamemaster.id}"))
       expect(user_info["campaign_id"]).to eq(nil)
     end
 
     it "can't set other users' campaigns" do
-      @user = User.create!(email: "someone@else.com")
-      @campaign = @user.campaigns.create!(title: "Adventure")
+      @gamemaster = User.create!(email: "someone@else.com")
+      @campaign = @gamemaster.campaigns.create!(title: "Adventure")
 
       post "/api/v1/campaigns/current", params: { id: @campaign.id }, headers: @headers
       expect(response).to have_http_status(:unauthorized)

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_01_15_231139) do
+ActiveRecord::Schema[7.0].define(version: 2023_01_16_144133) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -41,6 +41,15 @@ ActiveRecord::Schema[7.0].define(version: 2023_01_15_231139) do
     t.bigint "blob_id", null: false
     t.string "variation_digest", null: false
     t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
+  end
+
+  create_table "campaign_memberships", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "user_id", null: false
+    t.uuid "campaign_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["campaign_id"], name: "index_campaign_memberships_on_campaign_id"
+    t.index ["user_id"], name: "index_campaign_memberships_on_user_id"
   end
 
   create_table "campaigns", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -104,6 +113,20 @@ ActiveRecord::Schema[7.0].define(version: 2023_01_15_231139) do
     t.index ["campaign_id"], name: "index_fights_on_campaign_id"
   end
 
+  create_table "invitations", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "campaign_id", null: false
+    t.uuid "user_id", null: false
+    t.string "email"
+    t.uuid "pending_user_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["campaign_id", "email"], name: "index_invitations_on_campaign_email", unique: true
+    t.index ["campaign_id", "pending_user_id"], name: "index_invitations_on_campaign_and_pending_user", unique: true
+    t.index ["campaign_id"], name: "index_invitations_on_campaign_id"
+    t.index ["pending_user_id"], name: "index_invitations_on_pending_user_id"
+    t.index ["user_id"], name: "index_invitations_on_user_id"
+  end
+
   create_table "users", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.string "first_name", default: "", null: false
     t.string "last_name", default: "", null: false
@@ -138,6 +161,8 @@ ActiveRecord::Schema[7.0].define(version: 2023_01_15_231139) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "campaign_memberships", "campaigns"
+  add_foreign_key "campaign_memberships", "users"
   add_foreign_key "campaigns", "users"
   add_foreign_key "characters", "campaigns"
   add_foreign_key "characters", "users"
@@ -146,6 +171,9 @@ ActiveRecord::Schema[7.0].define(version: 2023_01_15_231139) do
   add_foreign_key "fight_characters", "characters"
   add_foreign_key "fight_characters", "fights"
   add_foreign_key "fights", "campaigns"
+  add_foreign_key "invitations", "campaigns"
+  add_foreign_key "invitations", "users"
+  add_foreign_key "invitations", "users", column: "pending_user_id"
   add_foreign_key "vehicles", "campaigns"
   add_foreign_key "vehicles", "users"
 end

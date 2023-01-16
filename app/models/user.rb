@@ -8,6 +8,10 @@ class User < ApplicationRecord
 
   has_many :campaigns
   has_many :characters
+  has_many :vehicles
+  has_many :campaign_memberships
+  has_many :player_campaigns, through: :campaign_memberships, source: "campaign"
+  has_many :invitations
 
   def jwt_payload
     super.merge(

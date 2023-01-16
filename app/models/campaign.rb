@@ -3,6 +3,9 @@ class Campaign < ApplicationRecord
   has_many :fights
   has_many :characters
   has_many :vehicles
+  has_many :campaign_memberships
+  has_many :players, through: :campaign_memberships, source: "user"
+  has_many :invitations
 
   validates :title, presence: true, allow_blank: false
 
@@ -11,7 +14,9 @@ class Campaign < ApplicationRecord
       id: id,
       title: title,
       description: description,
-      user: user
+      gamemaster: user,
+      players: players,
+      invitations: invitations,
     }
   end
 end

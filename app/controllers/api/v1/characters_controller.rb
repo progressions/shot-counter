@@ -34,8 +34,7 @@ class Api::V1::CharactersController < ApplicationController
   end
 
   def create
-    @character = Character.create!(character_params)
-    @character.user = current_user
+    @character = current_campaign.characters.create!(character_params.merge(user: current_user))
     @fight_character = @fight.fight_characters.build(character_id: @character.id, shot: shot_params[:current_shot])
 
     if @fight_character.save
@@ -70,7 +69,7 @@ class Api::V1::CharactersController < ApplicationController
   end
 
   def set_fight
-    @fight = Fight.find(params[:fight_id])
+    @fight = current_campaign.fights.find(params[:fight_id])
   end
 
   def shot_params
