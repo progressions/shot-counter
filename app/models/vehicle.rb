@@ -12,8 +12,8 @@ class Vehicle < ApplicationRecord
     "Crunch" => 0,
     "Condition Points" => 0,
     "Chase Points" => 0,
-    "Pursuer" => true,
-    "Position" => "Far",
+    "Pursuer" => "true",
+    "Position" => "far",
     "Type" => "PC",
     "Faction" => ""
   }
