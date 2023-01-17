@@ -1,7 +1,7 @@
 class Api::V1::FightsController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_fight, only: [:show, :update, :destroy]
   before_action :require_current_campaign
+  before_action :set_fight, only: [:show, :update, :destroy]
 
   def index
     Rails.logger.info("@campaign: #{current_campaign}")
@@ -37,6 +37,12 @@ class Api::V1::FightsController < ApplicationController
   end
 
   private
+
+  def require_current_campaign
+    if !current_campaign
+      render status: 404
+    end
+  end
 
   def set_fight
     @fight = current_campaign.fights.includes(:characters).includes(characters: :user).find(params[:id])
