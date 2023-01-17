@@ -40,7 +40,7 @@ class Api::V1::EffectsController < ApplicationController
   end
 
   def set_fight
-    @fight = Fight.find(params[:fight_id])
+    @fight = current_campaign.fights.find(params[:fight_id])
   end
 
   def effect_params
