@@ -66,8 +66,20 @@ Rails.application.configure do
   config.i18n.fallbacks = true
 
   config.action_mailer.default_url_options = {
-    host: 'shot-client.fly.dev',
+    host: 'chiwar.net',
     protocol: 'https'
+  }
+
+  # email setup
+  config.action_mailer.raise_delivery_errors = true
+  config.action_mailer.delivery_method = :smtp
+  config.x.mail_from = %(Isaac Priestley <admin@chiwar.net>)
+  ActionMailer::Base.smtp_settings = {
+    :address => "email-smtp.us-west-2.amazonaws.com", # use the endpoint from your AWS console
+    :port => '587',
+    :authentication => :plain,
+    :user_name => Rails.application.credentials.smtp.user_name,
+    :password => Rails.application.credentials.smtp.password,
   }
 
   # Don't log any deprecations.
@@ -78,7 +90,7 @@ Rails.application.configure do
 
   # Use a different logger for distributed setups.
   # require "syslog/logger"
-  # config.logger = ActiveSupport::TaggedLogging.new(Syslog::Logger.new "app-name")
+  #AKIA5OEJGVHUJGVVWVRL config.logger = ActiveSupport::TaggedLogging.new(Syslog::Logger.new "app-name")
 
   if ENV["RAILS_LOG_TO_STDOUT"].present?
     logger           = ActiveSupport::Logger.new(STDOUT)
