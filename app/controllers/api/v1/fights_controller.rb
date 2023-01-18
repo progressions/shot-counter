@@ -5,7 +5,7 @@ class Api::V1::FightsController < ApplicationController
 
   def index
     Rails.logger.info("@campaign: #{current_campaign}")
-    @fights = current_campaign.fights.order(name: :asc).includes(:characters).includes(characters: :user)
+    @fights = current_campaign.fights.where(archived: false).order(name: :asc).includes(:characters).includes(characters: :user)
     render json: @fights
   end
 
@@ -53,6 +53,6 @@ class Api::V1::FightsController < ApplicationController
   end
 
   def fight_params
-    params.require(:fight).permit(:name, :sequence, :active)
+    params.require(:fight).permit(:name, :sequence, :active, :archived)
   end
 end

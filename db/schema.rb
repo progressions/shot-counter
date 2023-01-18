@@ -112,7 +112,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_01_18_154648) do
     t.integer "sequence", default: 0, null: false
     t.uuid "campaign_id"
     t.boolean "active", default: true, null: false
-    t.boolean "archived", default: true, null: false
+    t.boolean "archived", default: false, null: false
     t.index ["campaign_id"], name: "index_fights_on_campaign_id"
   end
 
