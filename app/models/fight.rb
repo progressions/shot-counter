@@ -12,6 +12,7 @@ class Fight < ApplicationRecord
     {
       id: id,
       name: name,
+      active: active,
       created_at: created_at,
       updated_at: updated_at,
       characters: characters,

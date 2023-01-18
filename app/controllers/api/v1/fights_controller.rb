@@ -49,10 +49,10 @@ class Api::V1::FightsController < ApplicationController
   end
 
   def post_to_discord(fight)
-    FightPoster.post_to_discord(fight)
+    # FightPoster.post_to_discord(fight)
   end
 
   def fight_params
-    params.require(:fight).permit(:name, :sequence)
+    params.require(:fight).permit(:name, :sequence, :active)
   end
 end
