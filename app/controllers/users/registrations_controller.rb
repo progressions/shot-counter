@@ -6,6 +6,8 @@ class Users::RegistrationsController < Devise::RegistrationsController
   def create
     super
     resource.update(user_params)
+
+    UserMailer.with(user: resource).welcome.deliver_later
   end
 
   private
