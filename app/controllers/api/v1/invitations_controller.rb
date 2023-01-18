@@ -18,6 +18,7 @@ class Api::V1::InvitationsController < ApplicationController
     @user = User.find_by(email: @invitation.email)
     @invitation.pending_user = @user
     if @invitation.save
+      UserMailer.with(invitation: @invitation).invitation.deliver!
       render json: @invitation
     else
       render json: @invitation.errors, status: 400
