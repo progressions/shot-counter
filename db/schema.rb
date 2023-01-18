@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_01_18_140006) do
+ActiveRecord::Schema[7.0].define(version: 2023_01_18_143050) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -71,6 +71,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_01_18_140006) do
     t.uuid "user_id"
     t.jsonb "action_values"
     t.uuid "campaign_id"
+    t.boolean "active", default: true, null: false
     t.index ["campaign_id"], name: "index_characters_on_campaign_id"
     t.index ["created_at"], name: "index_characters_on_created_at"
     t.index ["user_id"], name: "index_characters_on_user_id"
