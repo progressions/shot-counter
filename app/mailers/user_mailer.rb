@@ -16,11 +16,13 @@ class UserMailer < Devise::Mailer
   def invitation
     @invitation = params[:invitation]
     @campaign = @invitation.campaign
-    host = Rails.application.config.action_mailer.default_url_options[:host]
-    protocol = Rails.application.config.action_mailer.default_url_options[:protocol]
-    port = Rails.application.config.action_mailer.default_url_options[:port]
-    port = ":#{port}" if port
-    @root_url = "#{protocol}://#{host}#{port}"
+    if Rails.application.config.action_mailer.default_url_options
+      host = Rails.application.config.action_mailer.default_url_options[:host]
+      protocol = Rails.application.config.action_mailer.default_url_options[:protocol]
+      port = Rails.application.config.action_mailer.default_url_options[:port]
+      port = ":#{port}" if port
+      @root_url = "#{protocol}://#{host}#{port}"
+    end
     mail(to: @invitation.email, subject: "You have been invited to join #{@invitation.campaign.title} in the Chi War!")
   end
 

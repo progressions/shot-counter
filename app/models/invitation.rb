@@ -18,7 +18,7 @@ class Invitation < ApplicationRecord
       },
       pending_user: {
         id: pending_user&.id,
-        email: pending_user&.id
+        email: pending_user&.email
       }
     }
   end

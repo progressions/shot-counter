@@ -25,6 +25,16 @@ RSpec.describe "Invitations", type: :request do
       body = JSON.parse(response.body)
       expect(body["email"]).to eq("ginny@email.com")
     end
+
+    it "updates pending user" do
+      @invitation = @gamemaster.invitations.create!(campaign_id: @campaign.id, email: "ginny@email.com")
+      @ginny = User.create!(email: "ginny@email.com")
+      get "/api/v1/invitations/#{@invitation.id}"
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["email"]).to eq("ginny@email.com")
+      expect(body["pending_user"]).to eq({"email" => @ginny.email, "id" => @ginny.id})
+    end
   end
 
   describe "POST /api/v1/invitations" do
