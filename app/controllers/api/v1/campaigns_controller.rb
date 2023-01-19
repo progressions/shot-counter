@@ -1,5 +1,6 @@
 class Api::V1::CampaignsController < ApplicationController
   before_action :authenticate_user!
+  before_action :require_gamemaster, only: [:create, :update, :destroy]
   before_action :set_campaign, only: [:show, :set]
 
   def index
@@ -9,10 +10,6 @@ class Api::V1::CampaignsController < ApplicationController
   end
 
   def create
-    if !current_user.gamemaster
-      render status: 403 and return
-    end
-
     @campaign = current_user.campaigns.new(campaign_params)
 
     if @campaign.save
@@ -31,10 +28,6 @@ class Api::V1::CampaignsController < ApplicationController
   end
 
   def update
-    if !current_user.gamemaster
-      render status: 403 and return
-    end
-
     @campaign = (current_user.gamemaster && current_user.campaigns.find_by(id: params[:id]))
 
     if @campaign.nil?
@@ -49,12 +42,8 @@ class Api::V1::CampaignsController < ApplicationController
   end
 
   def destroy
-    if !current_user.gamemaster
-      render status: 403 and return
-    end
-
     # Only a gamemaster can destroy a campaign
-    @campaign = (current_user.gamemaster && current_user.campaigns.find_by(id: params[:id]))
+    @campaign = current_user.campaigns.find_by(id: params[:id])
     if @campaign
       @campaign.destroy!
 
@@ -65,6 +54,7 @@ class Api::V1::CampaignsController < ApplicationController
   end
 
   def set
+    # TODO: Refactor this
     user_info = {
       "campaign_id" => @campaign&.id
     }
@@ -78,6 +68,12 @@ class Api::V1::CampaignsController < ApplicationController
   end
 
   private
+
+  def require_gamemaster
+    if !current_user.gamemaster
+      render status: 403 and return
+    end
+  end
 
   def set_campaign
     if params[:id] == "current"
