@@ -62,7 +62,8 @@ ActiveRecord::Schema[7.0].define(version: 2023_01_20_174243) do
   end
 
   create_table "character_effects", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
-    t.uuid "character_id", null: false
+    t.uuid "character_id"
+    t.uuid "vehicle_id"
     t.uuid "fight_id", null: false
     t.string "title", null: false
     t.string "description"
@@ -70,6 +71,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_01_20_174243) do
     t.datetime "updated_at", null: false
     t.index ["character_id"], name: "index_character_effects_on_character_id"
     t.index ["fight_id"], name: "index_character_effects_on_fight_id"
+    t.index ["vehicle_id"], name: "index_character_effects_on_vehicle_id"
   end
 
   create_table "characters", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -183,6 +185,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_01_20_174243) do
   add_foreign_key "campaigns", "users"
   add_foreign_key "character_effects", "characters"
   add_foreign_key "character_effects", "fights"
+  add_foreign_key "character_effects", "vehicles"
   add_foreign_key "characters", "campaigns"
   add_foreign_key "characters", "users"
   add_foreign_key "effects", "fights"
