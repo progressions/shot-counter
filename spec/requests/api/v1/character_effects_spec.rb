@@ -166,15 +166,23 @@ RSpec.describe "CharacterEffects", type: :request do
 
   describe "DELETE /api/v1/fights/:fight_id/character_effects/:id" do
     it "deletes the effect" do
-      @fight.fight_characters.create!(character_id: @brick.id, shot: 10)
+      @fight.characters << @brick
       @character_effect = CharacterEffect.create!(character_id: @brick.id, fight_id: @fight.id, title: "Bonuss")
       delete "/api/v1/fights/#{@fight.id}/character_effects/#{@character_effect.id}", headers: @headers
       expect(response).to have_http_status(:success)
       expect(@brick.reload.character_effects).to be_empty
     end
 
+    it "deletes the effect from a vehicle" do
+      @fight.vehicles << @speedboat
+      @character_effect = CharacterEffect.create!(vehicle_id: @speedboat.id, fight_id: @fight.id, title: "Bonuss")
+      delete "/api/v1/fights/#{@fight.id}/character_effects/#{@character_effect.id}", headers: @headers
+      expect(response).to have_http_status(:success)
+      expect(@speedboat.reload.character_effects).to be_empty
+    end
+
     it "requires authentication" do
-      @fight.fight_characters.create!(character_id: @brick.id, shot: 10)
+      @fight.characters << @brick
       @character_effect = CharacterEffect.create!(character_id: @brick.id, fight_id: @fight.id, title: "Bonuss")
       delete "/api/v1/fights/#{@fight.id}/character_effects/#{@character_effect.id}"
       expect(response).to have_http_status(:unauthorized)
