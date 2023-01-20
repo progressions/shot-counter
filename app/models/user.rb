@@ -12,6 +12,14 @@ class User < ApplicationRecord
   has_many :campaign_memberships, dependent: :destroy
   has_many :player_campaigns, through: :campaign_memberships, source: "campaign"
   has_many :invitations
+  validates :email,
+    uniqueness: true,
+    allow_nil: true,
+    format: {
+      with: /\A[^@\s]+@[^@.\s]+(?:\.[^@.\s]+)+\z/,
+      message: "is invalid"
+    }
+
 
   def jwt_payload
     super.merge(

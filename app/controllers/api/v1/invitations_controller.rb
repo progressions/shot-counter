@@ -34,10 +34,20 @@ class Api::V1::InvitationsController < ApplicationController
 
   def redeem
     @invitation = Invitation.find(params[:id])
-    @user = User.find_by(email: @invitation.email) ||
-      User.new(user_params.merge(email: @invitation.email))
-    if @invitation.campaign.players << @user
-      @invitation.destroy!
+
+    if @invitation.email
+      @user = User.find_by(email: @invitation.email) || User.new(user_params.merge(email: @invitation.email))
+    elsif @invitation.remaining_count && @invitation.remaining_count <= 0
+      render status: 403 and return
+    elsif @invitation.remaining_count
+      @user = current_user || User.new(user_params)
+      @invitation.decrement!(:remaining_count)
+    end
+
+    if @user.save && @invitation.campaign.players << @user
+      if @invitation.email
+        @invitation.destroy!
+      end
       render json: @user
     else
       render json: @user.errors, status: 400
@@ -53,7 +63,7 @@ class Api::V1::InvitationsController < ApplicationController
   private
 
   def invitation_params
-    params.require(:invitation).permit(:campaign_id, :email)
+    params.require(:invitation).permit(:campaign_id, :email, :maximum_count, :remaining_count)
   end
 
   def user_params
