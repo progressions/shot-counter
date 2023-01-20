@@ -27,6 +27,16 @@ class Api::V1::CharacterEffectsController < ApplicationController
     end
   end
 
+  def destroy
+    @character_effect = @fight.character_effects.find_by(id: params[:id])
+
+    if @character_effect.destroy!
+      render :ok
+    else
+      render json: @character_effect.errors, status: 400
+    end
+  end
+
   private
 
   def require_current_campaign

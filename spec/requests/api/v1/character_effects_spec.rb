@@ -10,7 +10,7 @@ RSpec.describe "CharacterEffects", type: :request do
     set_current_campaign(@gamemaster, @campaign)
   end
 
-  describe "POST /api/v1/character_effects" do
+  describe "POST /api/v1/fights/:fight_id/character_effects" do
     it "creates a character effect for a fight and character" do
       @fight.fight_characters.create!(character_id: @brick.id, shot: 10)
       post "/api/v1/fights/#{@fight.id}/character_effects", headers: @headers, params: {
@@ -52,7 +52,7 @@ RSpec.describe "CharacterEffects", type: :request do
     end
   end
 
-  describe "PATCH /api/v1/character_effects/:id" do
+  describe "PATCH /api/v1/fights/:fight_id/character_effects/:id" do
     it "updates a character_effect" do
       @fight.fight_characters.create!(character_id: @brick.id, shot: 10)
       @character_effect = CharacterEffect.create!(character_id: @brick.id, fight_id: @fight.id, title: "Bonuss")
@@ -66,9 +66,30 @@ RSpec.describe "CharacterEffects", type: :request do
       expect(body["title"]).to eq("Bonus")
       expect(@brick.reload.character_effects.first.title).to eq("Bonus")
     end
+
+    it "returns error if you update a character_effect to remove character_id" do
+      @fight.fight_characters.create!(character_id: @brick.id, shot: 10)
+      @character_effect = CharacterEffect.create!(character_id: @brick.id, fight_id: @fight.id, title: "Bonuss")
+      patch "/api/v1/fights/#{@fight.id}/character_effects/#{@character_effect.id}", headers: @headers, params: {
+        character_effect: {
+          character_id: nil
+        }
+      }
+      expect(response).to have_http_status(400)
+      body = JSON.parse(response.body)
+      expect(body["character"]).to eq(["must exist"])
+    end
   end
 
-  describe "DELETE /api/v1/character_effects/:id"
+  describe "DELETE /api/v1/fights/:fight_id/character_effects/:id" do
+    it "deletes the effect" do
+      @fight.fight_characters.create!(character_id: @brick.id, shot: 10)
+      @character_effect = CharacterEffect.create!(character_id: @brick.id, fight_id: @fight.id, title: "Bonuss")
+      delete "/api/v1/fights/#{@fight.id}/character_effects/#{@character_effect.id}", headers: @headers
+      expect(response).to have_http_status(:success)
+      expect(@brick.reload.character_effects).to be_empty
+    end
+  end
 
   def set_current_campaign(user, campaign)
     redis = Redis.new
