@@ -155,7 +155,7 @@ RSpec.describe "Api::V1::Campaigns", type: :request do
     end
   end
 
-  describe "DESTROY /campaigns/:id" do
+  describe "DELETE /campaigns/:id" do
     it "destroys campaign" do
       @campaign = @gamemaster.campaigns.create!(title: "Action Movie")
       delete "/api/v1/campaigns/#{@campaign.id}", headers: @headers
