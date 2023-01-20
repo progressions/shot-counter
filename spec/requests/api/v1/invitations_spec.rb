@@ -9,7 +9,7 @@ RSpec.describe "Invitations", type: :request do
 
   describe "GET /api/v1/invitations" do
     it "returns all invitations sent by the current user" do
-      @invitations = 4.times.map { @campaign.invitations.create!(user: @gamemaster) }
+      @invitations = 4.times.map { |i| @campaign.invitations.create!(email: "alice_#{i}@email.com", user: @gamemaster) }
       get "/api/v1/invitations", headers: @headers
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
@@ -41,7 +41,8 @@ RSpec.describe "Invitations", type: :request do
     it "creates an invitation for the given campaign" do
       post "/api/v1/invitations", headers: @headers, params: {
         invitation: {
-          campaign_id: @campaign.id
+          campaign_id: @campaign.id,
+          email: "alice@email.com"
         }
       }
       expect(response).to have_http_status(:success)
@@ -234,7 +235,7 @@ RSpec.describe "Invitations", type: :request do
 
   describe "DELETE /api/v1/invitations/:id" do
     it "deletes an invitation" do
-      @invitation = @gamemaster.invitations.create!(campaign_id: @campaign.id)
+      @invitation = @gamemaster.invitations.create!(email: "alice@email.com", campaign_id: @campaign.id)
       delete "/api/v1/invitations/#{@invitation.id}", headers: @headers
       expect(response).to have_http_status(:success)
       expect(Invitation.find_by(id: @invitation.id)).to be_nil
