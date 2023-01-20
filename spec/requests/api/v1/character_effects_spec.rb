@@ -50,6 +50,18 @@ RSpec.describe "CharacterEffects", type: :request do
       expect(body["character"]).to eq(["must belong to the fight"])
       expect(CharacterEffect.count).to eq(0)
     end
+
+    it "requires authentication" do
+      @fight.fight_characters.create!(character_id: @brick.id, shot: 10)
+      post "/api/v1/fights/#{@fight.id}/character_effects", params: {
+        character_effect: {
+          title: "Bonus",
+          character_id: @brick.id
+        }
+      }
+      expect(response).to have_http_status(:unauthorized)
+      expect(CharacterEffect.count).to eq(0)
+    end
   end
 
   describe "PATCH /api/v1/fights/:fight_id/character_effects/:id" do
@@ -79,6 +91,18 @@ RSpec.describe "CharacterEffects", type: :request do
       body = JSON.parse(response.body)
       expect(body["character"]).to eq(["must exist"])
     end
+
+    it "requires authentication" do
+      @fight.fight_characters.create!(character_id: @brick.id, shot: 10)
+      @character_effect = CharacterEffect.create!(character_id: @brick.id, fight_id: @fight.id, title: "Bonuss")
+      patch "/api/v1/fights/#{@fight.id}/character_effects/#{@character_effect.id}", params: {
+        character_effect: {
+          title: "Bonus",
+        }
+      }
+      expect(response).to have_http_status(:unauthorized)
+      expect(@character_effect.reload.title).to eq("Bonuss")
+    end
   end
 
   describe "DELETE /api/v1/fights/:fight_id/character_effects/:id" do
@@ -88,6 +112,14 @@ RSpec.describe "CharacterEffects", type: :request do
       delete "/api/v1/fights/#{@fight.id}/character_effects/#{@character_effect.id}", headers: @headers
       expect(response).to have_http_status(:success)
       expect(@brick.reload.character_effects).to be_empty
+    end
+
+    it "requires authentication" do
+      @fight.fight_characters.create!(character_id: @brick.id, shot: 10)
+      @character_effect = CharacterEffect.create!(character_id: @brick.id, fight_id: @fight.id, title: "Bonuss")
+      delete "/api/v1/fights/#{@fight.id}/character_effects/#{@character_effect.id}"
+      expect(response).to have_http_status(:unauthorized)
+      expect(@character_effect.reload).to be_present
     end
   end
 
