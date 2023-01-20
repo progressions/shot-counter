@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_01_18_154648) do
+ActiveRecord::Schema[7.0].define(version: 2023_01_20_042133) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -123,6 +123,8 @@ ActiveRecord::Schema[7.0].define(version: 2023_01_18_154648) do
     t.uuid "pending_user_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "maximum_count"
+    t.integer "remaining_count"
     t.index ["campaign_id", "email"], name: "index_invitations_on_campaign_email", unique: true
     t.index ["campaign_id", "pending_user_id"], name: "index_invitations_on_campaign_and_pending_user", unique: true
     t.index ["campaign_id"], name: "index_invitations_on_campaign_id"
