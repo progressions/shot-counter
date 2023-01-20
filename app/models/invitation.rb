@@ -6,11 +6,16 @@ class Invitation < ApplicationRecord
   validates :email, uniqueness: { scope: :campaign_id }, allow_nil: true
 
   validate :ensure_new_player
+  validate :valid_count
+
+  before_validation :update_remaining_count
 
   def as_json(args={})
     {
       id: id,
       email: email,
+      maximum_count: maximum_count,
+      remaining_count: remaining_count,
       gamemaster: user,
       campaign: {
         id: campaign.id,
@@ -24,6 +29,18 @@ class Invitation < ApplicationRecord
   end
 
   private
+
+  def valid_count
+    if self.maximum_count && (self.remaining_count.to_i > self.maximum_count)
+      errors.add(:remaining_count, "cannot exceed maximum_count")
+    end
+  end
+
+  def update_remaining_count
+    if self.maximum_count
+      self.remaining_count ||= self.maximum_count
+    end
+  end
 
   def ensure_new_player
     if (campaign&.players&.find_by(email: email))
