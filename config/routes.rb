@@ -8,6 +8,7 @@ Rails.application.routes.draw do
       resources :invitations do
         member do
           patch :redeem
+          post :resend
         end
       end
       resources :campaign_memberships, only: [:create]

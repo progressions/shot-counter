@@ -216,6 +216,16 @@ RSpec.describe "Invitations", type: :request do
     end
   end
 
+  describe "POST /api/v1/invitations/:id/resend" do
+    it "resends the invitation email to the user" do
+      @invitation = @gamemaster.invitations.create!(campaign_id: @campaign.id, email: "alice@email.com")
+      expect(UserMailer).to receive_message_chain(:with, :invitation, :deliver_later!)
+      post "/api/v1/invitations/#{@invitation.id}/resend", headers: @headers
+      expect(response).to have_http_status(:success)
+    end
+
+  end
+
   describe "DELETE /api/v1/invitations/:id" do
     it "deletes an invitation" do
       @invitation = @gamemaster.invitations.create!(campaign_id: @campaign.id)

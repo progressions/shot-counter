@@ -24,7 +24,7 @@ class Api::V1::InvitationsController < ApplicationController
     @invitation.pending_user = @user
     if @invitation.save
       if @invitation.email
-        UserMailer.with(invitation: @invitation).invitation.deliver!
+        UserMailer.with(invitation: @invitation).invitation.deliver_later!
       end
       render json: @invitation
     else
@@ -51,6 +51,16 @@ class Api::V1::InvitationsController < ApplicationController
       render json: @user
     else
       render json: @user.errors, status: 400
+    end
+  end
+
+  def resend
+    @invitation = Invitation.find(params[:id])
+    if @invitation.email
+      UserMailer.with(invitation: @invitation).invitation.deliver_later!
+       render status: 200
+    else
+      render status: 400
     end
   end
 
