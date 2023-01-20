@@ -6,6 +6,7 @@ class CreateCharacterEffects < ActiveRecord::Migration[7.0]
       t.references :fight, null: false, type: :uuid, foreign_key: true
       t.string :title, null: false
       t.string :description
+      t.string :severity, null: false, default: "info"
 
       t.timestamps
     end

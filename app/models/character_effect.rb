@@ -11,6 +11,8 @@ class CharacterEffect < ApplicationRecord
     {
       id: id,
       title: title,
+      description: description,
+      severity: severity
     }
   end
 
