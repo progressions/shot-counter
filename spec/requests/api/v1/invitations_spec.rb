@@ -224,6 +224,12 @@ RSpec.describe "Invitations", type: :request do
       expect(response).to have_http_status(:success)
     end
 
+    it "returns an error if the invitation has no email" do
+      @invitation = @gamemaster.invitations.create!(campaign_id: @campaign.id, maximum_count: 10)
+      expect(UserMailer).not_to receive(:with)
+      post "/api/v1/invitations/#{@invitation.id}/resend", headers: @headers
+      expect(response).to have_http_status(400)
+    end
   end
 
   describe "DELETE /api/v1/invitations/:id" do
