@@ -152,11 +152,25 @@ RSpec.describe "Invitations", type: :request do
       expect(ginny.player_campaigns).to include(@campaign)
     end
 
-    it "redeems and reduces the count" do
+    it "redeems for an existing user and reduces the count" do
       @alice = User.create!(email: "alice@email.com")
       @invitation = @gamemaster.invitations.create!(campaign_id: @campaign.id, maximum_count: 10)
       @headers = Devise::JWT::TestHelpers.auth_headers({}, @alice)
       patch "/api/v1/invitations/#{@invitation.id}/redeem", headers: @headers
+      expect(response).to have_http_status(200)
+      expect(@invitation.reload.remaining_count).to eq(9)
+    end
+
+    it "redeems, creates a new user, and reduces the count" do
+      @invitation = @gamemaster.invitations.create!(campaign_id: @campaign.id, maximum_count: 10)
+      patch "/api/v1/invitations/#{@invitation.id}/redeem", params: {
+        user: {
+          email: "ginny@email.com",
+          first_name: "Ginny",
+          last_name: "Field",
+          password: "Mother"
+        }
+      }
       expect(response).to have_http_status(200)
       expect(@invitation.reload.remaining_count).to eq(9)
     end
@@ -185,6 +199,20 @@ RSpec.describe "Invitations", type: :request do
 
       ginny = User.find_by(email: "ginny@email.com")
       expect(ginny.player_campaigns).to include(@campaign)
+    end
+
+    it "returns an error for an invalid email address" do
+      @invitation = @gamemaster.invitations.create!(campaign_id: @campaign.id, maximum_count: 10)
+      patch "/api/v1/invitations/#{@invitation.id}/redeem", params: {
+        user: {
+          email: "ginny",
+          first_name: "Ginny",
+          last_name: "Field",
+          password: "Mother"
+        }
+      }
+      expect(response).to have_http_status(400)
+      expect(@invitation.reload.remaining_count).to eq(9)
     end
   end
 

@@ -44,7 +44,7 @@ class Api::V1::InvitationsController < ApplicationController
       @invitation.decrement!(:remaining_count)
     end
 
-    if @invitation.campaign.players << @user
+    if @user.save && @invitation.campaign.players << @user
       if @invitation.email
         @invitation.destroy!
       end

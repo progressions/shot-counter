@@ -3,7 +3,13 @@ class Invitation < ApplicationRecord
   belongs_to :user
   belongs_to :pending_user, class_name: "User", optional: true
 
-  validates :email, uniqueness: { scope: :campaign_id }, allow_nil: true
+  validates :email,
+    uniqueness: { scope: :campaign_id },
+    allow_nil: true,
+    format: {
+      with: /\A[^@\s]+@[^@.\s]+(?:\.[^@.\s]+)+\z/,
+      message: "is invalid"
+    }
 
   validate :ensure_new_player
   validate :valid_count
