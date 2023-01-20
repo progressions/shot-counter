@@ -161,6 +161,15 @@ RSpec.describe "Invitations", type: :request do
       expect(@invitation.reload.remaining_count).to eq(9)
     end
 
+    it "can't redeem when it reaches zero remaining_count" do
+      @alice = User.create!(email: "alice@email.com")
+      @invitation = @gamemaster.invitations.create!(campaign_id: @campaign.id, maximum_count: 10, remaining_count: 0)
+      @headers = Devise::JWT::TestHelpers.auth_headers({}, @alice)
+      patch "/api/v1/invitations/#{@invitation.id}/redeem", headers: @headers
+      expect(response).to have_http_status(403)
+      expect(@invitation.reload.remaining_count).to eq(0)
+    end
+
     it "redeems an invitation for an existing user" do
       @ginny = User.create!(email: "ginny@email.com")
       @headers = Devise::JWT::TestHelpers.auth_headers({}, @ginny)

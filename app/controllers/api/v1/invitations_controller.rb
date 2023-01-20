@@ -37,8 +37,10 @@ class Api::V1::InvitationsController < ApplicationController
 
     if @invitation.email
       @user = User.find_by(email: @invitation.email) || User.new(user_params.merge(email: @invitation.email))
+    elsif @invitation.remaining_count && @invitation.remaining_count <= 0
+      render status: 403 and return
     elsif @invitation.remaining_count
-      @user = current_user
+      @user = current_user || User.new(user_params)
       @invitation.decrement!(:remaining_count)
     end
 
