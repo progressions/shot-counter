@@ -5,7 +5,6 @@ Rails.application.routes.draw do
   }
   namespace :api do
     namespace :v1 do
-      resources :character_effects, only: [:create, :update, :destroy]
       resources :invitations do
         member do
           patch :redeem
@@ -21,6 +20,7 @@ Rails.application.routes.draw do
       resources :all_vehicles
       resources :users, only: [:index, :show, :update, :destroy]
       resources :fights do
+        resources :character_effects, only: [:create, :update, :destroy]
         resources :effects
         resources :vehicles do
           member do

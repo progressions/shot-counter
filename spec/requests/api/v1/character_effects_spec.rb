@@ -13,10 +13,9 @@ RSpec.describe "CharacterEffects", type: :request do
   describe "POST /api/v1/character_effects" do
     it "creates a character effect for a fight and character" do
       @fight.fight_characters.create!(character_id: @brick.id, shot: 10)
-      post "/api/v1/character_effects", headers: @headers, params: {
+      post "/api/v1/fights/#{@fight.id}/character_effects", headers: @headers, params: {
         character_effect: {
           title: "Bonus",
-          fight_id: @fight.id,
           character_id: @brick.id
         }
       }
@@ -26,22 +25,10 @@ RSpec.describe "CharacterEffects", type: :request do
       expect(@brick.reload.character_effects.first.title).to eq("Bonus")
     end
 
-    it "returns an error if there's no fight_id" do
-      post "/api/v1/character_effects", headers: @headers, params: {
-        character_effect: {
-          title: "Bonus",
-          character_id: @brick.id
-        }
-      }
-      expect(response).to have_http_status(:not_found)
-      expect(CharacterEffect.count).to eq(0)
-    end
-
     it "returns an error if there's no character_id" do
-      post "/api/v1/character_effects", headers: @headers, params: {
+      post "/api/v1/fights/#{@fight.id}/character_effects", headers: @headers, params: {
         character_effect: {
           title: "Bonus",
-          fight_id: @fight.id,
         }
       }
       expect(response).to have_http_status(400)
@@ -52,10 +39,9 @@ RSpec.describe "CharacterEffects", type: :request do
 
     it "returns an error if the character isn't in the fight" do
       @space = @campaign.fights.create!(name: "Space")
-      post "/api/v1/character_effects", headers: @headers, params: {
+      post "/api/v1/fights/#{@fight.id}/character_effects", headers: @headers, params: {
         character_effect: {
           title: "Bonus",
-          fight_id: @space.id,
           character_id: @brick.id
         }
       }
@@ -65,6 +51,24 @@ RSpec.describe "CharacterEffects", type: :request do
       expect(CharacterEffect.count).to eq(0)
     end
   end
+
+  describe "PATCH /api/v1/character_effects/:id" do
+    it "updates a character_effect" do
+      @fight.fight_characters.create!(character_id: @brick.id, shot: 10)
+      @character_effect = CharacterEffect.create!(character_id: @brick.id, fight_id: @fight.id, title: "Bonuss")
+      patch "/api/v1/fights/#{@fight.id}/character_effects/#{@character_effect.id}", headers: @headers, params: {
+        character_effect: {
+          title: "Bonus",
+        }
+      }
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["title"]).to eq("Bonus")
+      expect(@brick.reload.character_effects.first.title).to eq("Bonus")
+    end
+  end
+
+  describe "DELETE /api/v1/character_effects/:id"
 
   def set_current_campaign(user, campaign)
     redis = Redis.new
