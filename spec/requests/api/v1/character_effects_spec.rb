@@ -12,6 +12,7 @@ RSpec.describe "CharacterEffects", type: :request do
 
   describe "POST /api/v1/character_effects" do
     it "creates a character effect for a fight and character" do
+      @fight.fight_characters.create!(character_id: @brick.id, shot: 10)
       post "/api/v1/character_effects", headers: @headers, params: {
         character_effect: {
           title: "Bonus",
@@ -23,6 +24,45 @@ RSpec.describe "CharacterEffects", type: :request do
       body = JSON.parse(response.body)
       expect(body["title"]).to eq("Bonus")
       expect(@brick.reload.character_effects.first.title).to eq("Bonus")
+    end
+
+    it "returns an error if there's no fight_id" do
+      post "/api/v1/character_effects", headers: @headers, params: {
+        character_effect: {
+          title: "Bonus",
+          character_id: @brick.id
+        }
+      }
+      expect(response).to have_http_status(:not_found)
+      expect(CharacterEffect.count).to eq(0)
+    end
+
+    it "returns an error if there's no character_id" do
+      post "/api/v1/character_effects", headers: @headers, params: {
+        character_effect: {
+          title: "Bonus",
+          fight_id: @fight.id,
+        }
+      }
+      expect(response).to have_http_status(400)
+      body = JSON.parse(response.body)
+      expect(body["character"]).to eq(["must exist"])
+      expect(CharacterEffect.count).to eq(0)
+    end
+
+    it "returns an error if the character isn't in the fight" do
+      @space = @campaign.fights.create!(name: "Space")
+      post "/api/v1/character_effects", headers: @headers, params: {
+        character_effect: {
+          title: "Bonus",
+          fight_id: @space.id,
+          character_id: @brick.id
+        }
+      }
+      expect(response).to have_http_status(400)
+      body = JSON.parse(response.body)
+      expect(body["character"]).to eq(["must belong to the fight"])
+      expect(CharacterEffect.count).to eq(0)
     end
   end
 

@@ -22,7 +22,10 @@ class Api::V1::CharacterEffectsController < ApplicationController
   end
 
   def set_fight
-    @fight = current_campaign.fights.find(character_effect_params[:fight_id])
+    @fight = current_campaign.fights.find_by(id: character_effect_params[:fight_id])
+    if @fight.nil?
+      render status: 404 and return
+    end
   end
 
   def character_effect_params
