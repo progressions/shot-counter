@@ -11,6 +11,7 @@ class Invitation < ApplicationRecord
       message: "is invalid"
     }
 
+  validate :ensure_count_or_email
   validate :ensure_new_player
   validate :valid_count
 
@@ -35,6 +36,18 @@ class Invitation < ApplicationRecord
   end
 
   private
+
+  def ensure_count_or_email
+    if self.email && self.maximum_count
+      errors.add(:email, "must not be present if maximum_count is set")
+      errors.add(:maximum_count, "must not be present if email is set")
+      return
+    end
+    if !self.email && !self.maximum_count
+      errors.add(:email, "must be present if maximum_count is not set")
+      errors.add(:maximum_count, "must be present if email is not set")
+    end
+  end
 
   def valid_count
     if self.maximum_count && (self.remaining_count.to_i > self.maximum_count)

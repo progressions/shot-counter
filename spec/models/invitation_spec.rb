@@ -22,4 +22,18 @@ RSpec.describe Invitation, type: :model do
     expect(@invitation).not_to be_valid
     expect(@invitation.errors[:email]).to eq(["is invalid"])
   end
+
+  it "can't have neither email nor maximum_count" do
+    @invitation = @campaign.invitations.new(user_id: @gamemaster.id, campaign_id: @campaign.id)
+    expect(@invitation).not_to be_valid
+    expect(@invitation.errors[:email]).to eq(["must be present if maximum_count is not set"])
+    expect(@invitation.errors[:maximum_count]).to eq(["must be present if email is not set"])
+  end
+
+  it "can't have both email and maximum_count" do
+    @invitation = @campaign.invitations.new(user_id: @gamemaster.id, campaign_id: @campaign.id, email: "alice@email.com", maximum_count: 10)
+    expect(@invitation).not_to be_valid
+    expect(@invitation.errors[:email]).to eq(["must not be present if maximum_count is set"])
+    expect(@invitation.errors[:maximum_count]).to eq(["must not be present if email is set"])
+  end
 end
