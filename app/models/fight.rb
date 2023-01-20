@@ -21,7 +21,7 @@ class Fight < ApplicationRecord
       shot_order: shot_order,
       sequence: sequence,
       effects: effects,
-      character_effects: character_effects
+      character_effects: character_effects.group_by { |ce| ce.character_id }
     }
   end
 

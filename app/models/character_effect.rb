@@ -6,12 +6,6 @@ class CharacterEffect < ApplicationRecord
     {
       id: id,
       title: title,
-      character: {
-        id: character.id
-      },
-      fight: {
-        id: fight.id
-      }
     }
   end
 end
