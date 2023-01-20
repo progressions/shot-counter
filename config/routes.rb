@@ -1,11 +1,11 @@
 Rails.application.routes.draw do
-  resources :character_effects
   devise_for :users, controllers: {
     sessions: 'users/sessions',
     registrations: 'users/registrations'
   }
   namespace :api do
     namespace :v1 do
+      resources :character_effects, only: [:create, :update, :destroy]
       resources :invitations do
         member do
           patch :redeem
