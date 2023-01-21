@@ -4,6 +4,7 @@ class Fight < ApplicationRecord
   has_many :characters, through: :fight_characters
   has_many :vehicles, through: :fight_characters
   has_many :effects, dependent: :destroy
+  has_many :character_effects
 
   SORT_ORDER = ["Uber-Boss", "PC", "Boss", "Featured Foe", "Ally", "Mook"]
   DEFAULT_SHOT_COUNT = 3
@@ -19,7 +20,8 @@ class Fight < ApplicationRecord
       vehicles: vehicles,
       shot_order: shot_order,
       sequence: sequence,
-      effects: effects
+      effects: effects,
+      character_effects: character_effects.group_by { |ce| ce.character_id }
     }
   end
 

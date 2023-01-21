@@ -3,6 +3,7 @@ class Vehicle < ApplicationRecord
   has_many :fights, through: :fight_characters
   belongs_to :user, optional: true
   belongs_to :campaign
+  has_many :character_effects
 
   DEFAULT_ACTION_VALUES = {
     "Acceleration" => 0,
