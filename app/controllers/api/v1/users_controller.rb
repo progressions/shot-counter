@@ -7,7 +7,11 @@ class Api::V1::UsersController < ApplicationController
   end
 
   def show
-    @user = User.find(params[:id])
+    if params[:id] == "confirmation_token"
+      @user = User.find_by(confirmation_token: params[:confirmation_token])
+    else
+      @user = User.find(params[:id])
+    end
     render json: @user
   end
 
