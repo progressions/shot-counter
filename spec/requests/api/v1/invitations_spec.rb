@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe "Invitations", type: :request do
   before(:each) do
-    @gamemaster = User.create!(email: "email@example.com")
+    @gamemaster = User.create!(email: "email@example.com", confirmed_at: Time.now)
     @campaign = @gamemaster.campaigns.create!(title: "Adventure")
     @headers = Devise::JWT::TestHelpers.auth_headers({}, @gamemaster)
   end
@@ -154,7 +154,7 @@ RSpec.describe "Invitations", type: :request do
     end
 
     it "redeems for an existing user and reduces the count" do
-      @alice = User.create!(email: "alice@email.com")
+      @alice = User.create!(email: "alice@email.com", confirmed_at: Time.now)
       @invitation = @gamemaster.invitations.create!(campaign_id: @campaign.id, maximum_count: 10)
       @headers = Devise::JWT::TestHelpers.auth_headers({}, @alice)
       patch "/api/v1/invitations/#{@invitation.id}/redeem", headers: @headers
@@ -177,7 +177,7 @@ RSpec.describe "Invitations", type: :request do
     end
 
     it "can't redeem when it reaches zero remaining_count" do
-      @alice = User.create!(email: "alice@email.com")
+      @alice = User.create!(email: "alice@email.com", confirmed_at: Time.now)
       @invitation = @gamemaster.invitations.create!(campaign_id: @campaign.id, maximum_count: 10, remaining_count: 0)
       @headers = Devise::JWT::TestHelpers.auth_headers({}, @alice)
       patch "/api/v1/invitations/#{@invitation.id}/redeem", headers: @headers
