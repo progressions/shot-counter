@@ -7,6 +7,8 @@ class CreateCharacterEffects < ActiveRecord::Migration[7.0]
       t.string :title, null: false
       t.string :description
       t.string :severity, null: false, default: "info"
+      t.string :change, null: true
+      t.string :action_value, null: true
 
       t.timestamps
     end

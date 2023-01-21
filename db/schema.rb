@@ -68,6 +68,8 @@ ActiveRecord::Schema[7.0].define(version: 2023_01_20_174243) do
     t.string "title", null: false
     t.string "description"
     t.string "severity", default: "info", null: false
+    t.string "change"
+    t.string "action_value"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["character_id"], name: "index_character_effects_on_character_id"

@@ -6,17 +6,39 @@ class CharacterEffect < ApplicationRecord
   validate :character_belongs_to_fight
   validate :vehicle_belongs_to_fight
   validate :ensure_character_or_vehicle
+  validate :ensure_action_value_and_change
+  validate :ensure_valid_action_value
 
   def as_json(args={})
     {
       id: id,
       title: title,
       description: description,
-      severity: severity
+      severity: severity,
+      action_value: action_value,
+      change: change
     }
   end
 
   private
+
+  def ensure_valid_action_value
+    if self.character_id && self.action_value && !Character::DEFAULT_ACTION_VALUES.keys.include?(self.action_value)
+      errors.add(:action_value, "must be a valid key")
+    end
+    if self.vehicle_id && self.action_value && !Vehicle::DEFAULT_ACTION_VALUES.keys.include?(self.action_value)
+      errors.add(:action_value, "must be a valid key")
+    end
+  end
+
+  def ensure_action_value_and_change
+    if !self.action_value && self.change
+      errors.add(:action_value, "must be present if change is set")
+    end
+    if !self.change && self.action_value
+      errors.add(:change, "must be present if action_value is set")
+    end
+  end
 
   def ensure_character_or_vehicle
     if self.vehicle && self.character
