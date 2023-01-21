@@ -53,6 +53,6 @@ class Api::V1::CharacterEffectsController < ApplicationController
   end
 
   def character_effect_params
-    params.require(:character_effect).permit(:title, :description, :fight_id, :character_id, :vehicle_id)
+    params.require(:character_effect).permit(:title, :description, :fight_id, :character_id, :vehicle_id, :severity)
   end
 end
