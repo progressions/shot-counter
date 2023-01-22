@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe "Api::V1::Campaigns", type: :request do
   before(:each) do
-    @gamemaster = User.create!(email: "email@example.com", gamemaster: true)
+    @gamemaster = User.create!(email: "email@example.com", gamemaster: true, confirmed_at: Time.now)
     @other_gamemaster = User.create!(email: "other@example.com", gamemaster: true)
     @headers = Devise::JWT::TestHelpers.auth_headers({}, @gamemaster)
   end
@@ -20,7 +20,7 @@ RSpec.describe "Api::V1::Campaigns", type: :request do
     end
 
     it "returns all my campaigns, both ones I run and ones I play in" do
-      @third_gamemaster = User.create!(email: "third@example.com", gamemaster: true)
+      @third_gamemaster = User.create!(email: "third@example.com", gamemaster: true, confirmed_at: Time.now)
       @modern = @third_gamemaster.campaigns.create!(title: "Modern")
 
       @action_movie = @gamemaster.campaigns.create!(title: "Action Movie")
@@ -53,7 +53,7 @@ RSpec.describe "Api::V1::Campaigns", type: :request do
     end
 
     it "returns error if you're unauthorized" do
-      @player = User.create!(email: "player@email.com", gamemaster: false)
+      @player = User.create!(email: "player@email.com", gamemaster: false, confirmed_at: Time.now)
       @headers = Devise::JWT::TestHelpers.auth_headers({}, @player)
 
       post "/api/v1/campaigns", headers: @headers, params: {
@@ -81,8 +81,8 @@ RSpec.describe "Api::V1::Campaigns", type: :request do
     it "fetches campaign you created" do
       @campaign = @gamemaster.campaigns.create!(title: "Action Movie")
 
-      @alice = User.create!(email: "alice@example.com")
-      @marcie = User.create!(email: "marcie@example.com")
+      @alice = User.create!(email: "alice@example.com", confirmed_at: Time.now)
+      @marcie = User.create!(email: "marcie@example.com", confirmed_at: Time.now)
 
       @campaign.players << @alice
       @campaign.players << @marcie
@@ -97,7 +97,7 @@ RSpec.describe "Api::V1::Campaigns", type: :request do
     it "fetches campaign you play in" do
       @campaign = @gamemaster.campaigns.create!(title: "Action Movie")
 
-      @alice = User.create!(email: "alice@example.com")
+      @alice = User.create!(email: "alice@example.com", confirmed_at: Time.now)
       @campaign.players << @alice
 
       @headers = Devise::JWT::TestHelpers.auth_headers({}, @alice)
@@ -140,7 +140,7 @@ RSpec.describe "Api::V1::Campaigns", type: :request do
 
     it "can't update a campaign you're just a player in" do
       @campaign = @gamemaster.campaigns.create!(title: "Action Movie")
-      @alice = User.create!(email: "alice@example.com")
+      @alice = User.create!(email: "alice@example.com", confirmed_at: Time.now)
       @campaign.players << @alice
 
       @headers = Devise::JWT::TestHelpers.auth_headers({}, @alice)
@@ -165,7 +165,7 @@ RSpec.describe "Api::V1::Campaigns", type: :request do
 
     it "can't destroy a campaign you're just a player in" do
       @campaign = @gamemaster.campaigns.create!(title: "Action Movie")
-      @alice = User.create!(email: "alice@example.com")
+      @alice = User.create!(email: "alice@example.com", confirmed_at: Time.now)
       @campaign.players << @alice
 
       @headers = Devise::JWT::TestHelpers.auth_headers({}, @alice)
@@ -177,7 +177,7 @@ RSpec.describe "Api::V1::Campaigns", type: :request do
 
     it "even for a gamemaster, can't destroy a campaign you're a player in" do
       @campaign = @gamemaster.campaigns.create!(title: "Action Movie")
-      @gm_alice = User.create!(email: "alice@example.com", gamemaster: true)
+      @gm_alice = User.create!(email: "alice@example.com", gamemaster: true, confirmed_at: Time.now)
       @campaign.players << @gm_alice
 
       @headers = Devise::JWT::TestHelpers.auth_headers({}, @gm_alice)
@@ -210,7 +210,7 @@ RSpec.describe "Api::V1::Campaigns", type: :request do
     end
 
     it "can't set other users' campaigns" do
-      @gamemaster = User.create!(email: "someone@else.com")
+      @gamemaster = User.create!(email: "someone@else.com", confirmed_at: Time.now)
       @campaign = @gamemaster.campaigns.create!(title: "Adventure")
 
       post "/api/v1/campaigns/current", params: { id: @campaign.id }, headers: @headers
@@ -219,7 +219,7 @@ RSpec.describe "Api::V1::Campaigns", type: :request do
 
     it "can set campaign you're a player in" do
       @campaign = @gamemaster.campaigns.create!(title: "Adventure")
-      @alice = User.create!(email: "alice@example.com")
+      @alice = User.create!(email: "alice@example.com", confirmed_at: Time.now)
       @campaign.players << @alice
 
       @headers = Devise::JWT::TestHelpers.auth_headers({}, @alice)

@@ -14,7 +14,6 @@ class Api::V1::InvitationsController < ApplicationController
       @invitation.update(pending_user: @user)
     end
 
-
     render json: @invitation
   end
 

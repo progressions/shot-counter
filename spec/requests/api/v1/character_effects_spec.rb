@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe "CharacterEffects", type: :request do
   before(:each) do
-    @gamemaster = User.create!(email: "email@example.com")
+    @gamemaster = User.create!(email: "email@example.com", confirmed_at: Time.now)
     @campaign = @gamemaster.campaigns.create!(title: "Adventure")
     @fight = @campaign.fights.create!(name: "Big Brawl")
     @brick = Character.create!(name: "Brick Manly", campaign_id: @campaign.id)

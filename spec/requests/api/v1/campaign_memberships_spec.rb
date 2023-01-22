@@ -3,14 +3,14 @@ require "rails_helper"
 RSpec.describe "Api::V1::CampaignMemberships", type: :request do
   # Current user must be owner of Campaign to add other users as players
   before(:each) do
-    @gamemaster = User.create!(email: "email@example.com")
+    @gamemaster = User.create!(email: "email@example.com", confirmed_at: Time.now)
     @headers = Devise::JWT::TestHelpers.auth_headers({}, @gamemaster)
     @action_movie = @gamemaster.campaigns.create!(title: "Action Movie")
     @adventure = @gamemaster.campaigns.create!(title: "Adventure")
     @weird = @gamemaster.campaigns.create!(title: "Weird World")
 
-    @alice = User.create!(email: "alice@example.com")
-    @marcie = User.create!(email: "marcie@example.com")
+    @alice = User.create!(email: "alice@example.com", confirmed_at: Time.now)
+    @marcie = User.create!(email: "marcie@example.com", confirmed_at: Time.now)
   end
 
   describe "POST /campaign_memberships" do
