@@ -16,7 +16,7 @@ class Users::ConfirmationsController < Devise::ConfirmationsController
       render status: 404 and return
     end
 
-    if @user&.confirm
+    if @user.confirm
       render json: @user
     else
       render json: @user.errors, status: 400

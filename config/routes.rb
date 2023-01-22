@@ -2,7 +2,8 @@ Rails.application.routes.draw do
   devise_for :users, controllers: {
     sessions: 'users/sessions',
     registrations: 'users/registrations',
-    confirmations: "users/confirmations"
+    confirmations: "users/confirmations",
+    passwords: "users/passwords",
   }
   namespace :api do
     namespace :v1 do

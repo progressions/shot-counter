@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class Users::PasswordsController < Devise::PasswordsController
+  respond_to :json
+
   # GET /resource/password/new
   # def new
   #   super
@@ -21,6 +23,14 @@ class Users::PasswordsController < Devise::PasswordsController
   #   super
   # end
 
+  def respond_with(resource, options={})
+    if resource.persisted?
+      render json: resource
+    else
+      render json: resource, stauts: 422
+    end
+  end
+
   # protected
 
   # def after_resetting_password_path_for(resource)
@@ -31,4 +41,10 @@ class Users::PasswordsController < Devise::PasswordsController
   # def after_sending_reset_password_instructions_path_for(resource_name)
   #   super(resource_name)
   # end
+
+  private
+
+  def user_params
+    params.require(:user).permit(:password)
+  end
 end
