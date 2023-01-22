@@ -12,6 +12,10 @@ class Users::ConfirmationsController < Devise::ConfirmationsController
   def create
     @user = User.find_by(confirmation_token: params[:confirmation_token])
 
+    if !@user
+      render status: 404 and return
+    end
+
     if @user&.confirm
       render json: @user
     else
