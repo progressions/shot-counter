@@ -23,14 +23,6 @@ class Users::PasswordsController < Devise::PasswordsController
   #   super
   # end
 
-  def respond_with(resource, options={})
-    if resource.persisted?
-      render json: resource
-    else
-      render json: resource, stauts: 422
-    end
-  end
-
   # protected
 
   # def after_resetting_password_path_for(resource)
