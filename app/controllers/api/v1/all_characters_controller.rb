@@ -53,7 +53,7 @@ class Api::V1::AllCharactersController < ApplicationController
   end
 
   def character_params
-    params.require(:character).permit(:name, :defense, :impairments, :color, :user_id, :active, action_values: Character::DEFAULT_ACTION_VALUES.keys)
+    params.require(:character).permit(:name, :defense, :impairments, :color, :user_id, :active, action_values: Character::DEFAULT_ACTION_VALUES.keys, description: Character::DEFAULT_DESCRIPTION.keys)
   end
 
 end
