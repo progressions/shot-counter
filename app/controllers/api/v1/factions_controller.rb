@@ -4,7 +4,7 @@ class Api::V1::FactionsController < ApplicationController
   before_action :set_scoped_characters
 
   def index
-    @factions = Character.pluck(Arel.sql("action_values -> 'Faction'"))
+    @factions = @scoped_characters.pluck(Arel.sql("action_values -> 'Faction'")).uniq
 
     render json: @factions
   end

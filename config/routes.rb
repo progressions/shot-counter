@@ -7,7 +7,7 @@ Rails.application.routes.draw do
   }
   namespace :api do
     namespace :v1 do
-      get 'factions/index'
+      resources :factions, only: [:index]
       resources :invitations do
         member do
           patch :redeem
