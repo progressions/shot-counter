@@ -1,0 +1,2 @@
+class SchticksController < ApplicationController
+end

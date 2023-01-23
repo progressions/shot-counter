@@ -7,6 +7,7 @@ Rails.application.routes.draw do
   }
   namespace :api do
     namespace :v1 do
+      resources :schticks
       resources :factions, only: [:index]
       resources :invitations do
         member do
