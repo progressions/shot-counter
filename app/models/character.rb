@@ -30,6 +30,17 @@ class Character < ApplicationRecord
     "Boss",
     "Uber-Boss"
   ]
+  DEFAULT_DESCRIPTION = {
+    "Nicknames" => "",
+    "Age" => "",
+    "Height" => "",
+    "Weight" => "",
+    "Hair Color" => "",
+    "Eye Color" => "",
+    "Style of Dress" => "",
+    "Appearance" => "",
+    "Background" => ""
+  }
 
   has_many :fight_characters, dependent: :destroy
   has_many :fights, through: :fight_characters
@@ -38,6 +49,7 @@ class Character < ApplicationRecord
   has_many :character_effects
 
   before_save :ensure_default_action_values
+  before_save :ensure_default_description
   before_save :ensure_integer_values
   before_save :ensure_non_integer_values
 
@@ -56,6 +68,7 @@ class Character < ApplicationRecord
       updated_at: updated_at,
       user: user,
       action_values: action_values,
+      description: description,
       color: color,
       impairments: impairments,
       category: "character"
@@ -73,6 +86,11 @@ class Character < ApplicationRecord
   def ensure_default_action_values
     self.action_values ||= {}
     self.action_values = DEFAULT_ACTION_VALUES.merge(self.action_values)
+  end
+
+  def ensure_default_description
+    self.description ||= {}
+    self.description = DEFAULT_DESCRIPTION.merge(self.description)
   end
 
   def ensure_integer_values
