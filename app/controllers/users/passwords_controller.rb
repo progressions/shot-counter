@@ -36,7 +36,7 @@ class Users::PasswordsController < Devise::PasswordsController
 
   private
 
-  def user_params
-    params.require(:user).permit(:password)
-  end
+  # def user_params
+    # params.require(:user).permit(:password)
+  # end
 end
