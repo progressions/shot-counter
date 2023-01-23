@@ -47,6 +47,8 @@ class Character < ApplicationRecord
   belongs_to :user, optional: true
   belongs_to :campaign
   has_many :character_effects
+  has_many :character_schticks, dependent: :destroy
+  has_many :schticks, through: :character_schticks
 
   before_save :ensure_default_action_values
   before_save :ensure_default_description
@@ -69,6 +71,7 @@ class Character < ApplicationRecord
       user: user,
       action_values: action_values,
       description: description,
+      schticks: schticks,
       color: color,
       impairments: impairments,
       category: "character"

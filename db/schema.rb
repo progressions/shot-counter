@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_01_23_184025) do
+ActiveRecord::Schema[7.0].define(version: 2023_01_23_223603) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -75,6 +75,15 @@ ActiveRecord::Schema[7.0].define(version: 2023_01_23_184025) do
     t.index ["character_id"], name: "index_character_effects_on_character_id"
     t.index ["fight_id"], name: "index_character_effects_on_fight_id"
     t.index ["vehicle_id"], name: "index_character_effects_on_vehicle_id"
+  end
+
+  create_table "character_schticks", force: :cascade do |t|
+    t.uuid "character_id", null: false
+    t.uuid "schtick_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["character_id"], name: "index_character_schticks_on_character_id"
+    t.index ["schtick_id"], name: "index_character_schticks_on_schtick_id"
   end
 
   create_table "characters", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -149,6 +158,17 @@ ActiveRecord::Schema[7.0].define(version: 2023_01_23_184025) do
     t.index ["user_id"], name: "index_invitations_on_user_id"
   end
 
+  create_table "schticks", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.string "title", null: false
+    t.string "description"
+    t.uuid "schtick_id"
+    t.string "category"
+    t.string "path"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["schtick_id"], name: "index_schticks_on_schtick_id"
+  end
+
   create_table "users", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.string "first_name", default: "", null: false
     t.string "last_name", default: "", null: false
@@ -199,6 +219,8 @@ ActiveRecord::Schema[7.0].define(version: 2023_01_23_184025) do
   add_foreign_key "character_effects", "characters"
   add_foreign_key "character_effects", "fights"
   add_foreign_key "character_effects", "vehicles"
+  add_foreign_key "character_schticks", "characters"
+  add_foreign_key "character_schticks", "schticks"
   add_foreign_key "characters", "campaigns"
   add_foreign_key "characters", "users"
   add_foreign_key "effects", "fights"
@@ -209,6 +231,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_01_23_184025) do
   add_foreign_key "invitations", "campaigns"
   add_foreign_key "invitations", "users"
   add_foreign_key "invitations", "users", column: "pending_user_id"
+  add_foreign_key "schticks", "schticks"
   add_foreign_key "vehicles", "campaigns"
   add_foreign_key "vehicles", "users"
 end
