@@ -159,6 +159,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_01_23_223603) do
   end
 
   create_table "schticks", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "campaign_id", null: false
     t.string "title", null: false
     t.string "description"
     t.uuid "schtick_id"
@@ -166,6 +167,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_01_23_223603) do
     t.string "path"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["campaign_id"], name: "index_schticks_on_campaign_id"
     t.index ["schtick_id"], name: "index_schticks_on_schtick_id"
   end
 
@@ -231,6 +233,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_01_23_223603) do
   add_foreign_key "invitations", "campaigns"
   add_foreign_key "invitations", "users"
   add_foreign_key "invitations", "users", column: "pending_user_id"
+  add_foreign_key "schticks", "campaigns"
   add_foreign_key "schticks", "schticks"
   add_foreign_key "vehicles", "campaigns"
   add_foreign_key "vehicles", "users"
