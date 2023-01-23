@@ -52,7 +52,6 @@ class Character < ApplicationRecord
   before_save :ensure_default_description
   before_save :ensure_integer_values
   before_save :ensure_non_integer_values
-  before_save :validate_schticks
 
   def act!(fight:, shot_cost: Fight::DEFAULT_SHOT_COUNT)
     self.current_shot ||= 0
@@ -87,7 +86,7 @@ class Character < ApplicationRecord
   def validate_schticks
     self.schticks ||= []
     self.schticks.each do |schtick|
-      if schticks[:title].blank?
+      if schtick[:title].blank?
         errors.add(:schticks, "must have a title")
       end
     end
