@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe "Api::V1::Factions", type: :request do
   before(:each) do
-    @gamemaster = User.create!(email: "email@example.com", confirmed_at: Time.now)
+    @gamemaster = User.create!(email: "email@example.com", confirmed_at: Time.now, gamemaster: true)
     @campaign = @gamemaster.campaigns.create!(title: "Adventure")
     @fight = @campaign.fights.create!(name: "Big Brawl")
     @brick = Character.create!(name: "Brick Manly", action_values: { "Type" => "PC", "Faction" => "The Dragons" }, campaign_id: @campaign.id)
@@ -13,7 +13,7 @@ RSpec.describe "Api::V1::Factions", type: :request do
 
   describe "GET /index" do
     it "returns http success" do
-      get "/api/v1/factions/index", headers: @headers
+      get "/api/v1/factions", headers: @headers
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
       expect(body).to eq(["The Dragons", "The Ascended"])
