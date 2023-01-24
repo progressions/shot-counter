@@ -8,6 +8,8 @@ class CreateSchticks < ActiveRecord::Migration[7.0]
       t.string :category
       t.string :path
 
+      t.index :title, unique: true
+
       t.timestamps
     end
   end

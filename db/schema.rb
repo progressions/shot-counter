@@ -82,6 +82,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_01_23_223603) do
     t.uuid "schtick_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["character_id", "schtick_id"], name: "index_character_id_on_schtick_id", unique: true
     t.index ["character_id"], name: "index_character_schticks_on_character_id"
     t.index ["schtick_id"], name: "index_character_schticks_on_schtick_id"
   end
@@ -169,6 +170,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_01_23_223603) do
     t.datetime "updated_at", null: false
     t.index ["campaign_id"], name: "index_schticks_on_campaign_id"
     t.index ["schtick_id"], name: "index_schticks_on_schtick_id"
+    t.index ["title"], name: "index_schticks_on_title", unique: true
   end
 
   create_table "users", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
