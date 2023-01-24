@@ -44,6 +44,6 @@ class Api::V1::SchticksController < ApplicationController
   private
 
   def schtick_params
-    params.require(:schtick).permit(:title, :description)
+    params.require(:schtick).permit(:title, :description, :category, :path, :color, :image_url)
   end
 end
