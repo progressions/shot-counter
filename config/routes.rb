@@ -20,7 +20,9 @@ Rails.application.routes.draw do
       post "campaigns/current", to: "campaigns#set"
       resources :campaigns
       get "campaigns/current", to: "campaigns#current"
-      resources :all_characters
+      resources :all_characters do
+        resources :schticks, controller: "character_schticks"
+      end
       resources :all_vehicles
       resources :users, only: [:index, :show, :update, :destroy]
       resources :fights do

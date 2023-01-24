@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe "Schticks", type: :request do
+RSpec.describe "Api::V1::CharacterSchticks", type: :request do
   before(:each) do
     @gamemaster = User.create!(email: "email@example.com", confirmed_at: Time.now)
     @campaign = @gamemaster.campaigns.create!(title: "Adventure")
@@ -11,60 +11,37 @@ RSpec.describe "Schticks", type: :request do
     set_current_campaign(@gamemaster, @campaign)
   end
 
-  describe "GET /api/v1/schticks" do
-    it "gets all the schticks" do
+  describe "GET /api/v1/all_characters/:all_character_id/schticks" do
+    it "gets all the schticks for a character" do
       @blam = @campaign.schticks.create!(title: "Blam Blam Epigram", description: "Say a pithy phrase before firing a shot.")
-      get "/api/v1/schticks", headers: @headers
+      @brick.schticks << @blam
+      get "/api/v1/all_characters/#{@brick.id}/schticks", headers: @headers
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
       expect(body).to eq([@blam.as_json])
     end
   end
 
-  describe "GET /api/v1/schtick/:id" do
-    it "gets a schtick" do
+  describe "POST /api/v1/all_characters/:all_character_id/schticks" do
+    it "adds a schtick to a character" do
       @blam = @campaign.schticks.create!(title: "Blam Blam Epigram", description: "Say a pithy phrase before firing a shot.")
-      get "/api/v1/schticks/#{@blam.id}", headers: @headers
-      expect(response).to have_http_status(:success)
-      body = JSON.parse(response.body)
-      expect(body).to eq(@blam.as_json)
-    end
-  end
-
-  describe "POST /api/v1/schticks" do
-    it "creates a schtick" do
-      post "/api/v1/schticks", headers: @headers, params: {
-        schtick: {
-          title: "Blam Blam Epigram",
-          description: "Say a pithy phrase before firing a shot."
-        }
+      post "/api/v1/all_characters/#{@brick.id}/schticks", headers: @headers, params: {
+        schtick: { id: @blam.id }
       }
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
-      expect(body["title"]).to eq("Blam Blam Epigram")
+      expect(body["schticks"].map { |s| s["title"] }).to eq(["Blam Blam Epigram"])
+      expect(@brick.reload.schticks).to include(@blam)
     end
   end
 
-  describe "PATCH /api/v1/schticks" do
-    it "updates a schtick" do
+  describe "DELETE /api/v1/all_characters/:all_character_id/schticks/:id" do
+    it "removes a schtick from a character" do
       @blam = @campaign.schticks.create!(title: "Blam Blam Epigram", description: "Say a pithy phrase before firing a shot.")
-      patch "/api/v1/schticks/#{@blam.id}", headers: @headers, params: {
-        schtick: {
-          title: "Blam Blam",
-        }
-      }
+      @brick.schticks << @blam
+      delete "/api/v1/all_characters/#{@brick.id}/schticks/#{@blam.id}", headers: @headers
       expect(response).to have_http_status(:success)
-      body = JSON.parse(response.body)
-      expect(body["title"]).to eq("Blam Blam")
-    end
-  end
-
-  describe "DELETE /api/v1/schticks/:id" do
-    it "deletes a schtick" do
-      @blam = @campaign.schticks.create!(title: "Blam Blam Epigram", description: "Say a pithy phrase before firing a shot.")
-      delete "/api/v1/schticks/#{@blam.id}", headers: @headers
-      expect(response).to have_http_status(:success)
-      expect(Schtick.find_by(id: @blam.id)).not_to be_present
+      expect(@brick.reload.schticks).to be_empty
     end
   end
 
