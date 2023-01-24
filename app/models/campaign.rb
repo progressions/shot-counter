@@ -6,6 +6,7 @@ class Campaign < ApplicationRecord
   has_many :campaign_memberships
   has_many :players, through: :campaign_memberships, source: "user"
   has_many :invitations
+  has_many :schticks
 
   validates :title, presence: true, allow_blank: false
 

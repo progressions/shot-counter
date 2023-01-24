@@ -41,15 +41,34 @@ class Character < ApplicationRecord
     "Appearance" => "",
     "Background" => ""
   }
+  DEFAULT_SKILLS = {
+    "Deceit" => 7,
+    "Detective" => 7,
+    "Driving" => 7,
+    "Fix-It" => 7,
+    "Gambling" => 7,
+    "Intimidation" => 7,
+    "Intrusion" => 7,
+    "Leadership" => 7,
+    "Medicine" => 7,
+    "Police" => 7,
+    "Sabotage" => 7,
+    "Seduction" => 7,
+  }
 
   has_many :fight_characters, dependent: :destroy
   has_many :fights, through: :fight_characters
   belongs_to :user, optional: true
   belongs_to :campaign
   has_many :character_effects
+  has_many :character_schticks, dependent: :destroy
+  has_many :schticks, through: :character_schticks
+
+  validates :name, presence: true, uniqueness: { scope: :campaign_id, message: "must be unique" }
 
   before_save :ensure_default_action_values
   before_save :ensure_default_description
+  before_save :ensure_default_skills
   before_save :ensure_integer_values
   before_save :ensure_non_integer_values
 
@@ -69,6 +88,8 @@ class Character < ApplicationRecord
       user: user,
       action_values: action_values,
       description: description,
+      schticks: schticks,
+      skills: skills,
       color: color,
       impairments: impairments,
       category: "character"
@@ -83,6 +104,15 @@ class Character < ApplicationRecord
 
   private
 
+  def validate_schticks
+    self.schticks ||= []
+    self.schticks.each do |schtick|
+      if schtick[:title].blank?
+        errors.add(:schticks, "must have a title")
+      end
+    end
+  end
+
   def ensure_default_action_values
     self.action_values ||= {}
     self.action_values = DEFAULT_ACTION_VALUES.merge(self.action_values)
@@ -91,6 +121,11 @@ class Character < ApplicationRecord
   def ensure_default_description
     self.description ||= {}
     self.description = DEFAULT_DESCRIPTION.merge(self.description)
+  end
+
+  def ensure_default_skills
+    self.skills ||= {}
+    self.skills = DEFAULT_SKILLS.merge(self.skills)
   end
 
   def ensure_integer_values
