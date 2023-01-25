@@ -8,8 +8,11 @@ class Api::V1::SchticksController < ApplicationController
       .includes(:prerequisite)
       .order(:category, :path, :title)
 
+    @paths = []
+
     if params[:category].present?
       @schticks = @schticks.where(category: params[:category])
+      @paths = @schticks.pluck(:path).uniq.compact
     end
 
     if params[:path].present?
@@ -20,7 +23,13 @@ class Api::V1::SchticksController < ApplicationController
       @schticks = @schticks.where("title LIKE ?", "%#{params[:title]}%")
     end
 
-    render json: @schticks
+    @schticks = @schticks.page(params[:page] ? params[:page].to_i : 1)
+
+    render json: {
+      schticks: @schticks,
+      meta: pagination_meta(@schticks),
+      paths: @paths
+    }
   end
 
   def show
@@ -73,5 +82,15 @@ class Api::V1::SchticksController < ApplicationController
 
   def schtick_params
     params.require(:schtick).permit(:title, :description, :category, :path, :color, :image_url)
+  end
+
+  def pagination_meta(object)
+    {
+      current_page: object.current_page,
+      next_page: object.next_page,
+      prev_page: object.prev_page,
+      total_pages: object.total_pages,
+      total_count: object.total_count
+    }
   end
 end
