@@ -11,7 +11,7 @@ module ImportSchticks
 
     def get_previous_numeral(numeral)
       if ROMAN_NUMERALS.include?(numeral.upcase)
-        previous_index = ROMAN_NUMERALS.index(numeral) - 1
+        previous_index = ROMAN_NUMERALS.index(numeral.upcase) - 1
         if (previous_index >= 0)
           return ROMAN_NUMERALS[previous_index]
         end
