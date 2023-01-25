@@ -3,7 +3,7 @@ class Api::V1::SchticksController < ApplicationController
   before_action :require_current_campaign
 
   def index
-    @schticks = current_campaign.schticks.order(:category, :path,:title).all
+    @schticks = current_campaign.schticks.includes(:prerequisite).order(:category, :path,:title).all
 
     render json: @schticks
   end
