@@ -27,6 +27,11 @@ class Api::V1::SchticksController < ApplicationController
     yaml = import_params[:yaml]
     data = YAML.load(yaml)
 
+    Rails.logger.info("DATA")
+    Rails.logger.info(data.inspect)
+
+    ImportSchticks.call(data, current_campaign)
+
     render :ok
   end
 
