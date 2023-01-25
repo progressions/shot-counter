@@ -1431,7 +1431,7 @@
           title: Parting Shot
           description: If the foe successfully Cheeses It despite a hero’s attempt to stop it, the hero takes 14 Damage.
         -
-          title: Pause That refreshes
+          title: Pause That Refreshes
           description: As an interrupt when a hero makes a Dodge, the foe may remove 4 Wound Points from any foe, including itself.
         -
           title: Pep Talk
@@ -1470,7 +1470,7 @@
           title: Shattered Loyalties
           description: "Suitable for: Sorcerer.  Spend 1 shot; if the foe is still active at start of next keyframe, target hero suffers a betrayal from a friendly supporting character in a later scene. Explain these stakes to the players. Usable once per adventure. Use this only if you have a setback in mind."
         -
-          title: Shouted orders
+          title: Shouted Orders
           description: As an interrupt when a mook hits a hero, the foe may spend 1 shot to add 4 Damage to the mook’s hit.
         -
           title: Skull-Mounted Targeting Goggles
@@ -1635,10 +1635,10 @@
           title: Teleread
           description: Spend 1 Genome point to know the definitive answer to a single question of 25 words or less, if that answer can be found written down anywhere in your current juncture.
         -
-          title: ultragloat
+          title: Ultragloat
           description: When a featured foe drops, spend 1 shot as an interrupt. Regain lost Genome points up to the number of featured foes still in the fight.
         -
-          title: unsplode
+          title: Unsplode
           description: Spend 1 Genome point to completely suppress any explosion whose epicenter you can see in person. In combat, is a 1-shot interrupt, when you see that an explosion is about to occur.
         -
           title: Very Fast
@@ -1702,7 +1702,7 @@
       schticks:
         -
           title: Allegiance
-          description: q Spend 1 shot or 1 Magic to tell if a person you can see (in person) knowingly works for a faction or conspiracy. If you have heard of the faction or conspiracy, you know which one. Otherwise, you only see that the person is a player in the Chi War. Shot cost matters only if you’re seeking this story benefit in mid-fight.
+          description: Spend 1 shot or 1 Magic to tell if a person you can see (in person) knowingly works for a faction or conspiracy. If you have heard of the faction or conspiracy, you know which one. Otherwise, you only see that the person is a player in the Chi War. Shot cost matters only if you’re seeking this story benefit in mid-fight.
         -
           title: Assessment
           description: Spend 1 shot or 1 Magic to tell if any of the enemies you face are bosses, and if so, which ones.
@@ -1747,7 +1747,7 @@
           description: Spend 2 shots and make a Sorcery Check against the Will Resistance of any foe attuned to one or more feng shui sites. (Featured foes may or may not be; boss foes almost invariably are. Mooks never are.) If successful, target takes 1 Impairment until end of fight.
         -
           title: Doom Boon
-          description: qRegain all spent Magic points after succeeding at an Up Check.
+          description: Regain all spent Magic points after succeeding at an Up Check.
         -
           title: Harvest Chi
           description: After a successful attack against a named foe, you may subtract 3 from its Outcome to regain a spent Magic point.
@@ -1755,7 +1755,7 @@
           title: Observe Chi
           description: See the flow of chi in an area, noting how strong or weak it is and if it is corrupted or impinged upon by some unnatural force. Immediately identify feng shui sites. Tell whether an individual you can see in person is attuned to at least one feng shui site.
         -
-          title: Quid to quo
+          title: Quid to Quo
           description: When you receive a boost from an ally, roll a die. On an even result, the ally also gains the benefit of the boost.
         -
           title: Radiant Grant
@@ -1875,9 +1875,9 @@
         -
           title: Echoes of the past
           description: If you deal Wound Points to a Transformed Animal foe, and it goes down at any later point in the fight, it reverts to its animal form. Transformed Animal heroes present for this take 3 Reversion points.
-    -
-      name: "Exorcism"
-      schticks:
+        -
+          title: Exorcism
+          description: Spend 1 Magic or 3 shots to free a single individual of any effects caused by Sorcery or Creature Powers.
         -
           title: Invocation
           description: Spend 2 Magic to seize a particular creature through time and space and cause it to appear at your side. You can target a creature if you successfully used Domination against it in the past, or if you have on your person a former body part of the creature, such as a claw, piece of hair, scraping of skin, or severed hand. Requires a Sorcery Check against the creature’s Will Resistance value; on a failure, nothing happens and you get the Magic points back. Merely summoning a creature does not ensure its cooperation. In fact, in most cases guarantees your subject’s extreme displeasure.  You can invoke hero ghosts or supernatural creatures, but only if their players want it to happen. If they do, your attempt automatically succeeds and costs you nothing.  Spend 1 Magic or 3 shots to free a single individual of any effects caused by Sorcery or Creature Powers.
