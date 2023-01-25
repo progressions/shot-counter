@@ -164,7 +164,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_01_25_042917) do
     t.uuid "campaign_id", null: false
     t.string "title", null: false
     t.string "description"
-    t.uuid "schtick_id"
+    t.uuid "prerequisite_id"
     t.string "category"
     t.string "path"
     t.datetime "created_at", null: false
@@ -173,7 +173,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_01_25_042917) do
     t.string "image_url"
     t.boolean "bonus"
     t.index ["campaign_id"], name: "index_schticks_on_campaign_id"
-    t.index ["schtick_id"], name: "index_schticks_on_schtick_id"
+    t.index ["prerequisite_id"], name: "index_schticks_on_prerequisite_id"
     t.index ["title"], name: "index_schticks_on_title", unique: true
   end
 
@@ -240,7 +240,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_01_25_042917) do
   add_foreign_key "invitations", "users"
   add_foreign_key "invitations", "users", column: "pending_user_id"
   add_foreign_key "schticks", "campaigns"
-  add_foreign_key "schticks", "schticks"
+  add_foreign_key "schticks", "schticks", column: "prerequisite_id"
   add_foreign_key "vehicles", "campaigns"
   add_foreign_key "vehicles", "users"
 end
