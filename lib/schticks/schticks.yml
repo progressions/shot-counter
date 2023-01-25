@@ -1,0 +1,648 @@
+-
+  name: "Guns"
+  paths:
+    -
+      name:
+      schticks:
+        -
+          title: Back For Seconds
+          description: Shed Wound Points equal to your Toughness +3 on a successful Up Check. You get to add +4 to your next attack.
+        -
+          title: Bag Full of Guns I
+          description: "Start each fight with a revolver (9/2/6). Each time you fail an attack roll, spend 0 shots to move to the next item in this gun list: Colt 1911A (10/2/4), Desert Eagle .357 Magnum (11/3/3), Chiappa Rhino (12/3/5), Mossberg Special Purpose (13/5/4)."
+        -
+          title: Bag Full of Guns II
+          description: "Start each fight with a revolver (9/2/6). Each time you attack a named foe and fail to dish out more than 15 Wound Points, spend 0 shots to move to the next item in this gun list: Colt 1911A (10/2/4), Desert Eagle .357 Magnum (11/3/3), Chiappa Rhino (12/3/5), Mossberg Special Purpose (13/5/4), homemade shotgun (14/5/4), homemade rifle (15/5/1). Homemade weapons fall apart at end of fight. Only you can use them."
+        -
+          title: Bag Full of Guns III
+          description: "Start each fight with a revolver (9/2/6.) Each time you attack a named foe and fail to dish out more than 20 Wound Points, spend 0 shots to move to the next item in this gun list: Colt 1911A (10/2/4), Desert Eagle .357 Magnum (11/3/3), Chiappa Rhino (12/3/5), Mossberg Special Purpose (13/5/4), homemade shotgun (14/5/4), homemade rifle (15/5/1), homemade rocket launcher (16/5/4), homemade shoulder-mounted Gatling (17/5/1). Homemade weapons fall apart at end of fight. Only you can use them."
+        -
+          title: Bag Full of Guns IV
+          description: "Start each fight with a revolver (9/2/6). After each attack, spend 0 shots to move to the next item in this gun list: Colt 1911A (10/2/4), Desert Eagle .357 Magnum (11/3/3), Chiappa Rhino (12/3/5), Mossberg Special Purpose (13/5/4), homemade shotgun (14/5/4), homemade rifle (15/5/1), homemade rocket launcher (16/5/4), homemade shoulder-mounted Gatling (17/5/1), homemade shoulder-mounted laser Gatling (18/5/1), homemade quantum collapser mini-Derringer (19/2/3). Homemade weapons fall apart at end of fight. Only you can use them."
+        -
+          title: Bank Shot
+          description: After a Guns attack against a mook fails, add a free Fortune die to your next Guns attack.
+        -
+          title: Battle Scavenge I
+          description: You gain +1 to Rearm Checks.  You may respond to a failed Reload Check by arming yourself with the weapon formerly carried by a fallen gun-wielding opponent. You may choose the best dropped opponent weapon that has not already been picked up. This action costs you 3 shots and allows you to carefully replace your previous weapon. You gain a free Fortune die on your first attack with the scavenged weapon.
+        -
+          title: Battle Scavenge II
+          description: You gain +2 to Rearm Checks.  You may respond to a failed Reload Check by arming yourself with the weapon formerly carried by a fallen gun-wielding opponent. You may choose the best of the opponent’s weapons that has not already been picked up. This action costs you 2 shots and allows you to carefully replace your previous weapon. You gain a free Fortune die on your first attack with the scavenged weapon, and regain 1 spent Fortune point.
+        -
+          title: Battle Scavenge III
+          description: You gain +4 to Rearm Checks.  You may respond to a failed Reload Check by arming yourself with the weapon formerly carried by a fallen gun-wielding opponent. You may choose the best dropped opponent weapon that has not already been picked up. This action costs you 0 shots and allows you to carefully replace your previous weapon. You gain a free Fortune die on your first attack with the scavenged weapon, and regain 3 spent Fortune points.
+        -
+          title: Blam Blam Epigram
+          description: Add 1 to the shot cost of any Guns attack and make a pithy quip before or after shooting. The Damage Value of your weapon increases by 2 against a non-Impaired opponent, by 8 against an Impaired opponent.
+        -
+          title: Bloody but Unbowed
+          description: Add a +2 bonus to Up Checks.
+        -
+          title: Bloody but Unbowed II
+          description: Add a +3 bonus to Up Checks.
+        -
+          title: Bloody but Unbowed III
+          description: Add a +4 bonus to Up Checks.
+        -
+          title: Both Guns Blazing I
+          description: Fire two guns simultaneously at your opponent; these must be handguns or otherwise outfitted with a pistol grip. Treat as one attack at Guns -2, with the Damage Values of both guns added together, and the opponent’s Toughness doubled.  Make one Reload Check for both your guns; one reload action reloads both of them.
+        -
+          title: Both Guns Blazing II
+          description: Fire two guns simultaneously at your opponent; these must be handguns or otherwise outfitted with a pistol grip. Treat as one attack at Guns -1, with the Damage Values of both guns added together, and the opponent’s Toughness doubled.  Make one Reload Check for both your guns; one reload action reloads both of them.
+        -
+          title: Both Guns Blazing III
+          description: Fire two guns simultaneously at your opponent; these must be handguns or otherwise outfitted with a pistol grip. Treat as one attack, with the Damage Values of both guns added together, and the opponent’s Toughness doubled.  Make one Reload Check for both your guns; one reload action reloads both of them.
+        -
+          title: Both Guns Blazing IV
+          description: Fire two guns simultaneously at your opponent; these must be handguns or otherwise outfitted with a pistol grip. Treat as one attack at Guns +1, with the Damage Values of both guns added together, and the opponent’s Toughness doubled. The next time you are attacked this sequence, you get a +1 Defense bonus.  Make one Reload Check for both your guns; one reload action reloads both of them.
+        -
+          title: Both Guns Blazing V
+          description: Fire two guns simultaneously at your opponent; these must be handguns or otherwise outfitted with a pistol grip. Treat as one attack at Guns +2, with the Damage Values of both guns added together, and the opponent’s Toughness doubled.The next time you are attacked this sequence, you get a +2 Defense bonus.  Make one Reload Check for both your guns; one reload action reloads both of them.
+        -
+          title: Bullet Time
+          description: Oh wait, that’s just Dodge. Never mind, don’t take this one.
+        -
+          title: Carnival of Carnage I
+          description: Add +1 Guns vs. mooks.
+        -
+          title: Carnival of Carnage II
+          description: Add +2 Guns vs. mooks.
+        -
+          title: Carnival of Carnage III
+          description: Add +2 Guns vs. mooks. Subtract 1 from the shot cost of any attack on a mook or mooks. Minimum shot cost remains 1.
+        -
+          title: Carnival of Carnage IV
+          description: Add +2 Guns vs. mooks. Subtract 2 from the shot cost of any attack on a mook or mooks. Minimum shot cost remains 1.
+        -
+          title: Click Click Toss I
+          description: When you fail a Reload Check, spend 1 shot as an interrupt to toss your emptied gun ineffectually toward your enemy. Add +5 to your next Attack Check.
+        -
+          title: Click Click Toss II
+          description: When you fail a Reload Check, spend 1 shot as an interrupt to toss your emptied gun ineffectually toward your enemy. Add +8 to your next Attack Check.
+        -
+          title: Click Click Toss III
+          description: When you fail a Reload Check, spend 1 shot as an interrupt to toss your emptied gun ineffectually toward your enemy. Add +11 to your next Attack Check.
+        -
+          title: Covering Fire
+          description: As an interrupt when an enemy tries to stop an ally from Cheesing It, make an attack against the enemy. The ally successfully Cheeses It.
+        -
+          title: Disarming Shot
+          description: Take a -1 penalty to your attack roll against a foe carrying a weapon. If your attack hits, the foe drops the weapon.The shot cost of its next attack increases by 3. After this attack the foe is considered to have its weapon back. The penalty to your attack is -3 against bosses.
+        -
+          title: Eagle Eye
+          description: Add +X to the shot cost of a Guns attack to gain +X Guns for that attack. X cannot exceed 3.
+        -
+          title: Fast Draw I
+          description: Add 2 to your Initiative result. Your first action of the sequence must use Guns.
+        -
+          title: Fast Draw II
+          description: Add 3 to your Initiative result. Your first action of the sequence must use Guns.
+        -
+          title: Fast Draw III
+          description: Add 4 to your Initiative result. Your first action of the sequence must use Guns.
+        -
+          title: Fast Draw IV
+          description: Add 5 to your Initiative result. Your first action of the sequence must use Guns.
+        -
+          title: Firm Grip
+          description: After a successful autofire attack, roll a die. On an even result, regain a spent Fortune point. Autofire attacks do not change your Reload value.
+        -
+          title: Flesh Wound
+          description: When for the first time in a fight you take 10 or more Wound Points, spend 1 shot as an interrupt to reduce Wound Points taken to 1.
+        -
+          title: For the Squad
+          description: When you assist an ally with an attack boost, the attack costs the ally 2 shots.
+        -
+          title: Hair-Trigger Neck Hairs
+          description: Gain + 1 Defense for the first sequence of any fight your opponents start unexpectedly.
+        -
+          title: Lightning Reload I
+          description: Add 1 to the results of all Reload Checks.
+        -
+          title: Lightning Reload II
+          description: Add 2 to the results of all Reload Checks.
+        -
+          title: Lightning Reload III
+          description: Add 3 to the results of all Reload Checks.
+        -
+          title: Lightning Reload IV
+          description: Add 4 to the results of all Reload Checks.
+        -
+          title: Lone Wolf
+          description: +3 Defense if you are the only viable target for three or more named character opponents.
+        -
+          title: Mocking Arrow
+          description: As an interrupt when an ally gets a Way-Awful Failure on a Guns attack, spend 1 shot to make a bow attack against the target of that attack.
+        -
+          title: Reactive Fire
+          description: As an interrupt when an enemy gets a Way-Awful Failure, spend 1 shot to attack that enemy.
+        -
+          title: Signature Weapon
+          description: "Select one specific gun as a Signature Weapon. Your character might have his lucky Glock, the combat shotgun his grandmother gave to him as a coming of age present, his collector’s edition ankle holster .32, or the like. A character using a Signature Weapon gets a +3 Damage Value bonus with that particular weapon. Note that this applies to a single, actual weapon, not to all identical weapons; your lucky Glock gives you a +3, but any other Glock of the same model is just that: a regular Glock. GM guidance for Signature Weapons appears on p. 302."
+        -
+          title: Scattering Fire
+          description: When you hit one or more mooks with a Guns attack, all other mooks in the fight must spend 2 shots.
+        -
+          title: Shake It Off
+          description: Remove 10 Wound Points after a successful Up Check.
+        -
+          title: Showy Arrow I
+          description: As an interrupt when an ally hits with a Guns attack, spend 1 Fortune and 2 shots to make a Guns attack with bow and arrow against the same target.
+        -
+          title: Showy Arrow II
+          description: As an interrupt when an ally hits with a Guns attack, spend 1 Fortune and 2 shots to make a +1 Guns attack with bow and arrow against the same target.
+        -
+          title: Showy Arrow III
+          description: As an interrupt when an ally hits with a Guns attack, spend 1 Fortune and 1 shot to make a +2 Guns attack with bow and arrow against the same target.
+        -
+          title: Smoke Arrow
+          description: When you hit an opponent with an arrow, that opponent suffers a point of Impairment until the next keyframe. The maximum Impairment any target can take from a Smoke Arrow is 1.
+        -
+          title: Stop Right There!
+          description: Spend 1 shot to automatically stop an enemy from Cheesing It.
+        -
+          title: Soul of the Sniper
+          description: If you are the first combatant to attack in a fight, you gain +2 Guns on that attack. You and all of your allies gain +1 Attack for the rest of the first sequence.
+        -
+          title: Take the Shot
+          description: Add +4 Guns vs. targets using hostages as human shields.
+        -
+          title: Time-Tested Tech I
+          description: As an interrupt when an enemy fails a Reload roll, spend 0 shots to make a Guns attack with a bow and arrow against that enemy.
+        -
+          title: Time-Tested Tech II
+          description: As an interrupt when an enemy fails a Reload roll, spend 0 shots to make a +2 Guns attack with a bow and arrow against that enemy.
+        -
+          title: Time-Tested Tech III
+          description: As an interrupt when an enemy fails a Reload roll, spend 0 shots to make a +3 Guns attack with a bow and arrow against that enemy.
+        -
+          title: Time-Tested Tech IV
+          description: As an interrupt when an enemy fails a Reload roll, spend 1 shot to make a +5 Guns attack with a bow and arrow against that enemy.
+        -
+          title: Trick Arrow
+          description: When you attempt stunts with a bow and arrow, either your opponent doesn’t gain the +2 Defense bonus or you can declare a stunt after you roll with an Outcome of 3 or more.
+        -
+          title: The Way the Wind Blows
+          description: Instead of a penalty under adverse conditions, you get a +2 attack bonus.
+        -
+          title: Vengeful Arrow
+          description: As an interrupt when an ally makes an Up Check, spend 1 shot to make a bow attack against the enemy who last hit the ally.
+        -
+          title: Wild Grenade
+          description: When you miss with a grenade, spend 1 Fortune. Characters between you and your target do not make Fortune rolls to avoid it. Instead, you and a nearby character of your choice (other than the target) take 20 Damage from flying debris.
+-
+  name: "Martial Arts"
+  paths:
+    -
+      path: Path of the Banisher
+      schticks:
+        -
+          title: Blunt the Crane's Beak
+          description: Protect others with your prowess. When an opponent makes a successful attack against one of your nearby allies, interrupt and spend 1 shot to reduce the attack’s Damage Value by 5.
+        -
+          title: Stave off Monkey
+          description: When an opponent makes a successful attack against you, interrupt and pay 5 shots; the attack fails.
+          prerequisite: Blunt the Crane’s Beak
+        -
+          title: Slow the Tiger
+          description: After a successful Martial Arts attack, spend 1 Chi and 1 shot. Target of the attack adds 1 to the shot cost of all actions with a cost of 1 or more until the next keyframe.
+          prerequisite: Blunt the Crane’s Beak
+        -
+          title: Chop the Willow
+          description: After a successful Martial Arts attack against a foe with 1 Impairment or less, spend 2 Chi and 1 shot. Target of the attack gains 1 Impairment until the next keyframe.
+          prerequisite: Slow the Tiger
+        -
+          title: Thwart the Dragon
+          description: When a nearby ally takes attack damage, interrupt and pay 2 shots to remove all Wound Points the ally gained in the attack. Costs Chi equal to the number of times you have used Thwart the Dragon this fight.
+          prerequisite: Blunt the Crane’s Beak
+    -
+      path: Path of the Death Punch
+      schticks:
+        -
+          title: Hands Without Shadow
+          description: You get +X Martial Arts vs. opponents whose Defense values, bonuses included, exceed your current Defense. X is equal to the difference between Defense values.
+        -
+          title: Lightning Fist
+          description: When you hit an opponent with a Martial Arts punch attack, spend 1 Chi and 1 shot as an interrupt. For this attack, and until the next keyframe, your target’s Toughness is halved (round fractions up).
+          prerequisite: Hands Without Shadow
+        -
+          title: Dim Mak
+          description: Any time after the second sequence, spend 3 Chi and make a Martial Arts punch attack against a featured foe. If successful, ignore normal Damage determination; the foe’s Wound Point total is now 34. If unsuccessful, regain 2 Chi. This has no effect on bosses.
+          prerequisite: Lightning Fist.
+    -
+      path: Path of the Dragon
+      schticks:
+        -
+          title: Bite of the Dragon
+          description: Pay 1 Chi to add 2 to the Damage of your Martial Arts attacks until the next keyframe.
+        -
+          title: Breath of the Dragon
+          description: Pay 1 Chi as an interrupt after you roll your Swerve (including rerolls of any 6s) on a Martial Arts attack; ignore the positive die, treating it as a 5.
+          prerequisite: Bite of the Dragon.
+        -
+          title: Claw of the Dragon
+          description: Spend 1 Chi and 1 shot. Until the end of the fight, the minimum Wound Points you inflict on a successful attack equals 5.
+          prerequisite: Breath of the Dragon.
+        -
+          title: Beard of the Dragon
+          description: Spend 1 Chi and 1 shot. Until the end of the fight, targets of your failed attacks nonetheless take 3 Wound Points per attack.
+          prerequisite: Claw of the Dragon.
+        -
+          title: Tail of the Dragon
+          description: Add the number of featured foes and bosses you have inflicted Wound Points on during the current fight to your Speed.
+          prerequisite: Beard of the Dragon.
+    -
+      path: Path of the Drunken Master
+      schticks:
+        -
+          title: Drunken Stance
+          description: You have +2 Martial Arts on odd-numbered shots and –1 Martial Arts on even-numbered shots. If you hold an action to act on an odd-numbered shot, pay 1 Chi.
+        -
+          title: The Esoteric Art of Speed-Drinking
+          bonus: true
+          description: Spend 1 shot to consume two servings of alcohol.
+        -
+          title: Drunken Master
+          bonus: true
+          description: You take no intoxication penalties to Martial Arts or Defense. You take a –2 penalty to Martial Arts and Defense when fighting cold sober, and a –1 penalty if you have had less than three servings of alcohol in the last half hour. You can’t use Drunken Master schticks when cold sober.
+        -
+          title: Drunken Fist
+          description: Spend 2 shots to make a Martial Arts attack at –2 AV, or spend 1 shot to make a Martial Arts attack at –4 AV.
+          prerequisite: Drunken Stance.
+        -
+          title: Wily Stupor
+          description: Spend 1 Chi; until the next keyframe, add the number of servings of alcohol you’ve consumed during the fight so far to your Toughness.
+          prerequisite: Drunken Fist.
+        -
+          title: Aberrant Spasm
+          description: When targeted for an attack, interrupt, spend 2 shots and designate another named character with a lower Defense than yours as a secondary target. If the attack misses you, the secondary target takes a Smackdown equal to the Damage Value of the attacker’s weapon.
+          prerequisite: Wily Stupor.
+        -
+          title: Spasmodic Leap
+          description: If a Guns attack misses you on any odd-numbered shot, regain a Chi point.
+          prerequisite: Aberrant Spasm.
+    -
+      path: Path of Flame
+      schticks:
+        -
+          title: Fire Strike
+          description: Spend 1 Chi and make a barehanded Martial Arts attack at +2 Damage. On a success, if your opponent is wearing flammable clothing, that clothing ignites and the opponent must take 3 shots to slap the fire out or suffer 1 Wound Point every 3 shots until something is done about the fire.
+        -
+          title: Stoke the Fire
+          bonus: true
+          description: Under the adverse condition Extreme Heat, spend 2 Chi to gain a +2 Immunity bonus to Martial Arts and Defense until end of fight.
+        -
+          title: Fire Stance
+          description: Until end of sequence, any opponent striking you barehanded suffers 3 Wound Points per strike.
+          prerequisite: Fire Strike.
+        -
+          title: Fire Fist
+          description: Strike an opponent barehanded with your fist wreathed in a nimbus of chi energy. Spend 1 Chi and make a Martial Arts punch attack against a featured foe or boss. On a success, target must check Toughness against the Smackdown. On a failure, opponent takes 3 Wound Points each time you make another attack against any opponent, until the next keyframe.
+          prerequisite: Fire Stance.
+        -
+          title: Fire Cloak
+          description: Flood the surrounding area with flame to create a hostile fighting environment for your foes. On a successful Martial Arts attack against an opponent whose Defense Value exceeds your Attack Value, the fight location suffers the adverse condition Extreme Heat until the next keyframe.
+          prerequisite: Fire Fist.
+        -
+          title: Hungry Fire
+          description: Spend 1 Chi and make a Martial Arts punch attack against a named enemy. On a success, spend 2 shots per named enemy. All named enemies take 5 Wound Points.
+          prerequisite: Fire Cloak.
+    -
+      path: Path of the Fox
+      schticks:
+        -
+          title: The Fox's retreat
+          description: As an interrupt when attacked, spend 1 Chi. Until the next keyframe, Dodges increase your Defense by 4.
+        -
+          title: Eyes of the Fox
+          description: Pay 2 Chi to reduce Wound Points dealt to you by an attack to 3.
+          prerequisite: The Fox’s Retreat.
+        -
+          title: Laughter of the Fox
+          description: "After a successful Martial Arts Check, roll a die. Even: gain +1 attack against the foe you just hit until end of fight. Odd: gain +1 Defense against the foe you just hit until end of fight.  Bonuses against the same foe accumulate over multiple successful hits."
+          prerequisite: Eyes of the Fox.
+        -
+          title: Vengeance of the Fox
+          description: When you are hit by a Martial Arts attack, spend 1 Chi and 1 shot as an interrupt. Make a Martial Arts Check against your attacker’s Defense. If successful, the opponent is thrown a number of meters equal to your Outcome in the direction of your choice. Opponent takes a Smackdown equal to his Strength Check value (usually 7) plus the Outcome.
+          prerequisite: Laughter of the Fox.
+        -
+          title: Luck of the Fox
+          description: Spend 1 Chi and 1 shot. Until the next keyframe, roll a die as an interrupt after adding a Fortune die to any check or to a Dodge. On an even result, regain the Fortune point.
+          prerequisite: Vengeance of the Fox.
+        -
+          title: Contract of the Fox
+          description: Spend 1 Chi immediately after Initiative is determined. Your Initiative result equals that of the combatant with the highest Initiative.
+          prerequisite: Luck of the Fox.
+    -
+      path: Path of the Healer
+      schticks:
+        -
+          title: Corners of the Mouth
+          description: Allies may spend 1 shot and 1 Fortune to give you 1 Chi.
+        -
+          title: Flow restoration
+          bonus: true
+          description: Spend 1 shot; touch a subject who is unable to act due to the effect of the Point Blockage fu power. Subject is released from effect and takes an action during the following shot. Subject gets +2 to next check.
+        -
+          title: Healing Chi
+          description: In a lightning-quick series of moves, jab crucial acupressure points of a wounded patient in order to dramatically speed up his natural healing process. Spend 3 shots and 1 Chi to reduce a character’s Wound Point total by the result of your Martial Arts Check.
+          prerequisite: Corners of the Mouth
+        -
+          title: Healing Petals
+          description: Spend 4 shots and 1 Chi; make a Martial Arts Check. Take your Action Result and divide it any way you like between any number of characters. The characters each subtract from their Wound Point totals the share of the Action Result you have allocated to them.
+          prerequisite: Healing Chi.
+        -
+          title: The Power of Love
+          description: Cradle an (apparently) dead comrade in your arms, weeping and wailing until your tears spatter his face. Spend 1 Chi when an ally who is close enough for you to touch fails a Death Check. Your ally lapses into immediate, death-like unconsciousness but gets to make a new Death Check.
+          prerequisite: Healing Chi.
+        -
+          title: Pressure Block
+          description: When an opponent misses you with a hand-to- hand attack, spend 1 Chi as an interrupt to give opponent a –1 attack penalty until end of fight. Not usable if opponent is already Pressure Blocked.
+          prerequisite: The Power of Love.
+        -
+          title: Point Blockage
+          description: After making a successful Martial Arts Check, spend 3 Chi and 1 shot to prevent your opponent from taking actions until the next keyframe, or until opponent takes 3 or more Wound Points, whichever comes first.
+          prerequisite: Pressure Block.
+    -
+      path: Path of the Hundred Names
+      schticks:
+        -
+          title: Bloody but unbowed I
+          description: Add +2 bonus to Up Checks.
+        -
+          title: Bloody but unbowed II
+          description: "Add +3 bonus to Up Checks."
+          prerequisite: Bloody but Unbowed I.
+        -
+          title: Bloody but unbowed III
+          description: Add +4 bonus to Up Checks.
+          prerequisite: Bloody but Unbowed II.
+        -
+          title: Humble Fury
+          description: Add +4 to Martial Arts on the first attack you make after passing an Up Check.
+        -
+          title: Underdog Triumphant
+          description: Standard attacks against foes whose attacks have forced you to make Up Checks cost you 2 shots.
+          prerequisite: Humble Fury.
+        -
+          title: Rise in Slow Motion
+          description: Immediately before the first attack you make after passing an Up Check, reduce your Wound Point total by your Toughness.
+    -
+      path: Path of the Montage
+      schticks:
+        -
+          title: Flesh Wound
+          description: As an interrupt when you take Wound Points, reduce Toughness by X until end of fight to reduce Wound Points taken to 0. X is equal to the number of the current sequence.
+        -
+          title: Lone Wolf
+          description: Add +3 Defense if you are the only viable target for three or more named character opponents.
+        -
+          title: Training Sequence I
+          description: Add +4 attack vs. uber-bosses.
+        -
+          title: Training Sequence II
+          description: Add +1 to Defense vs. bosses; +3 Defense vs. uber- bosses.
+          prerequisite: Training Sequence I.
+    -
+      path: Path of the Ninja
+      schticks:
+        -
+          title: Friend of Darkness
+          description: When attacking an opponent for the first time in the current fight, treat the opponent’s Toughness as 4. This is inapplicable if opponent’s Toughness is less than 4.
+        -
+          title: Dark's Soft Whisper
+          bonus: true
+          description: Make any attack completely silently. On a Guns attack, describe yourself using a silencer.
+        -
+          title: Catlike Tread
+          description: When you give an ally a Defense boost, you also gain the benefit of the boost.
+          prerequisite: Friend of Darkness.
+        -
+          title: Panther pounce
+          description: If you are the only PC in a scene and you encounter a single GMC, spend 0 Chi (for a mook) or 2 Chi (for a named character) to knock out, daze, or otherwise render the target helpless and unable to interfere with you. This lasts for five minutes, or until you try to harm the character, whichever comes first.
+          prerequisite: Friend of Darkness.
+        -
+          title: Blade of Darkness
+          description: Spend 2 Chi and 0 shots to create a six-inch razor-sharp blade from thin air. Its Damage Value of 14 drops by 1 at the end of each sequence. The blade dematerializes at the end of the fight.
+          prerequisite: Panther Pounce.
+        -
+          title: Gathering the Darkness
+          description: Draw the darkness and shadows in the area towards you like a protective cloak. Add +2 Defense against foes who have not yet hit you during this fight.
+          prerequisite: Blade of Darkness.
+        -
+          title: Strike from Darkness
+          description: On a successful Martial Arts attack against an opponent previously unaware of your presence, your Smackdown is not reduced by opponent’s Toughness.
+          prerequisite: Gathering the Darkness.
+        -
+          title: Shelter of Darkness
+          description: Summon a cloud of unnatural darkness to shroud your allies from harm in combat. Spend 3 shots to grant a Defense boost to all of your allies, which you may augment with Fortune. When an ally takes Wound Points from an attack while benefiting from this boost, you may, as a 0-shot interrupt, attack the ally’s attacker.
+          prerequisite: Strike from Darkness.
+    -
+      path: Path of the Nunchaku
+      schticks:
+        -
+          title: Whirl of Fury
+          description: Spend 1 Chi as you make a Martial Arts nunchaku attack. If you hit, this and all of your nunchaku attacks for the rest of the fight have a Damage Value of 14.
+        -
+          title: Blur of rage
+          description: Spend 1 Chi as you make a Martial Arts nunchaku attack against a mook. Until the next keyframe, roll a die whenever a mook attacks you. On an even result, the mook drops before it can attack.
+          prerequisite: Whirl of Fury.
+        -
+          title: Cyclone of Wood and Chain
+          description: After a successful Martial Arts nunchaku attack, spend X shots. Your opponent must also spend X shots. X may not exceed 6.
+          prerequisite: Blur of Rage.
+        -
+          title: Rain of Pain
+          description: On a successful nunchaku attack against multiple opponents, add an additional nearby foe as a target of the attack for every point of difference between the Outcome you needed and the Outcome you got.
+          prerequisite: Cyclone of Wood and Chain.
+        -
+          title: Nunchaku Nunchaku Nunchaku
+          description: When a Martial Arts nunchaku attack hits a named character, spend 1 Chi. Your nunchaku Damage Value increases by 2. Until the end of the fight, each additional successful Martial Arts nunchaku attack increases your nunchaku damage by an additional 1.
+          prerequisite: Rain of Pain.
+    -
+      path: Path of the outlaw
+      schticks:
+        -
+          title: Rise of the Downtrodden
+          description: Spend 1 Chi and 1 shot as an interrupt when struck by an attack. Until the end of the fight, the base Damage Value of the weapon hitting you becomes the base Damage Value of your hand-to-hand weapon.
+        -
+          title: No-o-o-o-o!!
+          description: Spend 1 Chi and 1 shot as an interrupt when an ally makes an Up Check. Until the end of fight, add the total number of Up Checks made by allies this fight to the Smackdown you deal on a successful attack.
+          prerequisite: Rise of the Downtrodden.
+        -
+          title: Shield of the underdog
+          description: Spend 1 Chi and 1 shot as an interrupt when struck by an opponent whose Defense value exceeds yours. Your Defense increases to equal the opponent’s (as of your use of this power) until end of fight.
+          prerequisite: No-o-o-o-o!!
+        -
+          title: Rally the Shattered
+          description: Spend 1 Chi and 1 shot as an interrupt when an ally takes an Impairment point. Until end of sequence, the ally treats Impairment as a bonus instead of a penalty.
+          prerequisite: Shield of the Underdog.
+        -
+          title: Turn the Tables
+          description: If the number of named opponents exceeds the number of heroes taking part in the current fight, spend 2 Chi and 1 shot to give all allies +2 to attacks until the next keyframe.
+          prerequisite: Rally the Shattered.
+    -
+      path: Path of the Sword
+      schticks:
+        -
+          title: Blooded Blade
+          description: You have +1 bonus to sword damage for each mook you drop. The bonus is reduced by half (round up) each time you hit a named foe and lasts until the end of the fight.
+        -
+          title: Backslash
+          description: "When you hit a named foe, spend 1 Chi as an interrupt and roll a die. Odd: drop 1 mook. Even: drop 2 mooks."
+          prerequisite: Blooded Blade.
+        -
+          title: Bullet Deflection
+          description: When you are missed by a named foe’s ranged attack while Dodging, drop 1 mook.
+          prerequisite: Backslash.
+        -
+          title: Hold Them at Bay
+          description: Spent 1 shot and 1 Chi. All mooks spend 3 shots.
+          prerequisite: Bullet Deflection.
+        -
+          title: Water Sword
+          description: When you hit a named foe, a number of named foes equal to your Swerve lose 1 shot each, if your Swerve is more than 1.
+          prerequisite: Bullet Deflection
+        -
+          title: Flashing Katana
+          description: When you hit a named foe, give one ally a boost.
+          prerequisite: Blooded Blade.
+        -
+          title: Lethal Strike
+          description: Any time after the second sequence, spend 1 shot and take 1 Mark of Death to down a featured foe.
+          prerequisite: Blooded Blade.
+    -
+      path: Path of the Tiger
+      schticks:
+        -
+          title: Claw of the Tiger
+          description: When your Martial Arts attack deals Wound Points to an opponent, roll a die; if the result is even, add the result to the Wound Points dealt.
+        -
+          title: Tiger Stance
+          description: When targeted for a Martial Arts attack, interrupt and spend 2 Chi to make one Martial Arts attack against your attacker, resolved before the original attack.
+          prerequisite: Claw of the Tiger.
+        -
+          title: Unyielding Tiger Stance
+          description: Spend 1 Chi and 1 shot. Until the next keyframe, any opponent missing you with a Martial Arts attack takes a Smackdown equal to your weapon’s Damage Value.
+          prerequisite: Tiger Stance.
+        -
+          title: Vengeance of the Tiger
+          description: When you take 10 or more Wound Points from a Martial Arts attack, spend 3 shots as an interrupt to make a +3 Martial Arts strike against the original attacker.
+          prerequisite: Unyielding Tiger Stance.
+        -
+          title: Leap of the Tiger
+          description: Spend 2 Chi as an interrupt at the end of your action or another character’s action. Your next action occurs at the beginning of the next shot.
+          prerequisite: Vengeance of the Tiger.
+    -
+      path: Path of the Weapon Master
+      schticks:
+        -
+          title: Signature Weapon
+          description: Select one specific martial arts weapon as a signature weapon. Your character might wield his lucky combat knife, the sword that got his father through a war, the hallowed spear of his destroyed village, and so on. A character using a signature weapon gets a +3 Damage Value bonus with that particular weapon. Note that this applies to a single, actual weapon, not to all identical weapons; your wing chun butterfly sword gives you a +3, but none of the other identical copies hanging on the dojo wall do. GM guidance for Signature Weapons appears on p. 302.
+        -
+          title: Versatile Master
+          description: Gain +2 to your first Martial Arts attack after switching from one weapon to another you have yet to use in the current fight.
+        -
+          title: Spear push
+          description: When you switch from another weapon to a spear, gain +3 Defense until the next keyframe. This bonus can’t be combined with Dodge.
+        -
+          title: Forceful Dart
+          description: Spend 1 Chi to give your thrown darts or throwing stars a Damage Value of X–1 until the next keyframe. X is equal to the highest base Damage Value of any weapon currently being wielded by an ally (ignoring any special damage bonuses the ally gets, of course).
+        -
+          title: Mesmerizing Dart
+          description: Spend 1 Chi and 1 shot. Until the next keyframe, every time you attack an opponent they lose 1 shot, regardless of whether your attack hits or misses.
+    -
+      path: Path of the Welcoming Sky
+      schticks:
+        -
+          title: prodigious Leap
+          description: Spend 1 shot to make a horizontal, vertical, or diagonal leap of up to 14 m. Also costs 1 Chi, if your current Chi is less than 2. If you have two or more other schticks in the Welcoming Sky path, leap increases to 28 m.
+        -
+          title: Aerial pushaway
+          description: Evade an enemy with a graceful midair backflip. When an enemy misses you with a Martial Arts attack, spend 1 shot to fly up to 14 m backwards, away from your enemy. Regain 1 spent Chi point.
+          prerequisite: Prodigious Leap.
+        -
+          title: Ominous Flutter
+          description: Spend 1 Chi. Until the end of the fight, any attack you immediately precede with a Prodigious Leap gets a +1 bonus.
+          prerequisite: Aerial Pushaway.
+        -
+          title: Flying Windmill Kick
+          description: Spend 4 shots to make a Martial Arts kick attack. If the attack hits, you may make another kick attack on the same opponent at 0 shot cost. You may continue doing this until an attack fails, or until you land a third hit.
+          prerequisite: Prodigious Leap.
+        -
+          title: Shadowfist
+          description: On a successful Martial Arts attack, ignore normal damage determination. Instead, both you and your opponent roll a Swerve and add 35 (or 50 for Big Bruisers and bosses) to it, adopting the resulting number as your current Wound Points total. Neither you or your opponent can use any other effect to reduce Wound Points before performing an Up Check.
+          prerequisite: "Flying Windmill Kick, plus at least one of the following: Turn the Tables, Thwart the Dragon, Shelter of Darkness, Tail of the Dragon, Mantis Stance, Nunchaku Nunchaku Nunchaku, Contract of the Fox, Hungry Fire, Flowing Strikes, Spasmodic Leap, Leap of the Tiger, Point Blockage, Natural Order."
+    -
+      path: Path of the Willow
+      schticks:
+        -
+          title: Willow Step
+          description: Spend 1 Chi and 1 shot to gain +2 Defense against non-Martial Arts attacks until the next keyframe.
+        -
+          title: King on the Water
+          bonus: true
+          description: In a fight under the adverse condition Torrential Rain, spend 1 Chi and 0 shots to gain a +2 Immunity bonus until the end of the fight or the end of the condition.
+        -
+          title: Walk of a Thousand Steps
+          description: When you take 5 or more Wound Points from a non-Martial Arts attack, your next action occurs on the next shot. It and all subsequent actions carry their usual shot costs.
+          prerequisite: Willow Step.
+        -
+          title: Rustling Leaves
+          description: When you take 5 or more Wound Points from a Guns attack, the attacker must Reload.
+          prerequisite: Walk of a Thousand Steps.
+        -
+          title: Enforced Tranquility
+          description: When targeted for a Guns attack, spend 1 Chi and 1 shot as an interrupt.The attacker’s gun malfunctions.
+          prerequisite: Rustling Leaves.
+        -
+          title: Natural order
+          description: When you take Wound Points from a Guns attack, spend 2 Chi as an interrupt to ignore them. If the fight takes place outdoors, a downpour ensues, and the area undergoes the adverse condition Torrential Rain.
+          prerequisite: Enforced Tranquility.
+    -
+      path: Path of Wing Chun
+      schticks:
+        -
+          title: Hammer punch
+          description: Your base damage with an unarmed Martial Arts attack is 9 or the current shot number, whichever is higher.
+        -
+          title: One-Inch punch
+          bonus: true
+          description: In a fight under the adverse condition Confined Space, spend 1 Chi and 0 shots to gain a +2 Immunity bonus until end of fight or end of condition.
+        -
+          title: Back Leg Kick
+          description: Add +1 Martial Arts vs. the opponent most recently targeted for attack by any of your allies.
+          prerequisite: Hammer Punch.
+        -
+          title: Target the Core
+          description: Spend 1 Chi as an interrupt after making a successful unarmed Martial Arts attack. Until the next keyframe, the target is at –1 Defense vs. Martial Arts attacks.
+          prerequisite: Hammer Punch.
+        -
+          title: Trapping Hands
+          description: Spend 1 Chi. Until the next keyframe, opponents making Martial Arts attacks against you must pay +1 shot to do so, and another extra shot if they miss.
+          prerequisite: Target the Core.
+        -
+          title: Flowing Strikes
+          description: Once per fight, spend 1 Chi and 1 shot, choosing a specific foe. Your Martial Arts attacks against that foe cost 2 shots each until end of fight.
+          prerequisite: Trapping Hands.
+      path: Path of Wushu
+      schticks:
+        -
+          title: Horse Stance
+          description: When a named opponent misses you with a Martial Arts attack, you move up in the shot order to act on the subsequent shot.
+        -
+          title: Crane Stance
+          description: Whenever a mook hits you, attack the mook as an interrupt.
+          prerequisite: Horse Stance.
+        -
+          title: The Four-Six Stance
+          description: You may make Martial Arts attacks at a shot cost of 2 against any characters who made Martial Arts attacks against you during the current sequence.
+          prerequisite: Crane Stance.
+        -
+          title: unicorn Stance
+          description: As an interrupt when targeted for a Martial Arts attack, spend 2 shots to gain +2 Defense. If the attack hits you anyway, you gain +3 Martial Arts on your next attack against this attacker.
+          prerequisite: The Four-Six Stance.
+        -
+          title: Mantis Stance
+          description: Whenever a named character deals you 8 or more Wound Points with a close combat attack, attack that foe as an interrupt.
+          prerequisite: Unicorn Stance.
