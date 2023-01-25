@@ -13,7 +13,7 @@ module ImportSchticks
             )
             if attributes["prerequisite"]
               prereq_name = attributes["prerequisite"].gsub(".", "")
-              schtick.schtick = campaign.schticks.find_by(title: prereq_name)
+              schtick.prerequisite = campaign.schticks.find_by(title: prereq_name)
             end
             schtick.save
           end
