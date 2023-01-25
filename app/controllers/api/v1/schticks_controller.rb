@@ -3,7 +3,22 @@ class Api::V1::SchticksController < ApplicationController
   before_action :require_current_campaign
 
   def index
-    @schticks = current_campaign.schticks.includes(:prerequisite).order(:category, :path,:title).all
+    @schticks = current_campaign
+      .schticks
+      .includes(:prerequisite)
+      .order(:category, :path, :title)
+
+    if params[:category].present?
+      @schticks = @schticks.where(category: params[:category])
+    end
+
+    if params[:path].present?
+      @schticks = @schticks.where(path: params[:path])
+    end
+
+    if params[:title].present?
+      @schticks = @schticks.where("title LIKE ?", "%#{params[:title]}%")
+    end
 
     render json: @schticks
   end
