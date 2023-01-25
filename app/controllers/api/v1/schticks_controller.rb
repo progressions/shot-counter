@@ -12,9 +12,13 @@ class Api::V1::SchticksController < ApplicationController
 
     if params[:character_id].present?
       @character = current_campaign.characters.find(params[:character_id])
-      @schticks = @schticks
-        .for_archetype(@character.action_values["Archetype"])
-        .where(prerequisite_id: [@character.schtick_ids, nil].flatten)
+      if @character.action_values["Type"] == "PC"
+        @schticks = @schticks
+          .for_archetype(@character.action_values["Archetype"])
+          .where(prerequisite_id: [@character.schtick_ids, nil].flatten)
+      else
+        @schticks = @schticks.where(category: "Foe")
+      end
     end
 
     if params[:category].present?
