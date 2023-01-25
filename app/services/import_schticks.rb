@@ -48,17 +48,21 @@ module ImportSchticks
     end
 
     def parse_attributes(attributes, category, path, campaign)
-        schtick = campaign.schticks.new(
-          category: category["name"].titleize,
-          title: attributes["title"],
-          description: attributes["description"],
-          bonus: attributes["bonus"],
-        )
-        if path["name"]
-          schtick.path = path["name"].titleize
-        end
-        schtick.prerequisite = find_prerequisite(attributes, campaign)
-        schtick.save
+      schtick = campaign.schticks.find_by(category: category["name"].titleize, title: attributes["title"]) || campaign.schticks.new
+
+      schtick.category = category["name"].titleize
+      schtick.title = attributes["title"]
+      schtick.description = attributes["description"]
+      schtick.bonus = attributes["bonus"]
+      schtick.archetypes = category["archetypes"]
+
+      if path["name"]
+        schtick.path = path["name"].titleize
+      end
+
+      schtick.prerequisite = find_prerequisite(attributes, campaign)
+
+      schtick.save
     end
 
   end

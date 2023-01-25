@@ -1,7 +1,7 @@
 namespace :schticks do
   task import: :environment do
     campaign = Campaign.find_by(title: "Born to Revengeance")
-    data = YAML.load_file("./martial_arts.yml")
+    data = YAML.load_file("./schticks.yml")
 
     data.each do |category|
       category["paths"].each do |path|

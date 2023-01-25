@@ -1,5 +1,24 @@
 -
   name: "Guns"
+  archetypes:
+    - Archer
+    - Bodyguard
+    - Bounty Hunter
+    - Drifter
+    - Everyday Hero
+    - Ex-Special Forces
+    - Full Metal Nutball
+    - Gambler
+    - Highway Ronin
+    - Karate Cop
+    - The Killer
+    - Magic Cop
+    - Masked Avenger
+    - Maverick Cop
+    - Ninja
+    - Private Investigator
+    - Spy
+    - Two-Fisted Archaeologist
   paths:
     -
       name:
@@ -192,6 +211,23 @@
           description: When you miss with a grenade, spend 1 Fortune. Characters between you and your target do not make Fortune rolls to avoid it. Instead, you and a nearby character of your choice (other than the target) take 20 Damage from flying debris.
 -
   name: "Martial Arts"
+  archetypes:
+    - Bandit
+    - Everyday Hero
+    - Ex-Special Forces
+    - Gambler
+    - Karate Cop
+    - Martial Artist
+    - Masked Avenger
+    - Ninja
+    - Old Master
+    - Redeemed Pirate
+    - Scrappy Kid
+    - Sifu
+    - Sword Master
+    - Thief
+    - Transformed Crab
+    - Transformed Dragon
   paths:
     -
       name: Path of the Banisher
@@ -649,6 +685,8 @@
           prerequisite: Unicorn Stance.
 -
   name: "Transformed Animal"
+  archetypes:
+    - Transformed
   paths:
     -
       name: Bear
@@ -967,6 +1005,9 @@
           description: Spend 1 Chi when another player fails a check to gain information or have a contact. You know the answer or a relevant contact.
 -
   name: "Creature"
+  archetypes:
+    - Ghost
+    - Supernatural Creature
   paths:
     -
       name:
@@ -1071,7 +1112,11 @@
           title: Venom Sac
           description: When you hit a named character with a close combat Creature Powers attack, you may specify that they take no damage now, but instead take the damage from your attack +5, 5 shots from now.
 -
-  name: "Cyborg"
+  name: "Scroungetech"
+  archetypes:
+    - Cyborg
+    - Full Metal Nutball
+    - Highway Ronin
   paths:
     -
       name:
@@ -1195,6 +1240,15 @@
           description: When you take your first point of Impairment, you suffer an obvious injury to your mechanical parts that others can’t help finding disturbing.  The shot cost of any attack against you increases by your degree of Impairment.
 -
   name: "Driving"
+  archetypes:
+    - Driver
+    - Full Metal Nutball
+    - Highway Ronin
+    - Karate Cop
+    - The Killer
+    - Maverick Cop
+    - Spy
+    - Two-Fisted Archaeologist
   paths:
     -
       name:
@@ -1260,7 +1314,7 @@
           title: Oh No You Don't
           description: As an interrupt after your vehicle takes Chase Points from an enemy narrowing or closing its gap with you, spend 1 Fortune and 1 shot to reduce your vehicle’s total Chase Points by 5.
         -
-          title: A ride is a ride
+          title: A Ride is a Ride
           description: Ignore Unfamiliar Vehicle penalties.
         -
           title: Ram Speed I
@@ -1552,6 +1606,8 @@
           description: –3 to Chase Points dealt to the foe’s vehicle in any ram or sideswipe.
 -
   name: "Mutant"
+  archetypes:
+    - Gene Freak
   paths:
     -
       name:
@@ -1648,6 +1704,11 @@
           description: Spend 1 shot. Until end of fight, add 3 to your Damage on any successful hand-to-hand strike (using your Mutant attack value) including strikes
 -
   name: "Sorcery"
+  archetypes:
+    - Exorcist Monk
+    - Ghost
+    - Magic Cop
+    - Sorcerer
   paths:
     -
       name: "Blast"

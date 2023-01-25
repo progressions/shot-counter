@@ -10,6 +10,13 @@ class Api::V1::SchticksController < ApplicationController
 
     @paths = []
 
+    if params[:character_id].present?
+      @character = current_campaign.characters.find(params[:character_id])
+      @schticks = @schticks
+        .for_archetype(@character.action_values["Archetype"])
+        .where(prerequisite_id: [@character.schtick_ids, nil].flatten)
+    end
+
     if params[:category].present?
       @schticks = @schticks.where(category: params[:category])
       @paths = @schticks.pluck(:path).uniq.compact
