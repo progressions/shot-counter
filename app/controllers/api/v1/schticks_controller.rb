@@ -23,6 +23,13 @@ class Api::V1::SchticksController < ApplicationController
     end
   end
 
+  def import
+    yaml = import_params[:yaml]
+    data = YAML.load(yaml)
+
+    render :ok
+  end
+
   def update
     @schtick = current_campaign.schticks.find(params[:id])
     if @schtick.update(schtick_params)
@@ -42,6 +49,10 @@ class Api::V1::SchticksController < ApplicationController
   end
 
   private
+
+  def import_params
+    params.require(:schtick).permit(:yaml)
+  end
 
   def schtick_params
     params.require(:schtick).permit(:title, :description, :category, :path, :color, :image_url)

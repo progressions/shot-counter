@@ -8,6 +8,7 @@ Rails.application.routes.draw do
   namespace :api do
     namespace :v1 do
       resources :schticks
+      post "schticks/import", to: "schticks#import"
       resources :factions, only: [:index]
       resources :invitations do
         member do
