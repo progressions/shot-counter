@@ -1,4 +1,5 @@
 martial_arts:
+  name: "Martial Arts"
   -
     path: Path of the Banisher
     schticks:
@@ -187,7 +188,7 @@ martial_arts:
         title: Humble Fury
         description: Add +4 to Martial Arts on the first attack you make after passing an Up Check.
       -
-        title: underdog Triumphant
+        title: Underdog Triumphant
         description: Standard attacks against foes whose attacks have forced you to make Up Checks cost you 2 shots.
         prerequisite: Humble Fury.
       -
@@ -224,7 +225,7 @@ martial_arts:
         description: When you give an ally a Defense boost, you also gain the benefit of the boost.
         prerequisite: Friend of Darkness.
       -
-        title: panther pounce
+        title: Panther pounce
         description: If you are the only PC in a scene and you encounter a single GMC, spend 0 Chi (for a mook) or 2 Chi (for a named character) to knock out, daze, or otherwise render the target helpless and unable to interfere with you. This lasts for five minutes, or until you try to harm the character, whichever comes first.
         prerequisite: Friend of Darkness.
       -
@@ -269,7 +270,7 @@ martial_arts:
     path: Path of the outlaw
     schticks:
       -
-        title: rise of the Downtrodden
+        title: Rise of the Downtrodden
         description: Spend 1 Chi and 1 shot as an interrupt when struck by an attack. Until the end of the fight, the base Damage Value of the weapon hitting you becomes the base Damage Value of your hand-to-hand weapon.
       -
         title: No-o-o-o-o!!
@@ -280,7 +281,7 @@ martial_arts:
         description: Spend 1 Chi and 1 shot as an interrupt when struck by an opponent whose Defense value exceeds yours. Your Defense increases to equal the opponent’s (as of your use of this power) until end of fight.
         prerequisite: No-o-o-o-o!!
       -
-        title: rally the Shattered
+        title: Rally the Shattered
         description: Spend 1 Chi and 1 shot as an interrupt when an ally takes an Impairment point. Until end of sequence, the ally treats Impairment as a bonus instead of a penalty.
         prerequisite: Shield of the Underdog.
       -
@@ -328,11 +329,11 @@ martial_arts:
         description: When targeted for a Martial Arts attack, interrupt and spend 2 Chi to make one Martial Arts attack against your attacker, resolved before the original attack.
         prerequisite: Claw of the Tiger.
       -
-        title: unyielding Tiger Stance
+        title: Unyielding Tiger Stance
         description: Spend 1 Chi and 1 shot. Until the next keyframe, any opponent missing you with a Martial Arts attack takes a Smackdown equal to your weapon’s Damage Value.
         prerequisite: Tiger Stance.
       -
-        title: vengeance of the Tiger
+        title: Vengeance of the Tiger
         description: When you take 10 or more Wound Points from a Martial Arts attack, spend 3 shots as an interrupt to make a +3 Martial Arts strike against the original attacker.
         prerequisite: Unyielding Tiger Stance.
       -
@@ -346,7 +347,7 @@ martial_arts:
         title: Signature Weapon
         description: Select one specific martial arts weapon as a signature weapon. Your character might wield his lucky combat knife, the sword that got his father through a war, the hallowed spear of his destroyed village, and so on. A character using a signature weapon gets a +3 Damage Value bonus with that particular weapon. Note that this applies to a single, actual weapon, not to all identical weapons; your wing chun butterfly sword gives you a +3, but none of the other identical copies hanging on the dojo wall do. GM guidance for Signature Weapons appears on p. 302.
       -
-        title: versatile Master
+        title: Versatile Master
         description: Gain +2 to your first Martial Arts attack after switching from one weapon to another you have yet to use in the current fight.
       -
         title: Spear push
@@ -368,7 +369,7 @@ martial_arts:
         description: Evade an enemy with a graceful midair backflip. When an enemy misses you with a Martial Arts attack, spend 1 shot to fly up to 14 m backwards, away from your enemy. Regain 1 spent Chi point.
         prerequisite: Prodigious Leap.
       -
-        title: ominous Flutter
+        title: Ominous Flutter
         description: Spend 1 Chi. Until the end of the fight, any attack you immediately precede with a Prodigious Leap gets a +1 bonus.
         prerequisite: Aerial Pushaway.
       -
@@ -394,7 +395,7 @@ martial_arts:
         description: When you take 5 or more Wound Points from a non-Martial Arts attack, your next action occurs on the next shot. It and all subsequent actions carry their usual shot costs.
         prerequisite: Willow Step.
       -
-        title: rustling Leaves
+        title: Rustling Leaves
         description: When you take 5 or more Wound Points from a Guns attack, the attacker must Reload.
         prerequisite: Walk of a Thousand Steps.
       -
@@ -412,7 +413,7 @@ martial_arts:
         title: Hammer punch
         description: Your base damage with an unarmed Martial Arts attack is 9 or the current shot number, whichever is higher.
       -
-        title: one-Inch punch
+        title: One-Inch punch
         bonus: true
         description: In a fight under the adverse condition Confined Space, spend 1 Chi and 0 shots to gain a +2 Immunity bonus until end of fight or end of condition.
       -

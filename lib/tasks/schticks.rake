@@ -5,9 +5,9 @@ namespace :schticks do
     data["martial_arts"].each do |path|
       path["schticks"].each do |attributes|
         schtick = campaign.schticks.new(
-          category: "Martial Arts",
-          path: path["path"],
-          title: attributes["title"],
+          category: data["name"].titleize,
+          path: path["path"].titleize,
+          title: attributes["title"].titleize,
           description: attributes["description"]
         )
         schtick.save
