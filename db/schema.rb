@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_01_24_033520) do
+ActiveRecord::Schema[7.0].define(version: 2023_01_25_042917) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -171,6 +171,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_01_24_033520) do
     t.datetime "updated_at", null: false
     t.string "color"
     t.string "image_url"
+    t.boolean "bonus"
     t.index ["campaign_id"], name: "index_schticks_on_campaign_id"
     t.index ["schtick_id"], name: "index_schticks_on_schtick_id"
     t.index ["title"], name: "index_schticks_on_title", unique: true
