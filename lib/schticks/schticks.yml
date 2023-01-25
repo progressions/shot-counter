@@ -194,7 +194,7 @@
   name: "Martial Arts"
   paths:
     -
-      path: Path of the Banisher
+      name: Path of the Banisher
       schticks:
         -
           title: Blunt the Crane's Beak
@@ -216,7 +216,7 @@
           description: When a nearby ally takes attack damage, interrupt and pay 2 shots to remove all Wound Points the ally gained in the attack. Costs Chi equal to the number of times you have used Thwart the Dragon this fight.
           prerequisite: Blunt the Crane’s Beak
     -
-      path: Path of the Death Punch
+      name: Path of the Death Punch
       schticks:
         -
           title: Hands Without Shadow
@@ -230,7 +230,7 @@
           description: Any time after the second sequence, spend 3 Chi and make a Martial Arts punch attack against a featured foe. If successful, ignore normal Damage determination; the foe’s Wound Point total is now 34. If unsuccessful, regain 2 Chi. This has no effect on bosses.
           prerequisite: Lightning Fist.
     -
-      path: Path of the Dragon
+      name: Path of the Dragon
       schticks:
         -
           title: Bite of the Dragon
@@ -252,7 +252,7 @@
           description: Add the number of featured foes and bosses you have inflicted Wound Points on during the current fight to your Speed.
           prerequisite: Beard of the Dragon.
     -
-      path: Path of the Drunken Master
+      name: Path of the Drunken Master
       schticks:
         -
           title: Drunken Stance
@@ -282,7 +282,7 @@
           description: If a Guns attack misses you on any odd-numbered shot, regain a Chi point.
           prerequisite: Aberrant Spasm.
     -
-      path: Path of Flame
+      name: Path of Flame
       schticks:
         -
           title: Fire Strike
@@ -308,7 +308,7 @@
           description: Spend 1 Chi and make a Martial Arts punch attack against a named enemy. On a success, spend 2 shots per named enemy. All named enemies take 5 Wound Points.
           prerequisite: Fire Cloak.
     -
-      path: Path of the Fox
+      name: Path of the Fox
       schticks:
         -
           title: The Fox's retreat
@@ -334,7 +334,7 @@
           description: Spend 1 Chi immediately after Initiative is determined. Your Initiative result equals that of the combatant with the highest Initiative.
           prerequisite: Luck of the Fox.
     -
-      path: Path of the Healer
+      name: Path of the Healer
       schticks:
         -
           title: Corners of the Mouth
@@ -364,7 +364,7 @@
           description: After making a successful Martial Arts Check, spend 3 Chi and 1 shot to prevent your opponent from taking actions until the next keyframe, or until opponent takes 3 or more Wound Points, whichever comes first.
           prerequisite: Pressure Block.
     -
-      path: Path of the Hundred Names
+      name: Path of the Hundred Names
       schticks:
         -
           title: Bloody but unbowed I
@@ -388,7 +388,7 @@
           title: Rise in Slow Motion
           description: Immediately before the first attack you make after passing an Up Check, reduce your Wound Point total by your Toughness.
     -
-      path: Path of the Montage
+      name: Path of the Montage
       schticks:
         -
           title: Flesh Wound
@@ -404,7 +404,7 @@
           description: Add +1 to Defense vs. bosses; +3 Defense vs. uber- bosses.
           prerequisite: Training Sequence I.
     -
-      path: Path of the Ninja
+      name: Path of the Ninja
       schticks:
         -
           title: Friend of Darkness
@@ -438,7 +438,7 @@
           description: Summon a cloud of unnatural darkness to shroud your allies from harm in combat. Spend 3 shots to grant a Defense boost to all of your allies, which you may augment with Fortune. When an ally takes Wound Points from an attack while benefiting from this boost, you may, as a 0-shot interrupt, attack the ally’s attacker.
           prerequisite: Strike from Darkness.
     -
-      path: Path of the Nunchaku
+      name: Path of the Nunchaku
       schticks:
         -
           title: Whirl of Fury
@@ -460,7 +460,7 @@
           description: When a Martial Arts nunchaku attack hits a named character, spend 1 Chi. Your nunchaku Damage Value increases by 2. Until the end of the fight, each additional successful Martial Arts nunchaku attack increases your nunchaku damage by an additional 1.
           prerequisite: Rain of Pain.
     -
-      path: Path of the outlaw
+      name: Path of the outlaw
       schticks:
         -
           title: Rise of the Downtrodden
@@ -482,7 +482,7 @@
           description: If the number of named opponents exceeds the number of heroes taking part in the current fight, spend 2 Chi and 1 shot to give all allies +2 to attacks until the next keyframe.
           prerequisite: Rally the Shattered.
     -
-      path: Path of the Sword
+      name: Path of the Sword
       schticks:
         -
           title: Blooded Blade
@@ -512,7 +512,7 @@
           description: Any time after the second sequence, spend 1 shot and take 1 Mark of Death to down a featured foe.
           prerequisite: Blooded Blade.
     -
-      path: Path of the Tiger
+      name: Path of the Tiger
       schticks:
         -
           title: Claw of the Tiger
@@ -534,7 +534,7 @@
           description: Spend 2 Chi as an interrupt at the end of your action or another character’s action. Your next action occurs at the beginning of the next shot.
           prerequisite: Vengeance of the Tiger.
     -
-      path: Path of the Weapon Master
+      name: Path of the Weapon Master
       schticks:
         -
           title: Signature Weapon
@@ -552,7 +552,7 @@
           title: Mesmerizing Dart
           description: Spend 1 Chi and 1 shot. Until the next keyframe, every time you attack an opponent they lose 1 shot, regardless of whether your attack hits or misses.
     -
-      path: Path of the Welcoming Sky
+      name: Path of the Welcoming Sky
       schticks:
         -
           title: prodigious Leap
@@ -574,7 +574,7 @@
           description: On a successful Martial Arts attack, ignore normal damage determination. Instead, both you and your opponent roll a Swerve and add 35 (or 50 for Big Bruisers and bosses) to it, adopting the resulting number as your current Wound Points total. Neither you or your opponent can use any other effect to reduce Wound Points before performing an Up Check.
           prerequisite: "Flying Windmill Kick, plus at least one of the following: Turn the Tables, Thwart the Dragon, Shelter of Darkness, Tail of the Dragon, Mantis Stance, Nunchaku Nunchaku Nunchaku, Contract of the Fox, Hungry Fire, Flowing Strikes, Spasmodic Leap, Leap of the Tiger, Point Blockage, Natural Order."
     -
-      path: Path of the Willow
+      name: Path of the Willow
       schticks:
         -
           title: Willow Step
@@ -600,7 +600,7 @@
           description: When you take Wound Points from a Guns attack, spend 2 Chi as an interrupt to ignore them. If the fight takes place outdoors, a downpour ensues, and the area undergoes the adverse condition Torrential Rain.
           prerequisite: Enforced Tranquility.
     -
-      path: Path of Wing Chun
+      name: Path of Wing Chun
       schticks:
         -
           title: Hammer punch
@@ -625,7 +625,8 @@
           title: Flowing Strikes
           description: Once per fight, spend 1 Chi and 1 shot, choosing a specific foe. Your Martial Arts attacks against that foe cost 2 shots each until end of fight.
           prerequisite: Trapping Hands.
-      path: Path of Wushu
+    -
+      name: Path of Wushu
       schticks:
         -
           title: Horse Stance
@@ -646,3 +647,1219 @@
           title: Mantis Stance
           description: Whenever a named character deals you 8 or more Wound Points with a close combat attack, attack that foe as an interrupt.
           prerequisite: Unicorn Stance.
+-
+  name: "Transformed Animal"
+  paths:
+    -
+      name: Bear
+      schticks:
+        -
+          title: Apex predator
+          description: After your first successful Martial Arts attack of a sequence, the following attack gets +3 to Martial Arts.
+          title: Bellow
+          description: Spend 1 Chi and 2 shots. You and a target make Will Checks. If you succeed and your target fails, target takes 1 Impairment Point until the next keyframe.
+          title: Claw
+          description: Add +6 Damage when your Martial Arts attack hits an opponent during an even-numbered shot.
+          title: Determination
+          description: Add +2 to Up Checks.
+          title: Fortitude
+          description: Spend 1 Chi and 1 shot to reduce your Marks of Death by one.
+          title: Iron Gut
+          description: Ingested poisons, including toxic effects of food poisoning, have no effect on you.
+          title: perseverance
+          description: Spend 1 Chi. Select a foe. Each time you miss this foe with a Martial Arts attack, gain a +1 cumulative bonus to Martial Arts attacks against it until end of fight.
+          title: rage
+          description: When a foe deals 7 or more Wound Points to an ally, gain +2 Martial Arts vs. that foe until the next keyframe.
+          title: Slap
+          description: After a successful Martial Arts attack, spend 1 Chi. Opponent loses a number of shots equal to your Outcome.
+          title: very Strong
+          description: Add +3 to all Strength Checks.
+    -
+      name: Crab
+      schticks:
+        -
+          title: Crusty Defender
+          description: Add +2 to Martial Arts and +1 to Defense when defending a feng shui site from attack.
+        -
+          title: Fast
+          description: Spend X Chi to add +2X to an Initiative roll.
+        -
+          title: pincer I
+          description: On a successful bare-handed Martial Arts attack, you deal 11 damage and shot cost of target’s next attack increases by 1. Latter effect not cumulative with previous Pincer attacks.
+        -
+          title: pincer II
+          description: On a successful bare-handed Martial Arts attack, you deal 13 damage and shot cost of target’s next attack increases by 2. Latter effect not cumulative with previous Pincer attacks.
+        -
+          title: prosperity of the Crab
+          description: Spend 1 Chi to treat the roll you get on any positive Swerve die as a 5 instead.
+        -
+          title: Scuttle
+          description: Add +2 to Martial Arts vs. featured foes and bosses if your previous attack was against a different featured foe or boss than the one you’re attacking now.
+        -
+          title: Shell I
+          description: Spend 1 Chi and 3 shots; gain +2 Toughness until the next keyframe.
+        -
+          title: Shell II
+          description: Spend 1 Chi and 2 shots; gain +2 Toughness until the next keyframe.
+        -
+          title: Shell III
+          description: Spend 1 Chi or 1 shot; gain +2 Toughness until the next keyframe.
+        -
+          title: Stalky Eyes
+          description: Add +2 Defense before your first shot in a sequence.
+        -
+          title: Stubborn
+          description: Spend 1 Chi and 1 shot when you fail a check; make the check again.
+    -
+      name: Dragon
+      schticks:
+        -
+          title: Borderline psychopath
+          description: Add +1 Attack vs. foes who disrespected you in a previous scene.
+        -
+          title: Innate Superiority
+          description: Your unarmed Martial Arts Damage Value equals the Damage Value of the foe you’re hitting +1.
+        -
+          title: Lightning response
+          description: When you are hit by an attack during a shot higher than your first shot, as determined by your original Initiative roll, spend 0 shots as an interrupt to launch an attack against any foe. Subsequent successful attacks against you also trigger this schtick, provided they occur before your originally determined first shot.
+        -
+          title: Luck of the Dragon
+          description: If you spend Fortune on a check and still fail to meet the Difficulty, you get the Fortune back.
+        -
+          title: omnicompetent
+          description: If no other PC present for the current session has a value of 13 or more in a given skill, spend 1 Chi to gain a value of 15 in that skill until end of session.
+        -
+          title: preternaturally Aware
+          description: Add +3 to all Notice Checks.
+        -
+          title: quick Study
+          description: Spend 1 Chi to gain a schtick possessed by a PC whose player is absent. When using this schtick, you can spend your Chi points in place of any other Fortune subtype. Each time you use a Sorcery or Creature Powers schtick gained from Quick Study that requires a check or expenditure, you gain 1 Reversion Point.
+        -
+          title: robust Health
+          description: Add +3 to all Constitution Checks.
+        -
+          title: Self-Sure
+          description: Add +3 to all Will Checks.
+        -
+          title: very Strong
+          description: Add +3 to all Strength Checks.
+        -
+          title: Elephant Elephant Walk
+          description: Add +1 Martial Arts until end of sequence when you roll a lower Initiative than any other hero.
+        -
+          title: Extremely Strong
+          description: Add +5 to all Strength Checks. This counts as Very Strong for game effects that require that to activate.
+        -
+          title: Herd Instinct
+          description: Spend 1 Chi to grant +1 Toughness to all currently close allies until the next keyframe.
+        -
+          title: Hold Them off
+          description: Add +2 Martial Arts and +1 Defense when one or more allies has fled the current fight.
+        -
+          title: Never Forget
+          description: Add +1 Martial Arts vs. opponents you’ve previously fought.
+        -
+          title: Shoulder the Brunt
+          description: When a nearby ally takes Wound Points, spend 1 shot as an interrupt. You take the Wound Points instead.
+        -
+          title: Tough Hide
+          description: Add +1 Toughness vs. Martial Arts attacks.
+        -
+          title: Trample
+          description: As an interrupt after hitting with an unarmed Martial Arts attack, spend X Chi to add 3 times X to your Damage Value.
+        -
+          title: Trumpet
+          description: Spend X Chi to send a psychic distress call to all transformed animals within 10X km. They know where you are and that you are in trouble, but nothing else. How they respond is up to them.
+        -
+          title: Wide Frame
+          description: Spend 0 shots to reduce Wound Points taken as a pedestrian hit by a vehicle to 3.
+        -
+          title: Fox Adaptive
+          description: Spend 1 Chi to gain +1 Defense vs. close attacks and –1 against ranged attacks, or vice versa, until end of fight.
+        -
+          title: Elusive
+          description: As an interrupt when you are hit by an attack, spend 1 Chi to force the reroll of its Swerve.
+        -
+          title: Embezzle
+          description: When hit by an attacker with a higher attack AV than yours, you gain the same attack AV as the attacker until the next keyframe.
+        -
+          title: Fleet
+          description: As an interrupt after Initiative results are determined, spend 1 Chi to switch your opening shot for the sequence with that of any other combatant.
+        -
+          title: Fortune of the Fox
+          description: Treat all Fortune die results of 3 or less as 4s.
+        -
+          title: Henhouse prowl
+          description: As an interrupt when an ally deals Wound Points to an enemy, spend 1 Chi to redirect the Wound Points to a different enemy.
+        -
+          title: Scamper
+          description: As an interrupt after you take Wound Points from an attack, spend 1 Chi and roll a die. Substitute the die roll result for the number of Wound Points you would otherwise take.
+        -
+          title: Tricksy
+          description: As an interrupt when you are targeted for attack, spend 1 Chi and designate a different hero as target. Be prepared to explain how you’re doing this.
+        -
+          title: very Clever
+          description: Spend 1 Chi to automatically succeed at a single skill check, with an Outcome of 2. Attack Checks are not skill checks.
+        -
+          title: Zigzag
+          description: Spend 1 Chi to treat all mook hits against you as misses until the next keyframe.
+        -
+          title: Monkey Bounce
+          description: Make a 5-shot Martial Arts attack at +3. If successful, opponent loses 1 shot.
+        -
+          title: Diversion
+          description: Spend 1 Chi and 1 shot to make a Martial Arts Check against a foe’s Will Resistance. On a success, the foe loses 4 shots.
+        -
+          title: Fast
+          description: Spend X Chi to add +2X to an Initiative roll.
+        -
+          title: Lime in the Coconut
+          description: Spend 1 Chi. Until the end of the fight, anyone taking Wound Points from a grenade you threw takes an extra 4 Wound Points.
+        -
+          title: Luck of the Monkey
+          description: Regain a spent Chi point after any Way-Awful Failure.
+        -
+          title: Monkey King
+          description: Once per sequence, make an attack with staff or spear at a shot cost of 2.
+        -
+          title: Scamper
+          description: As an interrupt after you take Wound Points from an attack, spend 1 Chi and roll a die. Substitute the die roll result for the number of Wound Points you would otherwise take.
+        -
+          title: Tricksy
+          description: As an interrupt when you are targeted for attack, spend 1 Chi and designate a different hero as target. Be prepared to explain how you’re doing this.
+        -
+          title: Throw
+          description: Add +2 Martial Arts with thrown weapons.
+        -
+          title: You Scratch My Back
+          description: When an ally gives you a boost, the ally also gets the boost’s benefit.
+    -
+      name: Snake
+      schticks:
+        -
+          title: Coiled Strike
+          description: Make a 5-shot Martial Arts attack at +3. If successful, opponent loses 1 shot.
+        -
+          title: Constrict
+          description: Spend 1 Chi when you hit an opponent with a Martial Arts attack. Opponent takes 5 Wound Points whenever it attacks a target other than you. Lasts until you fail an Up Check, or end of fight, whichever comes first.
+        -
+          title: Fast
+          description: As an interrupt after Initiative results are determined, spend 1 Chi to switch your opening shot for the sequence with that of any other combatant.
+        -
+          title: rattle
+          description: Spend 1 Chi and make a Martial Arts Check against a foe’s Will Resistance. On a success, the foe takes 7 Wound Points the next time it attacks you. The foe is aware of this effect and can avoid it by attacking other heroes.
+        -
+          title: riveting Gaze
+          description: Spend 6 shots; an opponent of your choice must spend 6 shots.
+        -
+          title: Serpent's Tooth
+          description: Add +2 Defense vs. any foe you have ever made a successful Seduction Check against.
+        -
+          title: Shed Skin I
+          description: Spend 3 Chi to abandon your current human form in favor of a completely new human appearance of your choice. It may match the same general type as a particular person you have in mind, but the resemblance is glancing at best. You may never return to your former appearance. The transformation itself takes 1 hour and leaves behind a filmy outer layer of discarded skin. Ew.
+        -
+          title: Shed Skin II
+          description: As per the above, but you can also duplicate particular individuals well enough to be mistaken for them. Spend any amount of Chi. People who know the subject you’re imitating get Notice Checks, one per viewer per scene, to spot the imposture, with the Difficulty equaling the amount of Chi you spent times 3. The transformation conveys no particular ability to imitate the individual’s voice, speech patterns, mannerisms, or anything else beyond visual resemblance.
+        -
+          title: Scorpion Hardy
+          description: Spend 1 Chi when you take Wound Points outside of a fight. Number of Wound Points dealt is cut in half, rounding down.
+        -
+          title: Hypnotic Sidling
+          description: Spend 6 shots; an opponent of your choice must spend 6 shots.
+        -
+          title: poison Sac
+          description: Spend 1 Chi as an interrupt after making a successful Martial Arts attack; your target takes no Wound Points. Until end of fight, each time the target is hit by an attack, its Toughness drops by 1. Opponents suffer no additional ill effect from all further hits with this schtick.
+        -
+          title: Scuttle
+          description: Add +2 to Martial Arts vs. featured foes and bosses, if your previous attack was against a different featured foe or boss than the one you’re attacking now.
+        -
+          title: Stillness
+          description: Add +2 Defense if you have yet to attack during the current sequence.
+        -
+          title: Slowing Strike
+          description: Spend 1 Chi as an interrupt after making a successful Martial Arts attack. Until the next keyframe, opponent adds 1 to the shot cost of all attacks.
+        -
+          title: Sting
+          description: Spend 1 Chi as an interrupt after making a successful Martial Arts attack. Until end of fight, target takes 3 Wound Points each time it fails an attack.
+        -
+          title: Sudden Jab
+          description: Add +3 to Initiative, provided your first action in the sequence is a Martial Arts attack.
+        -
+          title: Surprise
+          description: Add +2 to Martial Arts vs. opponents who have yet to attack during the current sequence.
+        -
+          title: Spider Chi Weaver
+          description: Add +2 to Martial Arts if you are attacking an enemy feng shui site.
+        -
+          title: House proud
+          description: Add +X bonus to all skill checks in story scenes. X is equal to the number of feng shui sites you are attuned to.
+        -
+          title: Lair Dweller
+          description: Add +1 to Martial Arts and Defense if you arrived at the fight’s location before the other side did.
+        -
+          title: Leap
+          description: Spend 1 Chi to leap up to 7 m, either horizontally or vertically. Add 7 m to the leap for each feng shui site you are attuned to.
+        -
+          title: pounce
+          description: Add +3 to Initiative, provided your first action in the sequence is a Martial Arts attack.
+        -
+          title: Scuttle
+          description: Add +2 to Martial Arts vs. featured foes and bosses, if your previous attack was against a different featured foe or boss than the one you’re attacking now.
+        -
+          title: Toxic Strike
+          description: Spend 1 Chi as an interrupt after making a successful Martial Arts attack; if at any point during the fight the target reaches 30 or more Wound Points, it then immediately takes another 5 Wound Points.
+        -
+          title: Tingle
+          description: Spend 1 Chi to know whether anyone who wants you dead, or has designs on a feng shui site you are attuned to, or is currently within 1 km of any feng site you are attuned to. If you are attuned to more than one site, you know which one. Other than that, you only know of the possible danger.
+        -
+          title: Web
+          description: If an enemy or supporting character tries to Cheese It, spend 1 Chi to make an attack against that opponent as an interrupt.
+        -
+          title: Tortoise rebuke
+          description: Spend 1 Chi. Until end of fight, the battle zone is treated as hostile to Sorcery.
+        -
+          title: reflect
+          description: As an interrupt when hit by a Sorcery attack, spend 1 Chi and 1 shot. The Sorcerer takes the Smackdown instead of you.
+        -
+          title: Slow but Steady
+          description: Add +2 to attacks during a sequence’s final 3 shots.
+        -
+          title: Shell I
+          description: Spend 1 Chi and 3 shots; gain +2 Toughness until the next keyframe.
+        -
+          title: Shell II
+          description: Spend 1 Chi and 2 shots; gain +2 Toughness until the next keyframe.
+        -
+          title: Shell III
+          description: Spend 1 Chi or 1 shot; gain +2 Toughness until the next keyframe.
+        -
+          title: Wait for an opening
+          description: +2 Martial Arts vs. enemies who have made Way- Awful Failures during the current fight. Ask the GM to alert you when this happens.
+        -
+          title: Wisdom
+          description: Spend 1 Chi when another player fails a check to gain information or have a contact. You know the answer or a relevant contact.
+-
+  name: "Creature"
+  paths:
+    -
+      name:
+      schticks:
+        -
+          title: Blood Drain
+          description: You have a specialized body feature that allows you to draw blood from living victims. Examples might include hollow fangs, rasping mouths on the palms of your hands, or dozens of little suckers on your torso.  After dealing Wound Points to an enemy, spend 1 Magic and 1 shot as an interrupt. Subtract the number of Wound Points you just dealt to the foe from your own Wound Point total.
+        -
+          title: Born in a Cage
+          description: After a boss deals you any number of Wound Points, add a free Fortune die to your next check.
+        -
+          title: Conditional Escalation
+          description: Add +2 to Creature Powers if at least one of your allies has 25 or more Wound Points. +3 if at least one of them is down.
+        -
+          title: Corded Musculature
+          description: Add +3 Toughness vs. close combat attacks during the first sequence of a fight, +2 during the second, and +1 during the third.
+        -
+          title: Courtier of the Yama Kings
+          description: Spend 1 Magic to seem trustworthy to all authority figures present in the current scene. Lasts until end of adventure, or until you actively violate their trust, whichever comes first.
+        -
+          title: Death resistance I
+          description: Add +2 bonus to Death Checks.
+        -
+          title: Death resistance II
+          description: Add +3 bonus to Death Checks.
+        -
+          title: Death resistance III
+          description: Add +4 bonus to Death Checks.
+        -
+          title: Demon punch
+          description: Make close combat Creature Powers attacks against your opponent’s Defense, with a base Damage of 13 during the first sequence, 11 during the second, and 9 in subsequent sequences.
+        -
+          title: Deserter from the Hell of Flaying
+          description: Spend 1 shot to make a hero immune to Impairment until end of fight.
+        -
+          title: Emit Smokescreen
+          description: Spend 1 Magic to allow any number of characters to automatically Cheese It.
+        -
+          title: Empathic rage
+          description: After another hero receives a Mark of Death, your next attack check gets a free Fortune die.
+        -
+          title: Exile from the Hell of Dismemberment
+          description: If another hero receives a Mark of Death, spend 1 shot to remove it. Roll a die. On an odd result, you gain a Mark of Death.
+        -
+          title: Flashback from the Hell of Knives
+          description: When a foe downs a hero, and is close enough for you to attack, make an attack against that foe as an interrupt.
+        -
+          title: Flight
+          description: Fly through the air, moving up to 3 m per shot.
+        -
+          title: Foul Spew
+          description: Barf acidic chunks on those who cross you. As an interrupt after you take more than 5 Wound Points from an enemy attack, spend 1 Magic and 1 shot. Enemy loses 3 Speed until end of fight if this is the first sequence, 2 Speed if this is the second sequence, or 1 Speed if this any subsequent sequence.
+        -
+          title: Inevitable Comeback
+          description: After you fail a Death Check, spend 3 Magic to return to life with 5 Wound Points. You must give your fellow heroes time to think you’re definitely, absolutely dead this time.
+        -
+          title: Insubstantial
+          description: Pass through solid matter by checking Creature Power against a Difficulty of 1 for each inch of material you are moving through. Specify two types of matter you cannot pass through; your GM picks a third.. Note that this power does not make you immune to damage.
+        -
+          title: Memory Drain
+          description: After damaging an enemy with any close combat Creature Powers attack, spend 1 Magic. You can access the enemy’s recollections until end of session.
+        -
+          title: Mimicry
+          description: After damaging an enemy with any close combat Creature Powers attack, spend 1 Magic. You can perfectly imitate this enemy’s voice until end of session.
+        -
+          title: Monstrous Foot Stomp
+          description: Momentarily grow a devastating pedal extremity. After you undergo a Transformation (q.v.) from human to creature, your next Creature Powers attack check this fight gets a free Fortune die. If successful, roll yet another die and add it to the Smackdown.
+        -
+          title: Natural Weapon
+          description: You strike with spines, claws, jagged teeth, or another monstrous body part of your choice. +2 Damage when making close Creature Powers attacks.
+        -
+          title: Night Dweller
+          description: Add +1 attack and +2 Defense during fights that take place outdoors at night.
+        -
+          title: rage Against Machines
+          description: Spend 3 shots and make a Creature Powers attack, at close or ranged distance, against the Driving value of a foe operating a moving vehicle. The vehicle takes 8 Condition Points. If the vehicle is involved in a Chase, it also takes 8 Chase Points, and is treated as if it has been rammed or sideswiped.
+        -
+          title: regeneration I
+          description: Your Wound Point total decreases by 2 at the beginning of each sequence.
+        -
+          title: regeneration II
+          description: Your Wound Point total decreases by 4 at the beginning of each sequence.
+        -
+          title: regeneration III
+          description: Your Wound Point total decreases by 5 at the beginning of each sequence.
+        -
+          title: regeneration Iv
+          description: Your Wound Point total decreases by 6 at the beginning of each sequence.
+        -
+          title: Schooled in the Hell of piercing
+          description: Your attacks treat foes with Toughness ratings of 7 or more as if they had a Toughness of 5.
+        -
+          title: Steel Hide
+          description: +3 Toughness vs. ranged attacks during the first sequence of a fight, +2 during the second, and +1 during the third.
+        -
+          title: Transformation I
+          description: You may change back and forth from your true form to that of an ordinary-looking human being. Describe the single human form you can assume. While in this form you can’t access your other Creature Powers. In combat, it takes you 3 shots to transform. In any other scene, it takes about 20 seconds.  If you are a ghost, your normal-seeming false form looks like you, except for the dead and see-through part.
+        -
+          title: Transformation II
+          description: As per Transformation I, but you can spend 1 Magic or 3 Magic to assume a new, normal- looking human form other than your default. If you spend 1, you can never assume that form in any subsequent session. If you spend 3, you can change to that form at will for the length of the series.
+        -
+          title: venom Sac
+          description: When you hit a named character with a close combat Creature Powers attack, you may specify that they take no damage now, but instead take the damage from your attack +5, 5 shots from now.
+-
+  name: "Cyborg"
+  paths:
+    -
+      name:
+      schticks:
+        -
+          title: Adrenal Boy-Howdy
+          description: Subdermal adrenaline injectors give your nervous system a kick in the pants in crisis situations. If you are Impaired, you make attacks at a shot cost of 2.
+        -
+          title: Agony Grenade
+          description: A relic of the old regime, this looks like a regular grenade with a demon hand for a pin. Spend 3 shots to deal all combatants 1 Wound Point each shot until end of sequence. Spend 1 Fortune apiece to spare allies (but not yourself ).
+        -
+          title: Blow up real Good
+          description: Take X Marks of Death to make a Scroungetech attack, Damage Value 20, against X–1 targets, who can be either in close or ranged proximity. Your attack hits every target whose Defense your attack meets or beats. If your result is less than the lowest Defense among any target, gain a retroactive +1 bonus to it.
+        -
+          title: Buzzsaw Hand
+          description: As an interrupt after a successful close- combat attack fails to do more than 4 Wound Points to an opponent, roll a die. On an even result, target of your attack takes 10 Wound Points. On an odd result, you take 5 Wound Points.
+        -
+          title: Cortisol Field Generator
+          description: Spend 3 shots; until end of fight, any featured foe reaching 25 or more Wound Points Cheeses It.
+        -
+          title: Force Blade
+          description: Make close Scroungetech attacks with a Damage Value of 10. Add +5 Damage vs. targets with Toughness 8 or higher.
+        -
+          title: Fluid Spill
+          description: If, when you are Impaired, an enemy misses you in close combat, spend 1 Fortune as an interrupt to attack that enemy.  This models a surprise opportunity you get when your opponent slips on the fluid you’re leaking.
+        -
+          title: Grav plate
+          description: Make a Scroungetech attack against multiple opponents. If successful, all of your targets take 0 Wound Points but lose 3 shots apiece.
+        -
+          title: Helix rethreader
+          description: Spend 3 shots; until the next keyframe, any named combatant (including you) who makes a failed attack takes 5 Wound Points.
+        -
+          title: Helix ripper
+          description: The defeat of the Architects left these massive rifles made of demon bone lying around for just anyone to pick up.  Make a +2 ranged Scroungetech attack against a mook or mooks. For each mook you down, you regain a spent Fortune point and take 2 Wound Points.
+        -
+          title: Hot Hot Hotspot
+          description: Connect any wi-fi-capable device to the Contemporary Juncture internet from any place on the planet, from the Netherworld, or from any other juncture, including pop-ups.
+        -
+          title: Hyperadrenaline patch
+          description: As an interrupt to any action, take 7 Wound Points to give a boost to an ally.
+        -
+          title: Improbability Capacitor
+          description: As an interrupt on an ally’s successful attack, spend 1 Fortune and 1 shot. Ally’s attack fails. Don’t roll your next attack; instead use the ally’s result from this attack.
+        -
+          title: Internal Lockbox
+          description: An artificial cavity in your abdomen allows you to store stuff where ordinary searches can’t find it.  A single gun with a Concealment of less than 5 is considered to have a Concealment of 0, until you remove it from your lockbox.
+        -
+          title: Intra-reality Goggles
+          description: Identify all Innerwalkers in your direct line of sight within 300 m. For Innerwalkers within 15 m, the goggle read-out tells you which other juncture they last visited and how long ago they left it.
+        -
+          title: Interceptor Drone
+          description: As an interrupt when an ally is hit by a ranged attack, spend 1 shot to grant that ally +5 Toughness. Bonus applies to the damage from this hit, as well as any other subsequent attacks this shot.
+        -
+          title: Kinetic Distributor
+          description: Spend 1 Fortune as an interrupt when targeted by a close attack. Gain +5 Toughness. If the attack deals you no Wound Points, roll a die. On an odd result, pick an ally to take 12 damage.
+        -
+          title: Laser Goggles
+          description: Make ranged Scroungetech attacks with a Damage Value of 11.
+        -
+          title: Lumbar Scorpion
+          description: A processor wired into the base of your spine keeps your body going after brain death.  Ignore the effects of failed Up Checks until end of fight. At the end of a fight in which you made 1 or more Up Checks, gain an additional Mark of Death.
+        -
+          title: onboard Flamethrower
+          description: Make ranged Scroungetech attacks with a Damage Value of 14. Each time you attack with it, take 3 Wound Points.
+        -
+          title: Molecular Disturber
+          description: Spend 1 Fortune as an interrupt when targeted by a Guns attack. Gain +3 Defense. If the attack misses, roll a Swerve. If the result is negative, pick an ally to be hit by the attack, with an Outcome of 2.
+        -
+          title: Neural Stimulator
+          description: Add +X Speed until end of fight; take 5 times X Wound Points.
+        -
+          title: pain uptake Inhibitor
+          description: When you take 10 or more Wound Points from an enemy attack, add a free Fortune die to your next attack.
+        -
+          title: personal Copter rig
+          description: Spend 1 shot to fly up to 14 m.  An enemy targeting you with a successful stunt attack wrecks your rotor until end of fight, preventing you from flying. Roll a Swerve. On a negative result, take 6 Wound Points.
+        -
+          title: plasma Tubules
+          description: Make a close combat Scroungetech attack, Damage 9. On a success, spend 1 Fortune to swap your Wound Point total with your target’s.
+        -
+          title: pulse Grenade
+          description: Any time after the end of sequence 2, spend 3 shots to down all mooks.
+        -
+          title: Quantum Manipulator
+          description: Spend 1 Fortune and 3 of a willing ally’s shots to make an attack as an interrupt. Downed allies can’t give you their shots.
+        -
+          title: reflex ramper
+          description: When an attack misses, take 1 Impairment to make a new attack on the same target as an interrupt. This Impairment goes away at the beginning of the next session.
+        -
+          title: robot Arm
+          description: Make close Scroungetech attacks with a Damage Value of 11.
+        -
+          title: Schrödinger Circuit
+          description: As an interrupt before making an Up Check, swap Wound Point totals with a willing ally. Ally does not have to make an Up Check until next taking Wound Points and gains a +2 bonus on that Up Check.
+        -
+          title: Seeker Missile
+          description: Make a Scroungetech attack against a mook. If successful, spend 1 Fortune to down an additional number of mooks equal to your Outcome - 13.
+        -
+          title: Shower of Sparks
+          description: The Smackdown of your Scroungetech attacks increases by 2 for each point of Impairment you’re currently suffering.
+        -
+          title: Smokin'!
+          description: When you hit multiple opponents with a ranged attack, regain 1 spent Fortune.
+        -
+          title: Subatomic Transfuser
+          description: Spend 3 shots and take 4 times X Wound Points to remove 10 Wound Points apiece from X allies.
+        -
+          title: Subdermal plating
+          description: Add +7 Toughness vs. damage from sources other than attacks or the use of schticks.
+        -
+          title: Titanium Claws
+          description: Spend 1 shot as an interrupt after dealing Wound Points to an enemy. Wound Points dealt increase by 5.
+        -
+          title: Tracker pin
+          description: Once you hit a foe in close combat, you subsequently know precise coordinates of the foe’s whereabouts at all times, provided the two of you are in the same juncture. This works for the duration of the series.
+        -
+          title: vampire rounds
+          description: When you hit multiple opponents with a ranged weapon attack, add a Damage bonus to one particular firearm equal to the number of opponents hit. Bonus lasts until end of fight. This may apply to multiple firearms but will not stack on the same firearm.
+        -
+          title: Yowch!
+          description: When you take your first point of Impairment, you suffer an obvious injury to your mechanical parts that others can’t help finding disturbing.  The shot cost of any attack against you increases by your degree of Impairment.
+-
+  name: "Driving"
+  paths:
+    -
+      name:
+      schticks:
+        -
+          title: Armor plated
+          description: You own and usually drive a customized vehicle whose body you have strategically reinforced. Compared to the standard model, it gets +1 to Frame and Crunch.
+        -
+          title: Counterslam I
+          description: Opposing vehicles take +3 Chase Points from Bumps.
+        -
+          title: Counterslam II
+          description: Opposing vehicles take +6 Chase Points from Bumps.
+        -
+          title: Counterslam III
+          description: Opposing vehicles take +9 Chase Points from Bumps.
+        -
+          title: Custom ride
+          description: You own and usually drive a customized vehicle, one you know down to every quirk and rivet. Compared to the standard model, it gets +1 to Handling and Squeal.
+        -
+          title: Dazed and Contused
+          description: Until the next keyframe, enemies getting out of a crashed vehicle you at any point rammed or sideswiped take 1 point of Impairment and add 1 to all shot costs.
+        -
+          title: Floor It I
+          description: +1 Handling when an opponent narrows the gap with you.
+        -
+          title: Floor It II
+          description: +2 Handling when an opponent narrows the gap with you.
+        -
+          title: Floor It III
+          description: +3 Handling when an opponent narrows the gap with you.
+        -
+          title: Hightailing It
+          description: Spend 1 Fortune to get +2 Driving until the next keyframe when you are the evader in a vehicle chase. You can’t acquire this schtick if you already have Hot Pursuit.
+        -
+          title: Hold on Tight I
+          description: +2 to Chase Points dealt an enemy vehicle when you close or narrow the gap with it.
+        -
+          title: Hold on Tight II
+          description: +3 to Chase Points dealt an enemy vehicle when you close or narrow the gap with it.
+        -
+          title: Hold on Tight III
+          description: +4 to Chase Points dealt an enemy vehicle when you close or narrow the gap with it.
+        -
+          title: Hot pursuit
+          description: Spend 1 Fortune to get +2 Driving until the next keyframe when you are the pursuer in a vehicle chase. You can’t acquire this schtick if you already have Hightailing It.
+        -
+          title: I Just painted That
+          description: +2 Martial Arts vs. any character who damaged your vehicle, even superficially, during the current session.
+        -
+          title: Laying rubber
+          description: Pay 1 Fortune as an interrupt when a passenger in a vehicle you’re driving is targeted for attack. All passengers in your vehicle gain +1 Defense until the next keyframe.
+        -
+          title: Lightning Speed
+          description: Pay 3 Fortune; until the next keyframe, the shot cost of all your Driving actions decreases by 1, with a minimum cost of 1.
+        -
+          title: objects in the Mirror
+          description: Pay 1 Fortune as an interrupt after making a Driving Check; all passengers in your vehicle gain +1 to attacks until the next keyframe.
+        -
+          title: obstacle Course
+          description: Pay 1 Fortune to ignore any negative modifiers to Driving from road obstacles and conditions until end of fight.
+        -
+          title: oh No You Don't
+          description: As an interrupt after your vehicle takes Chase Points from an enemy narrowing or closing its gap with you, spend 1 Fortune and 1 shot to reduce your vehicle’s total Chase Points by 5.
+        -
+          title: A ride is a ride
+          description: Ignore Unfamiliar Vehicle penalties.
+        -
+          title: ram Speed I
+          description: When you ram or sideswipe a vehicle, gain +1 Crunch. +2 to your Damage Value when you hit a pedestrian.
+        -
+          title: ram Speed II
+          description: When you ram or sideswipe a vehicle, gain +2 Crunch. +4 Damage Value when you hit a pedestrian.
+        -
+          title: ram Speed III
+          description: When you ram or sideswipe a vehicle, gain +3 Crunch. +6 Damage Value when you hit a pedestrian.
+        -
+          title: Swerve I
+          description: +1 Frame when rammed or sideswiped.
+        -
+          title: Swerve II
+          description: +2 Frame when rammed or sideswiped.
+        -
+          title: Swerve III
+          description: +3 Frame when rammed or sideswiped.
+        -
+          title: Takes a Licking
+          description: As an interrupt after your vehicle takes Chase Points from a ram or sideswipe, or a character attack or stunt, spend 1 Fortune and 1 shot to reduce your vehicle’s total Chase Points by 7.
+        -
+          title: Tarmac Warrior
+          description: If you exit your vehicle after making at least one Driving Check, +2 to your attacks until end of fight.
+        -
+          title: Tight roll I
+          description: When a vehicle you’re driving crashes, you and all occupants gain +2 Toughness against crash damage.
+        -
+          title: Tight roll II
+          description: When a vehicle you’re driving crashes, you and all occupants gain +4 Toughness against crash damage.
+        -
+          title: Tight roll III
+          description: When a vehicle you’re driving crashes, you and all occupants gain +6 Toughness against crash damage.
+        -
+          title: Tools of the Trade
+          description: After you make a successful Martial Arts attack with a wrench, tire iron, or improvised blunt weapon, spend 1 Fortune as an interrupt to give it a Damage Value of 15 until the next keyframe.
+        -
+          title: vroom!
+          description: If you are in the driver’s seat of a vehicle at the beginning of a sequence, spend 1 Fortune to gain an Initiative result 1 higher than that of any other fight participants. Any other heroes with Vroom! go during the same higher shot as you, by player seating order.
+-
+  name: "Foe"
+  paths:
+    -
+      name:
+      schticks:
+        -
+          title: Broken Trigram
+          description: "Suitable for: Sorcerer.  Spend 1 shot; if the foe is still active at the start of the next keyframe, target hero suffers a financial setback in a later scene. Explain these stakes to the players. Usable once per adventure. Use this only if you have a setback in mind."
+        -
+          title: Clear Aim
+          description: Add +3 Attack vs. characters whose current Defense exceeds their base Defense.
+        -
+          title: Contagion
+          description: "Suitable for: Supernatural Creature.  After the foe does 1 or more Wound Points on a successful Bite attack, the victim makes a Defense Check against the foe’s attack result. On a failure, the victim begins to turn into a version of the foe, and takes 1 Impairment until end of fight.  Only one hero per fight suffers the Contagion effect.  After the fight, the victim falls into a sickened, semi-conscious state. It can be ended, and the contagion cured, with an expenditure of 3 Magic points by a character with any schtick from the Sorcery Heal specialty. This expenditure cures any number of victims. Absent this intervention, the group becomes aware of a cure that requires them to take action in the storyline. They incur a debt or negative consequence to get or administer the cure.  The cure for the key jiangshi’s contagion effect draws on common folklore and is found in that foe’s description on p. 194."
+        -
+          title: Copy Cat
+          description: After missing a Dodging hero, the foe gains +2 Defense until the next keyframe.
+        -
+          title: Cursed Weapon
+          description: "Suitable for: Sorcerer, Supernatural Creature.  When a hero misses a weapon attack against this foe, all subsequent attacks using that weapon take a –2 penalty and cost +1 shots. If the hero drops the weapon and then Rearms, the attack penalty and added shot cost go away."
+        -
+          title: Cyclical Flow
+          description: "Suitable for: Martial Artist.  Damage equals current shot number +5."
+        -
+          title: Defensive Mastery
+          description: "Suitable for: Martial Artist.  When the foe takes more than 10 Wound Points from a weapon-wielding hero, the foe may spend 1 shot to Disarm the hero."
+        -
+          title: Delayed Death Strike
+          description: "Suitable for: Martial Artist.  On a successful unarmed strike, the target hero starts their next fight with 1 Mark of Death. Usable once per fight."
+        -
+          title: Disarm
+          description: The foe’s first successful hit against a hero each fight disarms that hero.
+        -
+          title: Disfiguring Strike
+          description: On an attack with an Outcome of 4 or more, the target hero suffers a gruesome (if temporary) physical injury that leads to a complication in her melodramatic storyline. Usable once.
+        -
+          title: Disrupt Meridian
+          description: "Suitable for: Martial Artist.  As an interrupt after a successful attack, spend 6 shots. Roll a die. On an even result the number of Wound Points dealt to hero doubles. On an odd result the hero takes 0 Wound Points."
+        -
+          title: Divert Blow
+          description: "Suitable for: Martial Artist.  Spend 1 shot as an interrupt after being hit by a Martial Arts attack; if the attack would deal 5 or less Wound Points, the attack deals 1 Wound Point. Otherwise, the attack deals 3 Wound Points."
+        -
+          title: Domination
+          description: "Suitable for: Sorcerers, Supernatural Creatures, Scroungetech Opponents with Hypnotic Devices.  The foe spends 1 shot and chooses a hero to make a Difficulty 10 Will Check. If the hero fails, the foe spends another 2 shots, and chooses the target of the hero’s next attack."
+        -
+          title: Don't Turn Your Back
+          description: Add +2 to Attack if the foe has not been attacked since it last attacked.
+        -
+          title: Dread resurrection
+          description: "Suitable for: Sorcerer.  Spend 1 shot; if the foe is still active at start of the next keyframe, an enemy of the target will come back from the dead in a later scene. Explain these stakes to the players. Use only if you have a dead enemy in mind."
+        -
+          title: Energy Drain
+          description: "Suitable for: Mutant, Supernatural Creature, Scroungetech.  Add +2 attack if any hero spent a Fortune point (including subtypes) since foe’s previous attack."
+        -
+          title: Explosive vest
+          description: All nearby heroes take a Smackdown of 12 when the foe goes down.
+        -
+          title: Fender Blender
+          description: "Suitable for: Gene Freak, Supernatural Creature.  If a foe is hit as a pedestrian during a chase, the foe takes no Wound Points. The Wound Points the foe would ordinarily take are instead added to the Driver’s Chase Point total, and count as a ram or sideswipe. Unlike most foe schticks, keep this one a secret until first used."
+        -
+          title: Flying Guillotine
+          description: "Suitable for: Martial Artist.  The foe hurls a bladed collar, sometimes connected by a chain, sometimes thrown by a weird curved blade, onto a victim. Soon blades will pop from the collar and it will constrict with decapitating force.  On a successful Martial Arts ranged hit, note the Wound Points hero would suffer on a Smackdown calculated with a Damage Value of 20. Unless another hero makes a successful stunt attack or athletic stunt to remove the collar within the next 3 shots, the hero suffers that damage.  Usable once per sequence."
+        -
+          title: Furious Wrath
+          description: If the foe’s last attack missed, its current one gains +1 Attack and +3 Damage. Not cumulative.
+        -
+          title: Garrotte of Destiny
+          description: "Suitable for: Sorcerer, Supernatural Creature.  After the first sequence, if the foe is up at the beginning of each sequence, all heroes lose 1 Fortune. Explain why this happened when the heroes first lose their Fortune."
+        -
+          title: Headshot
+          description: After a successful attack, the foe may decide that a hero takes –2 penalty to skill checks until beginning of a subsequent fight. This effect may extend into a future session. Usable once per fight.
+        -
+          title: Heal Steal
+          description: "Suitable for: Sorcerer.  As an interrupt, when a hero uses an effect that reduces any hero’s Wound Point total, the foe spends 1 shot and checks Sorcery against the effect- user’s Defense. On a success, the effect is dissipated, and the foe spends 2 more shots."
+        -
+          title: Helix Shredder
+          description: "Suitable for: Scroungetech.  On a successful attack, the target takes –1 penalty to Up Checks until end of fight."
+        -
+          title: Hot Metal
+          description: "Suitable for: Sorcerer, Supernatural Creature, Mutant.  On a successful hit, a hero carrying a weapon must drop that weapon, or suffer a –2 attack penalty until the next keyframe. If the hero drops the weapon and then Rearms, the penalty goes away."
+        -
+          title: Implant Suggestion
+          description: "Suitable for: Sorcerer, Scroungetech, Supernatural Creature.  Spend 1 shot; if the foe is still active at the start of the next keyframe, target hero takes an action against his will, in favor of the foe’s faction or interests, in a later scene. Explain these stakes to the players. Usable once per adventure.  When the implanted suggestion activates, the hero may make Difficulty 13 Will Check to suppress the impulse. Success postpones the effect until a future scene. The hero succumbs only once."
+        -
+          title: Inspire Fanaticism
+          description: "When a weapon-wielding hero announces an attack against a foe while at least 1 mook is still up, the foe spends 1 shot as an interrupt. One mook goes down. Roll a die. Odd: the attack is nullified, and the hero is Disarmed."
+        -
+          title: Inspire Loyalty
+          description: When this foe goes down, all active featured foes make an interrupt attack against a hero of their choice at a shot cost of 0.
+        -
+          title: Kneecapper
+          description: When the foe’s close attack hits with an Outcome of 3 or more, the target loses 3 Speed until end of fight. No hero can lose more than 3 Speed to any Kneecapper effect in any one fight.
+        -
+          title: Last rally
+          description: As an interrupt after taking Wound Points that bring the foe to a total of 35 or more, the foe makes an attack against any hero, at +2 Attack and +6 Damage.
+        -
+          title: Leveling Strike
+          description: After a successful attack, target hero is at –1 Attack vs. mooks while the foe remains active. This penalty is not cumulative on multiple hits.
+        -
+          title: Mach Schnell!
+          description: Add +3 to mook Initiative while this foe is up.
+        -
+          title: Medkit
+          description: Spend 3 shots to remove 7 Wound Points from a boss or featured foe.
+        -
+          title: Mimic Form
+          description: "Suitable for: Martial Artist.  Spend 1 shot as an interrupt after taking Wound Points from an attack with a Damage Value higher than any of the foe’s weapons. The foe’s Damage Value now equals that of the attacking hero."
+        -
+          title: Monkey See, Monkey Crouch
+          description: When a hero Dodges, the foe gains +3 defense against next attack. This is not cumulative.
+        -
+          title: Not So Fast
+          description: When a hero Cheeses It, this foe may spend 3 shots as an interrupt to deal that hero 14 Damage. This does not expend the bad guys’ one chance to stop the hero from Cheesing It.
+        -
+          title: Nuh-uh
+          description: As an interrupt when a hero regains any number of spent Fortune (including subtypes), spend 3 shots to attack that hero.
+        -
+          title: Numerical Superiority
+          description: Add +2 Toughness when more than half the mooks on the foe’s side are still standing.
+        -
+          title: offended Honor
+          description: Add +1 Damage for each hero after the first that has attacked it during the current fight.
+        -
+          title: oxygen Sink
+          description: "Suitable for: Mutant.  While the foe is up, heroes take –1 penalty to Up Checks."
+        -
+          title: parting Shot
+          description: If the foe successfully Cheeses It despite a hero’s attempt to stop it, the hero takes 14 Damage.
+        -
+          title: pause That refreshes
+          description: As an interrupt when a hero makes a Dodge, the foe may remove 4 Wound Points from any foe, including itself.
+        -
+          title: pep Talk
+          description: Spend 1 shot and make an attack against the Defense of the hero the foe last tried to hit. On a success, a number of downed mooks equal to 1 plus the Outcome recovers, and the foe spends 2 more shots. The foe can’t revive more mooks than are currently downed.
+        -
+          title: protective Fury
+          description: "Suitable for: Martial Artist.  When a mook is downed by a weapon-wielding hero, the foe may spend 1 shot to Disarm that hero."
+        -
+          title: Quantum Bastard
+          description: "Suitable for: Scroungetech.  While the foe is up, all heroes take 5 Wound Points each time they roll boxcars."
+        -
+          title: radiation poisoning
+          description: "Suitable for: Scroungetech, Mutant.  Spend 3 shots and beat a hero’s Defense with a Scroungetech or Mutant Check; if the foe is still active at the end of a sequence, that hero takes 22 Damage. Explain these stakes to the players."
+        -
+          title: reinforced Skeleton
+          description: "Suitable for: Scroungetech, Mutant, Supernatural Creature.  On a failed Martial Arts attack against the foe, the attacker takes Wound Points equal to the difference between result and the defender’s Defense."
+        -
+          title: reversion Curse
+          description: "Suitable for: Sorcerer, Ancient or Past Martial Artist.  Spend 1 shot; if the foe is still active at the start of the next keyframe, all Transformed Animal heroes will gain 5 Reversion Points at start of the next session. Explain these stakes to the players. Usable once per session."
+        -
+          title: requires Group Effort
+          description: +1 Damage for each hero who has yet to attack the foe during the current fight.
+        -
+          title: retrench
+          description: Regain 7 Wound Points at the end of any sequence in which a hero Dodged.
+        -
+          title: rock Hard
+          description: "Suitable for: Martial Artist, Supernatural Creature, Cyborg.  Heroes making successful unarmed attacks against this foe take 2 Wound Points per attack."
+        -
+          title: Screaming Steel
+          description: "Suitable for: Sorcerer, Supernatural Creature, Mutant.  On a successful attack against a hero fighting with a weapon, all mooks make a 0-shot cost attack on the hero as an interrupt every time the hero attacks with that weapon. This effect lasts until the end of the fight, or until the hero drops the weapon and then Rearms, whichever comes first."
+        -
+          title: Severed Love Line
+          description: "Suitable for: Sorcerer.  Spend 1 shot; if the foe is still active at the start of the next keyframe, target hero suffers a romantic setback in a later scene. Explain these stakes to the players. Usable once per adventure. Use this only if you have a setback in mind."
+        -
+          title: Shattered Loyalties
+          description: "Suitable for: Sorcerer.  Spend 1 shot; if the foe is still active at start of next keyframe, target hero suffers a betrayal from a friendly supporting character in a later scene. Explain these stakes to the players. Usable once per adventure. Use this only if you have a setback in mind."
+        -
+          title: Shouted orders
+          description: As an interrupt when a mook hits a hero, the foe may spend 1 shot to add 4 Damage to the mook’s hit.
+        -
+          title: Skull-Mounted Targeting Goggles
+          description: "Suitable for: Cyborg.  Add +3 Initiative if Wound Points are less than 20."
+        -
+          title: Slipstrike
+          description: "Suitable for: Martial Artist.  When this foe’s attack against a hero is successful but deals less than 5 Wound Points to that hero, the hero is Disarmed."
+        -
+          title: Spin the Cylinder
+          description: "Suitable for: Featured foe with Guns attack. After Reloading, the foe’s next attack is at +2 Attack and +6 Damage."
+        -
+          title: Stasis Field
+          description: "Suitable for: Scroungetech.  On a successful attack with an Outcome of 3 or more, +1 to the Reload value of all guns hero carries."
+        -
+          title: Stunt Stopper
+          description: As an interrupt when a hero announces a stunt, spend 3 shots to make an attack against the hero.
+        -
+          title: Supergun
+          description: "Suitable for: Guns character.  If the foe brings a hero to 35 or more Wound Points, the hero gains an additional Mark of Death."
+        -
+          title: T is for Target
+          description: As an interrupt after a failed attack on a hero, spend 1 shot; up to three mooks, as an interrupt, may attack the hero. Usable once per sequence.
+        -
+          title: Tactical Genius
+          description: Spend 1 shot; until the foe goes down, mooks gain +2 attack.
+        -
+          title: Taskmaster
+          description: "Suitable for: Boss.  Add +3 to featured foe Initiative while the boss is up."
+        -
+          title: Teleport
+          description: This foe can move from ranged to close distance long enough to make close attack, then instantaneously back to ranged distance.
+        -
+          title: Tongue Grab
+          description: "Suitable for: Supernatural Creature, Mutant. Spend 1 shot; the foe draws target hero from ranged distance to close combat distance."
+        -
+          title: Toxic Dart
+          description: When downed, the foe may as a 0-shot interrupt make an Attack against any hero’s Defense. If successful, the Attack does no immediate damage.Ten minutes after the fight ends, the target must make a Constitution Check or take 15 Wound Points.
+        -
+          title: Turnabout
+          description: When the foe is up, this and all other foes lose 5 Wound Points on every hero’s successful Up Check.
+        -
+          title: vehicle Hit
+          description: Spend 3 shots and make an Attack against a driver’s Driving AV. The Driver’s vehicle takes Outcome +11 Chase Points, which count as a ram or sideswipe.
+    -
+      name: "Driving-Based Schticks"
+      schticks:
+        -
+          title: Armor plated
+          description: Add 2 to the Frame of the vehicle the foe starts the chase in.
+        -
+          title: Braced for Impact
+          description: When the foe’s vehicle crashes, all occupants gain +4 Toughness against crash damage.
+        -
+          title: Counterslam
+          description: If the foe’s vehicle’s higher Frame gives an opposing vehicle a Bump value, that value increases by 3.
+        -
+          title: Dazed and Contused
+          description: Until the next keyframe, enemies getting out of a crashed vehicle the foe at any point rammed or sideswiped take 1 point of Impairment and add 1 to all shot costs.
+        -
+          title: High Gear
+          description: After Initiative is determined, if the foe’s Initiative is not equal to or higher than that of the first hero Driver to act, the foes Initiative equals that hero’s Initiative –1.
+        -
+          title: ram-alama-bam
+          description: When driving, if the foe rams a vehicle, gain +2 Frame. Also, +4 Damage Value when the foe hits a pedestrian.
+        -
+          title: rehearsed Getaway
+          description: –3 to Chase Points dealt to the foe’s vehicle when a hero narrows the gap with it.
+        -
+          title: Shibuya Slide
+          description: When driving as the evader in a chase, gain +2 Driving if one or more hero drivers have fewer Chase Points.
+        -
+          title: pedal to the Metal
+          description: When driving as the pursuer in a chase, gain +2 Driving if one or more hero drivers have fewer Chase Points.
+        -
+          title: Wicked ride
+          description: Add 2 to the Handling of the vehicle the foe starts the chase in.
+        -
+          title: Wrench the Wheel
+          description: –3 to Chase Points dealt to the foe’s vehicle in any ram or sideswipe.
+-
+  name: "Mutant"
+  paths:
+    -
+      name:
+      schticks:
+        -
+          title: Acid Blood
+          description: Spend 1 Genome point. Until end of fight, all enemies within close combat range take 2 Wound Points each time you take Wound Points from enemy attacks.
+        -
+          title: Adaptive Enzymes
+          description: When you take a Mark of Death, spend 1 shot to subtract 10 from your Wound Point total.
+        -
+          title: Eyes on the Back of Your Head
+          description: You automatically succeed at Notice Checks. Unless you’re wearing a hat, helmet, or other headgear. Yeah, they’re literal eyes literally on the back of your literal head.
+        -
+          title: Fear Shift
+          description: When another hero takes a Mark of Death, give a boost to any ally. When another hero goes down, give a boost to any two allies.
+        -
+          title: Force Shield
+          description: Spend 1 Genome point and 1 shot; your Defense increases by 1 until end of sequence.
+        -
+          title: Gene Link
+          description: Spend 1 Genome point; until the next keyframe, all allies within close combat range of you gain +1 to attacks.
+        -
+          title: Go Cartilaginous
+          description: You can squeeze through an opening as small as 75 sq cm.
+        -
+          title: How Magnets Work
+          description: Spend 1 shot and make a Mutant Check against an enemy’s Defense. Until the next keyframe, that enemy must stay within close combat range of you.
+        -
+          title: Impossibilist
+          description: Add 1 shot to the cost of a stunt attack to gain a free Fortune die on it.
+        -
+          title: Mjolnirification
+          description: Spend 1 shot to make any dropped or unattended weapon teleport into your hand.  Weapons in a Bag Full of Guns are not unattended.
+        -
+          title: Nanoportal
+          description: Spend 1 Genome point and spend 3 shots as an interrupt when an enemy targets an ally with a ranged attack. Pick any combatant as the new target for the attack.
+        -
+          title: Noctilucent
+          description: Spend 1 Genome point to brightly glow until end of scene or end of fight, whichever comes first. +2 Defense vs. close attacks, -2 Defense vs. ranged attacks.  Neither you nor allies within close range suffer penalties from the adverse condition Darkness.
+        -
+          title: pain Eater
+          description: When your attack takes a foe from 0 to 1 Impairment, or from 1 to 2 Impairment, regain 3 spent Genome points. When an ally’s attack takes a foe from 0 to 1 Impairment, or from 1 to 2 Impairment, regain 1 spent Genome point.
+        -
+          title: precognitive rescue
+          description: When one or more characters take Wound Points from a source of damage other than an attack or explosion, spend 1 Genome point to reduce Wound Points dealt to 0.
+        -
+          title: probability Wave
+          description: When you attack and miss, you may spend 1 shot to give an ally a boost.
+        -
+          title: psychic vampire
+          description: Spend 1 shot as an interrupt when your attack deals 3 or more Wound Points to an enemy. Subtract 3 from the Wound Points dealt to regain a spent Genome point.
+        -
+          title: push
+          description: Make a 3-shot ranged attack, Damage Value 11, using your Mutant attack value. If you deliver a Smackdown, the target flies X meters through the air directly away from you, where X = the number of Wound Points you dish out.
+        -
+          title: radioactive Exudation
+          description: Spend 1 Genome point; until the next keyframe, all enemies within close combat range of you take a -1 Toughness penalty.
+        -
+          title: recuperate
+          description: Spend X Genome points and 1 shot; your Wound Point total decreases by five times X.
+        -
+          title: resource Sniff
+          description: Always know the direction to head in to find the nearest source of edible food, clean water, or a particular chemical or element.
+        -
+          title: Shared Sight
+          description: Eat a small sample of skin, hair, or nail from a person or other intelligent being. You see what the target is seeing for the next five minutes. You may renew the effect for five minutes at a time at a cost of 1 Genome point per renewal.
+        -
+          title: Silver Lining
+          description: Spend 1 Genome point; until the next keyframe, all allies within close combat range of you heal 3 Wound Points each time you take any number of Wound Points.
+        -
+          title: Skulky
+          description: When you take Wound Points from an attack, your Defense increases by 1. This bonus stacks for each consecutive attack dealing Wound Points to you, but drops to 0 the first time an attack on you fails.
+        -
+          title: Slow Burn
+          description: If your Initiative result is less than 10, add a free Fortune die to the first check you make this sequence.
+        -
+          title: Some Damn Thing with playing Cards
+          description: When an ally misses an attack, spend 2 shots to allow the ally to attack again as a 0-shot interrupt.
+        -
+          title: Teleread
+          description: Spend 1 Genome point to know the definitive answer to a single question of 25 words or less, if that answer can be found written down anywhere in your current juncture.
+        -
+          title: ultragloat
+          description: When a featured foe drops, spend 1 shot as an interrupt. Regain lost Genome points up to the number of featured foes still in the fight.
+        -
+          title: unsplode
+          description: Spend 1 Genome point to completely suppress any explosion whose epicenter you can see in person. In combat, is a 1-shot interrupt, when you see that an explosion is about to occur.
+        -
+          title: very Fast
+          description: Spend 2 Genome points. Until end of sequence, the shot costs of your actions decrease by 1, with a minimum of 1 per action. You can move up to 30 m per sequence.
+        -
+          title: very Strong
+          description: Spend 1 shot. Until end of fight, add 3 to your Damage on any successful hand-to-hand strike (using your Mutant attack value) including strikes
+-
+  name: "Sorcery"
+  paths:
+    -
+      name: "Blast"
+      schticks:
+        -
+          title: Chi Blast
+          description: As a standard 3-shot action, direct a ranged attack of raw magical energy at a combatant of your choice, using your Sorcery attack value, at a Damage Value of 9.
+        -
+          title: Acid Blast
+          description: "As per Chi Blast. Also: on a successful attack, spend 1 Magic to give the combat area the adverse condition Toxic Fumes until the next keyframe.  Spend a Magic point to destroy or decisively degrade a piece of unwanted evidence, beyond all forensic efforts to reconstruct it."
+        -
+          title: Arctic Blast
+          description: "As per Chi Blast. Also: on a successful area the adverse condition Snow until the next keyframe. When the condition expires, roll a single die. On an even result, it renews until the next keyframe."
+        -
+          title: Conjured Blade
+          description: You create a handheld blade of magical force and wade into hand-to-hand combat. As per Chi Blast, but doesn’t count as a ranged attack, and so is useful against an opponent whose schticks somehow thwart ranged attacks.
+        -
+          title: Disintegration
+          description: "As per Chi Blast. Also: on a successful attack, spend 2 Magic to utterly destroy a weapon of your choice carried by the target. You can’t choose a signature weapon."
+        -
+          title: Escher Blast
+          description: "As per Chi Blast. Also: on a successful attack, spend 1 Magic to give the combat area the adverse condition Confined Space until the next keyframe."
+        -
+          title: Fire Blast
+          description: As per Chi Blast. When you take out a mook, spend 1 Magic and roll a single die. On an even die result, you take out another mook and roll a single die. If that result is even, you take out yet another mook, and so on, until you roll an odd result or run out of mooks to take out.  This is also useful for setting fires, lighting cigars and cigarettes in an impressive manner, heating up coffee, increasing room temperature, and thawing out frozen foods.
+        -
+          title: Flesh Melter
+          description: "As per Chi Blast. Also: on a successful attack, spend x Magic to give target 1 Impairment from the horrific sight of her flesh melting off. X varies by foe type: 1 for featured foes, 2 for bosses. Targets never suffer more than 2 Impairment from this or any other source."
+        -
+          title: Foggy Tendril
+          description: "As per Chi Blast. Also: on a successful attack, spend 1 Magic to give the combat area the adverse condition Obscured Vision until the next keyframe."
+        -
+          title: Flying Weapon
+          description: "You create from thin air a glowing, magical weapon or weapons — for example, a sword, spear, or rain of knives — which hurls towards your opponent. As per Chi Blast. Also: on a successful attack, target spends 1 shot."
+        -
+          title: Ice Blast
+          description: As per Chi Blast. Also, on a successful attack, spend 1 Magic, your target must spend 3 shots freeing himself from an encasing layer of ice. Targets with Strength Checks above 7 spend only 1 shot.  Also useful for making ice cubes, freezing or chilling food, making water solid enough to walk on, and cooling the temperature in a hot room.
+        -
+          title: Lightning Blast
+          description: As per Chi Blast. Also, on a successful attack, spend 1 Magic to require your target to spend 3 shots recovering from a stunning effect. Targets with Constitution Checks above 7 spend only 1 shot.  Spend 1 Magic to recharge or power any electrical device. Device works for one scene.
+        -
+          title: Lucky 8 Blast
+          description: As per Chi Blast. On an Outcome of 4 or more, regain 1 spent Magic.
+        -
+          title: Magnetic Blast
+          description: When you hit a vehicle with a Chi Blast, it takes +3 Condition Points.
+        -
+          title: pathogen
+          description: "As per Chi Blast. Also: on a successful attack, spend 1 Magic. For the remainder of the adventure, Wound Points dealt by the attack can only be removed by the Sorcery Heal schtick."
+    -
+      name: "Divination"
+      schticks:
+        -
+          title: Allegiance
+          description: q Spend 1 shot or 1 Magic to tell if a person you can see (in person) knowingly works for a faction or conspiracy. If you have heard of the faction or conspiracy, you know which one. Otherwise, you only see that the person is a player in the Chi War. Shot cost matters only if you’re seeking this story benefit in mid-fight.
+        -
+          title: Assessment
+          description: Spend 1 shot or 1 Magic to tell if any of the enemies you face are bosses, and if so, which ones.
+        -
+          title: Bullseye
+          description: Spend 1 shot or 1 Magic to identify the named foe you have the best chance of hitting with a Chi Blast.
+        -
+          title: Elevated Senses
+          description: Spend 1 Magic to gain (your choice) +3 to Notice, or a Notice value of 12, until end of scene.
+        -
+          title: Exposure
+          description: Spend 2 shots or 1 Magic to tell whether a person you can see is a Transformed Animal.
+        -
+          title: Fight Finder
+          description: Spend 1 Magic to know the location of the nearest group of people who want to kill you. You do not know which group. If no one wants to kill you, it must be early in the series. You get the spent Magic back.
+        -
+          title: Ghost Sense
+          description: "Ghosts capable of acting on the physical world, like the ones represented by the Ghost archetype, are rare. Ordinary ghosts, trapped in spirit form between this world and the next, mindlessly repeating moments from their living days, swarm through every place where people have lived and died.  Spend 1 Magic to see the ghosts all around you in a single scene. Unless you count the odd grotesque transformation or ineffective lunge in your direction, they can’t really communicate with you. But their presence and appearance may provide clues to past events in the area. Densely populated areas always crawl with ghosts. No refunds on Magic points, even if you see no ghosts or none of them can help you.  Ordinary supporting characters sometimes develop this sense spontaneously, without knowing the first thing about sorcery. They may be victims of curses or physical trauma. Some received tissue transplants from dead donors who have become restless ghosts. They react to their new sense with understandable terror, and can’t choose when they see ghosts."
+        -
+          title: prediction
+          description: "Spend 1 Magic to gain good, if somewhat obscure, advice or information about the future.  Most traditional Chinese mages employ the I Ching (pronounced yee jing), the ancient Book of Changes. You perform the divination by using an apparently random method to select one of its 64 cryptic verses, or hexagrams. The traditional method of invoking randomness has the user dividing yarrow stalks into odd and even clusters, arriving at a pair of trigrams. Trigrams are parallel broken or unbroken lines arranged in threes. Add the two trigrams together and you’ve got your hexagram. Example hexagrams include “Coupling,” “Diminishing,” or “The Well.” The real art comes in connecting the enigmatic verse and its other symbolic associations to the question you’re posing.  Even more traditional mages tell fortunes by throwing tortoise shells into the fire and then interpreting the patterns of cracks that appear on them after they are burned.  The GM provides a cryptic answer to a question posed by the sorcerer. This answer makes the player work to puzzle out its meaning and moves the plot along by providing a clue that gets the characters to the next scene.  If the GM is familiar with I Ching she can choose in advance an applicable hexagram.  If the attempt fails, the sorcerer gets a random hexagram instead. (The I Ching being what it is, the players may well find just as good advice in the random hexagram!)"
+        -
+          title: revelation
+          description: Spend 2 shots or 1 Magic to tell if something you are directly looking at is real, or an illusion.
+        -
+          title: Truthseek
+          description: Spend 1 Magic to tell if someone talking to you in person is speaking the truth as he knows it. Spend 1 more Magic to know the real truth, at least as far as the speaker understands it.
+        -
+          title: Warning
+          description: "Spend 1 Magic as you draw a chalk outline on a suitable surface, covering an area of up to 450 square meters (about the size of a convenience store). For the rest of the adventure, you immediately know if anyone crosses the line.  You can direct a Chi Blast (if you have that schtick) at any one target crossing the line, no matter how far away you are from it in space or time."
+    -
+      name: "Fertility"
+      schticks:
+        -
+          title: Bend Fate
+          description: As an interrupt when an enemy makes an Attack or Task Check, spend 3 shots and 1 Magic to add extra negative die to the result.
+        -
+          title: Big Luck
+          description: Spend 1 Magic to gain +3 to Fortune Checks until the end of the next scene in which you make a Fortune Check. (Or end of session, if that comes sooner.)
+        -
+          title: De-Attunement
+          description: Spend 2 shots and make a Sorcery Check against the Will Resistance of any foe attuned to one or more feng shui sites. (Featured foes may or may not be; boss foes almost invariably are. Mooks never are.) If successful, target takes 1 Impairment until end of fight.
+        -
+          title: Doom Boon
+          description: qRegain all spent Magic points after succeeding at an Up Check.
+        -
+          title: Harvest Chi
+          description: After a successful attack against a named foe, you may subtract 3 from its Outcome to regain a spent Magic point.
+        -
+          title: observe Chi
+          description: See the flow of chi in an area, noting how strong or weak it is and if it is corrupted or impinged upon by some unnatural force. Immediately identify feng shui sites. Tell whether an individual you can see in person is attuned to at least one feng shui site.
+        -
+          title: quid to quo
+          description: When you receive a boost from an ally, roll a die. On an even result, the ally also gains the benefit of the boost.
+        -
+          title: radiant Grant
+          description: When you give an ally a boost, roll a die. On an even result, choose a second ally to also gain the benefit of your boost.
+        -
+          title: Superior Evasion
+          description: On a failed attack against an enemy with a higher Defense than yours, spend 1 shot. Until the next keyframe, your Defense equals the enemy’s Defense +1.
+        -
+          title: Yin to Yang
+          description: Spend 1 Magic as an interrupt when you take Wound Points. Your next successful attack deals no fewer than this number of Wound Points.
+        -
+          title: Widen the Circle
+          description: Spend 1 shot as an interrupt when an ally grants a boost to any other ally. You also gain the benefit of that boost.
+    -
+      name: "Heal"
+      schticks:
+        -
+          title: Brew Antidote
+          description: Spend 1 Magic to eliminate any one effect of a foe schtick that continues past the end of a fight.
+        -
+          title: Cure Disease
+          description: Spend 3 Magic to cure any terminal illness, 2 to cure any serious non-fatal illness, 1 to cure any minor debilitating ailment.
+        -
+          title: Heal object
+          description: Make a Sorcery Check to restore a damaged inanimate object to its original condition, using Difficulties suggested by the table below. GMs set Difficulties for unlisted items, with larger objects being harder than small ones, and complicated devices harder than simple ones. You get one try to heal any particular given object, ever.  Due to the well-known mystical principle of, I dunno, uh, transitive numinosity, vehicle healing is its own separate schtick, below. You can’t heal vehicles with Heal Object.
+        -
+          title: Healing objects
+          description: object Difficulty Book or paper document 9 Computing device 10 Door 5 Gun 10 Hut 7 Martial arts weapon 7 Office tower 20 Small house 15 Heal vehicle Remember what we just said about transitive numinosity? Reduce the q Condition Points of any vehicle by the result of your Sorcery Check. In combat, takes 3 shots.
+        -
+          title: Heal Wounds
+          description: Spend 1 Magic to reduce the Wound Points of any character by the result of your q Sorcery Check. In combat, this takes you 4 shots.
+        -
+          title: Iron Mind powder
+          description: Spend 1 Magic to cancel a foe schtick effect that does something to an ally and is otherwise due to expire at the end of the sequence, keyframe, or fight.
+        -
+          title: Shared Bounty
+          description: Spend 1 shot to remove 10 of your own Wound Points. The enemy with the highest Wound Points total also removes 10 Wound Points. You can only use this if at least one enemy has 10 Wound Points.
+        -
+          title: vitamin S
+          description: Spend 1 Magic to grant yourself or an ally either +3 to Constitution Checks or a Toughness value of 12 for the purposes of making Constitution Checks (your choice) until end of scene.
+        -
+          title: Immortality
+          bonus: true
+          description: The quest for immortality occupies a central position in Chinese magical lore.  Spend 5 Magic to reverse a year’s worth of aging in any target. If spent in the second half of a game session, your Magic does not reset at the beginning of the next session.  Most often used as an inducement to get powerful, elderly people — sometimes kept alive only by such magics — to aid you.  Chinese mythology inextricably associates sorcery with the pursuit of immortality. Boss sorcerers’ evil schemes may revolve around cracking its secrets. It’s not much use to action movie heroes, though. Accordingly, you get this schtick for free the first time you acquire another Heal schtick as an advancement.
+    -
+      name: "Influence"
+      schticks:
+        -
+          title: Influence
+          description: This schtick allows the spellcaster to affect the emotions, thoughts, and sensory input of humans and other intelligent beings.
+        -
+          title: Brain Fortress
+          description: Spend 1 Magic to grant yourself or an ally either +3 to Will Checks or a Will value of 12 (your choice) until end of scene.
+        -
+          title: Exemplary prostrations
+          description: Spend 1 Magic to seem trustworthy to all authority figures present in the current scene. Lasts until end of adventure, or until you actively violate their trust, whichever comes first.
+        -
+          title: False Memory
+          description: Spend 1 Magic and make a Sorcery Check against the Will Resistance of a GMC you are engaged in conversation with, and regards you in a positive or neutral light. In about a hundred words or less, describe an experience the target is supposed to have had, but did not. On a success, the subject believes that this happened to her. +3 to the subject’s Will Resistance if the incident strains credulity, but not the subject’s self- image or sense of reality. +8 if the incident does contravene the subject’s self-image or sense of reality.
+        -
+          title: Greed potion
+          description: Spend 1 Magic to formulate a potion which, if ingested by a featured foe or supporting character, causes him to obsessively seek a particular item of value. At the end of each subsequent scene, make a Sorcery Check against the target’s Will Resistance. The effect ends when you fail a check, or at end of session, whichever comes sooner.
+        -
+          title: Hate potion
+          description: Spend 1 Magic to formulate a potion which, if ingested by a featured foe or supporting character, causes him to curse and despise another character specified by the sorcerer at time of formulation. At the end of each subsequent scene, make a Sorcery Check against the target’s Will Resistance. The effect ends when you fail a check, or at end of session, whichever comes sooner.
+        -
+          title: Illusion
+          description: Spend 1 Magic to make one object or person look, smell, and sound like something else of roughly the same size and physical configuration until end of scene. Or create an illusion from thin air, registering to sight, smell, and hearing, but not to touch or taste. Characters encountering the illusion make Notice Checks to identify it as false; if successful, they know something weird or magical is going on. Sorcerers with at least 1 Divination schtick get a +5 bonus to their Notice Checks.  Illusions affect characters’ responses during story scenes but not in combat. During a fight they may not consciously twig to the false vision, but happen to make decisions allowing them to conduct themselves effectively.
+        -
+          title: Love potion
+          description: Spend 1 Magic to formulate a potion which, if ingested by a featured foe or supporting character, causes him to fall head over heels in love with another character specified by the sorcerer at time of formulation. If attraction to the object of affection contradicts the ingesting character’s orientation, the pull remains powerful but platonic. At the end of each subsequent scene, make a Sorcery Check against the target’s Will Resistance. The effect ends when you fail a check, or at end of session, whichever comes sooner.
+        -
+          title: Mind Control
+          description: When a featured foe declares an attack, spend 4 shots as an interrupt to choose a new hero, named character, or mook as target for the attack.
+        -
+          title: override Will
+          description: Spend 1 Magic and make a Sorcery Check against the Will Resistance of a GMC you can see in person, and is in a relaxed state of mind. On a success, the target executes, to the best of his ability, a single instruction of 25 words or less. +3 to the target’s Will Resistance for an instruction that clearly threatens his interests or self-image. +8 for an instruction that violates his safety or that of others.
+        -
+          title: Spatial Confusion
+          description: Make yourself appear to be where you aren’t, and not where you are.  Spend 1 Magic and 1 shot to check Sorcery against a target’s Will Resistance value. On a success, gain +1 Sorcery and +1 Defense against that target until the next keyframe.
+    -
+      name: "Movement"
+      schticks:
+        -
+          title: Altruistic Switcheroo
+          description: As an interrupt when you or an ally is hit by an attack, spend 2 shots to choose either yourself or another willing ally to take the hit instead. Use the new recipient’s Toughness to determine how many Wound Points get dished out.
+        -
+          title: Far Lift
+          description: Cause an inanimate object to rise into the air, move horizontally, and then none-too- q gently set itself down again. Maximum vertical distance and maximum horizontal distance both equal your current Magic points in meters. Difficulty is 1 for every 5 kg the object weighs.  This takes 3 shots, if used in combat. If you’re dropping the object on an enemy, the Damage Value of the dropped object equals the Difficulty of your Sorcery Check. Your check must also exceed the target’s Defense.
+        -
+          title: Flight
+          description: Fly through the air, moving up to 5 m per shot.
+        -
+          title: Harsh Switcheroo
+          description: As an interrupt when an enemy is hit by an attack, spend 1 shot and make a Sorcery Check against the Defense of another enemy. On a success, the second enemy takes the hit instead. Use the new recipient’s Toughness to determine how many Wound Points get dished out.
+        -
+          title: Muscular Infusion
+          description: Spend 1 Magic to grant yourself or an ally either +3 to Strength Checks or a Strength value of 12 (your choice) until end of scene.
+        -
+          title: Remote Manipulation
+          description: Perform manual tasks involving distant objects or devices. Difficulty of the Sorcery Check equals your distance in meters from the object, which you must be able to see.
+        -
+          title: Slowdown
+          description: Spend X Magic and 3 shots to make a Sorcery Check against an enemy’s Defense; if successful, enemy’s Speed decreases by X until end of fight. Speed can’t be reduced below 1.
+    -
+      name: "Summoning"
+      schticks:
+        -
+          title: Banishment
+          description: Spend 3 Magic and 3 shots; on a Sorcery success against a supernatural creature’s Defense, it Cheeses It. On a failure, you regain the Magic points.
+        -
+          title: Corruption
+          description: Spend 1 Magic and 3 shots to grant +1 to the Attacks, Defense, and checks of all creatures engaged in the fight, until the next keyframe.
+        -
+          title: Demon Spoor Extract
+          description: Spend 1 Magic to cancel a foe schtick effect that directly bolsters a foe and is otherwise due to expire at the end of the sequence, keyframe, or fight.
+        -
+          title: Echoes of the past
+          description: If you deal Wound Points to a Transformed Animal foe, and it goes down at any later point in the fight, it reverts to its animal form. Transformed Animal heroes present for this take 3 Reversion points.
+    -
+      name: "Exorcism"
+      schticks:
+        -
+          title: Invocation
+          description: Spend 2 Magic to seize a particular creature through time and space and cause it to appear at your side. You can target a creature if you successfully used Domination against it in the past, or if you have on your person a former body part of the creature, such as a claw, piece of hair, scraping of skin, or severed hand. Requires a Sorcery Check against the creature’s Will Resistance value; on a failure, nothing happens and you get the Magic points back. Merely summoning a creature does not ensure its cooperation. In fact, in most cases guarantees your subject’s extreme displeasure.  You can invoke hero ghosts or supernatural creatures, but only if their players want it to happen. If they do, your attempt automatically succeeds and costs you nothing.  Spend 1 Magic or 3 shots to free a single individual of any effects caused by Sorcery or Creature Powers.
+        -
+          title: Purification
+          description: Spend 1 Magic and 3 shots to levy a –1 penalty to the Attacks, Defense, and checks of all creatures engaged in the fight, until the next keyframe.
+        -
+          title: Sustained Domination
+          description: Spend 1 Magic and make a Sorcery Check with a creature’s Will Resistance value as the Difficulty. The creature will obey your spoken instructions for a number of hours equal to your Outcome, or until end of session, whichever comes sooner. It will not fight for you but will otherwise obey the letter of your instructions to the best of its abilities. Does not work on bosses or uber-bosses.
+        -
+          title: Quick Domination
+          description: Spend 1 Magic and X shots; make a Sorcery Check with a creature’s Will Resistance value as the Difficulty. The creature fights as your ally for X shots, attacking targets you designate. Does not work on bosses or uber-bosses.
