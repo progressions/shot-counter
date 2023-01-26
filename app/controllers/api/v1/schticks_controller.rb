@@ -37,7 +37,7 @@ class Api::V1::SchticksController < ApplicationController
       @schticks = @schticks.where("title LIKE ?", "%#{params[:title]}%")
     end
 
-    @schticks = @schticks.page(params[:page] ? params[:page].to_i : 1)
+    @schticks = paginate(@schticks, per_page: 24, page: params[:page] ? params[:page].to_i : 1)
 
     render json: {
       schticks: @schticks,
