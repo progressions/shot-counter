@@ -16,6 +16,8 @@ class Api::V1::SchticksController < ApplicationController
         @schticks = @schticks
           .for_archetype(@character.action_values["Archetype"])
           .where(prerequisite_id: [@character.schtick_ids, nil].flatten)
+          .where.not(id: @character.schtick_ids)
+        @categories = @schticks.pluck(:category).uniq.compact
       else
         @schticks = @schticks.where(category: "Foe")
       end
@@ -39,7 +41,8 @@ class Api::V1::SchticksController < ApplicationController
     render json: {
       schticks: @schticks,
       meta: pagination_meta(@schticks),
-      paths: @paths
+      paths: @paths,
+      categories: @categories
     }
   end
 

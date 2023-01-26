@@ -7,7 +7,7 @@ class Schtick < ApplicationRecord
   validates :title, presence: true, uniqueness: true
 
   def self.for_archetype(archetype)
-    where("archetypes @> ?", [archetype].flatten.to_json)
+    where("schticks.archetypes @> ?", [archetype].flatten.to_json)
   end
 
   def as_json(args={})

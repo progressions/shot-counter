@@ -20,6 +20,9 @@ class Api::V1::CharacterSchticksController < ApplicationController
 
   def destroy
     @schtick = current_campaign.schticks.find_by(id: params[:id])
+    if @character.schticks.pluck(:prerequisite_id).include?(@schtick.id)
+      render json: { error: "You cannot remove this schtick, it is a prerequisite of other schticks you know." }, status: 422 and return
+    end
     if @character.schticks.delete(@schtick)
       render :ok
     else
