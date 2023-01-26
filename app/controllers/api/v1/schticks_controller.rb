@@ -20,8 +20,9 @@ class Api::V1::SchticksController < ApplicationController
       else
         @schticks = @schticks.where(category: "Foe")
       end
-      @categories = @schticks.pluck(:category).uniq.compact
     end
+
+    @categories = @schticks.pluck(:category).uniq.compact
 
     if params[:category].present?
       @schticks = @schticks.where(category: params[:category])
