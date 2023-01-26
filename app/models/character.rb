@@ -88,7 +88,7 @@ class Character < ApplicationRecord
       user: user,
       action_values: action_values,
       description: description,
-      schticks: schticks,
+      schticks: schticks.includes(:prerequisite).order(:category, :path, :title),
       skills: skills,
       color: color,
       impairments: impairments,
