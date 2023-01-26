@@ -17,10 +17,10 @@ class Api::V1::SchticksController < ApplicationController
           .for_archetype(@character.action_values["Archetype"])
           .where(prerequisite_id: [@character.schtick_ids, nil].flatten)
           .where.not(id: @character.schtick_ids)
-        @categories = @schticks.pluck(:category).uniq.compact
       else
         @schticks = @schticks.where(category: "Foe")
       end
+      @categories = @schticks.pluck(:category).uniq.compact
     end
 
     if params[:category].present?
