@@ -41,7 +41,7 @@
       name: Core
       schticks:
         -
-          title: Establishing Shot
+          title: Establishing Shot I
           description: Your first Martial Arts attack of any fight gets a +2 bonus.
         -
           title: Mounting Fury I
@@ -50,14 +50,62 @@
           title: Very Big
           description: You make Up Checks and gain Marks of Death only when you reach 50 Wound Points. Impairment of –1 occurs only at 40 Wound Points; Impairment of –2 at 45 Wound Points.
         -
-          title: Strong as an Ox
+          title: Strong as an Ox I
           description: Add 3 to your Damage on any successful Martial Arts strike, including strikes with hand-to-hand weapons. (Damage Values for your starting weapons already include this bonus.) You can use absurdly large objects, like motorcycles, as improvised weapons. You also get +3 to all Strength Checks.
         -
-          title: Healthy as a Horse
+          title: Strong as an Ox II
+          description: You get +4 to all Strength Checks.
+        -
+          title: Strong as an Ox III
+          description: You get +5 to all Strength Checks.
+        -
+          title: Strong as an Ox IV
+          description: You get +6 to all Strength Checks.
+        -
+          title: Strong as an Ox V
+          description: You get +7 to all Strength Checks.
+        -
+          title: Healthy as a Horse I
           description: You get a +3 bonus to Constitution Checks.
+        -
+          title: Healthy as a Horse II
+          description: You get a +4 bonus to Constitution Checks.
+        -
+          title: Healthy as a Horse III
+          description: You get a +5 bonus to Constitution Checks.
+        -
+          title: Healthy as a Horse IV
+          description: You get a +6 bonus to Constitution Checks.
+        -
+          title: Healthy as a Horse V
+          description: You get a +7 bonus to Constitution Checks.
         -
           title: The Bigger They Come...
           description: Toughness is reduced by –5 if you reach 50 or more Wound Points, until all Death Checks from this fight have been resolved.
+        -
+          title: Mounting Fury II
+          description: When your Mounting Fury bonus allows you to hit an opponent you would otherwise have missed, add +1 Damage.
+        -
+          title: Mounting Fury III
+          description: As Mounting Fury II, but your Damage Bonus is +2.
+        -
+          title: Mounting Fury IV
+          description: As Mounting Fury II, but your Damage Bonus is +3.
+        -
+          title: Establishing Shot II
+          description: Your first Martial Arts attack of any fight gets a +3 bonus.
+        -
+          title: Establishing Shot III
+          description: Your first Martial Arts attack of any fight gets a +4 bonus.
+        -
+          title: Establishing Shot IV
+          description: Your first Martial Arts attack of any fight gets a +5 bonus.
+        -
+          title: Establishing Shot V
+          description: Your first Martial Arts attack of any fight gets a +6 bonus.
+        -
+          title: Meat Shield
+          description: As an interrupt when a nearby ally takes Wound Points, spend 1 Fortune to take those Wound Points, and a Mark of Death, yourself. If the hit would have taken the ally above 35 Wound Points, take two Marks of Death.
 -
   name: "Bodyguard"
   archetypes:
@@ -702,6 +750,7 @@
   name: "Martial Arts"
   archetypes:
     - Bandit
+    - Big Bruiser
     - Everyday Hero
     - Ex-Special Forces
     - Gambler
@@ -1730,6 +1779,7 @@
 -
   name: "Driving"
   archetypes:
+    - Big Bruiser
     - Driver
     - Full Metal Nutball
     - Highway Ronin
