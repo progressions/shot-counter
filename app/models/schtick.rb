@@ -30,6 +30,7 @@ class Schtick < ApplicationRecord
       description: description,
       category: category,
       path: path,
+      color: color,
       prerequisite: {
         id: prerequisite&.id,
         title: prerequisite&.title,
