@@ -42,18 +42,18 @@ class Character < ApplicationRecord
     "Background" => ""
   }
   DEFAULT_SKILLS = {
-    "Deceit" => 7,
-    "Detective" => 7,
-    "Driving" => 7,
-    "Fix-It" => 7,
-    "Gambling" => 7,
-    "Intimidation" => 7,
-    "Intrusion" => 7,
-    "Leadership" => 7,
-    "Medicine" => 7,
-    "Police" => 7,
-    "Sabotage" => 7,
-    "Seduction" => 7,
+    "Deceit" => 0,
+    "Detective" => 0,
+    "Driving" => 0,
+    "Fix-It" => 0,
+    "Gambling" => 0,
+    "Intimidation" => 0,
+    "Intrusion" => 0,
+    "Leadership" => 0,
+    "Medicine" => 0,
+    "Police" => 0,
+    "Sabotage" => 0,
+    "Seduction" => 0,
   }
 
   has_many :fight_characters, dependent: :destroy
