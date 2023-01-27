@@ -1,4 +1,493 @@
 -
+  name: "Archer"
+  archetypes:
+    - Archer
+  paths:
+    -
+      name: Core
+      schticks:
+        -
+          title: Wuxia Archery
+          description: At the outset of any fight, note the highest Damage Value of any firearm carried by an ally taking part in the combat who attacks with Guns. The Damage Value of your arrows is 1 less than that.
+        -
+          title: Rapid Volley
+          description: When you wound an opponent with an arrow, spend 1 Chi and 3 shots to deal that many Wound Points again to the same opponent.
+-
+  name: "Bandit"
+  archetypes:
+    - Bandit
+  paths:
+    -
+      name: Core
+      schticks:
+        -
+          title: Survivor's Roar
+          description: Add +2 to a Martial Arts attack if you took damage from an enemy attack since you last made an attack of your own.
+        -
+          title: Hard to Kill
+          description: If you fail an Up Check, spend 2 Chi to spring back into action X shots later (where X = the absolute value of the Up Check Outcome) with a Wound 2 Point value of 24.
+        -
+          title: Strong
+          description: Add +1 to your Damage on any successful Martial Arts strike, including strikes with hand-to-hand weapons. (Damage Values for your starting weapons already include this bonus.)
+        -
+          title: Irascible
+          description: Whenever someone tries to intimidate you, you must spend 1 Chi or act on the irresistible urge to smash someone or something.
+-
+  name: "Big Bruiser"
+  archetypes:
+    - Big Bruiser
+  paths:
+    -
+      name: Core
+      schticks:
+        -
+          title: Establishing Shot
+          description: Your first Martial Arts attack of any fight gets a +2 bonus.
+        -
+          title: Mounting Fury I
+          description: If you miss with a Martial Arts attack, you gain a +1 cumulative bonus to your next Martial Arts attack. The bonus resets to 0 after you hit, and at the end of the fight.
+        -
+          title: Very Big
+          description: You make Up Checks and gain Marks of Death only when you reach 50 Wound Points. Impairment of –1 occurs only at 40 Wound Points; Impairment of –2 at 45 Wound Points.
+        -
+          title: Strong as an Ox
+          description: Add 3 to your Damage on any successful Martial Arts strike, including strikes with hand-to-hand weapons. (Damage Values for your starting weapons already include this bonus.) You can use absurdly large objects, like motorcycles, as improvised weapons. You also get +3 to all Strength Checks.
+        -
+          title: Healthy as a Horse
+          description: You get a +3 bonus to Constitution Checks.
+        -
+          title: The Bigger They Come...
+          description: Toughness is reduced by –5 if you reach 50 or more Wound Points, until all Death Checks from this fight have been resolved.
+-
+  name: "Bodyguard"
+  archetypes:
+    - Bodyguard
+  paths:
+    -
+      name: Core
+      schticks:
+        -
+          title: The Client
+          description: At the beginning of any fight, designate any PC or GMC as your client, who you will go on to protect. Spend 1 Fortune when your client takes Damage to reduce the Damage to 0. You take 7 Wound Points.
+        -
+          title: Dammit!
+          description: On your next attack after your client takes Wound Points, gain +2 Attack against the character who dealt the Damage.
+        -
+          title: Who Got Hit?
+          description: At the end of a fight, remove any number of Marks of Death from your client, applying them instead to yourself.
+-
+  name: "Bounty Hunter"
+  archetypes:
+    - Bounty Hunter
+  paths:
+    -
+      name: Core
+      schticks:
+        -
+          title: The Quarry
+          description: At the beginning of a fight, designate one enemy as your quarry. If the plot has already established that you’re hunting an enemy who appears in the fight, that character automatically becomes the quarry.
+        -
+          title: Crosshairs
+          description: Your attacks against the quarry gain a +2 bonus.
+        -
+          title: Share the Homework
+          description: Spend X Fortune; that many allies of your choice gain +1 to attacks against the quarry until the end of the fight.
+        -
+          title: Due Diligence
+          description: The quarry’s first attack against you in this fight automatically fails.
+-
+  name: "Cyborg"
+  archetypes:
+    - Cyborg
+  paths:
+    -
+      name: Core
+      schticks:
+        -
+          title: System Malfunction
+          description: Subtract –2 Toughness when making Up or Death Checks.
+-
+  name: "Drifter"
+  archetypes:
+    - Drifter
+  paths:
+    -
+      name: Core
+      schticks:
+        -
+          title: Like the Cavalry
+          description: If you were not with the other PCs when they arrived at the scene of a fight, you can show up in mid-fight, during or after sequence 1, shot 4. You reveal yourself anywhere in the fight location, without having to explain how you got there.
+        -
+          title: Ammunitional rescue
+          description: After using Like the Cavalry, your first Guns attack gains +4 bonus. For the rest of the fight, you get +2 to Guns, Martial Arts, and Defense.
+        -
+          title: Air of Mystery
+          description: Add +2 Defense against Sorcery attacks.
+        -
+          title: Don't Mess With Clint
+          description: If you are the only PC in a fight, spend 1 Fortune and 1 shot to put down a mook, no check required.
+        -
+          title: Lone Wolf
+          description: Add +3 Defense if you are the only viable target for three or more named character opponents.
+-
+  name: "Driver"
+  archetypes:
+    - Driver
+  paths:
+    -
+      name: Core
+      schticks:
+        -
+          title: Rage Outside the Machine
+          description: When you are the only PC in a scene, or your vehicle has 35 or more Chase Points, gain +2 Martial Arts.
+        -
+          title: Cool Car Jacket
+          description: You have the skills Seduction 11 and Intimidate 11, but only when wearing the jacket, and only when it is in good shape. The jacket is like new again at the start of each new adventure.
+-
+  name: "Everyday Hero"
+  archetypes:
+    - Everyday Hero
+  paths:
+    -
+      name: Core
+      schticks:
+        -
+          title: Lucky You
+          description: When you run out of Fortune, roll a die. On a 1 or 2, regain all your spent Fortune.
+        -
+          title: Improvised Weapon Mastery
+          description: Gain +1 Martial Arts when fighting with an improvised weapon found at the scene. After 3 successful attacks, you lose the bonus—unless you describe yourself picking up and using a different improvised weapon (shot cost 1).
+        -
+          title: Accidental Awesome
+          description: After you fail an Attack Check with an improvised weapon, add a free Fortune die to your next check or Dodge.
+-
+  name: "Ex-Special Forces"
+  archetypes:
+    - Ex-Special Forces
+  paths:
+    -
+      name: Core
+      schticks:
+        -
+          title: Field Triage
+          description: During a fight, spend 1 Chi and 1 shot to remove a point of Impairment from another nearby character, or 1 Chi and 3 shots to remove it from 1 yourself.
+        -
+          title: Highly Trained
+          description: At the beginning of any fight, you may swap your Guns and Martial Arts attack values. Swap remains in effect for duration of fight.
+-
+  name: "Exorcist Monk"
+  archetypes:
+    - Exorcist Monk
+  paths:
+    -
+      name: Core
+      schticks:
+        -
+          title: Shred the False Veil
+          description: If you damage an opponent disguised by magic or sorcery, it reverts to its true form. If you down a transformed animal foe, it reverts to its animal form. If you down a supernatural creature, it is immediately banished to the spirit realm and can never return to the present juncture.
+        -
+          title: Balance Bringer
+          description: Add +2 Martial Arts and +2 Toughness vs. foes with Sorcery or Creature Powers attacks.
+-
+  name: "Full Metal Nutball"
+  archetypes:
+    - Full Metal Nutball
+  paths:
+    -
+      name: Core
+      schticks:
+        -
+          title: Ready Resupply
+          description: "When an ally gets a Way-Awful Failure on an attack, is disarmed, or fails a Reload Check, you may spend 1 shot as an interrupt: that ally may make an attack as an interrupt at a shot cost of 0 and gains +2 Damage (stackable) until the end of the fight."
+        -
+          title: Nutball Luck
+          description: Spend 1 Fortune and 0 shots to gain +2 Defense vs. Guns attacks and +3 Toughness vs. explosion and debris damage until end of sequence.
+        -
+          title: Oops, Forgot that One
+          description: You always fail Concealment Checks. If searched for weapons, the searchers always find everything you’re carrying and completely disarm you. Even if you said you got rid of all your weapons, they always find at least a hidden ankle piece. (This does not mean that you always have a weapon.)
+-
+  name: "Gambler"
+  archetypes:
+    - Gambler
+  paths:
+    -
+      name: Core
+      schticks:
+        -
+          title: Stack the Odds
+          description: Spend 1 Fortune to reverse the results of any Swerve, treating the negative die as positive and vice versa. Others must share their die results with you when asked.  Explain how your planning or advance knowledge led to this 1 reversal.
+-
+  name: "Gene Freak"
+  archetypes:
+    - Gene Freak
+  paths:
+    -
+      name: Core
+      schticks:
+        -
+          title: Mutant Punch
+          description: Make hand-to-hand attacks using your Mutant Attack Value.
+-
+  name: "Ghost"
+  archetypes:
+    - Ghost
+  paths:
+    -
+      name: Core
+      schticks:
+        -
+          title: Hovering presence
+          description: You make boosts with a shot cost of 2.
+        -
+          title: Traditional Healing only
+          description: The Medicine skill only heals you if the practitioner trained in the Ancient Juncture.
+-
+  name: "Highway Ronin"
+  archetypes:
+    - Highway Ronin
+  paths:
+    -
+      name: Core
+      schticks:
+        -
+          title: Against All Warlords!
+          description: Add +2 Guns vs. Bosses. if the boss succeeds at an Up Check, you can force the GM to reroll the Up check. Up or down, use the second result.
+-
+  name: "Karate Cop"
+  archetypes:
+    - Karate Cop
+  paths:
+    -
+      name: Core
+      schticks:
+        -
+          title: Glutton for Punishment
+          description: When you take Wound Points from a Martial Arts attack, or take non-attack damage, your next Martial Arts attack this fight gets a +2 bonus. This bonus stacks with other effects but not with itself.  
+        -
+          title: Underdog Desperation
+          description: Add +2 Toughness vs. opponents with fewer Wound Points than you.
+        -
+          title: Indefatigable
+          description: Impairment points do not decrease your Martial Arts attack value.
+        -
+          title: Ouch!
+          description: When you miss with an unarmed attack, you take X Wound Points, where X equals the absolute value of your Swerve. Your next Martial Arts attack this fight gets a +X bonus. If successful, heal X Wound Points. This schtick is always active.
+-
+  name: "The Killer"
+  archetypes:
+    - The Killer
+  paths:
+    -
+      name: Core
+      schticks:
+        -
+          title: Heroic Bloodshed
+          description: In the climactic fight of an adventure, any attack that deals you more than 4 Wound Points deals an additional 3 Wound Points.
+-
+  name: "Magic Cop"
+  archetypes:
+    - Magic Cop
+  paths:
+    -
+      name: Core
+      schticks:
+        -
+          title: Inured to Weirdness
+          description: When a Sorcery, Creature, or Scroungetech attack misses you, regain a spent Magic point.
+        -
+          title: Juncture Adapted
+          description: When in your home juncture, ignore any juncture costs for Sorcery.
+-
+  name: "Masked Avenger"
+  archetypes:
+    - Masked Avenger
+  paths:
+    -
+      name: Core
+      schticks:
+        -
+          title: Tremble, Evildoers!
+          description: When you attack a single mook and drop it, 4 other mooks Cheese It. If your positive die exploded, a total of 6 mooks Cheese It.
+        -
+          title: Trained for Armor
+          description: Ignore Initiative penalties for armor.
+        -
+          title: Utility Belt
+          description: After spending Fortune on a boost, roll a die. On an even result, you get the Fortune back.
+-
+  name: "Maverick Cop"
+  archetypes:
+    - Maverick Cop
+  paths:
+    -
+      name: Core
+      schticks:
+        -
+          title: Justice Bringer
+          description: Add +2 Guns vs. any target you know to be a murderer, torturer, or felony sex offender.
+-
+  name: "Ninja"
+  archetypes:
+    - Ninja
+  paths:
+    -
+      name: Core
+      schticks:
+        -
+          title: Joint Cased
+          description: Add +2 Martial Arts if the current fight takes place in a location you have ever covertly entered using Intrusion, including at the beginning of this fight.
+-
+  name: "Old Master"
+  archetypes:
+    - Old Master
+  paths:
+    -
+      name: Core
+      schticks:
+        -
+          title: Chi Flow Perception
+          description: Your base damage with a punch or kick is 10, not 7.
+        -
+          title: Tired Bones
+          description: Make a Difficulty 7 Constitution Check whenever you take damage during a fight. Each time you fail, your Defense drops by 1, and stays that way until end of fight.
+-
+  name: "Private Investigator"
+  archetypes:
+    - Private Investigator
+  paths:
+    -
+      name: Core
+      schticks:
+        -
+          title: Finding the Tell
+          description: Add +2 to attacks against characters you spoke with in the previous scene.
+        -
+          title: Needling remark
+          description: When exchanging barbs with a character in a non-combat scene, spend 1 Fortune. Until the end of the adventure, that character gets +1 to attack you; you get +2 to 1 attack that character.
+        -
+          title: Cut the Bull
+          description: When you and the other PCs are speculating as to the best course of action, or as to the motivations of a given character, you can spend a Fortune point to have the GM tell you whether your speculation is correct or incorrect.
+-
+  name: "Redeemed Pirate"
+  archetypes:
+    - Redeemed Pirate
+  paths:
+    -
+      name: Core
+      schticks:
+        -
+          title: Swashbuckling
+          description: After performing a stunt that has you swinging on a rope or otherwise evoking classic pirate action, gain +2 to attacks until end of sequence.
+        -
+          title: Iron Gut
+          description: Add +3 to Constitution Checks to resist the effects of overindulgence in food and alcohol, and against poisons of all kinds.
+        -
+          title: Rebellious Streak
+          description: After taking Wound Points from a boss, add a free Fortune die to your next check.
+        -
+          title: "'Tis But A Scratch"
+          description: When for the first time in a fight you take 10 or more Wound Points, spend 1 shot as an interrupt to reduce Wound Points taken to 1.
+-
+  name: "Scrappy Kid"
+  archetypes:
+    - Scrappy Kid
+  paths:
+    -
+      name: Core
+      schticks:
+        -
+          title: Distraction
+          description: Describe a distracting non- lethal assault against your target. Instead of damage, on a successful Martial Arts attack, the target suffers 3 Impairment for a number of shots equal to your Outcome. You can’t further distract an already distracted opponent.
+        -
+          title: Look out, Kid!
+          description: Roll a die when you are attacked while benefiting from a Defense boost. On an even result the boost continues until end of next shot.
+-
+  name: "Sorcerer"
+  archetypes:
+    - Sorcerer
+  paths:
+    -
+      name: Core
+      schticks:
+        -
+          title: Scroll of Spells
+          description: Spend 2 Magic to gain any Sorcery schtick you don’t have, provided you have at least one schtick within that specialty, until end of session. Takes 3 shots if used in combat (6 shots if you’re 2 3/6 looking at the rulebook 
+-
+  name: "Spy"
+  archetypes:
+    - Spy
+  paths:
+    -
+      name: Core
+      schticks:
+        -
+          title: Integrated Training
+          description: Add +1 to Guns if your previous attack used Martial Arts. Add +1 to Martial Arts if your previous attack used Guns.
+        -
+          title: Scoped out
+          description: Add +1 to Guns, Martial Arts, and Defense vs. characters you have exchanged dialogue with at a previous time or location.
+-
+  name: "Supernatural Creature"
+  archetypes:
+    - Supernatural Creature
+  paths:
+    -
+      name: Core
+      schticks:
+        -
+          title: Conditional Escalation
+          description: You gain +2 to Creature Powers if at least one of your allies has accrued 25 or more Wound Points, or +3 to Creature Powers if any of them are down.
+        -
+          title: Inhuman physiology
+          description: The Medicine skill works to heal you only if the doctor using it was trained in the Ancient Juncture or Netherworld.
+-
+  name: "Sword Master"
+  archetypes:
+    - Sword Master
+  paths:
+    -
+      name: Core
+      schticks:
+        -
+          title: Rippling Death
+          description: Spend 1 Chi and 2 shots to gain +2 Martial Arts vs. multiple opponents until end of sequence.
+-
+  name: "Thief"
+  archetypes:
+    - Thief
+  paths:
+    -
+      name: Core
+      schticks:
+        -
+          title: Quicksilver Dive
+          description: If you get hit while Dodging, you regain any Fortune spent on the Dodge, and your next attack action costs only 1 shot.
+        -
+          title: Fast Learner
+          description: Add +1 Defense against any opponent who has already hit you during the current sequence.
+-
+  name: "Transformed Crab"
+  archetypes:
+    - Transformed Crab
+  paths:
+    -
+      name: Core
+      schticks:
+        -
+          title: Knuckle Dependent
+          description: Subtract –2 Damage from Martial Arts attacks you make with weapons.
+-
+  name: "Transformed Dragon"
+  archetypes:
+    - Transformed Dragon
+  paths:
+    -
+      name: Core
+      schticks:
+        -
+          title: Fatal Reversion
+          description: Your dragon form can only survive in magical environments.  If you are reverted to dragon form in a magic-hostile juncture, you die.
+-
   name: "Guns"
   archetypes:
     - Archer
