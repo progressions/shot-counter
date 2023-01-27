@@ -55,9 +55,14 @@ module ImportSchticks
       schtick.description = attributes["description"]
       schtick.bonus = attributes["bonus"]
       schtick.archetypes = category["archetypes"]
+      schtick.color = Schtick::COLORS[schtick.category]
 
       if path["name"]
         schtick.path = path["name"].titleize
+
+        if schtick.path == "Core"
+          schtick.color = Schtick::COLORS["Core"]
+        end
       end
 
       schtick.prerequisite = find_prerequisite(attributes, campaign)

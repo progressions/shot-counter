@@ -6,6 +6,19 @@ class Schtick < ApplicationRecord
 
   validates :title, presence: true, uniqueness: true
 
+  COLORS = {
+    "Guns" => "#b71c1c",
+    "Martial Arts" => "#4a148c",
+    "Driving"=> "#311b92",
+    "Sorcery"=> "#0d47a1",
+    "Creature"=> "#006064",
+    "Transformed Animal"=> "#1b5e20",
+    "Gene Freak"=> "#9e9d24",
+    "Cyborg"=> "#ff8f00",
+    "Foe" => "#bf360c",
+    "Core" => "#3e2723"
+  }
+
   def self.for_archetype(archetype)
     where("schticks.archetypes @> ?", [archetype].flatten.to_json)
   end
