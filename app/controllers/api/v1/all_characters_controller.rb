@@ -26,6 +26,15 @@ class Api::V1::AllCharactersController < ApplicationController
   end
 
   def update
+    Rails.logger.info("================")
+    Rails.logger.info("================")
+    Rails.logger.info("================")
+    Rails.logger.info("================")
+    Rails.logger.info(character_params[:skills])
+    Rails.logger.info("================")
+    Rails.logger.info("================")
+    Rails.logger.info("================")
+    Rails.logger.info("================")
     if @character.update(character_params)
       render json: @character
     else
@@ -56,10 +65,10 @@ class Api::V1::AllCharactersController < ApplicationController
     params
       .require(:character)
       .permit(:name, :defense, :impairments, :color,
-              :user_id, :active, skills: [],
+              :user_id, :active,
               action_values: Character::DEFAULT_ACTION_VALUES.keys,
               description: Character::DEFAULT_DESCRIPTION.keys,
-              schticks: [])
+              schticks: [], skills: params[:character][:skills].keys)
   end
 
 end
