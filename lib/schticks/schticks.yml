@@ -1652,6 +1652,9 @@
         -
           title: Venom Sac
           description: When you hit a named character with a close combat Creature Powers attack, you may specify that they take no damage now, but instead take the damage from your attack +5, 5 shots from now.
+        -
+          title: Amphibian
+          description: You can easily move, breathe, and fight underwater.
 -
   name: "Scroungetech"
   archetypes:
