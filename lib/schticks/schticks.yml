@@ -1034,7 +1034,7 @@
           description: When a Martial Arts nunchaku attack hits a named character, spend 1 Chi. Your nunchaku Damage Value increases by 2. Until the end of the fight, each additional successful Martial Arts nunchaku attack increases your nunchaku damage by an additional 1.
           prerequisite: Rain of Pain.
     -
-      name: Path of the outlaw
+      name: Path of the Outlaw
       schticks:
         -
           title: Rise of the Downtrodden
@@ -1599,6 +1599,9 @@
           title: Foul Spew
           description: Barf acidic chunks on those who cross you. As an interrupt after you take more than 5 Wound Points from an enemy attack, spend 1 Magic and 1 shot. Enemy loses 3 Speed until end of fight if this is the first sequence, 2 Speed if this is the second sequence, or 1 Speed if this any subsequent sequence.
         -
+					title: Gruesome Appearance
+					description: When in monstrous form, you gain the Intimidate skill at an Action Value of 12.
+				-
           title: Inevitable Comeback
           description: After you fail a Death Check, spend 3 Magic to return to life with 5 Wound Points. You must give your fellow heroes time to think you’re definitely, absolutely dead this time.
         -
