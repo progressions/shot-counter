@@ -8,7 +8,6 @@ Rails.application.routes.draw do
   namespace :api do
     namespace :v1 do
       resources :schticks
-      resources :advancements
       post "schticks/import", to: "schticks#import"
       resources :factions, only: [:index]
       resources :invitations do
@@ -24,6 +23,7 @@ Rails.application.routes.draw do
       get "campaigns/current", to: "campaigns#current"
       resources :all_characters do
         resources :schticks, controller: "character_schticks"
+        resources :advancements
       end
       resources :all_vehicles
       resources :users, only: [:index, :show, :update, :destroy]
@@ -36,7 +36,7 @@ Rails.application.routes.draw do
             post :add
           end
         end
-        resources :characters do
+        resources :actors do
           member do
             patch :act
             post :add
