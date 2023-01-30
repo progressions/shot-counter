@@ -26,6 +26,7 @@ Rails.application.routes.draw do
         resources :schticks, controller: "character_schticks"
         resources :advancements
         resources :sites
+        resources :weapons, controller: "carries"
       end
       resources :vehicles
       resources :users, only: [:index, :show, :update, :destroy]

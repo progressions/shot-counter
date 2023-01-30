@@ -99,6 +99,7 @@ class Character < ApplicationRecord
       impairments: impairments,
       advancements: advancements.order(:created_at),
       sites: sites.order(:created_at),
+      weapons: weapons,
       category: "character",
     }
   end
