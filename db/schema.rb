@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_01_30_184927) do
+ActiveRecord::Schema[7.0].define(version: 2023_01_30_194045) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -234,6 +234,15 @@ ActiveRecord::Schema[7.0].define(version: 2023_01_30_184927) do
     t.boolean "active", default: true, null: false
     t.index ["campaign_id"], name: "index_vehicles_on_campaign_id"
     t.index ["user_id"], name: "index_vehicles_on_user_id"
+  end
+
+  create_table "weapons", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.string "name"
+    t.integer "damage"
+    t.integer "concealment"
+    t.integer "reload"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
