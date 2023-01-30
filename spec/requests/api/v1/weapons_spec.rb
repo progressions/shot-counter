@@ -36,6 +36,7 @@ RSpec.describe "Api::V1::Weapons", type: :request do
       post "/api/v1/weapons", headers: @headers, params: {
         weapon: {
           name: "Beretta M9",
+          description: "As seen in A Better Tomorrow",
           damage: 10,
           concealment: 2,
           reload_value: 3
@@ -44,6 +45,10 @@ RSpec.describe "Api::V1::Weapons", type: :request do
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
       expect(body["name"]).to eq("Beretta M9")
+      expect(body["damage"]).to eq(10)
+      expect(body["concealment"]).to eq(2)
+      expect(body["reload_value"]).to eq(3)
+      expect(body["description"]).to eq("As seen in A Better Tomorrow")
     end
   end
 

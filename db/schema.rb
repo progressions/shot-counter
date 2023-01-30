@@ -248,6 +248,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_01_30_194546) do
   create_table "weapons", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.uuid "campaign_id", null: false
     t.string "name", null: false
+    t.string "description"
     t.integer "damage", null: false
     t.integer "concealment"
     t.integer "reload_value"
