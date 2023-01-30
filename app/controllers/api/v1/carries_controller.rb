@@ -19,9 +19,9 @@ class Api::V1::CarriesController < ApplicationController
   end
 
   def destroy
-    @weapon = current_campaign.weapons.find_by(id: params[:id])
+    @carry = @character.carries.find_by(weapon_id: params[:id])
 
-    if @character.weapons.delete(@weapon)
+    if @carry.destroy
       render :ok
     else
       render json: @character.errors, status: 400
