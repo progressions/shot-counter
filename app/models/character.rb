@@ -66,6 +66,8 @@ class Character < ApplicationRecord
   has_many :schticks, through: :character_schticks
   has_many :advancements
   has_many :sites
+  has_many :carries
+  has_many :weapons, through: :carries
 
   validates :name, presence: true, uniqueness: { scope: :campaign_id, message: "must be unique" }
 
@@ -97,6 +99,7 @@ class Character < ApplicationRecord
       impairments: impairments,
       advancements: advancements.order(:created_at),
       sites: sites.order(:created_at),
+      weapons: weapons,
       category: "character",
     }
   end
