@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe "Api::V1::AllCharacters", type: :request do
+RSpec.describe "Api::V1::Characters", type: :request do
   before(:each) do
     @gamemaster = User.create!(email: "email@example.com", confirmed_at: Time.now, gamemaster: true)
     @campaign = @gamemaster.campaigns.create!(title: "Adventure")
@@ -13,7 +13,7 @@ RSpec.describe "Api::V1::AllCharacters", type: :request do
 
   describe "GET /index" do
     it "gets all characters" do
-      get "/api/v1/all_characters", headers: @headers
+      get "/api/v1/characters", headers: @headers
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
       expect(body.map { |c| c["name"] }).to eq(["Brick Manly", "Ugly Shing"])

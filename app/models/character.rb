@@ -93,7 +93,8 @@ class Character < ApplicationRecord
       skills: skills.sort_by { |key, value| [(DEFAULT_SKILLS.keys.include?(key) ? 0 : 1), key] }.to_h,
       color: color,
       impairments: impairments,
-      category: "character"
+      advancements: advancements.order(:created_at),
+      category: "character",
     }
   end
 

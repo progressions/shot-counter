@@ -65,7 +65,7 @@ class Api::V1::ActorsController < ApplicationController
   end
 
   def set_fight_character
-    @fight_character = @fight.fight_characters.find_or_create_by(actor_id: @character.id)
+    @fight_character = @fight.fight_characters.find_or_create_by(character_id: @character.id)
   end
 
   def set_fight

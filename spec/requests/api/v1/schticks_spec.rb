@@ -17,7 +17,7 @@ RSpec.describe "Schticks", type: :request do
       get "/api/v1/schticks", headers: @headers
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
-      expect(body).to eq([@blam.as_json])
+      expect(body["schticks"]).to eq(JSON.parse([@blam].to_json))
     end
   end
 
@@ -27,7 +27,7 @@ RSpec.describe "Schticks", type: :request do
       get "/api/v1/schticks/#{@blam.id}", headers: @headers
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
-      expect(body).to eq(@blam.as_json)
+      expect(body).to eq(JSON.parse(@blam.to_json))
     end
   end
 

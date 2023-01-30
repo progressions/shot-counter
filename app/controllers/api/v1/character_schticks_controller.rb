@@ -37,6 +37,6 @@ class Api::V1::CharacterSchticksController < ApplicationController
   end
 
   def set_character
-    @character = current_campaign.characters.find(params[:all_character_id])
+    @character = current_campaign.characters.find(params[:character_id])
   end
 end

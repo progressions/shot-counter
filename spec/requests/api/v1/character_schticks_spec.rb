@@ -11,21 +11,21 @@ RSpec.describe "Api::V1::CharacterSchticks", type: :request do
     set_current_campaign(@gamemaster, @campaign)
   end
 
-  describe "GET /api/v1/all_characters/:all_character_id/schticks" do
+  describe "GET /api/v1/characters/:all_character_id/schticks" do
     it "gets all the schticks for a character" do
       @blam = @campaign.schticks.create!(title: "Blam Blam Epigram", description: "Say a pithy phrase before firing a shot.")
       @brick.schticks << @blam
-      get "/api/v1/all_characters/#{@brick.id}/schticks", headers: @headers
+      get "/api/v1/characters/#{@brick.id}/schticks", headers: @headers
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
-      expect(body).to eq([@blam.as_json])
+      expect(body).to eq(JSON.parse([@blam].to_json))
     end
   end
 
-  describe "POST /api/v1/all_characters/:all_character_id/schticks" do
+  describe "POST /api/v1/characters/:all_character_id/schticks" do
     it "adds a schtick to a character" do
       @blam = @campaign.schticks.create!(title: "Blam Blam Epigram", description: "Say a pithy phrase before firing a shot.")
-      post "/api/v1/all_characters/#{@brick.id}/schticks", headers: @headers, params: {
+      post "/api/v1/characters/#{@brick.id}/schticks", headers: @headers, params: {
         schtick: { id: @blam.id }
       }
       expect(response).to have_http_status(:success)
@@ -35,11 +35,11 @@ RSpec.describe "Api::V1::CharacterSchticks", type: :request do
     end
   end
 
-  describe "DELETE /api/v1/all_characters/:all_character_id/schticks/:id" do
+  describe "DELETE /api/v1/characters/:all_character_id/schticks/:id" do
     it "removes a schtick from a character" do
       @blam = @campaign.schticks.create!(title: "Blam Blam Epigram", description: "Say a pithy phrase before firing a shot.")
       @brick.schticks << @blam
-      delete "/api/v1/all_characters/#{@brick.id}/schticks/#{@blam.id}", headers: @headers
+      delete "/api/v1/characters/#{@brick.id}/schticks/#{@blam.id}", headers: @headers
       expect(response).to have_http_status(:success)
       expect(@brick.reload.schticks).to be_empty
     end
