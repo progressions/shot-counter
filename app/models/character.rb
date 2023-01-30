@@ -63,6 +63,7 @@ class Character < ApplicationRecord
   has_many :character_effects
   has_many :character_schticks, dependent: :destroy
   has_many :schticks, through: :character_schticks
+  has_many :advancements
 
   validates :name, presence: true, uniqueness: { scope: :campaign_id, message: "must be unique" }
 
