@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_01_25_210000) do
+ActiveRecord::Schema[7.0].define(version: 2023_01_30_012609) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -174,8 +174,8 @@ ActiveRecord::Schema[7.0].define(version: 2023_01_25_210000) do
     t.boolean "bonus"
     t.jsonb "archetypes"
     t.index ["campaign_id"], name: "index_schticks_on_campaign_id"
+    t.index ["category", "title"], name: "index_schticks_on_category_and_title", unique: true
     t.index ["prerequisite_id"], name: "index_schticks_on_prerequisite_id"
-    t.index ["title"], name: "index_schticks_on_title", unique: true
   end
 
   create_table "users", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|

@@ -4,7 +4,7 @@ class Schtick < ApplicationRecord
   has_many :character_schticks
   has_many :characters, through: :character_schticks
 
-  validates :title, presence: true, uniqueness: true
+  validates :title, presence: true, uniqueness: { scope: :category }
 
   COLORS = {
     "Guns" => "#b71c1c",
