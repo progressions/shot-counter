@@ -39,7 +39,8 @@ RSpec.describe "Api::V1::Weapons", type: :request do
           description: "As seen in A Better Tomorrow",
           damage: 10,
           concealment: 2,
-          reload_value: 3
+          reload_value: 3,
+          juncture: "Modern",
         }
       }
       expect(response).to have_http_status(:success)
@@ -49,6 +50,7 @@ RSpec.describe "Api::V1::Weapons", type: :request do
       expect(body["concealment"]).to eq(2)
       expect(body["reload_value"]).to eq(3)
       expect(body["description"]).to eq("As seen in A Better Tomorrow")
+      expect(body["juncture"]).to eq("Modern")
     end
   end
 
