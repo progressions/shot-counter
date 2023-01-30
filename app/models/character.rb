@@ -63,6 +63,7 @@ class Character < ApplicationRecord
   has_many :character_effects
   has_many :character_schticks, dependent: :destroy
   has_many :schticks, through: :character_schticks
+  has_many :advancements
 
   validates :name, presence: true, uniqueness: { scope: :campaign_id, message: "must be unique" }
 
@@ -92,7 +93,8 @@ class Character < ApplicationRecord
       skills: skills.sort_by { |key, value| [(DEFAULT_SKILLS.keys.include?(key) ? 0 : 1), key] }.to_h,
       color: color,
       impairments: impairments,
-      category: "character"
+      advancements: advancements.order(:created_at),
+      category: "character",
     }
   end
 
