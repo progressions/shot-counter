@@ -25,12 +25,12 @@ Rails.application.routes.draw do
         resources :schticks, controller: "character_schticks"
         resources :advancements
       end
-      resources :all_vehicles
+      resources :vehicles
       resources :users, only: [:index, :show, :update, :destroy]
       resources :fights do
         resources :character_effects, only: [:create, :update, :destroy]
         resources :effects
-        resources :vehicles do
+        resources :drivers do
           member do
             patch :act
             post :add
