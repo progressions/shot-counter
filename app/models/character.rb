@@ -39,7 +39,8 @@ class Character < ApplicationRecord
     "Eye Color" => "",
     "Style of Dress" => "",
     "Appearance" => "",
-    "Background" => ""
+    "Background" => "",
+    "Melodramatic Hook" => "",
   }
   DEFAULT_SKILLS = {
     "Deceit" => 0,
