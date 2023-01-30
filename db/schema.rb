@@ -237,12 +237,14 @@ ActiveRecord::Schema[7.0].define(version: 2023_01_30_194045) do
   end
 
   create_table "weapons", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "campaign_id", null: false
     t.string "name"
     t.integer "damage"
     t.integer "concealment"
     t.integer "reload"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["campaign_id"], name: "index_weapons_on_campaign_id"
   end
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
@@ -271,4 +273,5 @@ ActiveRecord::Schema[7.0].define(version: 2023_01_30_194045) do
   add_foreign_key "sites", "characters"
   add_foreign_key "vehicles", "campaigns"
   add_foreign_key "vehicles", "users"
+  add_foreign_key "weapons", "campaigns"
 end
