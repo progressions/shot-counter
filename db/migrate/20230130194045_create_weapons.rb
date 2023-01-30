@@ -5,7 +5,7 @@ class CreateWeapons < ActiveRecord::Migration[7.0]
       t.string :name, null: false
       t.integer :damage, null: false
       t.integer :concealment
-      t.integer :reload
+      t.integer :reload_value
 
       t.timestamps
     end
