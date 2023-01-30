@@ -64,6 +64,7 @@ class Character < ApplicationRecord
   has_many :character_schticks, dependent: :destroy
   has_many :schticks, through: :character_schticks
   has_many :advancements
+  has_many :sites
 
   validates :name, presence: true, uniqueness: { scope: :campaign_id, message: "must be unique" }
 
@@ -94,6 +95,7 @@ class Character < ApplicationRecord
       color: color,
       impairments: impairments,
       advancements: advancements.order(:created_at),
+      sites: sites.order(:created_at),
       category: "character",
     }
   end

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_01_30_143833) do
+ActiveRecord::Schema[7.0].define(version: 2023_01_30_184927) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -186,6 +186,14 @@ ActiveRecord::Schema[7.0].define(version: 2023_01_30_143833) do
     t.index ["prerequisite_id"], name: "index_schticks_on_prerequisite_id"
   end
 
+  create_table "sites", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "character_id", null: false
+    t.string "description"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["character_id"], name: "index_sites_on_character_id"
+  end
+
   create_table "users", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.string "first_name", default: "", null: false
     t.string "last_name", default: "", null: false
@@ -251,6 +259,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_01_30_143833) do
   add_foreign_key "invitations", "users", column: "pending_user_id"
   add_foreign_key "schticks", "campaigns"
   add_foreign_key "schticks", "schticks", column: "prerequisite_id"
+  add_foreign_key "sites", "characters"
   add_foreign_key "vehicles", "campaigns"
   add_foreign_key "vehicles", "users"
 end
