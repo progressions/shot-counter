@@ -32,7 +32,7 @@ module ImportWeapons
 
       weapon.juncture = juncture["name"].titleize
       weapon.category = category["name"].titleize
-      weapon.name = attributes["name"]
+      weapon.name = name
       weapon.description = attributes["description"]
       weapon.mook_bonus = attributes["mook_bonus"].to_i
       weapon.kachunk = attributes["kachunk"]

@@ -12,12 +12,19 @@ class Api::V1::WeaponsController < ApplicationController
         .order(:juncture, :name)
     end
 
+    @categories = []
+
     @weapons = paginate(@weapons, per_page: (params[:per_page] || 24), page: (params[:page] || 1))
 
     @junctures = @weapons.pluck(:juncture).uniq.compact
 
     if params[:juncture].present?
       @weapons = @weapons.where(juncture: params[:juncture])
+      @categories = @weapons.pluck(:category).uniq.compact
+    end
+
+    if params[:category].present?
+      @weapons = @weapons.where(category: params[:category])
     end
 
     if params[:name].present?
@@ -27,7 +34,8 @@ class Api::V1::WeaponsController < ApplicationController
     render json: {
       weapons: @weapons,
       meta: pagination_meta(@weapons),
-      junctures: @junctures
+      junctures: @junctures,
+      categories: @categories
     }
   end
 
