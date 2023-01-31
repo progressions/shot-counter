@@ -3,18 +3,11 @@ class Api::V1::WeaponsController < ApplicationController
   before_action :require_current_campaign
 
   def index
-    if params[:character_id].present?
-      @character = current_campaign.characters.find(params[:character_id])
-      @weapons = @character.weapons
-    else
-      @weapons = current_campaign
-        .weapons
-        .order(:juncture, :name)
-    end
+    @weapons = current_campaign
+      .weapons
+      .order(:juncture, :name)
 
     @categories = []
-
-    @weapons = paginate(@weapons, per_page: (params[:per_page] || 24), page: (params[:page] || 1))
 
     @junctures = @weapons.pluck(:juncture).uniq.compact
 
@@ -30,6 +23,8 @@ class Api::V1::WeaponsController < ApplicationController
     if params[:name].present?
       @weapons = @weapons.where("name ILIKE ?", "%#{params[:name]}%")
     end
+
+    @weapons = paginate(@weapons, per_page: (params[:per_page] || 24), page: (params[:page] || 1))
 
     render json: {
       weapons: @weapons,
