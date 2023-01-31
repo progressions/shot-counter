@@ -10,6 +10,7 @@ Rails.application.routes.draw do
       resources :schticks
       resources :weapons
       post "schticks/import", to: "schticks#import"
+      post "weapons/import", to: "weapons#import"
       resources :factions, only: [:index]
       resources :invitations do
         member do

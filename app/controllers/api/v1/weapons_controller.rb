@@ -54,6 +54,15 @@ class Api::V1::WeaponsController < ApplicationController
     end
   end
 
+  def import
+    yaml = import_params[:yaml]
+    data = YAML.load(yaml)
+
+    ImportWeapons.call(data, current_campaign)
+
+    render :ok
+  end
+
   def update
     @weapon = current_campaign.weapons.find(params[:id])
     if @weapon.update(weapon_params)
