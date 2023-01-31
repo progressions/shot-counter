@@ -83,6 +83,10 @@ class Api::V1::WeaponsController < ApplicationController
 
   private
 
+  def import_params
+    params.require(:weapon).permit(:yaml)
+  end
+
   def weapon_params
     params.require(:weapon).permit(:name, :description, :damage, :concealment, :reload_value, :juncture, :mook_bonus, :category, :kachunk)
   end
