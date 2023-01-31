@@ -44,7 +44,12 @@ class Api::V1::FightsController < ApplicationController
   end
 
   def set_fight
-    @fight = current_campaign.fights.includes(:characters).includes(characters: :user).find(params[:id])
+    @fight = current_campaign
+      .fights
+      .includes(:fight_characters, :effects, :characters, :vehicles)
+      .includes(characters: [:user, :advancements, :sites, :character_effects, :schticks, :weapons])
+      .includes(vehicles: [:user])
+      .find(params[:id])
   end
 
   def post_to_discord(fight)
