@@ -55,6 +55,10 @@ class Character < ApplicationRecord
     "Police" => 0,
     "Sabotage" => 0,
     "Seduction" => 0,
+    "Constituion" => 0,
+    "Will" => 0,
+    "Notice" => 0,
+    "Strength" => 0
   }
 
   has_many :fight_characters, dependent: :destroy
