@@ -42,7 +42,7 @@ class Api::V1::WeaponsController < ApplicationController
     if @weapon.save
       render json: @weapon
     else
-      render json: @weapon, status: 400
+      render json: @weapon.errors, status: 400
     end
   end
 
