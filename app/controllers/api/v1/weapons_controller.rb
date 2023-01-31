@@ -67,7 +67,7 @@ class Api::V1::WeaponsController < ApplicationController
   private
 
   def weapon_params
-    params.require(:weapon).permit(:name, :description, :damage, :concealment, :reload_value, :juncture)
+    params.require(:weapon).permit(:name, :description, :damage, :concealment, :reload_value, :juncture, :mook_bonus)
   end
 
   def pagination_meta(object)

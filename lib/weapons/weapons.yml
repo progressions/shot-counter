@@ -1,0 +1,19 @@
+-
+  name: "Ancient"
+  weapons:
+    -
+      name: Bow and Arrow 7/5/-
+      description: Your basic pre-gunpowder ranged weapon. You never have to make Reload Checks when wielding a bow. Post-apocalyptic survivors may also resort to bows, having run out of ammunition for their battered, duct-taped firearms.
+-
+  name: "Past"
+  weapons:
+    -
+      name: Black Powder Pistol 7/3/6
+      description: Takes 9 shots to reload.
+    -
+      name: Crossbow 7/4/6
+      description: Already obsolete in 1850, by several centuries. Takes 9 shots to reload.
+    -
+      name: Musket 8/5/6
+      description: Your basic black powder rifle. Takes 9 shots to reload.
+
