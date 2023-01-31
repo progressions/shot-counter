@@ -3,13 +3,31 @@ class Api::V1::WeaponsController < ApplicationController
   before_action :require_current_campaign
 
   def index
-    @weapons = current_campaign.weapons
+    if params[:character_id].present?
+      @character = current_campaign.characters.find(params[:character_id])
+      @weapons = @character.weapons
+    else
+      @weapons = current_campaign
+        .weapons
+        .order(:juncture, :name)
+    end
 
     @weapons = paginate(@weapons, per_page: (params[:per_page] || 24), page: (params[:page] || 1))
 
+    @junctures = @weapons.pluck(:juncture).uniq.compact
+
+    if params[:juncture].present?
+      @weapons = @weapons.where(juncture: params[:juncture])
+    end
+
+    if params[:name].present?
+      @weapons = @weapons.where("name ILIKE ?", "%#{params[:name]}%")
+    end
+
     render json: {
       weapons: @weapons,
-      meta: pagination_meta(@weapons)
+      meta: pagination_meta(@weapons),
+      junctures: @junctures
     }
   end
 
