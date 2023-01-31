@@ -1,19 +1,300 @@
 -
   name: "Ancient"
-  weapons:
+  categories:
     -
-      name: Bow and Arrow 7/5/-
-      description: Your basic pre-gunpowder ranged weapon. You never have to make Reload Checks when wielding a bow. Post-apocalyptic survivors may also resort to bows, having run out of ammunition for their battered, duct-taped firearms.
+      name: ""
+      weapons:
+        -
+          name: Bow and Arrow 7/5/-
+          description: Your basic pre-gunpowder ranged weapon. You never have to make Reload Checks when wielding a bow. Post-apocalyptic survivors may also resort to bows, having run out of ammunition for their battered, duct-taped firearms.
 -
   name: "Past"
-  weapons:
+  categories:
     -
-      name: Black Powder Pistol 7/3/6
-      description: Takes 9 shots to reload.
+      name: ""
+      weapons:
+        -
+          name: Black Powder Pistol 7/3/6
+          description: Takes 9 shots to reload.
+        -
+          name: Crossbow 7/4/6
+          description: Already obsolete in 1850, by several centuries. Takes 9 shots to reload.
+        -
+          name: Musket 8/5/6
+          description: Your basic black powder rifle. Takes 9 shots to reload.
+-
+  name: "Modern"
+  categories:
     -
-      name: Crossbow 7/4/6
-      description: Already obsolete in 1850, by several centuries. Takes 9 shots to reload.
+      name: Autoloader Handguns
+      weapons:
+        -
+          name: American Derringer Mini-Cop 11/1/6
+          description: Very small .357 Magnum which unlike other autoloaders takes 5 shots to reload.
+        -
+          name: AMT Automag v 12/3/5
+          description: This .50 cal stainless-steel phallic symbol is not for the subtle. Produced in a batch of less than 3000, it shows the size of the owner’s bankroll, as well as his fondness for great big bullets.
+        -
+          name: Auto-ordnance pit Bull 10/1/4
+          description: More concealable version of the Colt 1911 (described later), and with a cool name to boot. Guns with cool names are very important to action heroes.
+        -
+          name: Beretta 92FS Centurion 10/2/3
+          description: Another common 9mm autoloader.
+        -
+          name: Beretta Model 21 Bobcat 8/1/4
+          description: A pistol small enough to go in your ankle holster.
+        -
+          name: Beretta Model 950BS Jet Fire 8/1/4
+          description: Even lighter than the above. Hey, these Beretta guys have the cool name thing down pat, don’t they?
+        -
+          name: Beretta M9 10/2/3
+          description: Hey, Beretta, why the comparatively sober model name? Might it be that this is a common sidearm for the lucrative military market, which eschews fancy marketing for letters and numbers that look good on a requisition form?
+        -
+          name: Browning Hi-power 10/2/3
+          description: As seen in A Better Tomorrow, Hard Boiled, and Exiled, as well as a host of Hollywood flicks. Though the peak of its movie career stretched from the 70s into the 80s, it keeps its SAG membership up-to-date with the occasional cameo even now.
+        -
+          name: Colt Delta Elite MKIv Series 80 11/2/4
+          description: "10mm autoloader. Ex-military types may be irresistibly drawn to the word “Delta.”"
+        -
+          name: Colt 380 Gov't pocketlite 8/1/4
+          description: Your basic diet .380 autoloader.
+        -
+          name: Colt 1911A 10/2/4
+          description: The classic workhorse of .45 autoloaders. Like the number says, it’s based on a 1911 design. Most other models of autoloader listed here are minor modifications of this one. Until very recently this was the basic sidearm of the US military; it’s still the basic pistol of action movie heroes on screens worldwide.
+        -
+          name: CZ 75B 10/1/3
+          description: This Czech-made pistol, originally a semi-auto and now available in a full-auto model, earns inclusion as Mad Dog’s workaday sidearm in the Hk crime melodrama Hard Boiled.
+        -
+          name: Desert Eagle .357 Magnum 11/3/3
+          description: Wins the brand-name recognition contest in the really-big-handgun category. Finish comes in your choice of black oxide, nickel, or chrome. Hey, if you’re going to wave something this big around, you might as well go for the chrome.
+        -
+          name: Desert Eagle .50AE 12/3/4
+          description: As above, but substitute “BFG” for “really big handgun.”
+        -
+          name: 'E.T. "Series one Laseraim" 11/3/3'
+          description: Funky 10mm autoloader with high-tech looking scallops along the top of the barrel — sure to appeal to yuppie heroes and pretentious bad guys. Comes with laser targeting sight, which, in the cinematic world of Feng Shui, has no game effect but looks cool and is intimidating to be targeted by. Made by new-wave gun gods Emerging Technologies.
+        -
+          name: Glock 17   10/1/3
+          description: Workhorse autoloader pistol with a polymer frame; it’s light for a 9mm. Sneered at by many gun enthusiasts. Killer types may consider it useful but unhip. But then again, US soldiers bought lots of them with their own money in preparation for the Gulf War.The default pistol of contemporary mooks.
+        -
+          name: Glock 18 10/1/3; 10/2/1
+          description: Fully-automatic version of above. Stick with the 17 shot clip and stay highly concealable, or go nuts with the 33 shot clip — which is about twice the length of the gun’s grip.
+        -
+          name: Grendel p-12 9/1/3
+          description: Small polymer/metal .380 autoloader pistol with a relatively high capacity. Cheap enough that your gun-toting PC probably puts them in all her friends’ Christmas stockings.
+        -
+          name: Grendel p-30 8/1/1
+          description: This .22 autoloader looks like something out of the 1930s Flash Gordon serials and has a downright wacky capacity. Your character may be taunted for being seen in public with this oddity, but then again, it is named after the monster that Beowulf fought, and that oughta count for something.
+        -
+          name: Heckler & Koch p7 10/2/4
+          description: Another 9mm autoloading pistol with name- brand credibility. If your character prefers one of these, she probably uses the phrase “fine German craftsmanship” a lot.
+        -
+          name: Heckler & Koch HK45C 10/2/3
+          description: As of this writing, the sidearm issued to Navy SEALs.
+        -
+          name: Kahr K9   10/1/4
+          description: Like the macarena, Jerry Maguire, and first edition Feng Shui, this small 9mm was a product of the mid- nineties. However it has by now killed more people than those three things combined. If we were strict realists, this would be 28 g too heavy to qualify for its Concealment rating. Happily, we’re not.
+        -
+          name: Intratec Tec-9 10/3/1
+          description: 9mm handgun that looks like a baby SMG housed in high-impact plastic. Formerly perceived as a gun for weenies only (and hence ideal mook ordnance), it became much hipper in the US in the wake of the assault weapons ban. It has a magazine instead of a clip, so it takes 3 shots to reload.
+        -
+          name: Intratec Tec-22 8/2/1
+          description: This .22 looks like a Luger with a big, curving high-capacity magazine stuck on it. High-impact plastic housing.
+        -
+          name: Kimber Solo Carry 10/1/6
+          description: An example of the burgeoning micro-pistol category for the concealed carry market, the Kimber Solo boasts a lissome 7 cm barrel length. It comes in shiny stainless steel, black matte aluminum, or shiny with a fancy rosewood grip. Just because you’re hiding it doesn’t mean it can’t be beautiful!
+        -
+          name: Llama Large Frame 10/2/4
+          description: Some gunmen may prefer their .45 Colt 1911A variant to be named after a fuzzy South American mammal.
+        -
+          name: Makarov 10/2/4
+          description: A common autoloading pistol in the former USSR and its former satellite and client states.
+        -
+          name: Norinco Type M1911 10/3/4
+          description: If they’re regularly blowing up things in the Pacific Rim, the PCs will often be encountering this Chinese version of the Colt 1911A. That’s a .45 autoloader pistol if you haven’t been reading in alphabetical order.
+        -
+          name: Norinco Tokarev 10/2/4
+          description: This version of the classic Soviet 9mm autoloader pistol will also be frequently encountered in Pacific Rim firefights.
+        -
+          name: ruger p89 10/2/3
+          description: High-capacity 9mm autoloading pistol for action heroes who insist on weapons manufactured in the good old US of A.
+        -
+          name: Sig-Sauer P220 10/2/4
+          description: "Monster hunters and magic cops will want this .45 German-made autoloading pistol on the grounds that Mulder used one on The X-Files. (Scully fans will stock up on the Sig-Sauer P230: 9/1/4.)"
+        -
+          name: Sig-Sauer P230 9/1/4
+          description: Scully fans will stock up on the Sig-Sauer P230.
+        -
+          name: Smith & Wesson 2213 Sportsman 8/1/4
+          description: Rugged little .22 autoloader pistol
+        -
+          name: 8/1/4 Smith & Wesson 3566 11/3/3
+          description: .356 autoloader pistol. If you’re going to go for an easily-spotted, high-power weapon, you might as well pick one that you don’t have to reload every sequence. Real-world shooters would be scared off by the unusual ammo, but that’s not a problem for PCs who can seamlessly source difficult supplies between scenes.
+        -
+          name: Smith & Wesson Sigma 10/1/3
+          description: S&W’s polymer-cased 9mm autoloader pistol.
+        -
+          name: Walther p-5 Compact 10/1/4
+          description: Another 9mm autoloader pistol with name cachet. You could go for the regular P-5, with a Concealment rating of 2, but it has the same Damage and Capacity ratings as this one, so why bother?
+        -
+          name: Walther ppK 9/1/5
+          description: James Bond carried this 7.65mm (.32 ACP) autoloader pistol. He had to be ordered into it, though.
     -
-      name: Musket 8/5/6
-      description: Your basic black powder rifle. Takes 9 shots to reload.
+      name: Revolvers
+      weapons:
+        -
+          name: Chiappa rhino 12/3/5
+          description: Chrome plating and serrated filigrees on the underside of the barrel grant this recent, lower recoil addition to the BFG category gnarliness appeal for the boss villain set.
+        -
+          name: Colt Detective Special 9/1/5
+          description: "If the name alone isn’t a dead giveaway, this is your baseline police-ready .38 revolver.  Other names with the same game statistics: Rossi 88 ‘S’ Series, Smith & Wesson Combat Masterpiece (modesty is not a virtue in gun sales, is it?), S&W Chiefs Special or Chiefs Special Airweight, S&W Bodyguard or Bodyguard Airweight, and Taurus Model 85."
+        -
+          name: Colt King Cobra 11/3/5
+          description: Matte stainless steel .357 revolver. Or, if you’re looking for a slightly different snake name, the Colt Python and Colt Anaconda both have the same game stats and, if size matters to you, can come with an additional 5 cm of barrel. The marketing guys at Colt are obviously devoted Freudians.  If you don’t want a gun named after a reptile, check out such 11/3/6 revolvers as the European American Bounty Hunter, Rossi Model 971, Ruger GP100, Ruger Redhawk, and Smith & Wesson Model 29. While wielding the latter, ask punks if they feel lucky.
+        -
+          name: rossi Model 515 8/2/4
+          description: "The kind of gun that the old professor with the vital clue who is being attacked by the bad guys tries to grab out of his desk drawer but they’re too fast for him and he never gets a chance to shoot it so the PCs have to rescue him. Different name, same stats: Taurus Model 94."
+        -
+          name: rossi Model 851 9/2/5
+          description: Your basic .38 revolver. If you want a more bullish name, pick a Taurus Model 80.
+        -
+          name: S&W Model 19 Combat Magnum 11/2/5
+          description: As concealable as a .357 Magnum revolver is going to get. The S&W Model 13 Military and Police Heavy Barrel has the same game numbers, as does another gun called the European American Armory Tactical.
+        -
+          name: Smith & Wesson Model 500 12/3/5
+          description: Why stop at the 10 cm barrel of this chrome- plated behemoth, when you can broadcast your inadequacy issues with 22 cm, or go completely over the top with the nearly 27 cm?
+        -
+          name: Taurus Model 85 9/2/5
+          description: This snub-nose pistol belongs to the large class of guns that wins inclusion here due to its appearance in The Killer.
 
+    -
+      name: Target Pistols
+      weapons:
+        -
+          name: Thompson Center Arms Contender 12/3/7
+          description: This break-action weapon flies open like a shotgun when you squeeze a special lever built into the trigger guard. Its finger-molded grip and rifle-like barrel grant it a formidable and exotic appearance. The gun fires a single shot, making it a deal-breaker for most. But with the right Reload schticks, reality can be explosively defied.  Its design leads many jurisdictions to class it as a short shotgun, and thus highly illegal.  Notably wielded by Mad Dog in Hard Boiled. Always reloads in slow motion, hence the 7 at the end of its game stats.
+    -
+      name: Submachine Guns
+      weapons:
+        -
+          name: Beretta M12 10/5/6
+          description: First designed for the Italian police, the modern model of this compact machine gun provides extra safety against accidental misfire. Its pistol grip qualifies it for use with the Both Guns Blazing gun schtick. Appears in many John Woo movies.
+        -
+          name: FN p90   13/5/6
+          description: New gun designs don’t come along that often, but this Belgian weapon, first manufactured in 1990, fits that bill in weirdly curved spades. Packing a small rifle-round punch into a relatively compact frame, it appeals to shooters needing portability, from vehicle patrollers to counter-insurgents. Your gun expert character, while someone is shooting it at him, might want to explain that this is not strictly speaking a submachine gun, but rather belongs to the blandly explanatory category of “personal defense weapon.”
+        -
+          name: Colt M6351 10/5/1
+          description: Looks like a stubby assault rifle,but not small enough to be concealable. Guards atop secret installations run by the Ascended or other groups might tote these, as will SWAT teams, paramilitaries, and the like. This is the model for the mook in the know.
+        -
+          name: Hechler & Koch Mp5 10/5/1
+          description: One of the most common SMGs around, this 9mm honey is still wielded by bad guys equipped with 80s and 90s vintage weapons.
+        -
+          name: Heckler & Koch Mp5 K 10/3/1
+          description: Today’s SMG of choice among special forces and well-equipped assassins. At just over 36 cm in length, this can be concealed beneath a heavy jacket, making it ideal on offensive missions. Its pistol grip allows characters to carry one in each hand and blaze away — see the Both Guns Blazing schtick.
+        -
+          name: Heckler & Koch Mp5 police 11/5/1
+          description: Cop characters can take this 10mm version of the above if desired; it’s produced in low quantities for law enforcement clients.
+        -
+          name: Heckler & Koch Mp7 12/5/1
+          description: With a higher velocity round allowing greater body armor penetration than the HK MP5 above, this SMG shares a year of birth with the Global War on Terror and is a veteran of the latest Afghanistan war. In film it usually appears in the hands of girls and henchmen. Make of that what you will.
+        -
+          name: Heckler & Koch uMp 11/5/1
+          description: 21st-century action flicks feature this in place of the MP5, in either .45 or .40 flavors. Well-known wielders include vampire Kate Beckinsale, assorted Expendables, and that sulky impostor pretending to be 007.
+        -
+          name: Mp40 10/5/1
+          description: This German WWII vintage SMG might be used by mooks and militias in third world countries.
+        -
+          name: M3 10/5/1
+          description: The vintage .45 “grease gun” used by the US military will likewise still be in use in various gun-laden back corners of the world.
+        -
+          name: Mini uZI 10/3/1
+          description: This concealable version of the famous Israeli SMG is particularly popular among low-level crooks and gangbangers, to whom the UZI name means prestige.
+        -
+          name: ruger Mp9 10/3/1
+          description: New gun going after the MP5’s “lotsa death in a small package” niche market. Just a hair longer than its rival.
+        -
+          name: TDI vector 11/5/2
+          description: The recoil-diverting design of this 2009 release gives it a bizarre silhouette, leading to its casting in futuristic roles, like the Total Recall remake. Hey, it didn’t write the script.
+        -
+          name: Thompson M1A1 10/5/1
+          description: The fabled tommy gun is long obsolete, but you might need the stats if a) a bad guy has an Al Capone fetish, b) there’s a hit at a costume party with a Prohibition-era theme, or c) your next pop- up juncture is 30s Chicago.
+        -
+          name: Uzi 10/4/1
+          description: Like Xerox and Kleenex, this gun is so ingrained in the popular consciousness that its brand name is becoming a synonym for its type. This is the model for the status-conscious mook who wants to look good for movie casting agents.
+    -
+      name: Shotguns
+      weapons:
+        -
+          name: Amsel Striker 13/4/3
+          description: This South African shotgun’s massive drum holds 12 rounds and makes the weapon look like a steroidal tommy gun. Its crazy look leads to its casting in villainous roles, for example its greatest appearance in the hands of Anthony Wong in Hard Boiled.
+        -
+          name: Benelli 121 13/5/4
+          description: Italian semi-auto with a classic look. Useful for chi warriors wishing to pass themselves off as ordinary hunters.
+          kachunk: true
+        -
+          name: Benelli 90 M3 13/5/4
+          description: Both a semi-auto and a pump, for the best of both worlds. Has a pistol grip, which looks cool, and that’s all that matters.
+          kachunk: true
+        -
+          name: Beretta 1201 riot 13/5/5
+          description: Sleek and streamlined classy semi-auto with that all-important brand name. Ideal for black tie and other formal events.
+        -
+          name: Bernadelli 13/5/3
+          description: This metallic pump action 12 gauge with pistol grip looks more like a machine gun or assault rifle than a shotgun. A manstopper for the emotionally secure nonconformist. Or the gunman who prefers capacity over aesthetic classicism.
+          kachunk: true
+        -
+          name: Franchi SpAS-12 13/5/4
+          description: An ergonomic pump, a pistol grip and a high-tech look distinguish this pump/semi-auto combo. This is a gun with a chip on its shoulder.
+          kachunk: true
+        -
+          name: Mossberg Special purpose 13/5/4
+          description: "And just what might that special purpose be, hmmm...? Might it be: blowing people away? It’s pump action constructed to fulfill military specifications."
+          kachunk: true
+        -
+          name: Remington 870 police 13/5/4
+          description: Remington is a brand name that conjures up images of the Old West. Pump action with classic stock design. Whenever a “not-as-dumb-as-his- cracker-act-would-suggest” Southern sheriff points a shotgun at your character’s head, it’s this one he’s pointing.
+          kachunk: true
+        -
+          name: Ruger red Label 10/5/6
+          description: This is your basic hunting over/under shotgun (one barrel is over the other); use the same stats for any of the other zillion hunting guns on the market. This is what irascible old coots will be firing at you when you trespass on their land looking for the feng shui site where the coot keeps his moonshine still.
+        -
+          name: Winchester Model 1300 Marine 13/5/4
+          description: Another historic brand name in a stainless steel pump action no-nonsense design.
+          kachunk: true
+    -
+      name: Rifles
+      weapons:
+        -
+          name: AK-47 13/5/1
+          description: The classic Soviet assault rifle. There are a zillion of these around the world. You’re especially likely to get shot at with them in nations that used to be Soviet clients or satellites.
+          mook_bonus: 2
+        -
+          name: AK-74 13/5/1
+          description: The 47’s younger brother. See above.
+          mook_bonus: 1
+        -
+          name: K2   13/4/1
+          description: An almost-concealable 5.56 caliber rifle from South Korea.
+          mook_bonus: 1
+        -
+          name: FN F2000 13/5/1
+          description: Configured in the compact bullpup design, which significantly reduces the size of the stock, this NATO weapon remains in the fledgling stage of its movie career, appearing in the hands of Channing Tatum, Jason Statham, Jet Li, Zoë Bell, and latter- day Sly Stallone.
+          mook_bonus: 1
+        -
+          name: M16 13/5/1
+          description: The basic rifle of the US army, among many other militaries, including Furious George’s. Since these weapons aren’t manufactured for the consumer market, flash and marketing glitz aren’t a factor here. There are lots of variations on this one, none of which have cool names so let’s just call them all M16s and be done with it. Today’s rifle hobbyists favor the version marketed by Colt as the AR-15. But if you’re threatening someone, you still tell them you’re going to come around their place with an M16.  Military characters instead carry M4s, the present- day descendant of the M16 now replacing it throughout the US military.
+          mook_bonus: 1
+        -
+          name: M14 13/5/2
+          description: A bigger-caliber buddy of the M16.
+          mook_bonus: 2
+        -
+          name: SvD Dragunov 13/5/3
+          description: Scary-looking Russian sniper rifle wielded by the Chow Yun Fat character during The Killer’s dragon boat hit scene. (Actually it was another weapon playing the Dragunov, which the film’s gun techs were unable to source. But your character has no trouble finding the real thing.)
+        -
+          name: Tavor Tar-21 13/5/1
+          description: A plasticky bullpup (short-stocked) assault rifle covered in futuristic ridges and macho filigrees, this gun looks like a reincarnated Adidas shoe with murder on its mind. Despite its visual distinctiveness, it has yet to make its mark on the movies, where so far it has been used chiefly for zombie abatement.
+          mook_bonus: 2
+        -
+          name: Winchester Model 70 12/5/5
+          description: Sure, you could carry a more modern rifle than the classic sports shooter’s bolt action, but you have your reasons. For one thing, this looks less militarized than today’s top hardware. That might still matter to you if you’re a Maverick Cop. Or maybe you want to be able to pass yourself off as a hunter or hobbyist. Mostly though, it’s Dirty Harry’s rifle, that’s why. You’ve even chambered it for his favored .458 Magnum.
