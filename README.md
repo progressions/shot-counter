@@ -1,6 +1,8 @@
 # Chi War API Server
 
-Chi War is a character and campaign manager for the tabletop roleplaying game (RPG) called Feng Shui 2, by Robin D. Laws.
+Chi War is a character and campaign manager for the tabletop roleplaying game (RPG) called Feng Shui 2, published by Atlas Games.
+
+This server was coded entirely by Isaac Priestley.
 
 This repository is the backend API server containing the database and JSON API that communicates with the frontend client `shot-client`, which is written with NextJS and React.
 
@@ -25,6 +27,12 @@ Feng Shui 2 doesn't have a ton of players, but it's my favorite RPG, and I've be
 I chose to build the app as an API server only because Ruby on Rails is my primary strength as a developer, and I wanted to learn some new frontend skills on a big project.
 
 ## Features
+
+### Users
+
+Users of Chi War can be defined as gamemasters or players. There's also an admin flag to allow them to manage users.
+
+A gamemaster has privileges to create campaigns and to edit all the relevant tables associated with their campaign. They can create or delete Fights, Characters, Vehicles, Schticks, and Weapons.
 
 ### Characters
 
@@ -62,7 +70,17 @@ If the Ninja is on shot 15, his `character` will be associated with the `fight` 
 
 ### Schticks
 
+In Feng Shui 2, character talents are called `schticks`. A character has multiple schticks, and some schticks are gated by a pre-requisite. The system is built so a character can add schticks they don't currently have, as long as they do have any prerequisites needed.
+
+They're also prohibited from removing schticks which are prerequisites to other schticks they own.
+
+Gamemasters can create and manage Schtick records, and Players can choose from the existing Schticks, which have several levels of categorization, and add them to or remove them from their character.
+
 ### Weapons
+
+Weapons have only a few statistics and a name and description. A character can have multiple weapons, and potentially multiple instances of the same type of weapon.
+
+Gamemasters can create and manage Weapons, and Players can choose existing Weapons for their character.
 
 ## Discord Bot
 
@@ -102,3 +120,13 @@ smtp:
   user_name: ...
   password: ...
 ```
+
+## Areas of Improvement
+
+Places where I think there are improvements I can make:
+
+- Performance. Currently, if a fight has a lot of characters, and those characters have a lot of schticks, weapons, and so on, there can be a slight delay as the page renders. Most of that delay is currently on the NextJS/React side, but I do think there are things I could do to speed it up on the server.
+- JSON serializing. I haven't chosen a library to do JSON serializing, so right now when a character is serialized to JSON, it includes almost all of its attributes and associations. I'd like to customize that further, so that different requests can serialize different attributes when they're not all needed by the client.
+
+
+
