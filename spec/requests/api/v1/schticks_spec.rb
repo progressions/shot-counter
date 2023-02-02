@@ -19,6 +19,17 @@ RSpec.describe "Schticks", type: :request do
       body = JSON.parse(response.body)
       expect(body["schticks"]).to eq(JSON.parse([@blam].to_json))
     end
+
+    it "gets schticks for a Foe, excluding schticks they already know" do
+      @blam = @campaign.schticks.create!(title: "Blam Blam Epigram", description: "Say a pithy phrase before firing a shot.")
+      @big = @campaign.schticks.create!(title: "Very Big", description: "+3 to Strength checks.")
+      @boss.schticks << @blam
+      get "/api/v1/schticks?character_id=#{@boss.id}", headers: @headers
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["schticks"]).not_to include(JSON.parse(@blam.to_json))
+      expect(body["schticks"]).to include(JSON.parse(@big.to_json))
+    end
   end
 
   describe "GET /api/v1/schtick/:id" do
