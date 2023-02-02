@@ -18,7 +18,8 @@ class Api::V1::SchticksController < ApplicationController
           .where(prerequisite_id: [@character.schtick_ids, nil].flatten)
           .where.not(id: @character.schtick_ids)
       else
-        @schticks = @schticks.where(category: "Foe")
+        @schticks = @schticks
+          .where.not(id: @character.schtick_ids)
       end
     end
 
