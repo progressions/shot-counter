@@ -11,6 +11,10 @@ class Api::V1::FightsController < ApplicationController
       .includes(:characters)
       .includes(characters: :user)
 
+    if params[:show_all] != "true"
+      @fights = @fights.where(active: true)
+    end
+
     @fights = paginate(@fights, per_page: (params[:per_page] || 24), page: (params[:page] || 1))
 
     render json: {
