@@ -21,7 +21,6 @@ class Api::V1::CharactersAndVehiclesController < ApplicationController
     @archetypes = @action_values.map(&:archetype).uniq.reject(&:blank?).sort
 
     if params[:fight_id]
-      # Game.where.not(id: MarkedGame.where(user_id: current_user.id).pluck(:game_id))
       @characters = @characters.where.not(id: FightCharacter.where(fight_id: params[:fight_id]).pluck(:character_id))
     end
     if params[:show_all] != "true"

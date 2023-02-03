@@ -4,8 +4,19 @@ class Api::V1::FightsController < ApplicationController
   before_action :set_fight, only: [:show, :update, :destroy]
 
   def index
-    @fights = current_campaign.fights.where(archived: false).order(name: :asc).includes(:characters).includes(characters: :user)
-    render json: @fights
+    @fights = current_campaign
+      .fights
+      .where(archived: false)
+      .order(name: :asc)
+      .includes(:characters)
+      .includes(characters: :user)
+
+    @fights = paginate(@fights, per_page: (params[:per_page] || 24), page: (params[:page] || 1))
+
+    render json: {
+      fights: @fights,
+      meta: pagination_meta(@fights)
+    }
   end
 
   def show
