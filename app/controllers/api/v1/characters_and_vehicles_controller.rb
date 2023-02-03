@@ -20,6 +20,10 @@ class Api::V1::CharactersAndVehiclesController < ApplicationController
     @factions = @action_values.map(&:faction).uniq.reject(&:blank?).sort
     @archetypes = @action_values.map(&:archetype).uniq.reject(&:blank?).sort
 
+    if params[:fight_id]
+      # Game.where.not(id: MarkedGame.where(user_id: current_user.id).pluck(:game_id))
+      @characters = @characters.where.not(id: FightCharacter.where(fight_id: params[:fight_id]).pluck(:character_id))
+    end
     if params[:show_all] != "true"
       @characters = @characters.where(active: true)
     end
@@ -40,6 +44,9 @@ class Api::V1::CharactersAndVehiclesController < ApplicationController
       .includes(:user)
       .order(:name)
 
+    if params[:fight_id]
+      @vehicles = @vehicles.where.not(id: FightCharacter.where(fight_id: params[:fight_id]).pluck(:vehicle_id))
+    end
     if params[:show_all] != "true"
       @characters = @characters.where(active: true)
     end
