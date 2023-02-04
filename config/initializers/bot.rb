@@ -1,3 +1,4 @@
+=begin
 unless ENV['DISCORD_BOT'] == 'false'
   require 'discordrb'
 
@@ -14,3 +15,4 @@ unless ENV['DISCORD_BOT'] == 'false'
   Bot.run(true)
   puts "Invite URL: #{Bot.invite_url}"
 end
+=end
