@@ -59,7 +59,7 @@ class Api::V1::CharactersController < ApplicationController
               :user_id, :active,
               action_values: Character::DEFAULT_ACTION_VALUES.keys,
               description: Character::DEFAULT_DESCRIPTION.keys,
-              schticks: [], skills: params.fetch(:character, {}).fetch(:skills, {}).keys)
+              schticks: [], skills: params.fetch(:character, {}).fetch(:skills, {}).keys || [])
   end
 
 end
