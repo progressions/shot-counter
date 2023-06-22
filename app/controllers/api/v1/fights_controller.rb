@@ -7,9 +7,12 @@ class Api::V1::FightsController < ApplicationController
     @fights = current_campaign
       .fights
       .where(archived: false)
-      .order(name: :asc)
+      .order(created_at: :desc)
+      .includes(:fight_characters)
+      .includes(:vehicles)
       .includes(:characters)
       .includes(characters: :user)
+      .includes(:character_effects)
 
     if params[:show_all] != "true"
       @fights = @fights.where(active: true)
