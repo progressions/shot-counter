@@ -64,7 +64,7 @@ class Api::V1::CharactersAndVehiclesController < ApplicationController
 
     @characters_and_vehicles = (@characters + @vehicles).sort_by(&:name)
 
-    @characters_and_vehicles = paginate(@characters_and_vehicles, per_page: (params[:per_page] || 24), page: (params[:page] || 1))
+    @characters_and_vehicles = paginate(@characters_and_vehicles, per_page: (params[:per_page] || 10), page: (params[:page] || 1))
 
     render json: {
       characters: @characters_and_vehicles,
