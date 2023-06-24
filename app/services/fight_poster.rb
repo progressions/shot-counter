@@ -93,14 +93,20 @@ TEXT
       end
       char_msg << "\n"
 
+      char_msg << "```diff"
+
       char_msg << "Wounds #{character.action_values["Wounds"]}"
+      if character.impairments.to_i > 0
+        char_msg << "Impairments -#{character.impairments}"
+      end
+      chat_msg << "\n"
+
       main_attack = character.action_values["MainAttack"]
       char_msg << "#{main_attack} #{character.action_values[main_attack] - character.impairments.to_i}"
       char_msg << "Defense #{character.action_values["Defense"] - character.impairments.to_i}"
 
-      if character.impairments.to_i > 0
-        char_msg << "Impairments -#{character.impairments}"
-      end
+      char_msg<< "```"
+
       char_msg.join(" ")
     end
 
