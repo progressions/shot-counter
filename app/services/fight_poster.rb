@@ -39,7 +39,7 @@ TEXT
       message << ""
       message << "**#{fight.name}**"
       message << "```diff"
-      message << "- (sequence #{CurrentSequence.get})"
+      message << "- (sequence #{fight.sequence})"
       message << "```"
       message.join("\n")
     end
