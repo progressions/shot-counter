@@ -1,11 +1,24 @@
 module SlashListFights
   extend Discordrb::Commands::CommandContainer
 
+  Bot.register_application_command(:campaigns, 'List campaigns') do |cmd|
+  end
+
+  Bot.application_command(:campaigns) do |event|
+    campaigns = Campaign.all
+    message = "\n\n**CAMPAIGNS**\n"
+    message += "============\n"
+    message += campaigns.map(&:title).join("\n")
+
+    event.respond(content: message)
+  end
+
   Bot.register_application_command(:list, 'List all available fights.') do |cmd|
   end
 
   Bot.application_command(:list) do |event|
-    fights = Fight.active.order("created_at DESC")
+    campaign = CurrentCampaign.get
+    fights = campaign.fights.active.order("created_at DESC")
 
     message = "\n\n**FIGHTS**\n"
     message += "=========\n"
