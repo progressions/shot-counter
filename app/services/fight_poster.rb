@@ -103,13 +103,13 @@ TEXT
       end
 
       if character.action_values["Type"] == "PC"
-        char_msg << "\n"
+        char_msg << "("
 
         char_msg << "#{character.action_values["Wounds"]} Wounds"
         if character.impairments.to_i > 0
           char_msg << "(-#{character.impairments} impairments)"
         end
-        char_msg << "\n"
+        char_msg << ")"
 
         main_attack = character.action_values["MainAttack"]
 
