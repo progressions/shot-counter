@@ -7,7 +7,7 @@ module SlashSetCharacter
   end
 
   Bot.application_command(:set) do |event|
-    key = :current_shot
+    key = :shot
 
     fight = CurrentFight.get
     if fight.nil?
@@ -18,14 +18,14 @@ module SlashSetCharacter
     name = event.options["name"]
     value = event.options["shot"]
 
-    character = fight.characters.where("name ILIKE ?", name.downcase).first
+    fight_character = fight.fight_characters.where("name ILIKE ?", name.downcase).first
 
-    if fight.nil?
+    if fight_character.nil?
       event.respond(content: "Can't find that character!")
       return
     end
 
-    character.update(key => value)
+    fight_character.update(key => value)
 
     event.respond(content: FightPoster.shots(fight))
   end
