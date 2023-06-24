@@ -37,10 +37,7 @@ TEXT
       message = []
       message << "FIGHT"
       message << ""
-      message << "**#{fight.name}**"
-      message << "```"
-      message << "- (sequence #{fight.sequence})"
-      message << "```"
+      message << "**#{fight.name}** (Sequence #{fight.sequence})"
       message.join("\n")
     end
 
@@ -48,7 +45,11 @@ TEXT
       message = []
       fight.shot_order.each do |shot, characters|
         shot_msg = []
-        shot_msg << "Shot #{shot.to_i}"
+
+        shot_msg << "```"
+        shot_msg << "- Shot #{shot.to_i}"
+        shot_msg << "```"
+
         shot_msg << characters.map do |character|
           char_msg = []
           char_msg << "**#{character.name}**"
@@ -70,7 +71,7 @@ TEXT
       message = []
       fight.shot_order.each do |shot, characters|
         shot_msg = []
-        shot_msg << "Shot #{shot.to_i}"
+        shot_msg << "**Shot #{shot.to_i}**"
         shot_msg << characters.map do |character|
           show_character(character)
         end.join("\n")
@@ -91,10 +92,9 @@ TEXT
       if character.action_values["Faction"]
         char_msg << "- #{character.action_values["Faction"]}"
       end
-      char_msg << "\n"
 
       if character.action_values["Type"] == "PC"
-        char_msg << "```diff"
+        char_msg << "\n"
 
         char_msg << "Wounds #{character.action_values["Wounds"]}"
         if character.impairments.to_i > 0
@@ -107,8 +107,6 @@ TEXT
         char_msg << "Defense #{character.action_values["Defense"] - character.impairments.to_i}"
         char_msg << "Toughness #{character.action_values["Toughness"] - character.impairments.to_i}"
         char_msg << "Speed #{character.action_values["Speed"] - character.impairments.to_i}"
-
-        char_msg<< "```"
       end
 
       char_msg.join(" ")
