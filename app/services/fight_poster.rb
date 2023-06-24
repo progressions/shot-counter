@@ -112,7 +112,7 @@ TEXT
         char_msg << "\n"
 
         main_attack = character.action_values["MainAttack"]
-        secondary_attack = character.action_Values["SecondaryAttack"]
+        secondary_attack = character.action_values["SecondaryAttack"]
 
         char_msg << "#{main_attack} #{character.action_values[main_attack] - character.impairments.to_i}"
         char_msg << " / "
