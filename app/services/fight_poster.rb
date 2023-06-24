@@ -85,7 +85,7 @@ TEXT
         message << shot_msg
       end
 
-      message.join("\n")
+      message.join
     end
 
     private
