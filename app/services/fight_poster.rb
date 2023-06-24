@@ -47,6 +47,7 @@ TEXT
       fight.shot_order.each do |shot, characters|
         shot_msg = []
 
+        shot_msg << "\n"
         shot_msg << "```"
         shot_msg << "- Shot #{shot.to_i}"
         shot_msg << "```"
