@@ -7,7 +7,7 @@ module SlashListFights
   Bot.application_command(:list) do |event|
     fights = Fight.active.order("created_at DESC")
 
-    message = "SLASH FIGHTS\n"
+    message = "\n\n**FIGHTS**\n"
     message += "=========\n"
     message += fights.map(&:name).join("\n")
     event.respond(content: message)

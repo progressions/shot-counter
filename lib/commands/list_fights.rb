@@ -1,3 +1,4 @@
+# I don't remember if we need this.
 module ListFights
   extend Discordrb::Commands::CommandContainer
 
