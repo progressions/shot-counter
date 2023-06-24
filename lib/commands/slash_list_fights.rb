@@ -14,10 +14,13 @@ module SlashListFights
   end
 
   Bot.register_application_command(:campaign, 'Start a campaign.') do |cmd|
+    cmd.string(:name, "Campaign name")
   end
 
   Bot.application_command(:campaign) do |event|
-    campaign = Campaign.find_by(title: event.options['campaign'].value)
+    name = event.options[:name] || event.options["name"]
+
+    campaign = Campaign.find_by(title: name)
     if campaign.nil?
       event.respond(content: "No campaign found with that name.")
       return
