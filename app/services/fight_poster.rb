@@ -38,7 +38,7 @@ TEXT
       message << "FIGHT"
       message << ""
       message << "**#{fight.name}** (Sequence #{fight.sequence})"
-      message << "============================================"
+      message << "======================================"
       message.join("\n")
     end
 
@@ -74,14 +74,13 @@ TEXT
       fight.shot_order.each do |shot, characters|
         shot_msg = []
 
-        shot_msg << "\n"
-        shot_msg << "```"
-        shot_msg << "- Shot #{shot.to_i}"
-        shot_msg << "```"
+        shot_msg << "**Shot #{shot.to_i}**"
+        shot_msg << "--------------------------------------"
 
         shot_msg << characters.map do |character|
           show_character(character)
-        end.join("\n")
+        end
+
         message << shot_msg
       end
 
