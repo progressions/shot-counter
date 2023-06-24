@@ -74,7 +74,6 @@ TEXT
       fight.shot_order.each do |shot, characters|
         shot_msg = []
 
-        shot_msg << "\n"
         shot_msg << "**Shot #{shot.to_i}**"
         shot_msg << "--------------------------------------"
 
@@ -85,7 +84,7 @@ TEXT
         message << shot_msg
       end
 
-      message.join
+      message.join("\n")
     end
 
     private
@@ -112,11 +111,11 @@ TEXT
         main_attack = character.action_values["MainAttack"]
 
         char_msg << "#{main_attack} #{character.action_values[main_attack] - character.impairments.to_i}"
-        char_msg << " "
+        char_msg << " / "
         char_msg << "Defense #{character.action_values["Defense"] - character.impairments.to_i}"
-        char_msg << " "
+        char_msg << " / "
         char_msg << "Toughness #{character.action_values["Toughness"] - character.impairments.to_i}"
-        char_msg << " "
+        char_msg << " / "
         char_msg << "Speed #{character.action_values["Speed"] - character.impairments.to_i}"
       end
 
