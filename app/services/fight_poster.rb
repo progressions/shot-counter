@@ -99,7 +99,7 @@ TEXT
       if character.impairments.to_i > 0
         char_msg << "Impairments -#{character.impairments}"
       end
-      chat_msg << "\n"
+      char_msg << "\n"
 
       main_attack = character.action_values["MainAttack"]
       char_msg << "#{main_attack} #{character.action_values[main_attack] - character.impairments.to_i}"
