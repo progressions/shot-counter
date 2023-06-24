@@ -118,8 +118,8 @@ TEXT
         char_msg << " / "
         if character.action_values[secondary_attack].to_i > 7
           char_msg << "#{secondary_attack} #{character.action_values[secondary_attack] - character.impairments.to_i}"
+          char_msg << " / "
         end
-        char_msg << " / "
         char_msg << "Defense #{character.action_values["Defense"] - character.impairments.to_i}"
         char_msg << " / "
         char_msg << "Toughness #{character.action_values["Toughness"] - character.impairments.to_i}"
