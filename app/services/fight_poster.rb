@@ -74,7 +74,7 @@ TEXT
       fight.shot_order.each do |shot, characters|
         shot_msg = []
 
-        shot_msg << "**Shot #{shot.to_i}**"
+        shot_msg << "\n**Shot #{shot.to_i}**"
         shot_msg << "--------------------------------------"
 
         shot_msg << characters.map do |character|
@@ -92,11 +92,14 @@ TEXT
     def show_character(character)
       char_msg = ["-"]
       char_msg << "**#{character.name}**"
-      if character.action_values["Archetype"]
-        char_msg << "#{character.action_values["Archetype"]}"
-      end
-      if character.action_values["Faction"]
-        char_msg << "- #{character.action_values["Faction"]}"
+
+      if false
+        if character.action_values["Archetype"]
+          char_msg << "#{character.action_values["Archetype"]}"
+        end
+        if character.action_values["Faction"]
+          char_msg << "- #{character.action_values["Faction"]}"
+        end
       end
 
       if character.action_values["Type"] == "PC"
