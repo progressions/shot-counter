@@ -52,8 +52,8 @@ TEXT
         shot_msg << characters.map do |character|
           char_msg = []
           char_msg << "**#{character.name}**"
-          if character.defense
-            char_msg << "(D#{character.defense.to_i - character.impairments.to_i})"
+          if defense = character.action_values["Defense"]
+            char_msg << "(D#{defense - character.impairments.to_i})"
           end
           if character.impairments.to_i > 0
             char_msg << "(-#{character.impairments})"
