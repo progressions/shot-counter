@@ -85,11 +85,19 @@ TEXT
     def show_character(character)
       char_msg = ["-"]
       char_msg << "**#{character.name}**"
+      if character.action_values["Archetype"]
+        char_msg << "#{character.action_values["Archetype"]}"
+      end
+      if character.action_values["Faction"]
+        char_msg << "- #{character.action_values["Faction"]}"
+      end
+      char_msg << "\n"
+
       if defense = character.action_values["Defense"]
-        char_msg << "(D#{defense - character.impairments.to_i})"
+        char_msg << "Defense #{defense - character.impairments.to_i}"
       end
       if character.impairments.to_i > 0
-        char_msg << "(-#{character.impairments})"
+        char_msg << "Impairments -#{character.impairments}"
       end
       char_msg.join(" ")
     end
