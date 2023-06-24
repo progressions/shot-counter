@@ -110,6 +110,7 @@ TEXT
           char_msg << "(-#{character.impairments} impairments)"
         end
         char_msg << ")"
+        char_msg << "\n"
 
         main_attack = character.action_values["MainAttack"]
 
@@ -122,7 +123,7 @@ TEXT
         char_msg << "Speed #{character.action_values["Speed"] - character.impairments.to_i}"
       end
 
-      char_msg.join(" ")
+      char_msg.join("")
     end
 
   end
