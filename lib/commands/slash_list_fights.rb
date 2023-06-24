@@ -20,7 +20,7 @@ module SlashListFights
   Bot.application_command(:campaign) do |event|
     name = event.options[:name] || event.options["name"]
 
-    campaign = Campaign.where("name ILIKE ?", "%#{name}%").first
+    campaign = Campaign.where("title ILIKE ?", "%#{name}%").first
     if campaign.nil?
       event.respond(content: "No campaign found with that name.")
       return
