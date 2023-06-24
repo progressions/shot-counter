@@ -90,6 +90,7 @@ TEXT
     private
 
     def show_character(character)
+      char_msg = []
       char_msg << "- **#{character.name}**"
 
       if false
