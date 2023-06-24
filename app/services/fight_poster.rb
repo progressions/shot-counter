@@ -127,7 +127,7 @@ TEXT
         char_msg << "Speed #{character.action_values["Speed"] - character.impairments.to_i}"
       end
 
-      char_msg.join("")
+      char_msg.join(" ")
     end
 
   end
