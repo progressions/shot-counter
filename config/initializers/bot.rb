@@ -1,4 +1,3 @@
-=begin
 unless ENV['DISCORD_BOT'] == 'false'
   require 'discordrb'
 
@@ -10,9 +9,8 @@ unless ENV['DISCORD_BOT'] == 'false'
     prefix: '/'
   )
 
-  Dir["#{Rails.root}/app/commands/*.rb"].each { |file| require file }
+  Dir["#{Rails.root}/lib/commands/*.rb"].each { |file| require file }
 
   Bot.run(true)
   puts "Invite URL: #{Bot.invite_url}"
 end
-=end
