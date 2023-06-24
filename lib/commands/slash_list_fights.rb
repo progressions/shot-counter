@@ -13,6 +13,19 @@ module SlashListFights
     event.respond(content: message)
   end
 
+  Bot.register_application_command(:campaign, 'Start a campaign.') do |cmd|
+  end
+
+  Bot.application_command(:campaign) do |event|
+    campaign = Campaign.find_by(title: event.options['campaign'].value)
+    if campaign.nil?
+      event.respond(content: "No campaign found with that name.")
+      return
+    end
+    CurrentCampaign.set(campaign)
+    event.respond(content: "Campaign set to #{campaign.title}")
+  end
+
   Bot.register_application_command(:list, 'List all available fights.') do |cmd|
   end
 
