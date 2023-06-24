@@ -32,6 +32,7 @@ module ListFights
 
   Bot.command(:fights, attributes) do |event|
     fights = Fight.all
+
     message = "FIGHTS\n"
     message += "=========\n"
     message += fights.map(&:name).join("\n")

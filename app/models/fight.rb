@@ -6,6 +6,8 @@ class Fight < ApplicationRecord
   has_many :effects, dependent: :destroy
   has_many :character_effects
 
+  scope :active, -> { where(active: true) }
+
   SORT_ORDER = ["Uber-Boss", "PC", "Boss", "Featured Foe", "Ally", "Mook"]
   DEFAULT_SHOT_COUNT = 3
 
