@@ -72,20 +72,26 @@ TEXT
         shot_msg = []
         shot_msg << "Shot #{shot.to_i}"
         shot_msg << characters.map do |character|
-          char_msg = ["-"]
-          char_msg << "**#{character.name}**"
-          if character.defense
-            char_msg << "(D#{character.defense.to_i - character.impairments.to_i})"
-          end
-          if character.impairments.to_i > 0
-            char_msg << "(-#{character.impairments})"
-          end
-          char_msg.join(" ")
+          show_character(character)
         end.join("\n")
         message << shot_msg
       end
 
       message.join("\n")
+    end
+
+    private
+
+    def show_character(character)
+      char_msg = ["-"]
+      char_msg << "**#{character.name}**"
+      if defense = character.action_values["Defense"]
+        char_msg << "(D#{defense - character.impairments.to_i})"
+      end
+      if character.impairments.to_i > 0
+        char_msg << "(-#{character.impairments})"
+      end
+      char_msg.join(" ")
     end
 
   end

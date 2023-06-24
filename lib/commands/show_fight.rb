@@ -31,11 +31,6 @@ module ShowFight
   end
 
   Bot.command(:show, attributes) do |event|
-    fight = CurrentFight.get
-    if fight
-      event.respond(FightPoster.shots(fight))
-    else
-      event.respond("There is no current fight.")
-    end
+    event.respond("Wut")
   end
 end
