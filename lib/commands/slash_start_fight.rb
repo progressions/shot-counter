@@ -6,8 +6,13 @@ module SlashStartFight
   end
 
   Bot.application_command(:start) do |event|
+    campaign = CurrentCampaign.get
+
     fight_name = event.options["name"]
-    fight = Fight.where("name ILIKE ?", fight_name.downcase).first || Fight.create!(name: fight_name)
+    fight = campaign
+      .fights
+      .active
+      .where("name ILIKE ?", fight_name.downcase).first || campaign.fights.create!(name: fight_name)
 
     if !fight
       event.respond(content: "Couldn't find that fight!")
