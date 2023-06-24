@@ -103,18 +103,22 @@ TEXT
       end
 
       if character.action_values["Type"] == "PC"
-        char_msg << "("
+        char_msg << "\n"
 
         char_msg << "#{character.action_values["Wounds"]} Wounds"
         if character.impairments.to_i > 0
           char_msg << "(-#{character.impairments} impairments)"
         end
-        char_msg << ")"
         char_msg << "\n"
 
         main_attack = character.action_values["MainAttack"]
+        secondary_attack = character.action_Values["SecondaryAttack"]
 
         char_msg << "#{main_attack} #{character.action_values[main_attack] - character.impairments.to_i}"
+        char_msg << " / "
+        if character.action_values[secondary_attack] > 7
+          char_msg << "#{secondary_attack} #{character.action_values[secondary_attack] - character.impairments.to_i}"
+        end
         char_msg << " / "
         char_msg << "Defense #{character.action_values["Defense"] - character.impairments.to_i}"
         char_msg << " / "
