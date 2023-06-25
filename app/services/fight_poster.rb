@@ -97,8 +97,7 @@ TEXT
       shot = fight.fight_characters.maximum(:shot)
       fight
         .effects
-        .where("start_sequence <= ? AND end_sequence >= ?", fight.sequence, fight.sequence)
-        .where("start_shot <= ? AND end_shot >= ?", shot, shot)
+        .where("(start_sequence = :sequence AND start_shot >= :shot) OR (end_sequence = :sequence AND end_shot >= :shot)", sequence: fight.sequence, shot: shot)
         .order(:severity)
     end
 

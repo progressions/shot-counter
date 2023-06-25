@@ -106,6 +106,8 @@ RSpec.describe FightPoster do
       serena.character_effects.create!(title: "Feeling weird", fight: fight)
 
       fight.effects.create!(title: "Shadow of the Sniper", description: "+1 Attack", severity: "success", start_sequence: 1, end_sequence: 2, start_shot: 14, end_shot: 14)
+      fight.effects.create!(title: "Some effect", description: "", severity: "error", start_sequence: 1, end_sequence: 2, start_shot: 16, end_shot: 16)
+      fight.effects.create!(title: "Some other effect", description: "", severity: "success", start_sequence: 1, end_sequence: 2, start_shot: 9, end_shot: 9)
     end
 
     let(:expected) do
@@ -113,6 +115,7 @@ RSpec.describe FightPoster do
 # Museum Battle
 ### Sequence 1
 ```diff
+- Some effect (until sequence 2, shot 16)
 + Shadow of the Sniper: +1 Attack (until sequence 2, shot 14)
 ```
 ## Shot 14
