@@ -13,6 +13,10 @@ module FightPoster
       Bot.send_message(ChannelID, show(fight))
     end
 
+    def shots(fight)
+      show(fight)
+    end
+
     def message(fight)
       message = <<-TEXT
         A new fight has been created: #{fight.name}
