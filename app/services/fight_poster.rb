@@ -27,7 +27,6 @@ TEXT
     def shots(fight)
       message = []
       message << header(fight)
-      # message << terse_shots(fight)
       message << verbose_shots(fight)
 
       message.join("\n")
@@ -35,28 +34,24 @@ TEXT
 
     def header(fight)
       message = []
-      message << ""
-      message << ""
       message << "# #{fight.name}"
       message << "### Sequence #{fight.sequence}"
       message.join("\n")
     end
 
     def verbose_shots(fight)
-      message = []
-      fight.shot_order.each do |shot, characters|
-        shot_msg = []
+      fight.shot_order.map do |shot, characters|
+        [].tap do |shot_msg|
 
-        shot_msg << "## Shot #{shot.to_i}"
+          shot_msg << "## Shot #{shot.to_i}"
 
-        shot_msg << characters.map do |character|
-          show_character(character)
+          shot_msg << characters.map do |character|
+            show_character(character)
+          end
+
+          shot_msg << "\n"
         end
-
-        message << shot_msg
       end
-
-      message.join("\n")
     end
 
     private
@@ -65,7 +60,7 @@ TEXT
       char_msg = []
       char_msg << "- **#{character.name}**"
 
-      if character.action_values["Faction"]
+      if character.action_values["Faction"].present?
         char_msg << "- #{character.action_values["Faction"]}"
       end
 
@@ -104,33 +99,6 @@ TEXT
         msg << " / "
         msg << "Speed #{character.action_values["Speed"] - character.impairments.to_i}#{asterisk}"
       end
-    end
-
-    def terse_shots(fight)
-      message = []
-      fight.shot_order.each do |shot, characters|
-        shot_msg = []
-
-        shot_msg << "\n"
-        shot_msg << "```"
-        shot_msg << "- Shot #{shot.to_i}"
-        shot_msg << "```"
-
-        shot_msg << characters.map do |character|
-          char_msg = []
-          char_msg << "**#{character.name}**"
-          if defense = character.action_values["Defense"]
-            char_msg << "(D#{defense - character.impairments.to_i})"
-          end
-          if character.impairments.to_i > 0
-            char_msg << "(-#{character.impairments})"
-          end
-          char_msg.join(" ")
-        end.join(",")
-        message << shot_msg.join(" ")
-      end
-
-      message.join("\n")
     end
 
   end
