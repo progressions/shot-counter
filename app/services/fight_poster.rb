@@ -38,7 +38,7 @@ TEXT
 
     def action_value(character, key)
       if character.action_values[key].to_i > 0
-        asterisk = character.impairments.to_i > 0 ? "*" : nil
+        asterisk = character.impairments.to_i > 0 ? "*" : ""
         value = character.action_values[key].to_i - character.impairments.to_i
 
         "#{key} #{value}#{asterisk}"
@@ -59,6 +59,20 @@ TEXT
         character.action_values["Wounds"].to_i > 0 ? "#{character.action_values["Wounds"]} Wounds" : nil,
         character.impairments.to_i > 0 ? "(#{character.impairments} #{impairments})" : nil
       ].compact.join(" ")
+    end
+
+    def character_effect(effect)
+      action_value = effect.action_value
+      if action_value == "MainAttack"
+        action_value = effect.character.action_values["MainAttack"]
+      end
+
+      title = effect.title
+      description = effect.description.present? ? " (#{effect.description})" : ""
+      if description.present? || effect.change.present?
+        title = "#{title}:"
+      end
+      "#{title}#{description} #{action_value} #{effect.change}".strip
     end
 
   end

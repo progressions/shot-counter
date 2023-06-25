@@ -23,6 +23,10 @@
    action_value(character, "Speed"),
  ].compact.join(" ")
 %>
+<% if character.character_effects.any? -%>
+ <%= character.character_effects.map { |effect| character_effect(effect) }.join("\n ") -%>
+
+<% end -%>
 <% end -%>
 <% end -%>
 <% end -%>
