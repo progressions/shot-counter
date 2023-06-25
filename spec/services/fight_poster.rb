@@ -122,7 +122,6 @@ Shadow of the Sniper: +1 Attack (until sequence 2, shot 14)
   ```diff
  Feeling weird
  ```
-
 ## Shot 12
 - **Thunder King**
 - **Brick Manly**
@@ -131,7 +130,6 @@ Shadow of the Sniper: +1 Attack (until sequence 2, shot 14)
  Bonus: (Got lucky) Guns +1
  - Blinded: Defense -1
  ```
-
 ## Shot 10
 - **Ugly Shing**
 - **Jawbuster**

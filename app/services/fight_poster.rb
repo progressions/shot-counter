@@ -82,7 +82,7 @@ TEXT
       "#{status}#{title}#{description} #{action_value} #{effect.change}".strip
     end
 
-    def fight_effects(fight)
+    def active_effects(fight)
       shot = fight.fight_characters.maximum(:shot)
       fight
         .effects
