@@ -29,7 +29,7 @@ TEXT
     def show(fight)
       @fight = fight
       filename = Rails.root.join("app", "views", "fights", "show.md.erb")
-      ERB.new(filename.read, nil, "-").result(binding)
+      ERB.new(filename.read, trim_mode: "-").result(binding)
     end
 
     def action_value(character, key)
@@ -42,6 +42,10 @@ TEXT
     end
 
     def fortune_value(character)
+      asterisk = character.impairments.to_i > 0 ? "*" : ""
+      max_fortune = character.action_values["MaxFortune"].to_i - character.impairments.to_i
+
+      "#{character.action_values["FortuneType"]} #{character.action_values["Fortune"]}/#{max_fortune}#{asterisk}"
     end
 
     def wounds_and_impairments(character)
