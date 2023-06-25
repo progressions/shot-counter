@@ -33,9 +33,17 @@ TEXT
     def action_value(character, key)
       if character.action_values[key].to_i > 0
         asterisk = character.impairments.to_i > 0 ? "*" : ""
+        value = character.action_values[key].to_i - character.impairments.to_i
 
-        "#{key} #{character.action_values[key]}#{asterisk}"
+        "#{key} #{value}#{asterisk}"
       end
+    end
+
+    def wounds_and_impairments(character)
+      [
+        "#{character.action_values["Wounds"]} Wounds",
+        character.impairments.to_i > 0 ? "(#{character.impairments} Impairments)" : nil
+      ].compact.join(" ")
     end
 
   end

@@ -4,7 +4,7 @@
 ## Shot <%= shot %>
 <% characters.each do |character| -%>
 - **<%= character.name %>**
- <%= character.action_values["Wounds"] %> Wounds
+ <%= wounds_and_impairments(character) %>
  <%-
     main_attack = character.action_values["MainAttack"]
     secondary_attack = character.action_values["SecondaryAttack"]

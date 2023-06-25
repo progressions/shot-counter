@@ -50,7 +50,7 @@ RSpec.describe FightPoster do
     before(:each) do
       brick = Character.create!(name: "Brick Manly", action_values: {"Type" => "PC", "Guns" => 15, "Defense" => 14, "Toughness" => 7, "Speed" => 7, "Fortune" => 7}, campaign_id: action_movie.id)
       fight.fight_characters.create!(character: brick, shot: 12)
-      serena = Character.create!(name: "Serena", action_values: {"Type" => "PC", "MainAttack" => "Sorcery", "FortuneType" => "Magic", "Sorcery" => 14, "Defense" => 13, "Toughness" => 7, "Speed" => 6, "Magic" => 7}, campaign_id: action_movie.id)
+      serena = Character.create!(name: "Serena", action_values: {"Type" => "PC", "MainAttack" => "Sorcery", "FortuneType" => "Magic", "Sorcery" => 14, "Defense" => 13, "Toughness" => 7, "Speed" => 6, "Magic" => 7}, campaign_id: action_movie.id, impairments: 1)
       fight.fight_characters.create!(character: serena, shot: 14)
     end
 
@@ -60,8 +60,8 @@ RSpec.describe FightPoster do
 ### Sequence 0
 ## Shot 14
 - **Serena**
- 0 Wounds
- Sorcery 14 / Defense 13 / Magic 7 / Toughness 7 / Speed 6
+ 0 Wounds (1 Impairments)
+ Sorcery 13* / Defense 12* / Magic 6* / Toughness 6* / Speed 5*
 ## Shot 12
 - **Brick Manly**
  0 Wounds
