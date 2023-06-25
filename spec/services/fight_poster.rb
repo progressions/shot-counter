@@ -3,13 +3,13 @@ require 'rails_helper'
 RSpec.describe FightPoster do
   let(:user) { User.create!(email: "email@example.com") }
   let(:action_movie) { user.campaigns.create!(title: "Action Movie") }
-  let(:fight) { Fight.create!(name: "Museum Battle", campaign_id: action_movie.id) }
+  let(:fight) { Fight.create!(name: "Museum Battle", campaign_id: action_movie.id, sequence: 1) }
 
   context "with no shots or characters" do
     let(:expected) do
       <<-TEXT
 # Museum Battle
-### Sequence 0
+### Sequence 1
       TEXT
     end
 
@@ -29,7 +29,7 @@ RSpec.describe FightPoster do
     let(:expected) do
       <<-TEXT
 # Museum Battle
-### Sequence 0
+### Sequence 1
 ## Shot 12
 - **Brick Manly**
  Guns 15 Defense 14 Fortune 7/7 Toughness 7 Speed 7
@@ -56,7 +56,7 @@ RSpec.describe FightPoster do
     let(:expected) do
       <<-TEXT
 # Museum Battle
-### Sequence 0
+### Sequence 1
 ## Shot 14
 - **Serena**
  (1 Impairment)
@@ -91,7 +91,7 @@ RSpec.describe FightPoster do
       # PC
       brick = Character.create!(name: "Brick Manly", action_values: {"Type" => "PC", "Guns" => 15, "Defense" => 14, "Toughness" => 7, "Speed" => 7, "Fortune" => 7, "Max Fortune" => 7}, campaign_id: action_movie.id)
       # PC
-      serena = Character.create!(name: "Serena", action_values: {"Type" => "PC", "MainAttack" => "Sorcery", "FortuneType" => "Magic", "Sorcery" => 14, "Defense" => 13, "Toughness" => 7, "Speed" => 6, "Fortune" => 5, "Max Fortune" => 7, "Wounds" => 39}, campaign_id: action_movie.id, impairments: 1)
+      serena = Character.create!(name: "Serena", action_values: {"Type" => "PC", "MainAttack" => "Sorcery", "FortuneType" => "Magic", "Sorcery" => 14, "Defense" => 13, "Toughness" => 7, "Speed" => 6, "Fortune" => 5, "Max Fortune" => 7, "Wounds" => 39}, campaign_id: action_movie.id, impairments: 2)
 
       fight.fight_characters.create!(character: mook, shot: 8)
       fight.fight_characters.create!(character: jawbuster, shot: 10)
@@ -104,17 +104,22 @@ RSpec.describe FightPoster do
       brick.character_effects.create!(:title=>"Bonus", :fight => fight, :description=>"Got lucky", :severity=>"info", :action_value=>"MainAttack", :change=>"+1")
       brick.character_effects.create!(:title=>"Blinded", :fight => fight, :description=>"", :severity=>"error", :action_value=>"Defense", :change=>"-1")
       serena.character_effects.create!(title: "Feeling weird", fight: fight)
+
+      fight.effects.create!(title: "Shadow of the Sniper", description: "+1 Attack", severity: "success", start_sequence: 1, end_sequence: 2, start_shot: 14, end_shot: 14)
     end
 
     let(:expected) do
       <<-TEXT
 # Museum Battle
-### Sequence 0
+### Sequence 1
+```diff
+Shadow of the Sniper: +1 Attack (until sequence 2, shot 14)
+```
 ## Shot 14
 - **Serena**
- 39 Wounds (1 Impairment)
- Sorcery 13* Defense 12* Magic 4/6* Toughness 6* Speed 5*
-  ```
+ 39 Wounds (2 Impairments)
+ Sorcery 12* Defense 11* Magic 3/5* Toughness 5* Speed 4*
+  ```diff
  Feeling weird
  ```
 
@@ -122,7 +127,7 @@ RSpec.describe FightPoster do
 - **Thunder King**
 - **Brick Manly**
  Guns 15 Defense 14 Fortune 7/7 Toughness 7 Speed 7
-  ```
+  ```diff
  Bonus: (Got lucky) Guns +1
  - Blinded: Defense -1
  ```

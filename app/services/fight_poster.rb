@@ -1,6 +1,4 @@
 module FightPoster
-  extend ActiveSupport::Inflector
-
   class << self
     SEVERITIES = {
       "info" => "",
@@ -10,6 +8,7 @@ module FightPoster
     }
 
     include Rails.application.routes.url_helpers
+    include ActiveSupport::Inflector
 
     def post_to_discord(fight)
       return unless defined?(Bot)
@@ -81,6 +80,15 @@ TEXT
       end
       status = SEVERITIES[effect.severity]
       "#{status}#{title}#{description} #{action_value} #{effect.change}".strip
+    end
+
+    def fight_effects(fight)
+      shot = fight.fight_characters.maximum(:shot)
+      fight
+        .effects
+        .where("start_sequence <= ? AND end_sequence >= ?", fight.sequence, fight.sequence)
+        .where("start_shot <= ? AND end_shot >= ?", shot, shot)
+        .order(:severity)
     end
 
   end
