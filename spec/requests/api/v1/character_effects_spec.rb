@@ -17,7 +17,8 @@ RSpec.describe "CharacterEffects", type: :request do
       post "/api/v1/fights/#{@fight.id}/character_effects", headers: @headers, params: {
         character_effect: {
           title: "Bonus",
-          character_id: @brick.id
+          character_id: @brick.id,
+          fight_id: @fight.id
         }
       }
       expect(response).to have_http_status(:success)

@@ -2,6 +2,7 @@ class FightCharacter < ApplicationRecord
   belongs_to :fight
   belongs_to :character, optional: true
   belongs_to :vehicle, optional: true
+  has_many :character_effects, dependent: :destroy
 
   validate :ensure_campaign
 

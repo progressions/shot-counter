@@ -4,7 +4,8 @@ class Api::V1::CharacterEffectsController < ApplicationController
   before_action :set_fight, only: [:create, :update, :destroy]
 
   def create
-    @character_effect = @fight.character_effects.new(character_effect_params)
+    @fight_character = @fight.fight_characters.find_by(character_id: character_effect_params[:character_id])
+    @character_effect = @fight_character.character_effects.new(character_effect_params)
 
     if @character_effect.save
       render json: @character_effect

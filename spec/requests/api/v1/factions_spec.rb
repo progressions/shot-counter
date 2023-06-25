@@ -16,7 +16,7 @@ RSpec.describe "Api::V1::Factions", type: :request do
       get "/api/v1/factions", headers: @headers
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
-      expect(body).to eq(["The Dragons", "The Ascended"])
+      expect(body).to eq(["The Ascended", "The Dragons"])
     end
   end
 

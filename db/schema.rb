@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_01_31_151159) do
+ActiveRecord::Schema[7.0].define(version: 2023_06_25_195159) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -89,7 +89,9 @@ ActiveRecord::Schema[7.0].define(version: 2023_01_31_151159) do
     t.string "action_value"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.uuid "fight_character_id"
     t.index ["character_id"], name: "index_character_effects_on_character_id"
+    t.index ["fight_character_id"], name: "index_character_effects_on_fight_character_id"
     t.index ["fight_id"], name: "index_character_effects_on_fight_id"
     t.index ["vehicle_id"], name: "index_character_effects_on_vehicle_id"
   end
@@ -271,6 +273,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_01_31_151159) do
   add_foreign_key "carries", "characters"
   add_foreign_key "carries", "weapons"
   add_foreign_key "character_effects", "characters"
+  add_foreign_key "character_effects", "fight_characters"
   add_foreign_key "character_effects", "fights"
   add_foreign_key "character_effects", "vehicles"
   add_foreign_key "character_schticks", "characters"

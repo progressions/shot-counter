@@ -2,6 +2,7 @@ class CharacterEffect < ApplicationRecord
   belongs_to :character, optional: true
   belongs_to :vehicle, optional: true
   belongs_to :fight
+  belongs_to :fight_character, optional: true
 
   validate :character_belongs_to_fight
   validate :vehicle_belongs_to_fight
