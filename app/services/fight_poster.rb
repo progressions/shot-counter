@@ -1,4 +1,6 @@
 module FightPoster
+  extend ActiveSupport::Inflector
+
   class << self
     include Rails.application.routes.url_helpers
 
@@ -39,10 +41,14 @@ TEXT
       end
     end
 
+    def fortune_value(character)
+    end
+
     def wounds_and_impairments(character)
+      impairments = "Impairment".pluralize(character.impairments.to_i)
       [
         "#{character.action_values["Wounds"]} Wounds",
-        character.impairments.to_i > 0 ? "(#{character.impairments} Impairments)" : nil
+        character.impairments.to_i > 0 ? "(#{character.impairments} #{impairments})" : nil
       ].compact.join(" ")
     end
 

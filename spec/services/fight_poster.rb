@@ -60,7 +60,7 @@ RSpec.describe FightPoster do
 ### Sequence 0
 ## Shot 14
 - **Serena**
- 0 Wounds (1 Impairments)
+ 0 Wounds (1 Impairment)
  Sorcery 13* / Defense 12* / Magic 6* / Toughness 6* / Speed 5*
 ## Shot 12
 - **Brick Manly**
