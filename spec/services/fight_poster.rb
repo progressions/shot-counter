@@ -113,7 +113,7 @@ RSpec.describe FightPoster do
 # Museum Battle
 ### Sequence 1
 ```diff
-Shadow of the Sniper: +1 Attack (until sequence 2, shot 14)
++ Shadow of the Sniper: +1 Attack (until sequence 2, shot 14)
 ```
 ## Shot 14
 - **Serena**

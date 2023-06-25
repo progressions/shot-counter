@@ -82,6 +82,17 @@ TEXT
       "#{status}#{title}#{description} #{action_value} #{effect.change}".strip
     end
 
+    def fight_effect(effect)
+      title = effect.title
+      description = effect.description.present? ? " #{effect.description}" : ""
+      status = SEVERITIES[effect.severity]
+      if description.present?
+        title = "#{title}:"
+      end
+
+      "#{status}#{title}#{description} (until sequence #{effect.end_sequence}, shot #{effect.end_shot})"
+    end
+
     def active_effects(fight)
       shot = fight.fight_characters.maximum(:shot)
       fight

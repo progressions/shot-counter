@@ -1,5 +1,10 @@
 # <%= @fight.name %>
 ### Sequence <%= @fight.sequence %>
+<% if active_effects(@fight).any? -%>
+```diff
+<%= active_effects(@fight).map { |effect| fight_effect(effect) }.join("\n ") %>
+```
+<% end -%>
 <% @fight.shot_order.each do |shot, characters| -%>
 ## Shot <%= shot %>
 <% characters.each do |character| -%>
