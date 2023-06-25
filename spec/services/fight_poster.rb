@@ -114,13 +114,19 @@ RSpec.describe FightPoster do
 - **Serena**
  39 Wounds (1 Impairment)
  Sorcery 13* Defense 12* Magic 4/6* Toughness 6* Speed 5*
+  ```
  Feeling weird
+ ```
+
 ## Shot 12
 - **Thunder King**
 - **Brick Manly**
  Guns 15 Defense 14 Fortune 7/7 Toughness 7 Speed 7
+  ```
  Bonus: (Got lucky) Guns +1
- Blinded: Defense -1
+ - Blinded: Defense -1
+ ```
+
 ## Shot 10
 - **Ugly Shing**
 - **Jawbuster**

@@ -72,7 +72,11 @@ TEXT
       if description.present? || effect.change.present?
         title = "#{title}:"
       end
-      "#{title}#{description} #{action_value} #{effect.change}".strip
+      status = ""
+      if effect.severity == "danger"
+        status = "- "
+      end
+      "#{status}#{title}#{description} #{action_value} #{effect.change}".strip
     end
 
   end
