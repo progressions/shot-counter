@@ -37,7 +37,8 @@ TEXT
       message = []
       message << ""
       message << ""
-      message << "# #{fight.name} (Sequence #{fight.sequence})"
+      message << "# #{fight.name}"
+      message << "### Sequence #{fight.sequence}"
       message.join("\n")
     end
 
