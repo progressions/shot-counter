@@ -5,6 +5,12 @@ class Api::V1::CharacterEffectsController < ApplicationController
 
   def create
     @fight_character = @fight.fight_characters.find_by(character_id: character_effect_params[:character_id])
+    if @fight_character.nil?
+      render json: {
+        character: ["must be present if vehicle is not set"],
+        vehicle: ["must be present if character is not set"]
+      }, status: 400 and return
+    end
     @character_effect = @fight_character.character_effects.new(character_effect_params)
 
     if @character_effect.save
@@ -54,6 +60,6 @@ class Api::V1::CharacterEffectsController < ApplicationController
   end
 
   def character_effect_params
-    params.require(:character_effect).permit(:title, :description, :fight_id, :character_id, :vehicle_id, :severity, :action_value, :change)
+    params.require(:character_effect).permit(:title, :description, :fight_id, :character_id, :vehicle_id, :severity, :action_value, :change).merge(fight_id: @fight.id)
   end
 end

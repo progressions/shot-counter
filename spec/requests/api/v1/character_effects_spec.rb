@@ -17,8 +17,7 @@ RSpec.describe "CharacterEffects", type: :request do
       post "/api/v1/fights/#{@fight.id}/character_effects", headers: @headers, params: {
         character_effect: {
           title: "Bonus",
-          character_id: @brick.id,
-          fight_id: @fight.id
+          character_id: @brick.id
         }
       }
       expect(response).to have_http_status(:success)
@@ -64,7 +63,7 @@ RSpec.describe "CharacterEffects", type: :request do
       }
       expect(response).to have_http_status(400)
       body = JSON.parse(response.body)
-      expect(body["character"]).to eq(["must belong to the fight"])
+      expect(body["character"]).to eq(["must be present if vehicle is not set"])
       expect(CharacterEffect.count).to eq(0)
     end
 
@@ -78,7 +77,7 @@ RSpec.describe "CharacterEffects", type: :request do
       }
       expect(response).to have_http_status(400)
       body = JSON.parse(response.body)
-      expect(body["vehicle"]).to eq(["must belong to the fight"])
+      expect(body["vehicle"]).to eq(["must be present if character is not set"])
       expect(CharacterEffect.count).to eq(0)
     end
 
