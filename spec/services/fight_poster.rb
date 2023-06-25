@@ -32,7 +32,7 @@ RSpec.describe FightPoster do
 ### Sequence 0
 ## Shot 12
 - **Brick Manly**
- Guns 15 | Defense 14 | Fortune 7/7 | Toughness 7 | Speed 7
+ Guns 15 Defense 14 Fortune 7/7 Toughness 7 Speed 7
       TEXT
     end
 
@@ -60,10 +60,10 @@ RSpec.describe FightPoster do
 ## Shot 14
 - **Serena**
  (1 Impairment)
- Sorcery 13* | Defense 12* | Magic 4/6* | Toughness 6* | Speed 5*
+ Sorcery 13* Defense 12* Magic 4/6* Toughness 6* Speed 5*
 ## Shot 12
 - **Brick Manly**
- Guns 15 | Defense 14 | Fortune 7/7 | Toughness 7 | Speed 7
+ Guns 15 Defense 14 Fortune 7/7 Toughness 7 Speed 7
       TEXT
     end
 
@@ -109,16 +109,16 @@ RSpec.describe FightPoster do
 ## Shot 14
 - **Serena**
  39 Wounds (1 Impairment)
- Sorcery 13* | Defense 12* | Magic 4/6* | Toughness 6* | Speed 5*
+ Sorcery 13* Defense 12* Magic 4/6* Toughness 6* Speed 5*
 ## Shot 12
 - **Thunder King**
 - **Brick Manly**
- Guns 15 | Defense 14 | Fortune 7/7 | Toughness 7 | Speed 7
+ Guns 15 Defense 14 Fortune 7/7 Toughness 7 Speed 7
 ## Shot 10
 - **Ugly Shing**
 - **Jawbuster**
  12 Wounds
- Guns 15 | Defense 14 | Fortune 0/0 | Toughness 7 | Speed 7
+ Guns 15 Defense 14 Fortune 0/0 Toughness 7 Speed 7
 ## Shot 9
 - **Hitman**
 ## Shot 8
