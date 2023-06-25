@@ -32,7 +32,6 @@ RSpec.describe FightPoster do
 ### Sequence 0
 ## Shot 12
 - **Brick Manly**
- 0 Wounds
  Guns 15 | Defense 14 | Fortune 7/7 | Toughness 7 | Speed 7
       TEXT
     end
@@ -60,11 +59,10 @@ RSpec.describe FightPoster do
 ### Sequence 0
 ## Shot 14
 - **Serena**
- 0 Wounds (1 Impairment)
+ (1 Impairment)
  Sorcery 13* | Defense 12* | Magic 4/6* | Toughness 6* | Speed 5*
 ## Shot 12
 - **Brick Manly**
- 0 Wounds
  Guns 15 | Defense 14 | Fortune 7/7 | Toughness 7 | Speed 7
       TEXT
     end
@@ -87,13 +85,13 @@ RSpec.describe FightPoster do
       # Featured Foe
       hitman = Character.create!(name: "Hitman", action_values: {"Type" => "Featured Foe", "Guns" => 15, "Defense" => 14, "Toughness" => 7, "Speed" => 7}, campaign_id: action_movie.id)
       # Ally
-      jawbuster = Character.create!(name: "Jawbuster", action_values: {"Type" => "Ally", "Guns" => 15, "Defense" => 14, "Toughness" => 7, "Speed" => 7}, campaign_id: action_movie.id)
+      jawbuster = Character.create!(name: "Jawbuster", action_values: {"Type" => "Ally", "Guns" => 15, "Defense" => 14, "Toughness" => 7, "Speed" => 7, "Wounds" => 12}, campaign_id: action_movie.id)
       # Mook
       mook = Character.create!(name: "Ninja", action_values: {"Type" => "Mook", "Guns" => 8, "Defense" => 13, "Toughness" => 7, "Speed" => 6}, campaign_id: action_movie.id)
       # PC
       brick = Character.create!(name: "Brick Manly", action_values: {"Type" => "PC", "Guns" => 15, "Defense" => 14, "Toughness" => 7, "Speed" => 7, "Fortune" => 7, "Max Fortune" => 7}, campaign_id: action_movie.id)
       # PC
-      serena = Character.create!(name: "Serena", action_values: {"Type" => "PC", "MainAttack" => "Sorcery", "FortuneType" => "Magic", "Sorcery" => 14, "Defense" => 13, "Toughness" => 7, "Speed" => 6, "Fortune" => 5, "Max Fortune" => 7}, campaign_id: action_movie.id, impairments: 1)
+      serena = Character.create!(name: "Serena", action_values: {"Type" => "PC", "MainAttack" => "Sorcery", "FortuneType" => "Magic", "Sorcery" => 14, "Defense" => 13, "Toughness" => 7, "Speed" => 6, "Fortune" => 5, "Max Fortune" => 7, "Wounds" => 39}, campaign_id: action_movie.id, impairments: 1)
 
       fight.fight_characters.create!(character: mook, shot: 8)
       fight.fight_characters.create!(character: jawbuster, shot: 10)
@@ -110,17 +108,16 @@ RSpec.describe FightPoster do
 ### Sequence 0
 ## Shot 14
 - **Serena**
- 0 Wounds (1 Impairment)
+ 39 Wounds (1 Impairment)
  Sorcery 13* | Defense 12* | Magic 4/6* | Toughness 6* | Speed 5*
 ## Shot 12
 - **Thunder King**
 - **Brick Manly**
- 0 Wounds
  Guns 15 | Defense 14 | Fortune 7/7 | Toughness 7 | Speed 7
 ## Shot 10
 - **Ugly Shing**
 - **Jawbuster**
- 0 Wounds
+ 12 Wounds
  Guns 15 | Defense 14 | Fortune 0/0 | Toughness 7 | Speed 7
 ## Shot 9
 - **Hitman**

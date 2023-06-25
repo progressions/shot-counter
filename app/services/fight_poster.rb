@@ -38,7 +38,7 @@ TEXT
 
     def action_value(character, key)
       if character.action_values[key].to_i > 0
-        asterisk = character.impairments.to_i > 0 ? "*" : ""
+        asterisk = character.impairments.to_i > 0 ? "*" : nil
         value = character.action_values[key].to_i - character.impairments.to_i
 
         "#{key} #{value}#{asterisk}"
@@ -56,7 +56,7 @@ TEXT
     def wounds_and_impairments(character)
       impairments = "Impairment".pluralize(character.impairments.to_i)
       [
-        "#{character.action_values["Wounds"]} Wounds",
+        character.action_values["Wounds"].to_i > 0 ? "#{character.action_values["Wounds"]} Wounds" : nil,
         character.impairments.to_i > 0 ? "(#{character.impairments} #{impairments})" : nil
       ].compact.join(" ")
     end

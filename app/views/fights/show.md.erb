@@ -5,22 +5,24 @@
 <% characters.each do |character| -%>
 - **<%= character.name %>**
 <% if character.action_values["Type"] == "PC" || character.action_values["Type"] == "Ally" -%>
+<% if wounds_and_impairments(character).present? -%>
  <%= wounds_and_impairments(character) %>
- <%-
-    main_attack = character.action_values["MainAttack"]
-    secondary_attack = character.action_values["SecondaryAttack"]
-    fortune_type = character.action_values["FortuneType"]
-  -%>
+<% end -%>
+<%-
+  main_attack = character.action_values["MainAttack"]
+  secondary_attack = character.action_values["SecondaryAttack"]
+  fortune_type = character.action_values["FortuneType"]
+-%>
  <%=
-   [
-     action_value(character, main_attack),
-     action_value(character, secondary_attack),
-     action_value(character, "Defense"),
-     fortune_value(character),
-     action_value(character, "Toughness"),
-     action_value(character, "Speed"),
-   ].compact.join(" | ")
- %>
+ [
+   action_value(character, main_attack),
+   action_value(character, secondary_attack),
+   action_value(character, "Defense"),
+   fortune_value(character),
+   action_value(character, "Toughness"),
+   action_value(character, "Speed"),
+ ].compact.join(" | ")
+%>
 <% end -%>
 <% end -%>
 <% end -%>
