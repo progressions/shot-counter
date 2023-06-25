@@ -23,7 +23,7 @@
    action_value(character, "Speed"),
  ].compact.join(" ")
 %>
-<% if character.character_effects.any? -%>
+<% if character.character_effects.where(fight: @fight).any? -%>
   ```
  <%= character.character_effects.where(fight: @fight).map { |effect| character_effect(effect) }.join("\n ") %>
  ```
