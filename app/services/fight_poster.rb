@@ -65,13 +65,8 @@ TEXT
       char_msg = []
       char_msg << "- **#{character.name}**"
 
-      if false
-        if character.action_values["Archetype"]
-          char_msg << "#{character.action_values["Archetype"]}"
-        end
-        if character.action_values["Faction"]
-          char_msg << "- #{character.action_values["Faction"]}"
-        end
+      if character.action_values["Faction"]
+        char_msg << "- #{character.action_values["Faction"]}"
       end
 
       if character.action_values["Type"] == "PC"
@@ -87,7 +82,7 @@ TEXT
         secondary_attack = character.action_values["SecondaryAttack"]
 
         asterisk = character.impairments.to_i > 0 ? "*" : ""
-        char_msg << "#{main_attack} #{character.action_values[main_attack] - character.impairments.to_i}"
+        char_msg << "#{main_attack} #{character.action_values[main_attack] - character.impairments.to_i}#{asterisk}"
         char_msg << " / "
         if character.action_values[secondary_attack].to_i > 7
           char_msg << "#{secondary_attack} #{character.action_values[secondary_attack] - character.impairments.to_i}#{asterisk}"
