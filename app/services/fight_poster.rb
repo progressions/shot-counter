@@ -2,6 +2,13 @@ module FightPoster
   extend ActiveSupport::Inflector
 
   class << self
+    SEVERITIES = {
+      "info" => "",
+      "error" => "- ",
+      "success" => "+ ",
+      "warning" => "! "
+    }
+
     include Rails.application.routes.url_helpers
 
     def post_to_discord(fight)
@@ -72,10 +79,7 @@ TEXT
       if description.present? || effect.change.present?
         title = "#{title}:"
       end
-      status = ""
-      if effect.severity == "error"
-        status = "- "
-      end
+      status = SEVERITIES[effect.severity]
       "#{status}#{title}#{description} #{action_value} #{effect.change}".strip
     end
 

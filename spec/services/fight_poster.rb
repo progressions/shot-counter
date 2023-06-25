@@ -102,7 +102,7 @@ RSpec.describe FightPoster do
       fight.fight_characters.create!(character: thunder_king, shot: 12)
 
       brick.character_effects.create!(:title=>"Bonus", :fight => fight, :description=>"Got lucky", :severity=>"info", :action_value=>"MainAttack", :change=>"+1")
-      brick.character_effects.create!(:title=>"Blinded", :fight => fight, :description=>"", :severity=>"danger", :action_value=>"Defense", :change=>"-1")
+      brick.character_effects.create!(:title=>"Blinded", :fight => fight, :description=>"", :severity=>"error", :action_value=>"Defense", :change=>"-1")
       serena.character_effects.create!(title: "Feeling weird", fight: fight)
     end
 
