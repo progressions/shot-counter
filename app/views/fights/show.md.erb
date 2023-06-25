@@ -8,16 +8,16 @@
  <%-
     main_attack = character.action_values["MainAttack"]
     secondary_attack = character.action_values["SecondaryAttack"]
-
-    asterisk = character.impairments.to_i > 0 ? "*" : ""
+    fortune_type = character.action_values["FortuneType"]
   -%>
  <%=
    [
-      "#{main_attack} #{character.action_values[main_attack] - character.impairments.to_i}#{asterisk}",
-      character.action_values[secondary_attack] > 7 ? "#{secondary_attack} #{character.action_values[secondary_attack] - character.impairments.to_i}#{asterisk}" : nil,
-      "Defense #{character.action_values["Defense"] - character.impairments.to_i}#{asterisk}",
-      "Toughness #{character.action_values["Toughness"] - character.impairments.to_i}#{asterisk}",
-      "Speed #{character.action_values["Speed"] - character.impairments.to_i}#{asterisk}",
+     action_value(character, main_attack),
+     action_value(character, secondary_attack),
+     action_value(character, "Defense"),
+     action_value(character, fortune_type),
+     action_value(character, "Toughness"),
+     action_value(character, "Speed"),
    ].compact.join(" / ")
  %>
 <% end -%>
