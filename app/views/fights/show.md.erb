@@ -1,5 +1,5 @@
 # <%= @fight.name %>
-### Sequence <%= @fight.sequence %>
+## Sequence <%= @fight.sequence %>
 <% if active_effects(@fight).any? -%>
 ```diff
 <%= active_effects(@fight).map { |effect| fight_effect(effect) }.join("\n") %>

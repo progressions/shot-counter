@@ -9,7 +9,7 @@ RSpec.describe FightPoster do
     let(:expected) do
       <<-TEXT
 # Museum Battle
-### Sequence 1
+## Sequence 1
       TEXT
     end
 
@@ -29,7 +29,7 @@ RSpec.describe FightPoster do
     let(:expected) do
       <<-TEXT
 # Museum Battle
-### Sequence 1
+## Sequence 1
 ## Shot 12
 - **Brick Manly**
  Guns 15 Defense 14 Fortune 7/7 Toughness 7 Speed 7
@@ -56,7 +56,7 @@ RSpec.describe FightPoster do
     let(:expected) do
       <<-TEXT
 # Museum Battle
-### Sequence 1
+## Sequence 1
 ## Shot 14
 - **Serena**
  (1 Impairment)
@@ -113,7 +113,7 @@ RSpec.describe FightPoster do
     let(:expected) do
       <<-TEXT
 # Museum Battle
-### Sequence 1
+## Sequence 1
 ```diff
 - Some effect (until sequence 2, shot 16)
 + Shadow of the Sniper: +1 Attack (until sequence 2, shot 14)
