@@ -73,7 +73,7 @@ TEXT
         title = "#{title}:"
       end
       status = ""
-      if effect.severity == "danger"
+      if effect.severity == "error"
         status = "- "
       end
       "#{status}#{title}#{description} #{action_value} #{effect.change}".strip
