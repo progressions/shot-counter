@@ -48,8 +48,6 @@ TEXT
           shot_msg << characters.map do |character|
             show_character(character)
           end
-
-          shot_msg << "\n"
         end
       end
     end
