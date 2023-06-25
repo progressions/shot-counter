@@ -4,6 +4,7 @@
 ## Shot <%= shot %>
 <% characters.each do |character| -%>
 - **<%= character.name %>**
+<% if character.action_values["Type"] == "PC" || character.action_values["Type"] == "Ally" -%>
  <%= wounds_and_impairments(character) %>
  <%-
     main_attack = character.action_values["MainAttack"]
@@ -20,5 +21,6 @@
      action_value(character, "Speed"),
    ].compact.join(" | ")
  %>
+<% end -%>
 <% end -%>
 <% end -%>
