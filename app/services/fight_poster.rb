@@ -28,6 +28,7 @@ TEXT
       message = []
       message << header(fight)
       message << verbose_shots(fight)
+      message << ""
 
       message.join("\n")
     end

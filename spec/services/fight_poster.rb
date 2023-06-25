@@ -10,6 +10,7 @@ RSpec.describe FightPoster do
       <<-TEXT
 # Museum Battle
 ### Sequence 0
+
       TEXT
     end
 
@@ -34,7 +35,6 @@ RSpec.describe FightPoster do
 - **Brick Manly** 
  0 Wounds 
  Guns 15  /  Defense 14  /  Toughness 7  /  Speed 7
-
       TEXT
     end
 
@@ -67,7 +67,6 @@ RSpec.describe FightPoster do
 - **Brick Manly** 
  0 Wounds 
  Guns 15  /  Defense 14  /  Toughness 7  /  Speed 7
-
       TEXT
     end
 
