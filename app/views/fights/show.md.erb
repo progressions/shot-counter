@@ -1,0 +1,24 @@
+# <%= @fight.name %>
+### Sequence <%= @fight.sequence %>
+<% @fight.shot_order.each do |shot, characters| -%>
+## Shot <%= shot %>
+<% characters.each do |character| -%>
+- **<%= character.name %>**
+ <%= character.action_values["Wounds"] %> Wounds
+ <%-
+    main_attack = character.action_values["MainAttack"]
+    secondary_attack = character.action_values["SecondaryAttack"]
+
+    asterisk = character.impairments.to_i > 0 ? "*" : ""
+  -%>
+ <%=
+   [
+      "#{main_attack} #{character.action_values[main_attack] - character.impairments.to_i}#{asterisk}",
+      character.action_values[secondary_attack] > 7 ? "#{secondary_attack} #{character.action_values[secondary_attack] - character.impairments.to_i}#{asterisk}" : nil,
+      "Defense #{character.action_values["Defense"] - character.impairments.to_i}#{asterisk}",
+      "Toughness #{character.action_values["Toughness"] - character.impairments.to_i}#{asterisk}",
+      "Speed #{character.action_values["Speed"] - character.impairments.to_i}#{asterisk}",
+   ].compact.join(" / ")
+ %>
+<% end -%>
+<% end -%>

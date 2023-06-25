@@ -8,7 +8,7 @@ module FightPoster
     end
 
     def post_shots(fight)
-      Bot.send_message(ChannelID, shots(fight))
+      Bot.send_message(ChannelID, show(fight))
     end
 
     def message(fight)
@@ -22,6 +22,12 @@ TEXT
       opts = Rails.application.config.action_mailer.default_url_options
       port = opts[:port] ? ":#{opts[:port]}" : nil
       "#{opts[:protocol]}://#{opts[:host]}#{port}/fights/#{fight.id}"
+    end
+
+    def show(fight)
+      @fight = fight
+      filename = Rails.root.join("app", "views", "fights", "show.md.erb")
+      ERB.new(filename.read, nil, "-").result(binding)
     end
 
     def shots(fight)

@@ -10,12 +10,11 @@ RSpec.describe FightPoster do
       <<-TEXT
 # Museum Battle
 ### Sequence 0
-
       TEXT
     end
 
     it "shows fight" do
-      response = FightPoster.shots(fight)
+      response = FightPoster.show(fight)
       puts response
       expect(response).to eq(expected)
     end
@@ -32,14 +31,14 @@ RSpec.describe FightPoster do
 # Museum Battle
 ### Sequence 0
 ## Shot 12
-- **Brick Manly** 
- 0 Wounds 
- Guns 15  /  Defense 14  /  Toughness 7  /  Speed 7
+- **Brick Manly**
+ 0 Wounds
+ Guns 15 / Defense 14 / Toughness 7 / Speed 7
       TEXT
     end
 
     it "shows fight" do
-      response = FightPoster.shots(fight)
+      response = FightPoster.show(fight)
       puts
       puts response
       puts
@@ -60,18 +59,18 @@ RSpec.describe FightPoster do
 # Museum Battle
 ### Sequence 0
 ## Shot 14
-- **Serena** 
- 0 Wounds 
- Sorcery 14  /  Defense 13  /  Toughness 7  /  Speed 6
+- **Serena**
+ 0 Wounds
+ Sorcery 14 / Defense 13 / Toughness 7 / Speed 6
 ## Shot 12
-- **Brick Manly** 
- 0 Wounds 
- Guns 15  /  Defense 14  /  Toughness 7  /  Speed 7
+- **Brick Manly**
+ 0 Wounds
+ Guns 15 / Defense 14 / Toughness 7 / Speed 7
       TEXT
     end
 
     it "shows fight" do
-      response = FightPoster.shots(fight)
+      response = FightPoster.show(fight)
       puts
       puts response
       puts
