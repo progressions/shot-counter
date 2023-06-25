@@ -70,32 +70,40 @@ TEXT
       end
 
       if character.action_values["Type"] == "PC"
-        char_msg << "\n"
+        char_msg << show_player_character(character)
+      end
 
-        char_msg << "#{character.action_values["Wounds"]} Wounds"
+      char_msg.join(" ")
+    end
+
+    def show_player_character(character)
+      [].tap do |msg|
+        msg << "\n"
+
+        msg << "#{character.action_values["Wounds"]} Wounds"
         if character.impairments.to_i > 0
-          char_msg << "(-#{character.impairments} impairments)"
+          msg << "(-#{character.impairments} impairments)"
         end
-        char_msg << "\n"
+        msg << "\n"
 
         main_attack = character.action_values["MainAttack"]
         secondary_attack = character.action_values["SecondaryAttack"]
 
         asterisk = character.impairments.to_i > 0 ? "*" : ""
-        char_msg << "#{main_attack} #{character.action_values[main_attack] - character.impairments.to_i}#{asterisk}"
-        char_msg << " / "
-        if character.action_values[secondary_attack].to_i > 7
-          char_msg << "#{secondary_attack} #{character.action_values[secondary_attack] - character.impairments.to_i}#{asterisk}"
-          char_msg << " / "
-        end
-        char_msg << "Defense #{character.action_values["Defense"] - character.impairments.to_i}#{asterisk}"
-        char_msg << " / "
-        char_msg << "Toughness #{character.action_values["Toughness"] - character.impairments.to_i}#{asterisk}"
-        char_msg << " / "
-        char_msg << "Speed #{character.action_values["Speed"] - character.impairments.to_i}#{asterisk}"
-      end
+        msg << "#{main_attack} #{character.action_values[main_attack] - character.impairments.to_i}#{asterisk}"
+        msg << " / "
 
-      char_msg.join(" ")
+        if character.action_values[secondary_attack].to_i > 7
+          msg << "#{secondary_attack} #{character.action_values[secondary_attack] - character.impairments.to_i}#{asterisk}"
+          msg << " / "
+        end
+
+        msg << "Defense #{character.action_values["Defense"] - character.impairments.to_i}#{asterisk}"
+        msg << " / "
+        msg << "Toughness #{character.action_values["Toughness"] - character.impairments.to_i}#{asterisk}"
+        msg << " / "
+        msg << "Speed #{character.action_values["Speed"] - character.impairments.to_i}#{asterisk}"
+      end
     end
 
     def terse_shots(fight)
