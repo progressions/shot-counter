@@ -24,7 +24,9 @@
  ].compact.join(" ")
 %>
 <% if character.character_effects.any? -%>
- <%= character.character_effects.where(fight: @fight).map { |effect| character_effect(effect) }.join("\n ") -%>
+  ```
+ <%= character.character_effects.where(fight: @fight).map { |effect| character_effect(effect) }.join("\n ") %>
+ ```
 
 <% end -%>
 <% end -%>
