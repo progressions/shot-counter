@@ -1,14 +1,14 @@
 class CharacterEffect < ApplicationRecord
   belongs_to :character, optional: true
   belongs_to :vehicle, optional: true
-  belongs_to :fight
   belongs_to :fight_character, optional: true
 
-  validate :character_belongs_to_fight
-  validate :vehicle_belongs_to_fight
   validate :ensure_character_or_vehicle
   validate :ensure_action_value_and_change
   validate :ensure_valid_action_value
+  validates :fight_character, presence: true
+
+  delegate :fight, to: :fight_character, allow_nil: true
 
   def as_json(args={})
     {
@@ -42,6 +42,9 @@ class CharacterEffect < ApplicationRecord
   end
 
   def ensure_character_or_vehicle
+    self.character_id ||= self.fight_character&.character_id
+    self.vehicle_id ||= self.fight_character&.vehicle_id
+
     if self.vehicle && self.character
       errors.add(:vehicle, "must not be present if character is set")
       errors.add(:character, "must not be present if vehicle is set")
@@ -50,18 +53,6 @@ class CharacterEffect < ApplicationRecord
     if !self.vehicle && !self.character
       errors.add(:vehicle, "must be present if character is not set")
       errors.add(:character, "must be present if vehicle is not set")
-    end
-  end
-
-  def character_belongs_to_fight
-    if self.fight_id && self.character_id && !fight.character_ids.include?(self.character_id)
-      errors.add(:character, "must belong to the fight")
-    end
-  end
-
-  def vehicle_belongs_to_fight
-    if self.fight_id && self.vehicle_id && !fight.vehicle_ids.include?(self.vehicle_id)
-      errors.add(:vehicle, "must belong to the fight")
     end
   end
 end

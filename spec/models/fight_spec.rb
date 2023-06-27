@@ -68,4 +68,48 @@ RSpec.describe Fight, type: :model do
     fight.fight_characters.create!(character: serena, shot: 12)
     expect(fight.shot_order).to eq([[12, [serena, brick]]])
   end
+
+  context "effects" do
+    let(:fight) { Fight.create!(name: "Fight", campaign_id: @action_movie.id, sequence: 1) }
+    let(:brick) { Character.create!(name: "Brick Manly", action_values: {"Type" => "PC", "Guns" => 15, "Defense" => 14, "Toughness" => 7, "Speed" => 7, "Fortune" => 7}, campaign_id: @action_movie.id) }
+    let!(:brick_shot) { fight.fight_characters.create!(character: brick, shot: 12) }
+    let!(:effect) {
+      fight.effects.create!(title: "Effect", start_sequence: 1, end_sequence: 2, start_shot: 15, end_shot: 15, severity: "info")
+    }
+
+    # Effect is active between sequence 1, shot 15 and sequence 2, shot 15
+
+    it "sequence 1, shot 16, effect is not active" do
+      brick_shot.update(shot: 16)
+      expect(fight.active_effects).to eq([])
+    end
+
+    it "sequence 1, shot 12, effect is active" do
+      brick_shot.update(shot: 12)
+      expect(fight.active_effects).to eq([effect])
+    end
+
+    it "sequence 1, shot 5, effect is active" do
+      brick_shot.update(shot: 5)
+      expect(fight.active_effects).to eq([effect])
+    end
+
+    it "sequence 2, shot 16, effect is active" do
+      fight.update(sequence: 2)
+      brick_shot.update(shot: 16)
+      expect(fight.active_effects).to eq([effect])
+    end
+
+    it "sequence 2, shot 15, effect is not active" do
+      fight.update(sequence: 2)
+      brick_shot.update(shot: 15)
+      expect(fight.active_effects).to eq([])
+    end
+
+    it "sequence 2, shot 1, effect is not active" do
+      fight.update(sequence: 2)
+      brick_shot.update(shot: 10)
+      expect(fight.active_effects).to eq([])
+    end
+  end
 end

@@ -4,7 +4,7 @@ class Fight < ApplicationRecord
   has_many :characters, through: :fight_characters
   has_many :vehicles, through: :fight_characters
   has_many :effects, dependent: :destroy
-  has_many :character_effects
+  has_many :character_effects, through: :fight_characters
 
   scope :active, -> { where(active: true) }
 
@@ -25,6 +25,26 @@ class Fight < ApplicationRecord
       effects: effects,
       character_effects: character_effects.group_by { |ce| ce.character_id }
     }
+  end
+
+  def current_shot
+    fight_characters.maximum(:shot) || 0
+  end
+
+  #    return fight.effects.filter((effect: Effect) => {
+  #     return shot > 0 && (
+  #       (fight.sequence == effect.start_sequence && shot <= effect.start_shot) ||
+  #         (fight.sequence == effect.end_sequence && shot > effect.end_shot)
+  #     )
+  def active_effects
+    @current_shot = current_shot
+    @active_effects ||= effects.order(:severity).select do |effect|
+      @current_shot > 0 &&
+        (
+          (sequence == effect.start_sequence && current_shot <= effect.start_shot) ||
+          (sequence == effect.end_sequence && current_shot > effect.end_shot)
+        )
+    end
   end
 
   def shot_order

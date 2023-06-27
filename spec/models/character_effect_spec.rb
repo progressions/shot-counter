@@ -12,7 +12,7 @@ RSpec.describe CharacterEffect, type: :model do
   it "must belong to a fight" do
     @character_effect = CharacterEffect.new(title: "Bonus", character_id: @brick.id)
     expect(@character_effect).not_to be_valid
-    expect(@character_effect.errors[:fight]).to eq(["must exist"])
+    expect(@character_effect.errors[:fight_character]).to eq(["can't be blank"])
   end
 
   it "must belong to either a character or a vehicle" do

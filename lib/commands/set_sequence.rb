@@ -34,7 +34,8 @@ module SetSequence
     args = event.content.split(" ")[1..]
     value = args.join(" ")
     if value
-      CurrentSequence.set(value)
+      fight = CurrentFight.get
+      fight.update(sequence: value)
       event.respond("Current sequence is #{value}")
     else
       event.respond("Couldn't find that fight!")

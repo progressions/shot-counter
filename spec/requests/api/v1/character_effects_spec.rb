@@ -96,8 +96,8 @@ RSpec.describe "CharacterEffects", type: :request do
 
   describe "PATCH /api/v1/fights/:fight_id/character_effects/:id" do
     it "updates a character_effect" do
-      @fight.characters << @brick
-      @character_effect = CharacterEffect.create!(character_id: @brick.id, fight_id: @fight.id, title: "Bonuss")
+      fight_character = @fight.fight_characters.create!(character_id: @brick.id, shot: 10)
+      @character_effect = fight_character.character_effects.create!(title: "Bonuss")
       patch "/api/v1/fights/#{@fight.id}/character_effects/#{@character_effect.id}", headers: @headers, params: {
         character_effect: {
           title: "Bonus",
@@ -110,8 +110,8 @@ RSpec.describe "CharacterEffects", type: :request do
     end
 
     it "updates a character_effect on a vehicle" do
-      @fight.vehicles << @speedboat
-      @character_effect = CharacterEffect.create!(vehicle_id: @speedboat.id, fight_id: @fight.id, title: "Bonuss")
+      fight_character = @fight.fight_characters.create!(vehicle_id: @speedboat.id, shot: 10)
+      @character_effect = fight_character.character_effects.create!(title: "Bonuss")
       patch "/api/v1/fights/#{@fight.id}/character_effects/#{@character_effect.id}", headers: @headers, params: {
         character_effect: {
           title: "Bonus",
@@ -123,37 +123,9 @@ RSpec.describe "CharacterEffects", type: :request do
       expect(@speedboat.reload.character_effects.first.title).to eq("Bonus")
     end
 
-    it "returns error if you update a character_effect to remove character_id" do
-      @fight.fight_characters.create!(character_id: @brick.id, shot: 10)
-      @character_effect = CharacterEffect.create!(character_id: @brick.id, fight_id: @fight.id, title: "Bonuss")
-      patch "/api/v1/fights/#{@fight.id}/character_effects/#{@character_effect.id}", headers: @headers, params: {
-        character_effect: {
-          character_id: nil
-        }
-      }
-      expect(response).to have_http_status(400)
-      body = JSON.parse(response.body)
-      expect(body["character"]).to eq(["must be present if vehicle is not set"])
-      expect(body["vehicle"]).to eq(["must be present if character is not set"])
-    end
-
-    it "returns error if you update a character_effect to remove vehicle_id" do
-      @fight.fight_characters.create!(vehicle_id: @speedboat.id, shot: 10)
-      @character_effect = CharacterEffect.create!(vehicle_id: @speedboat.id, fight_id: @fight.id, title: "Bonuss")
-      patch "/api/v1/fights/#{@fight.id}/character_effects/#{@character_effect.id}", headers: @headers, params: {
-        character_effect: {
-          vehicle_id: nil
-        }
-      }
-      expect(response).to have_http_status(400)
-      body = JSON.parse(response.body)
-      expect(body["character"]).to eq(["must be present if vehicle is not set"])
-      expect(body["vehicle"]).to eq(["must be present if character is not set"])
-    end
-
     it "requires authentication" do
-      @fight.fight_characters.create!(character_id: @brick.id, shot: 10)
-      @character_effect = CharacterEffect.create!(character_id: @brick.id, fight_id: @fight.id, title: "Bonuss")
+      fight_character = @fight.fight_characters.create!(character_id: @brick.id, shot: 10)
+      @character_effect = fight_character.character_effects.create!(title: "Bonuss")
       patch "/api/v1/fights/#{@fight.id}/character_effects/#{@character_effect.id}", params: {
         character_effect: {
           title: "Bonus",
@@ -166,24 +138,24 @@ RSpec.describe "CharacterEffects", type: :request do
 
   describe "DELETE /api/v1/fights/:fight_id/character_effects/:id" do
     it "deletes the effect" do
-      @fight.characters << @brick
-      @character_effect = CharacterEffect.create!(character_id: @brick.id, fight_id: @fight.id, title: "Bonuss")
+      fight_character = @fight.fight_characters.create!(character_id: @brick.id, shot: 10)
+      @character_effect = fight_character.character_effects.create!(title: "Bonuss")
       delete "/api/v1/fights/#{@fight.id}/character_effects/#{@character_effect.id}", headers: @headers
       expect(response).to have_http_status(:success)
       expect(@brick.reload.character_effects).to be_empty
     end
 
     it "deletes the effect from a vehicle" do
-      @fight.vehicles << @speedboat
-      @character_effect = CharacterEffect.create!(vehicle_id: @speedboat.id, fight_id: @fight.id, title: "Bonuss")
+      fight_character = @fight.fight_characters.create!(vehicle_id: @speedboat.id, shot: 10)
+      @character_effect = fight_character.character_effects.create!(title: "Bonuss")
       delete "/api/v1/fights/#{@fight.id}/character_effects/#{@character_effect.id}", headers: @headers
       expect(response).to have_http_status(:success)
       expect(@speedboat.reload.character_effects).to be_empty
     end
 
     it "requires authentication" do
-      @fight.characters << @brick
-      @character_effect = CharacterEffect.create!(character_id: @brick.id, fight_id: @fight.id, title: "Bonuss")
+      fight_character = @fight.fight_characters.create!(character_id: @brick.id, shot: 10)
+      @character_effect = fight_character.character_effects.create!(title: "Bonuss")
       delete "/api/v1/fights/#{@fight.id}/character_effects/#{@character_effect.id}"
       expect(response).to have_http_status(:unauthorized)
       expect(@character_effect.reload).to be_present

@@ -33,9 +33,9 @@ RSpec.describe "Fights", type: :request do
     end
 
     it "returns the character effects for each character" do
-      @fight.fight_characters.create!(character_id: @brick.id, shot: 10)
+      fight_character = @fight.fight_characters.create!(character_id: @brick.id, shot: 10)
 
-      @character_effect = CharacterEffect.create!(title: "Bonus", fight_id: @fight.id, character_id: @brick.id)
+      @character_effect = fight_character.character_effects.create!(title: "Bonus")
 
       get "/api/v1/fights/#{@fight.id}", headers: @headers
       expect(response).to have_http_status(:success)

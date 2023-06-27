@@ -4,6 +4,7 @@ RSpec.describe FightPoster do
   let(:user) { User.create!(email: "email@example.com") }
   let(:action_movie) { user.campaigns.create!(title: "Action Movie") }
   let(:fight) { Fight.create!(name: "Museum Battle", campaign_id: action_movie.id, sequence: 1) }
+  let(:other_fight) { Fight.create!(name: "Other Fight", campaign_id: action_movie.id, sequence: 1) }
 
   context "with no shots or characters" do
     let(:expected) do
@@ -97,13 +98,16 @@ RSpec.describe FightPoster do
       fight.fight_characters.create!(character: jawbuster, shot: 10)
       fight.fight_characters.create!(character: hitman, shot: 9)
       fight.fight_characters.create!(character: shing, shot: 10)
-      fight.fight_characters.create!(character: brick, shot: 12)
-      fight.fight_characters.create!(character: serena, shot: 14)
+      brick_in_fight = fight.fight_characters.create!(character: brick, shot: 12)
+      serena_in_fight = fight.fight_characters.create!(character: serena, shot: 14)
       fight.fight_characters.create!(character: thunder_king, shot: 12)
 
-      brick.character_effects.create!(:title=>"Bonus", :fight => fight, :description=>"Got lucky", :severity=>"info", :action_value=>"MainAttack", :change=>"+1")
-      brick.character_effects.create!(:title=>"Blinded", :fight => fight, :description=>"", :severity=>"error", :action_value=>"Defense", :change=>"-1")
-      serena.character_effects.create!(title: "Feeling weird", fight: fight)
+      brick_in_other_fight = other_fight.fight_characters.create!(character: brick, shot: 12)
+
+      brick_in_fight.character_effects.create!(:title=>"Bonus", :description=>"Got lucky", :severity=>"info", :action_value=>"MainAttack", :change=>"+1")
+      brick_in_fight.character_effects.create!(:title=>"Blinded", :description=>"", :severity=>"error", :action_value=>"Defense", :change=>"-1")
+      brick_in_other_fight.character_effects.create!(:title=>"Effect in Other Fight", :description=>"", :severity=>"error", :action_value=>"Defense", :change=>"-1")
+      serena_in_fight.character_effects.create!(title: "Feeling weird")
 
       fight.effects.create!(title: "Shadow of the Sniper", description: "+1 Attack", severity: "success", start_sequence: 1, end_sequence: 2, start_shot: 14, end_shot: 14)
       fight.effects.create!(title: "Some effect", description: "", severity: "error", start_sequence: 1, end_sequence: 2, start_shot: 16, end_shot: 16)

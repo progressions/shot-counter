@@ -1,8 +1,8 @@
 # <%= @fight.name %>
 ## Sequence <%= @fight.sequence %>
-<% if active_effects(@fight).any? -%>
+<% if @fight.active_effects.any? -%>
 ```diff
-<%= active_effects(@fight).map { |effect| fight_effect(effect) }.join("\n") %>
+<%= @fight.active_effects.map { |effect| fight_effect(effect) }.join("\n") %>
 ```
 <% end -%>
 <% @fight.shot_order.each do |shot, characters| -%>
@@ -28,9 +28,9 @@
    action_value(character, "Speed"),
  ].compact.join(" ")
 %>
-<% if character.character_effects.where(fight: @fight).any? -%>
+<% if character.fight_characters.find_by(fight_id: @fight.id).character_effects.any? -%>
   ```diff
- <%= character.character_effects.where(fight: @fight).map { |effect| character_effect(effect) }.join("\n ") %>
+ <%= character.fight_characters.find_by(fight_id: @fight.id).character_effects.map { |effect| character_effect(effect) }.join("\n ") %>
  ```
 <% end -%>
 <% end -%>

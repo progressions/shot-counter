@@ -60,6 +60,6 @@ class Api::V1::CharacterEffectsController < ApplicationController
   end
 
   def character_effect_params
-    params.require(:character_effect).permit(:title, :description, :fight_id, :character_id, :vehicle_id, :severity, :action_value, :change).merge(fight_id: @fight.id)
+    params.require(:character_effect).permit(:title, :description, :fight_id, :character_id, :vehicle_id, :severity, :action_value, :change)
   end
 end
