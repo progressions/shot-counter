@@ -114,6 +114,18 @@ class Character < ApplicationRecord
     [0, Fight::SORT_ORDER.index(character_type), speed * -1, name]
   end
 
+  def good_guy?
+    action_values.fetch("Type") == "PC" || action_values.fetch("Type") == "Ally"
+  end
+
+  def bad_guy?
+    !good_guy?
+  end
+
+  def effects_for_fight(fight)
+   fight_characters.find_by(fight_id: fight.id).character_effects
+  end
+
   private
 
   def validate_schticks

@@ -10,7 +10,7 @@
 ## Shot <%= shot %>
 <% characters.each do |character| -%>
 - **<%= character.name %>**
-<% if character.action_values["Type"] == "PC" || character.action_values["Type"] == "Ally" -%>
+<% if character.good_guy? -%>
 <% if wounds_and_impairments(character).present? -%>
  <%= wounds_and_impairments(character) %>
 <% end -%>
@@ -29,9 +29,9 @@
    action_value(character, "Speed"),
  ].compact.join(" ")
 %>
-<% if character.fight_characters.find_by(fight_id: @fight.id).character_effects.any? -%>
+<% if character.effects_for_fight(@fight).any? -%>
   ```diff
- <%= character.fight_characters.find_by(fight_id: @fight.id).character_effects.map { |effect| character_effect(effect) }.join("\n ") %>
+ <%= character.effects_for_fight(@fight).map { |effect| character_effect(effect) }.join("\n ") %>
  ```
 <% end -%>
 <% end -%>
