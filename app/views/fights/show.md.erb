@@ -6,6 +6,7 @@
 ```
 <% end -%>
 <% @fight.shot_order.each do |shot, characters| -%>
+<% next if shot.nil? -%>
 ## Shot <%= shot %>
 <% characters.each do |character| -%>
 - **<%= character.name %>**

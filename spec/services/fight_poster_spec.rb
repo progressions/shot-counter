@@ -94,7 +94,7 @@ RSpec.describe FightPoster do
       # PC
       serena = Character.create!(name: "Serena", action_values: {"Type" => "PC", "MainAttack" => "Sorcery", "FortuneType" => "Magic", "Sorcery" => 14, "Defense" => 13, "Toughness" => 7, "Speed" => 6, "Fortune" => 5, "Max Fortune" => 7, "Wounds" => 39}, campaign_id: action_movie.id, impairments: 2)
 
-      fight.fight_characters.create!(character: mook, shot: 8)
+      fight.fight_characters.create!(character: mook, shot: nil)
       fight.fight_characters.create!(character: jawbuster, shot: 10)
       fight.fight_characters.create!(character: hitman, shot: 9)
       fight.fight_characters.create!(character: shing, shot: 10)
@@ -144,8 +144,6 @@ RSpec.describe FightPoster do
  Guns 15 Defense 14 Fortune 0/0 Toughness 7 Speed 7
 ## Shot 9
 - **Hitman**
-## Shot 8
-- **Ninja**
       TEXT
     end
 
