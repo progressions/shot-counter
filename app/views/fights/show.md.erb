@@ -15,9 +15,9 @@
  <%= wounds_and_impairments(character) %>
 <% end -%>
 <%-
-  main_attack = character.action_values["MainAttack"]
-  secondary_attack = character.action_values["SecondaryAttack"]
-  fortune_type = character.action_values["FortuneType"]
+  main_attack = character.main_attack
+  secondary_attack = character.secondary_attack
+  fortune_type = character.fortune_type
 -%>
  <%=
  [

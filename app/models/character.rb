@@ -126,6 +126,18 @@ class Character < ApplicationRecord
     fight_characters.find_by(fight_id: fight.id).character_effects
   end
 
+  def main_attack
+    action_values.fetch("MainAttack")
+  end
+
+  def secondary_attack
+    action_values.fetch("SecondaryAttack")
+  end
+
+  def fortune_type
+    action_values.fetch("FortuneType")
+  end
+
   private
 
   def validate_schticks
