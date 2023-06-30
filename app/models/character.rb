@@ -123,7 +123,9 @@ class Character < ApplicationRecord
   end
 
   def effects_for_fight(fight)
-    fight_characters.find_by(fight_id: fight.id).character_effects
+    fight_characters
+      .find_by(fight_id: fight.id)
+      .character_effects
   end
 
   def main_attack

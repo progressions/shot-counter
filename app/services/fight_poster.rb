@@ -75,10 +75,12 @@ TEXT
 
       title = effect.title
       description = effect.description.present? ? " (#{effect.description})" : ""
+      status = SEVERITIES[effect.severity]
+
       if description.present? || effect.change.present?
         title = "#{title}:"
       end
-      status = SEVERITIES[effect.severity]
+
       "#{status}#{title}#{description} #{action_value} #{effect.change}".strip
     end
 
@@ -86,6 +88,7 @@ TEXT
       title = effect.title
       description = effect.description.present? ? " #{effect.description}" : ""
       status = SEVERITIES[effect.severity]
+
       if description.present?
         title = "#{title}:"
       end
