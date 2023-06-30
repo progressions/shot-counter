@@ -32,12 +32,4 @@ RSpec.describe "Api::V1::CharactersAndVehicles", type: :request do
       expect(body["meta"]).to eq({"current_page"=>1, "next_page"=>2, "prev_page"=>nil, "total_count"=>63, "total_pages"=>2})
     end
   end
-
-  def set_current_campaign(user, campaign)
-    redis = Redis.new
-    user_info = {
-      "campaign_id" => campaign&.id
-    }
-    redis.set("user_#{user.id}", user_info.to_json)
-  end
 end

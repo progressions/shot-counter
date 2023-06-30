@@ -78,12 +78,4 @@ RSpec.describe "Schticks", type: :request do
       expect(Schtick.find_by(id: @blam.id)).not_to be_present
     end
   end
-
-  def set_current_campaign(user, campaign)
-    redis = Redis.new
-    user_info = {
-      "campaign_id" => campaign&.id
-    }
-    redis.set("user_#{user.id}", user_info.to_json)
-  end
 end

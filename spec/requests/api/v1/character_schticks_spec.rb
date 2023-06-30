@@ -44,12 +44,4 @@ RSpec.describe "Api::V1::CharacterSchticks", type: :request do
       expect(@brick.reload.schticks).to be_empty
     end
   end
-
-  def set_current_campaign(user, campaign)
-    redis = Redis.new
-    user_info = {
-      "campaign_id" => campaign&.id
-    }
-    redis.set("user_#{user.id}", user_info.to_json)
-  end
 end

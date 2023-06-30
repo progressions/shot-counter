@@ -44,12 +44,4 @@ RSpec.describe "Fights", type: :request do
       expect(body["character_effects"][@brick.id][0]["title"]).to eq("Bonus")
     end
   end
-
-  def set_current_campaign(user, campaign)
-    redis = Redis.new
-    user_info = {
-      "campaign_id" => campaign&.id
-    }
-    redis.set("user_#{user.id}", user_info.to_json)
-  end
 end
