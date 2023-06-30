@@ -69,11 +69,12 @@ class Character < ApplicationRecord
   has_many :character_schticks, dependent: :destroy
   has_many :schticks, through: :character_schticks
   has_many :advancements
-  has_many :sites
   has_many :carries
   has_many :weapons, through: :carries
   has_many :memberships
   has_many :parties, through: :memberships
+  has_many :attunements
+  has_many :sites, through: :attunements
 
   validates :name, presence: true, uniqueness: { scope: :campaign_id, message: "must be unique" }
 

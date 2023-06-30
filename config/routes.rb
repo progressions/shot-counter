@@ -13,6 +13,7 @@ Rails.application.routes.draw do
       resources :parties do
         resources :memberships
       end
+      resources :sites
       post "schticks/import", to: "schticks#import"
       post "weapons/import", to: "weapons#import"
       resources :factions, only: [:index]
@@ -30,7 +31,7 @@ Rails.application.routes.draw do
       resources :characters do
         resources :schticks, controller: "character_schticks"
         resources :advancements
-        resources :sites, controller: "character_sites"
+        resources :sites, controller: "attunements"
         resources :weapons, controller: "carries"
       end
       resources :vehicles

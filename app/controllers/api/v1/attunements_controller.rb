@@ -1,4 +1,4 @@
-class Api::V1::CharacterSitesController < ApplicationController
+class Api::V1::AttunementsController < ApplicationController
   before_action :authenticate_user!
   before_action :require_current_campaign
   before_action :set_character
@@ -10,25 +10,13 @@ class Api::V1::CharacterSitesController < ApplicationController
   end
 
   def create
-    @site = @character.sites.new(site_params)
-
-    if @site.save
-      render json: @site
+    if site_params[:id].present?
+      @site = current_campaign.sites.find(site_params[:id])
     else
-      render json: @site, status: 422
+      @site = current_campaign.sites.find_or_create_by(name: site_params[:name])
     end
-  end
 
-  def show
-    @site = @character.sites.find(params[:id])
-
-    render json: @site
-  end
-
-  def update
-    @site = @character.sites.find(params[:id])
-
-    if @site.update(site_params)
+    if @character.sites << @site
       render json: @site
     else
       render json: @site, status: 422
@@ -36,10 +24,10 @@ class Api::V1::CharacterSitesController < ApplicationController
   end
 
   def destroy
-    @site = @character.sites.find(params[:id])
+    @attunement = @character.attunements.find_by(site_id: params[:id])
 
-    if @site.destroy
-      render status: 200
+    if @attunement.destroy
+      render :ok
     else
       render json: @site, status: 422
     end
@@ -48,7 +36,7 @@ class Api::V1::CharacterSitesController < ApplicationController
   private
 
   def site_params
-    params.require(:site).permit(:description)
+    params.require(:site).permit(:name, :description, :id)
   end
 
   def set_character

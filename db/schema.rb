@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_06_30_000341) do
+ActiveRecord::Schema[7.0].define(version: 2023_06_30_140714) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -49,6 +49,15 @@ ActiveRecord::Schema[7.0].define(version: 2023_06_30_000341) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["character_id"], name: "index_advancements_on_character_id"
+  end
+
+  create_table "attunements", force: :cascade do |t|
+    t.uuid "character_id", null: false
+    t.uuid "site_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["character_id"], name: "index_attunements_on_character_id"
+    t.index ["site_id"], name: "index_attunements_on_site_id"
   end
 
   create_table "campaign_memberships", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -214,11 +223,13 @@ ActiveRecord::Schema[7.0].define(version: 2023_06_30_000341) do
   end
 
   create_table "sites", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
-    t.uuid "character_id", null: false
     t.string "description"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["character_id"], name: "index_sites_on_character_id"
+    t.uuid "campaign_id"
+    t.string "name"
+    t.index ["campaign_id", "name"], name: "index_sites_on_campaign_id_and_name", unique: true
+    t.index ["campaign_id"], name: "index_sites_on_campaign_id"
   end
 
   create_table "users", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -283,6 +294,8 @@ ActiveRecord::Schema[7.0].define(version: 2023_06_30_000341) do
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "advancements", "characters"
+  add_foreign_key "attunements", "characters"
+  add_foreign_key "attunements", "sites"
   add_foreign_key "campaign_memberships", "campaigns"
   add_foreign_key "campaign_memberships", "users"
   add_foreign_key "campaigns", "users"
@@ -308,7 +321,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_06_30_000341) do
   add_foreign_key "parties", "campaigns"
   add_foreign_key "schticks", "campaigns"
   add_foreign_key "schticks", "schticks", column: "prerequisite_id"
-  add_foreign_key "sites", "characters"
+  add_foreign_key "sites", "campaigns"
   add_foreign_key "vehicles", "campaigns"
   add_foreign_key "vehicles", "users"
   add_foreign_key "weapons", "campaigns"
