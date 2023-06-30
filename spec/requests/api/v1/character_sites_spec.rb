@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe "Api::V1::Sites", type: :request do
+RSpec.describe "Api::V1::CharacterSites", type: :request do
   before(:each) do
     @gamemaster = User.create!(email: "email@example.com", confirmed_at: Time.now)
     @campaign = @gamemaster.campaigns.create!(title: "Adventure")

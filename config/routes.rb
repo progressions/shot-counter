@@ -30,7 +30,7 @@ Rails.application.routes.draw do
       resources :characters do
         resources :schticks, controller: "character_schticks"
         resources :advancements
-        resources :sites
+        resources :sites, controller: "character_sites"
         resources :weapons, controller: "carries"
       end
       resources :vehicles

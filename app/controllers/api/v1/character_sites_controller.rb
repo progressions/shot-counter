@@ -1,4 +1,4 @@
-class Api::V1::SitesController < ApplicationController
+class Api::V1::CharacterSitesController < ApplicationController
   before_action :authenticate_user!
   before_action :require_current_campaign
   before_action :set_character
