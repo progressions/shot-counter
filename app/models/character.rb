@@ -72,6 +72,8 @@ class Character < ApplicationRecord
   has_many :sites
   has_many :carries
   has_many :weapons, through: :carries
+  has_many :memberships
+  has_many :parties, through: :memberships
 
   validates :name, presence: true, uniqueness: { scope: :campaign_id, message: "must be unique" }
 

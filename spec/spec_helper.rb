@@ -44,6 +44,14 @@ RSpec.configure do |config|
   # triggering implicit auto-inclusion in groups with matching metadata.
   config.shared_context_metadata_behavior = :apply_to_host_groups
 
+  def set_current_campaign(user, campaign)
+    redis = Redis.new
+    user_info = {
+      "campaign_id" => campaign&.id
+    }
+    redis.set("user_#{user.id}", user_info.to_json)
+  end
+
 # The settings below are suggested to provide a good initial experience
 # with RSpec, but feel free to customize to your heart's content.
 =begin

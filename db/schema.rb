@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_06_26_001923) do
+ActiveRecord::Schema[7.0].define(version: 2023_06_30_000341) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -177,6 +177,24 @@ ActiveRecord::Schema[7.0].define(version: 2023_06_26_001923) do
     t.index ["user_id"], name: "index_invitations_on_user_id"
   end
 
+  create_table "memberships", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "party_id", null: false
+    t.uuid "character_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["character_id"], name: "index_memberships_on_character_id"
+    t.index ["party_id"], name: "index_memberships_on_party_id"
+  end
+
+  create_table "parties", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.string "name"
+    t.string "description"
+    t.uuid "campaign_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["campaign_id"], name: "index_parties_on_campaign_id"
+  end
+
   create_table "schticks", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.uuid "campaign_id", null: false
     t.string "title", null: false
@@ -285,6 +303,9 @@ ActiveRecord::Schema[7.0].define(version: 2023_06_26_001923) do
   add_foreign_key "invitations", "campaigns"
   add_foreign_key "invitations", "users"
   add_foreign_key "invitations", "users", column: "pending_user_id"
+  add_foreign_key "memberships", "characters"
+  add_foreign_key "memberships", "parties"
+  add_foreign_key "parties", "campaigns"
   add_foreign_key "schticks", "campaigns"
   add_foreign_key "schticks", "schticks", column: "prerequisite_id"
   add_foreign_key "sites", "characters"

@@ -8,6 +8,7 @@ class Campaign < ApplicationRecord
   has_many :invitations
   has_many :schticks
   has_many :weapons
+  has_many :parties
 
   validates :title, presence: true, allow_blank: false
 

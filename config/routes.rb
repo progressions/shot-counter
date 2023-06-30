@@ -10,6 +10,9 @@ Rails.application.routes.draw do
       resources :characters_and_vehicles, only: [:index]
       resources :schticks
       resources :weapons
+      resources :parties do
+        resources :memberships
+      end
       post "schticks/import", to: "schticks#import"
       post "weapons/import", to: "weapons#import"
       resources :factions, only: [:index]
