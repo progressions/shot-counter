@@ -3,7 +3,20 @@ class Api::V1::SitesController < ApplicationController
   before_action :require_current_campaign
 
   def index
-    render json: current_campaign.sites
+    @sites = current_campaign.sites
+
+    if params[:character_id].present?
+      @sites = current_campaign.sites
+      @site_ids = Attunement.where(site_id: @sites).where(character_id: params[:character_id]).pluck(:site_id)
+      @sites = @sites.where.not(id: @site_ids)
+    end
+
+    @sites = paginate(@sites, per_page: (params[:per_page] || 24), page: (params[:page] || 1))
+
+    render json: {
+      sites: @sites,
+      meta: pagination_meta(@sites),
+    }
   end
 
   def show

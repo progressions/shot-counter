@@ -7,6 +7,7 @@ RSpec.describe "Api::V1::Sites", type: :request do
   let!(:party) { Party.create!(name: "The Party", campaign: action_movie) }
   let(:headers) { Devise::JWT::TestHelpers.auth_headers({}, user) }
   let!(:site) { Site.create!(name: "The Site", campaign: action_movie) }
+  let!(:baseball_field) { Site.create!(name: "Baseball Field", campaign: action_movie) }
 
   before(:each) do
     set_current_campaign(user, action_movie)
@@ -17,8 +18,16 @@ RSpec.describe "Api::V1::Sites", type: :request do
       get "/api/v1/sites", headers: headers
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
-      expect(body.length).to eq(1)
-      expect(body[0]["name"]).to eq("The Site")
+      expect(body["sites"][0]["name"]).to eq("The Site")
+    end
+
+    it "returns all sites that are not the current character's site" do
+      brick.sites << site
+
+      get "/api/v1/sites", headers: headers, params: { character_id: brick.id }
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["sites"].length).to eq(1)
     end
   end
 
