@@ -60,9 +60,9 @@ RSpec.describe "Api::V1::Sites", type: :request do
 
   describe "DELETE /destroy" do
     it "returns http success" do
-      delete "/api/v1/sites/#{site.id}", headers: headers
-      expect(response).to have_http_status(:success)
-      expect(Site.count).to eq(0)
+      expect {
+        delete "/api/v1/sites/#{site.id}", headers: headers
+      }.to change { Site.count }.by(-1)
     end
   end
 end

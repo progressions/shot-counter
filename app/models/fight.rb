@@ -50,7 +50,7 @@ class Fight < ApplicationRecord
   def shot_order
     fight_characters
       .group_by { |fc| fc.shot }
-      .sort_by { |shot, fight_chars| -shot.to_i }
+      .sort_by { |shot, fight_chars| shot.nil? ? 1000 : -shot.to_i }
       .map { |shot, fight_chars|
         [shot, fight_chars
                  .map { |fc| fc.character || fc.vehicle }

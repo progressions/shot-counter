@@ -22,6 +22,31 @@ RSpec.describe Fight, type: :model do
     expect(fight.shot_order).to eq([[12, [brick, serena]]])
   end
 
+  it "has a short order with hidden characters, orders them last" do
+    fight = Fight.create!(name: "Fight", campaign_id: @action_movie.id)
+    # Uber-Boss
+    thunder_king = Character.create!(name: "Thunder King", action_values: {"Type" => "Uber-Boss", "Guns" => 18, "Defense" => 17, "Toughness" => 9, "Speed" => 8}, campaign_id: @action_movie.id)
+    # PC
+    brick = Character.create!(name: "Brick Manly", action_values: {"Type" => "PC", "Guns" => 15, "Defense" => 14, "Toughness" => 7, "Speed" => 7, "Fortune" => 7}, campaign_id: @action_movie.id)
+    # Boss
+    shing = Character.create!(name: "Ugly Shing", action_values: {"Type" => "Boss", "Guns" => 15, "Defense" => 14, "Toughness" => 7, "Speed" => 7}, campaign_id: @action_movie.id)
+    # Featured Foe
+    hitman = Character.create!(name: "Hitman", action_values: {"Type" => "Featured Foe", "Guns" => 15, "Defense" => 14, "Toughness" => 7, "Speed" => 7}, campaign_id: @action_movie.id)
+    # Ally
+    jawbuster = Character.create!(name: "Jawbuster", action_values: {"Type" => "Ally", "Guns" => 15, "Defense" => 14, "Toughness" => 7, "Speed" => 7}, campaign_id: @action_movie.id)
+    # Mook
+    mook = Character.create!(name: "Ninja", action_values: {"Type" => "Mook", "Guns" => 8, "Defense" => 13, "Toughness" => 7, "Speed" => 6}, campaign_id: @action_movie.id)
+
+    fight.fight_characters.create!(character: mook, shot: 12)
+    fight.fight_characters.create!(character: jawbuster, shot: 12)
+    fight.fight_characters.create!(character: hitman, shot: 10)
+    fight.fight_characters.create!(character: shing, shot: nil)
+    fight.fight_characters.create!(character: brick, shot: nil)
+    fight.fight_characters.create!(character: thunder_king, shot: 0)
+
+    expect(fight.shot_order.map { |shot, chars| [shot, chars.map(&:name)] }).to eq([[12, ["Jawbuster", "Ninja"]], [10, ["Hitman"]], [0, ["Thunder King"]], [nil, ["Brick Manly", "Ugly Shing"]]])
+  end
+
   it "orders characters by Type" do
     fight = Fight.create!(name: "Fight", campaign_id: @action_movie.id)
     # Uber-Boss
