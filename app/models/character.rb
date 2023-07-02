@@ -84,6 +84,7 @@ class Character < ApplicationRecord
   before_save :ensure_default_skills
   before_save :ensure_integer_values
   before_save :ensure_non_integer_values
+  before_save :ensure_faction
 
   def act!(fight:, shot_cost: Fight::DEFAULT_SHOT_COUNT)
     self.current_shot ||= 0
@@ -153,6 +154,14 @@ class Character < ApplicationRecord
       if schtick[:title].blank?
         errors.add(:schticks, "must have a title")
       end
+    end
+  end
+
+  def ensure_faction
+    if action_values.fetch("Faction").present?
+      self.faction = self.campaign.factions.find_or_create_by(name: action_values.fetch("Faction"))
+    else
+      self.faction = nil
     end
   end
 

@@ -14,11 +14,6 @@ class Api::V1::CharactersController < ApplicationController
     @character.user = current_user
     @character.campaign = current_campaign
 
-    if @character.action_values.fetch("Faction")
-      @faction = current_campaign.factions.find_or_create_by(name: @character.action_values.fetch("Faction"))
-      @character.faction = @faction
-    end
-
     if @character.save
       render json: @character
     else

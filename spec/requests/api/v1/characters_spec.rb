@@ -48,6 +48,24 @@ RSpec.describe "Api::V1::Characters", type: :request do
       body = JSON.parse(response.body)
       expect(body["name"]).to eq("Brick Manly, Esq")
     end
+
+    it "updates a character's faction" do
+      put "/api/v1/characters/#{@brick[:id]}", params: { character: { action_values: { "Faction" => "The Dragons" } } }, headers: @headers
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["action_values"]["Faction"]).to eq("The Dragons")
+      character = Character.find(body["id"])
+      expect(character.faction.name).to eq("The Dragons")
+    end
+
+    it "removes a character's faction" do
+      put "/api/v1/characters/#{@boss[:id]}", params: { character: { action_values: { "Faction" => "" } } }, headers: @headers
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["action_values"]["Faction"]).to eq(nil)
+      character = Character.find(body["id"])
+      expect(character.faction).to eq(nil)
+    end
   end
 
   describe "DELETE /destroy" do
