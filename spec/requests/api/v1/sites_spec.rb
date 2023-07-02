@@ -4,7 +4,6 @@ RSpec.describe "Api::V1::Sites", type: :request do
   let!(:user) { User.create!(email: "email@example.com", confirmed_at: Time.now) }
   let!(:action_movie) { user.campaigns.create!(title: "Action Movie") }
   let(:brick) { Character.create!(name: "Brick Manly", campaign: action_movie) }
-  let!(:party) { Party.create!(name: "The Party", campaign: action_movie) }
   let(:headers) { Devise::JWT::TestHelpers.auth_headers({}, user) }
   let!(:site) { Site.create!(name: "The Site", campaign: action_movie) }
   let!(:baseball_field) { Site.create!(name: "Baseball Field", campaign: action_movie) }

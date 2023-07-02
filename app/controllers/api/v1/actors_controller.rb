@@ -2,11 +2,11 @@ class Api::V1::ActorsController < ApplicationController
   before_action :authenticate_user!
   before_action :require_current_campaign
   before_action :set_fight
-  before_action :set_character, only: [:update, :destroy, :act]
-  before_action :set_fight_character, only: [:update, :destroy, :act]
+  before_action :set_character, only: [:update, :destroy, :act, :reveal, :hide]
+  before_action :set_fight_character, only: [:update, :destroy, :act, :reveal, :hide]
 
   def index
-    render json: @fight.characters
+    render json: @fight.characters.order(:name)
   end
 
   def act
@@ -45,12 +45,25 @@ class Api::V1::ActorsController < ApplicationController
   end
 
   def update
-    @fight_character.update(shot: shot_params[:current_shot]) if shot_params[:current_shot]
+    current_shot = shot_params[:current_shot] == "hidden" ? nil : shot_params[:current_shot]
+    @fight_character.update(shot: current_shot) if shot_params[:current_shot]
     if @character.update(character_params)
       render json: @character
     else
       render @character.errors, status: 400
     end
+  end
+
+  def reveal
+    @fight_character.update(shot: 0)
+
+    render json: @character
+  end
+
+  def hide
+    @fight_character.update(shot: nil)
+
+    render json: @character
   end
 
   def destroy

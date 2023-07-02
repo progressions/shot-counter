@@ -48,6 +48,8 @@ Rails.application.routes.draw do
         resources :actors do
           member do
             patch :act
+            patch :hide
+            patch :reveal
             post :add
           end
         end
