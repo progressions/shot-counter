@@ -4,13 +4,10 @@ class Api::V1::FactionsController < ApplicationController
 
   def index
     @factions = current_campaign
-      .characters
-      .pluck(Arel.sql("action_values -> 'Faction'"))
-      .reject { |f| f.blank? }
-      .uniq
-      .sort
+      .factions
+      .order(:name)
 
-    render json: @factions
+    render json: @factions.map(&:name)
   end
 
 end

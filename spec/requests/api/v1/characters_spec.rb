@@ -19,4 +19,42 @@ RSpec.describe "Api::V1::Characters", type: :request do
       expect(body.map { |c| c["name"] }).to eq(["Brick Manly", "Ugly Shing"])
     end
   end
+
+  describe "POST /create" do
+    it "creates a character" do
+      post "/api/v1/characters", params: { character: { name: "Serena Tessaro", action_values: { "Type" => "PC", "Faction" => "The Dragons" } } }, headers: @headers
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["name"]).to eq("Serena Tessaro")
+      expect(body["action_values"]["Faction"]).to eq("The Dragons")
+      character = Character.find(body["id"])
+      expect(character.faction.name).to eq("The Dragons")
+    end
+  end
+
+  describe "GET /show" do
+    it "shows a character" do
+      get "/api/v1/characters/#{@brick[:id]}", headers: @headers
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["name"]).to eq("Brick Manly")
+    end
+  end
+
+  describe "PUT /update" do
+    it "updates a character" do
+      put "/api/v1/characters/#{@brick[:id]}", params: { character: { name: "Brick Manly, Esq" } }, headers: @headers
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["name"]).to eq("Brick Manly, Esq")
+    end
+  end
+
+  describe "DELETE /destroy" do
+    it "destroys a character" do
+      delete "/api/v1/characters/#{@brick[:id]}", headers: @headers
+      expect(response).to have_http_status(:success)
+      expect(Character.count).to eq(1)
+    end
+  end
 end

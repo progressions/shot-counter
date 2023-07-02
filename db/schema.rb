@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_07_02_185354) do
+ActiveRecord::Schema[7.0].define(version: 2023_07_02_185653) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -126,8 +126,10 @@ ActiveRecord::Schema[7.0].define(version: 2023_07_02_185354) do
     t.boolean "active", default: true, null: false
     t.jsonb "description"
     t.jsonb "skills"
+    t.uuid "faction_id"
     t.index ["campaign_id"], name: "index_characters_on_campaign_id"
     t.index ["created_at"], name: "index_characters_on_created_at"
+    t.index ["faction_id"], name: "index_characters_on_faction_id"
     t.index ["user_id"], name: "index_characters_on_user_id"
   end
 
@@ -152,6 +154,8 @@ ActiveRecord::Schema[7.0].define(version: 2023_07_02_185354) do
     t.string "description"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.uuid "campaign_id", null: false
+    t.index ["campaign_id"], name: "index_factions_on_campaign_id"
   end
 
   create_table "fight_characters", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -314,9 +318,11 @@ ActiveRecord::Schema[7.0].define(version: 2023_07_02_185354) do
   add_foreign_key "character_schticks", "characters"
   add_foreign_key "character_schticks", "schticks"
   add_foreign_key "characters", "campaigns"
+  add_foreign_key "characters", "factions"
   add_foreign_key "characters", "users"
   add_foreign_key "effects", "fights"
   add_foreign_key "effects", "users"
+  add_foreign_key "factions", "campaigns"
   add_foreign_key "fight_characters", "characters"
   add_foreign_key "fight_characters", "fights"
   add_foreign_key "fights", "campaigns"

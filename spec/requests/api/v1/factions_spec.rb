@@ -8,6 +8,12 @@ RSpec.describe "Api::V1::Factions", type: :request do
     @brick = Character.create!(name: "Brick Manly", action_values: { "Type" => "PC", "Faction" => "The Dragons" }, campaign_id: @campaign.id)
     @boss = Character.create!(name: "Ugly Shing", action_values: { "Type" => "Boss", "Faction" => "The Ascended" }, campaign_id: @campaign.id)
     @headers = Devise::JWT::TestHelpers.auth_headers({}, @gamemaster)
+
+    @the_ascended = Faction.create!(name: "The Ascended", campaign_id: @campaign.id)
+    @the_dragons = Faction.create!(name: "The Dragons", campaign_id: @campaign.id)
+    @brick.faction = @the_dragons
+    @boss.faction = @the_ascended
+
     set_current_campaign(@gamemaster, @campaign)
   end
 

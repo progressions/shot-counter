@@ -7,6 +7,17 @@ namespace :characters do
     end
   end
 
+  task convert_factions: :environment do
+    Character.find_each do |character|
+      faction_name = character.action_values['Faction']
+      if faction_name.present?
+        faction = character.campaign.factions.find_or_create_by(name: faction_name)
+        faction.characters << character
+        faction.save!
+      end
+    end
+  end
+
   task convert_action_values: :environment do
     Character.find_each do |character|
       character.save!

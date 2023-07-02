@@ -63,6 +63,7 @@ class Character < ApplicationRecord
 
   has_many :fight_characters, dependent: :destroy
   has_many :fights, through: :fight_characters
+  belongs_to :faction, optional: true
   belongs_to :user, optional: true
   belongs_to :campaign
   has_many :character_effects
@@ -98,7 +99,8 @@ class Character < ApplicationRecord
       created_at: created_at,
       updated_at: updated_at,
       user: user,
-      action_values: action_values,
+      action_values: action_values.merge("Faction" => faction&.name),
+      faction: faction,
       description: description,
       schticks: schticks.includes(:prerequisite).order(:category, :path, :title),
       skills: skills.sort_by { |key, value| [(DEFAULT_SKILLS.keys.include?(key) ? 0 : 1), key] }.to_h,

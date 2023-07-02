@@ -10,6 +10,7 @@ class Campaign < ApplicationRecord
   has_many :weapons
   has_many :parties
   has_many :sites
+  has_many :factions
 
   validates :title, presence: true, allow_blank: false
 
