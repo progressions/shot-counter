@@ -92,7 +92,7 @@ class Character < ApplicationRecord
     save!
   end
 
-  def as_json(args=nil)
+  def as_json(args={})
     {
       id: id,
       name: name,
