@@ -8,6 +8,7 @@ RSpec.describe "Api::V1::Parties", type: :request do
   let(:brick) { Character.create!(name: "Brick Manly", campaign: action_movie) }
   let(:serena) { Character.create!(name: "Serena Tessaro", campaign: action_movie) }
   let!(:party) { Party.create!(name: "The Party", campaign: action_movie) }
+  let!(:gang) { Party.create!(name: "The Gang", campaign: action_movie) }
   let!(:crew) { Party.create!(name: "The Pirate Crew", campaign: pirates) }
   let(:headers) { Devise::JWT::TestHelpers.auth_headers({}, user) }
 
@@ -20,8 +21,16 @@ RSpec.describe "Api::V1::Parties", type: :request do
       get "/api/v1/parties", headers: headers
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
-      expect(body["parties"].length).to eq(1)
+      expect(body["parties"].length).to eq(2)
       expect(body["parties"][0]["name"]).to eq("The Party")
+    end
+
+    it "returns parties matching a search string" do
+      get "/api/v1/parties?search=gang", headers: headers
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["parties"].length).to eq(1)
+      expect(body["parties"][0]["name"]).to eq("The Gang")
     end
   end
 

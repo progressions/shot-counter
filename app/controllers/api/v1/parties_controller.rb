@@ -6,6 +6,10 @@ class Api::V1::PartiesController < ApplicationController
   def index
     @parties = current_campaign.parties
 
+    if params[:search].present?
+      @parties = @parties.where("name ILIKE ?", "%#{params[:search]}%")
+    end
+
     @parties = paginate(@parties, per_page: (params[:per_page] || 50), page: (params[:page] || 1))
 
     render json: {
