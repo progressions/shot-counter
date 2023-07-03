@@ -3,10 +3,12 @@ require 'rails_helper'
 RSpec.describe "Api::V1::Parties", type: :request do
   let!(:user) { User.create!(email: "email@example.com", confirmed_at: Time.now) }
   let!(:action_movie) { user.campaigns.create!(title: "Action Movie") }
+  let!(:pirates) { user.campaigns.create!(title: "Pirates") }
   let(:fight) { Fight.create!(name: "Museum Fight", campaign: action_movie) }
   let(:brick) { Character.create!(name: "Brick Manly", campaign: action_movie) }
   let(:serena) { Character.create!(name: "Serena Tessaro", campaign: action_movie) }
   let!(:party) { Party.create!(name: "The Party", campaign: action_movie) }
+  let!(:crew) { Party.create!(name: "The Pirate Crew", campaign: pirates) }
   let(:headers) { Devise::JWT::TestHelpers.auth_headers({}, user) }
 
   before(:each) do
