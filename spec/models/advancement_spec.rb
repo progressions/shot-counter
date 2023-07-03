@@ -9,5 +9,9 @@ RSpec.describe Advancement, type: :model do
     it "must have character" do
       expect(Advancement.create(character: nil, description: "Strength")).to be_invalid
     end
+
+    it "doesn't need description" do
+      expect(Advancement.create(character: brick, description: nil)).to be_valid
+    end
   end
 end
