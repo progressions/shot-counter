@@ -1,7 +1,13 @@
 class ApplicationController < ActionController::API
   before_action :set_current_campaign
 
+  rescue_from ActiveRecord::RecordNotFound, with: :record_not_found
+
   private
+
+  def record_not_found
+    render json: { error: 'Record not found' }, status: :not_found
+  end
 
   def set_current_campaign
     return unless current_user
