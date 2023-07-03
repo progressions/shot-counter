@@ -7,8 +7,6 @@ class Site < ApplicationRecord
   validates :name, presence: true, uniqueness: { scope: :campaign_id }
 
   def as_json(args = {})
-    super(args.merge(include: :faction))
-
     {
       id: id,
       name: name,
