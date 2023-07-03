@@ -1,6 +1,7 @@
 class Api::V1::PartiesController < ApplicationController
   before_action :authenticate_user!
   before_action :require_current_campaign
+  before_action :set_party, only: [:show, :update, :destroy]
 
   def index
     @parties = current_campaign.parties
@@ -9,8 +10,6 @@ class Api::V1::PartiesController < ApplicationController
   end
 
   def show
-    @party = current_campaign.parties.find(params[:id])
-
     render json: @party
   end
 
@@ -21,20 +20,30 @@ class Api::V1::PartiesController < ApplicationController
   end
 
   def update
-    @party = current_campaign.parties.find(params[:id])
     @party.update!(party_params)
 
     render json: @party
   end
 
+  def fight
+    @party = current_campaign.parties.find(params[:party_id])
+    @fight = current_campaign.fights.find(params[:fight_id])
+    @fight.characters << @party.characters
+
+    render json: @party
+  end
+
   def destroy
-    @party = current_campaign.parties.find(params[:id])
     @party.destroy!
 
     render :ok
   end
 
   private
+
+  def set_party
+    @party = current_campaign.parties.find(params[:id])
+  end
 
   def party_params
     params.require(:party).permit(:name, :description)

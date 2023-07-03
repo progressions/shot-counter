@@ -12,6 +12,7 @@ Rails.application.routes.draw do
       resources :weapons
       resources :parties do
         resources :memberships
+        post "fight/:fight_id", to: "parties#fight"
       end
       resources :sites
       post "schticks/import", to: "schticks#import"

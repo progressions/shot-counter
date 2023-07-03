@@ -3,7 +3,9 @@ require 'rails_helper'
 RSpec.describe "Api::V1::Parties", type: :request do
   let!(:user) { User.create!(email: "email@example.com", confirmed_at: Time.now) }
   let!(:action_movie) { user.campaigns.create!(title: "Action Movie") }
+  let(:fight) { Fight.create!(name: "Museum Fight", campaign: action_movie) }
   let(:brick) { Character.create!(name: "Brick Manly", campaign: action_movie) }
+  let(:serena) { Character.create!(name: "Serena Tessaro", campaign: action_movie) }
   let!(:party) { Party.create!(name: "The Party", campaign: action_movie) }
   let(:headers) { Devise::JWT::TestHelpers.auth_headers({}, user) }
 
@@ -18,6 +20,16 @@ RSpec.describe "Api::V1::Parties", type: :request do
       body = JSON.parse(response.body)
       expect(body.length).to eq(1)
       expect(body[0]["name"]).to eq("The Party")
+    end
+  end
+
+  describe "POST /fight" do
+    it "adds a party to a fight" do
+      party.characters << brick
+      party.characters << serena
+      post "/api/v1/parties/#{party.id}/fight/#{fight.id}", headers: headers
+      expect(response).to have_http_status(:success)
+      expect(fight.characters.reload).to include(brick, serena)
     end
   end
 
