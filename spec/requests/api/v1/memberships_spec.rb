@@ -4,6 +4,7 @@ RSpec.describe "Api::V1::Memberships", type: :request do
   let!(:user) { User.create!(email: "email@example.com", confirmed_at: Time.now) }
   let!(:action_movie) { user.campaigns.create!(title: "Action Movie") }
   let(:brick) { Character.create!(name: "Brick Manly", campaign: action_movie) }
+  let(:serena) { Character.create!(name: "Serena Tessaro", campaign: action_movie) }
   let!(:party) { Party.create!(name: "The Party", campaign: action_movie) }
   let!(:other_party) { Party.create!(name: "The Other Party", campaign: action_movie) }
   let(:headers) { Devise::JWT::TestHelpers.auth_headers({}, user) }
@@ -26,15 +27,14 @@ RSpec.describe "Api::V1::Memberships", type: :request do
   describe "POST /create" do
     it "creates a membership" do
       expect {
-        post "/api/v1/parties/#{party.id}/memberships", params: { character_id: brick.id }, headers: headers
+        post "/api/v1/parties/#{party.id}/memberships", params: { character_id: serena.id }, headers: headers
       }.to change { party.characters.count }.by(1)
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
-      expect(body["name"]).to eq("Brick Manly")
+      expect(body["name"]).to eq("Serena Tessaro")
     end
 
     it "creates a membership to a different party" do
-      party.characters << brick
       expect {
         post "/api/v1/parties/#{other_party.id}/memberships", params: { character_id: brick.id }, headers: headers
       }.to change { other_party.characters.count }.by(1)
