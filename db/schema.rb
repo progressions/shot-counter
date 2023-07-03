@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_07_02_192443) do
+ActiveRecord::Schema[7.0].define(version: 2023_07_03_152116) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -178,6 +178,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_07_02_192443) do
     t.uuid "campaign_id"
     t.boolean "active", default: true, null: false
     t.boolean "archived", default: false, null: false
+    t.text "description"
     t.index ["campaign_id"], name: "index_fights_on_campaign_id"
   end
 

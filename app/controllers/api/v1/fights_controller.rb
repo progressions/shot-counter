@@ -33,7 +33,6 @@ class Api::V1::FightsController < ApplicationController
   def create
     @fight = current_campaign.fights.new(fight_params)
     if @fight.save
-      post_to_discord(@fight)
       render json: @fight
     else
       render status: 400
@@ -70,11 +69,7 @@ class Api::V1::FightsController < ApplicationController
       .find(params[:id])
   end
 
-  def post_to_discord(fight)
-    # FightPoster.post_to_discord(fight)
-  end
-
   def fight_params
-    params.require(:fight).permit(:name, :sequence, :active, :archived)
+    params.require(:fight).permit(:name, :sequence, :active, :archived, :description)
   end
 end

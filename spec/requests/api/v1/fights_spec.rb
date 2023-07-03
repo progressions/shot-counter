@@ -11,6 +11,43 @@ RSpec.describe "Fights", type: :request do
     set_current_campaign(@gamemaster, @campaign)
   end
 
+  describe "POST /api/v1/fights" do
+    it "creates a fight" do
+      post "/api/v1/fights", params: { fight: {
+        name: "Museum Fight",
+        description: "A fight in a museum",
+      } }, headers: @headers
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["name"]).to eq("Museum Fight")
+      expect(body["description"]).to eq("A fight in a museum")
+      expect(body["active"]).to be_truthy
+    end
+  end
+
+  describe "PATCH /api/v1/fights/:id" do
+    it "updates a fight" do
+      patch "/api/v1/fights/#{@fight.id}", params: { fight: {
+        name: "Huge Brawl",
+        description: "A very big brawl",
+      } }, headers: @headers
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["name"]).to eq("Huge Brawl")
+      expect(body["description"]).to eq("A very big brawl")
+      expect(body["active"]).to be_truthy
+    end
+  end
+
+  describe "DELETE /api/v1/fights/:id" do
+    it "deletes a fight" do
+      expect {
+        delete "/api/v1/fights/#{@fight.id}", headers: @headers
+      }.to change { Fight.count }.by(-1)
+      expect(response).to have_http_status(:success)
+    end
+  end
+
   describe "GET /api/v1/fights/:id" do
     it "returns a fight" do
       @fight.fight_characters.create!(character_id: @brick.id, shot: 10)
