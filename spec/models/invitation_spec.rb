@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe Invitation, type: :model do
   before(:each) do
     @gamemaster = User.create!(email: "email@example.com")
-    @campaign = @gamemaster.campaigns.create!(title: "Adventure")
+    @campaign = @gamemaster.campaigns.create!(name: "Adventure")
   end
 
   it "can't have remaining_count greater than maximum_count" do

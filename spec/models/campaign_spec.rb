@@ -2,12 +2,12 @@ require 'rails_helper'
 
 RSpec.describe Campaign, type: :model do
   let!(:user) { User.create!(email: "email@example.com", confirmed_at: Time.now) }
-  let!(:action_movie) { user.campaigns.create!(title: "Action Movie") }
+  let!(:action_movie) { user.campaigns.create!(name: "Action Movie") }
   let(:brick) { Character.create!(name: "Brick Manly", campaign: action_movie) }
 
   describe "validations" do
-    it "requires a title" do
-      expect(Campaign.create(title: nil)).to be_invalid
+    it "requires a name" do
+      expect(Campaign.create(name: nil)).to be_invalid
     end
   end
 
@@ -47,7 +47,7 @@ RSpec.describe Campaign, type: :model do
     end
 
     it "has many schticks" do
-      schtick = Schtick.create!(title: "Schtick", campaign: action_movie)
+      schtick = Schtick.create!(name: "Schtick", campaign: action_movie)
       expect(action_movie.schticks).to eq([schtick])
     end
 

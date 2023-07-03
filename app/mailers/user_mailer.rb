@@ -23,7 +23,7 @@ class UserMailer < Devise::Mailer
       port = ":#{port}" if port
       @root_url = "#{protocol}://#{host}#{port}"
     end
-    mail(to: @invitation.email, subject: "You have been invited to join #{@invitation.campaign.title} in the Chi War!")
+    mail(to: @invitation.email, subject: "You have been invited to join #{@invitation.campaign.name} in the Chi War!")
   end
 
 end

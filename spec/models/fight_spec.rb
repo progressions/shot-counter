@@ -3,7 +3,7 @@ require "rails_helper"
 RSpec.describe Fight, type: :model do
   before(:each) do
     @user = User.create!(email: "email@example.com")
-    @action_movie = @user.campaigns.create!(title: "Action Movie")
+    @action_movie = @user.campaigns.create!(name: "Action Movie")
   end
 
   it "has a shot order with one character" do
@@ -99,7 +99,7 @@ RSpec.describe Fight, type: :model do
     let(:brick) { Character.create!(name: "Brick Manly", action_values: {"Type" => "PC", "Guns" => 15, "Defense" => 14, "Toughness" => 7, "Speed" => 7, "Fortune" => 7}, campaign_id: @action_movie.id) }
     let!(:brick_shot) { fight.fight_characters.create!(character: brick, shot: 12) }
     let!(:effect) {
-      fight.effects.create!(title: "Effect", start_sequence: 1, end_sequence: 2, start_shot: 15, end_shot: 15, severity: "info")
+      fight.effects.create!(name: "Effect", start_sequence: 1, end_sequence: 2, start_shot: 15, end_shot: 15, severity: "info")
     }
 
     # Effect is active between sequence 1, shot 15 and sequence 2, shot 15

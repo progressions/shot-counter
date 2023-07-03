@@ -26,7 +26,7 @@ class Invitation < ApplicationRecord
       gamemaster: user,
       campaign: {
         id: campaign.id,
-        title: campaign.title
+        name: campaign.name
       },
       pending_user: {
         id: pending_user&.id,

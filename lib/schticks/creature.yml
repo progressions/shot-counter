@@ -5,101 +5,101 @@
       name:
       schticks:
         -
-          title: Blood Drain
+          name: Blood Drain
           description: You have a specialized body feature that allows you to draw blood from living victims. Examples might include hollow fangs, rasping mouths on the palms of your hands, or dozens of little suckers on your torso.  After dealing Wound Points to an enemy, spend 1 Magic and 1 shot as an interrupt. Subtract the number of Wound Points you just dealt to the foe from your own Wound Point total.
         -
-          title: Born in a Cage
+          name: Born in a Cage
           description: After a boss deals you any number of Wound Points, add a free Fortune die to your next check.
         -
-          title: Conditional Escalation
+          name: Conditional Escalation
           description: Add +2 to Creature Powers if at least one of your allies has 25 or more Wound Points. +3 if at least one of them is down.
         -
-          title: Corded Musculature
+          name: Corded Musculature
           description: Add +3 Toughness vs. close combat attacks during the first sequence of a fight, +2 during the second, and +1 during the third.
         -
-          title: Courtier of the Yama Kings
+          name: Courtier of the Yama Kings
           description: Spend 1 Magic to seem trustworthy to all authority figures present in the current scene. Lasts until end of adventure, or until you actively violate their trust, whichever comes first.
         -
-          title: Death resistance I
+          name: Death resistance I
           description: Add +2 bonus to Death Checks.
         -
-          title: Death resistance II
+          name: Death resistance II
           description: Add +3 bonus to Death Checks.
         -
-          title: Death resistance III
+          name: Death resistance III
           description: Add +4 bonus to Death Checks.
         -
-          title: Demon punch
+          name: Demon punch
           description: Make close combat Creature Powers attacks against your opponent’s Defense, with a base Damage of 13 during the first sequence, 11 during the second, and 9 in subsequent sequences.
         -
-          title: Deserter from the Hell of Flaying
+          name: Deserter from the Hell of Flaying
           description: Spend 1 shot to make a hero immune to Impairment until end of fight.
         -
-          title: Emit Smokescreen
+          name: Emit Smokescreen
           description: Spend 1 Magic to allow any number of characters to automatically Cheese It.
         -
-          title: Empathic rage
+          name: Empathic rage
           description: After another hero receives a Mark of Death, your next attack check gets a free Fortune die.
         -
-          title: Exile from the Hell of Dismemberment
+          name: Exile from the Hell of Dismemberment
           description: If another hero receives a Mark of Death, spend 1 shot to remove it. Roll a die. On an odd result, you gain a Mark of Death.
         -
-          title: Flashback from the Hell of Knives
+          name: Flashback from the Hell of Knives
           description: When a foe downs a hero, and is close enough for you to attack, make an attack against that foe as an interrupt.
         -
-          title: Flight
+          name: Flight
           description: Fly through the air, moving up to 3 m per shot.
         -
-          title: Foul Spew
+          name: Foul Spew
           description: Barf acidic chunks on those who cross you. As an interrupt after you take more than 5 Wound Points from an enemy attack, spend 1 Magic and 1 shot. Enemy loses 3 Speed until end of fight if this is the first sequence, 2 Speed if this is the second sequence, or 1 Speed if this any subsequent sequence.
         -
-          title: Inevitable Comeback
+          name: Inevitable Comeback
           description: After you fail a Death Check, spend 3 Magic to return to life with 5 Wound Points. You must give your fellow heroes time to think you’re definitely, absolutely dead this time.
         -
-          title: Insubstantial
+          name: Insubstantial
           description: Pass through solid matter by checking Creature Power against a Difficulty of 1 for each inch of material you are moving through. Specify two types of matter you cannot pass through; your GM picks a third.. Note that this power does not make you immune to damage.
         -
-          title: Memory Drain
+          name: Memory Drain
           description: After damaging an enemy with any close combat Creature Powers attack, spend 1 Magic. You can access the enemy’s recollections until end of session.
         -
-          title: Mimicry
+          name: Mimicry
           description: After damaging an enemy with any close combat Creature Powers attack, spend 1 Magic. You can perfectly imitate this enemy’s voice until end of session.
         -
-          title: Monstrous Foot Stomp
+          name: Monstrous Foot Stomp
           description: Momentarily grow a devastating pedal extremity. After you undergo a Transformation (q.v.) from human to creature, your next Creature Powers attack check this fight gets a free Fortune die. If successful, roll yet another die and add it to the Smackdown.
         -
-          title: Natural Weapon
+          name: Natural Weapon
           description: You strike with spines, claws, jagged teeth, or another monstrous body part of your choice. +2 Damage when making close Creature Powers attacks.
         -
-          title: Night Dweller
+          name: Night Dweller
           description: Add +1 attack and +2 Defense during fights that take place outdoors at night.
         -
-          title: rage Against Machines
+          name: rage Against Machines
           description: Spend 3 shots and make a Creature Powers attack, at close or ranged distance, against the Driving value of a foe operating a moving vehicle. The vehicle takes 8 Condition Points. If the vehicle is involved in a Chase, it also takes 8 Chase Points, and is treated as if it has been rammed or sideswiped.
         -
-          title: regeneration I
+          name: regeneration I
           description: Your Wound Point total decreases by 2 at the beginning of each sequence.
         -
-          title: regeneration II
+          name: regeneration II
           description: Your Wound Point total decreases by 4 at the beginning of each sequence.
         -
-          title: regeneration III
+          name: regeneration III
           description: Your Wound Point total decreases by 5 at the beginning of each sequence.
         -
-          title: regeneration Iv
+          name: regeneration Iv
           description: Your Wound Point total decreases by 6 at the beginning of each sequence.
         -
-          title: Schooled in the Hell of piercing
+          name: Schooled in the Hell of piercing
           description: Your attacks treat foes with Toughness ratings of 7 or more as if they had a Toughness of 5.
         -
-          title: Steel Hide
+          name: Steel Hide
           description: +3 Toughness vs. ranged attacks during the first sequence of a fight, +2 during the second, and +1 during the third.
         -
-          title: Transformation I
+          name: Transformation I
           description: You may change back and forth from your true form to that of an ordinary-looking human being. Describe the single human form you can assume. While in this form you can’t access your other Creature Powers. In combat, it takes you 3 shots to transform. In any other scene, it takes about 20 seconds.  If you are a ghost, your normal-seeming false form looks like you, except for the dead and see-through part.
         -
-          title: Transformation II
+          name: Transformation II
           description: As per Transformation I, but you can spend 1 Magic or 3 Magic to assume a new, normal- looking human form other than your default. If you spend 1, you can never assume that form in any subsequent session. If you spend 3, you can change to that form at will for the length of the series.
         -
-          title: venom Sac
+          name: venom Sac
           description: When you hit a named character with a close combat Creature Powers attack, you may specify that they take no damage now, but instead take the damage from your attack +5, 5 shots from now.

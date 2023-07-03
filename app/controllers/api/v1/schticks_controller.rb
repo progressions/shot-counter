@@ -6,7 +6,7 @@ class Api::V1::SchticksController < ApplicationController
     @schticks = current_campaign
       .schticks
       .includes(:prerequisite)
-      .order(:category, :path, :title)
+      .order(:category, :path, :name)
 
     @paths = []
 
@@ -34,8 +34,8 @@ class Api::V1::SchticksController < ApplicationController
       @schticks = @schticks.where(path: params[:path])
     end
 
-    if params[:title].present?
-      @schticks = @schticks.where("title ILIKE ?", "%#{params[:title]}%")
+    if params[:name].present?
+      @schticks = @schticks.where("name ILIKE ?", "%#{params[:name]}%")
     end
 
     @schticks = paginate(@schticks, per_page: (params[:per_page] || 24), page: (params[:page] || 1))
@@ -97,6 +97,6 @@ class Api::V1::SchticksController < ApplicationController
   end
 
   def schtick_params
-    params.require(:schtick).permit(:title, :description, :category, :path, :color, :image_url)
+    params.require(:schtick).permit(:name, :description, :category, :path, :color, :image_url)
   end
 end

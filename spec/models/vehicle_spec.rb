@@ -3,7 +3,7 @@ require "rails_helper"
 RSpec.describe Vehicle, type: :model do
   before(:each) do
     @user = User.create!(email: "email@example.com")
-    @action_movie = @user.campaigns.create!(title: "Action Movie")
+    @action_movie = @user.campaigns.create!(name: "Action Movie")
   end
 
   it "sets default action values" do

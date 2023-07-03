@@ -5,287 +5,287 @@
       name: Bear
       schticks:
         -
-          title: Apex predator
+          name: Apex predator
           description: After your first successful Martial Arts attack of a sequence, the following attack gets +3 to Martial Arts.
-          title: Bellow
+          name: Bellow
           description: Spend 1 Chi and 2 shots. You and a target make Will Checks. If you succeed and your target fails, target takes 1 Impairment Point until the next keyframe.
-          title: Claw
+          name: Claw
           description: Add +6 Damage when your Martial Arts attack hits an opponent during an even-numbered shot.
-          title: Determination
+          name: Determination
           description: Add +2 to Up Checks.
-          title: Fortitude
+          name: Fortitude
           description: Spend 1 Chi and 1 shot to reduce your Marks of Death by one.
-          title: Iron Gut
+          name: Iron Gut
           description: Ingested poisons, including toxic effects of food poisoning, have no effect on you.
-          title: perseverance
+          name: perseverance
           description: Spend 1 Chi. Select a foe. Each time you miss this foe with a Martial Arts attack, gain a +1 cumulative bonus to Martial Arts attacks against it until end of fight.
-          title: rage
+          name: rage
           description: When a foe deals 7 or more Wound Points to an ally, gain +2 Martial Arts vs. that foe until the next keyframe.
-          title: Slap
+          name: Slap
           description: After a successful Martial Arts attack, spend 1 Chi. Opponent loses a number of shots equal to your Outcome.
-          title: very Strong
+          name: very Strong
           description: Add +3 to all Strength Checks.
     -
       name: Crab
       schticks:
         -
-          title: Crusty Defender
+          name: Crusty Defender
           description: Add +2 to Martial Arts and +1 to Defense when defending a feng shui site from attack.
         -
-          title: Fast
+          name: Fast
           description: Spend X Chi to add +2X to an Initiative roll.
         -
-          title: pincer I
+          name: pincer I
           description: On a successful bare-handed Martial Arts attack, you deal 11 damage and shot cost of target’s next attack increases by 1. Latter effect not cumulative with previous Pincer attacks.
         -
-          title: pincer II
+          name: pincer II
           description: On a successful bare-handed Martial Arts attack, you deal 13 damage and shot cost of target’s next attack increases by 2. Latter effect not cumulative with previous Pincer attacks.
         -
-          title: prosperity of the Crab
+          name: prosperity of the Crab
           description: Spend 1 Chi to treat the roll you get on any positive Swerve die as a 5 instead.
         -
-          title: Scuttle
+          name: Scuttle
           description: Add +2 to Martial Arts vs. featured foes and bosses if your previous attack was against a different featured foe or boss than the one you’re attacking now.
         -
-          title: Shell I
+          name: Shell I
           description: Spend 1 Chi and 3 shots; gain +2 Toughness until the next keyframe.
         -
-          title: Shell II
+          name: Shell II
           description: Spend 1 Chi and 2 shots; gain +2 Toughness until the next keyframe.
         -
-          title: Shell III
+          name: Shell III
           description: Spend 1 Chi or 1 shot; gain +2 Toughness until the next keyframe.
         -
-          title: Stalky Eyes
+          name: Stalky Eyes
           description: Add +2 Defense before your first shot in a sequence.
         -
-          title: Stubborn
+          name: Stubborn
           description: Spend 1 Chi and 1 shot when you fail a check; make the check again.
     -
       name: Dragon
       schticks:
         -
-          title: Borderline psychopath
+          name: Borderline psychopath
           description: Add +1 Attack vs. foes who disrespected you in a previous scene.
         -
-          title: Innate Superiority
+          name: Innate Superiority
           description: Your unarmed Martial Arts Damage Value equals the Damage Value of the foe you’re hitting +1.
         -
-          title: Lightning response
+          name: Lightning response
           description: When you are hit by an attack during a shot higher than your first shot, as determined by your original Initiative roll, spend 0 shots as an interrupt to launch an attack against any foe. Subsequent successful attacks against you also trigger this schtick, provided they occur before your originally determined first shot.
         -
-          title: Luck of the Dragon
+          name: Luck of the Dragon
           description: If you spend Fortune on a check and still fail to meet the Difficulty, you get the Fortune back.
         -
-          title: omnicompetent
+          name: omnicompetent
           description: If no other PC present for the current session has a value of 13 or more in a given skill, spend 1 Chi to gain a value of 15 in that skill until end of session.
         -
-          title: preternaturally Aware
+          name: preternaturally Aware
           description: Add +3 to all Notice Checks.
         -
-          title: quick Study
+          name: quick Study
           description: Spend 1 Chi to gain a schtick possessed by a PC whose player is absent. When using this schtick, you can spend your Chi points in place of any other Fortune subtype. Each time you use a Sorcery or Creature Powers schtick gained from Quick Study that requires a check or expenditure, you gain 1 Reversion Point.
         -
-          title: robust Health
+          name: robust Health
           description: Add +3 to all Constitution Checks.
         -
-          title: Self-Sure
+          name: Self-Sure
           description: Add +3 to all Will Checks.
         -
-          title: very Strong
+          name: very Strong
           description: Add +3 to all Strength Checks.
         -
-          title: Elephant Elephant Walk
+          name: Elephant Elephant Walk
           description: Add +1 Martial Arts until end of sequence when you roll a lower Initiative than any other hero.
         -
-          title: Extremely Strong
+          name: Extremely Strong
           description: Add +5 to all Strength Checks. This counts as Very Strong for game effects that require that to activate.
         -
-          title: Herd Instinct
+          name: Herd Instinct
           description: Spend 1 Chi to grant +1 Toughness to all currently close allies until the next keyframe.
         -
-          title: Hold Them off
+          name: Hold Them off
           description: Add +2 Martial Arts and +1 Defense when one or more allies has fled the current fight.
         -
-          title: Never Forget
+          name: Never Forget
           description: Add +1 Martial Arts vs. opponents you’ve previously fought.
         -
-          title: Shoulder the Brunt
+          name: Shoulder the Brunt
           description: When a nearby ally takes Wound Points, spend 1 shot as an interrupt. You take the Wound Points instead.
         -
-          title: Tough Hide
+          name: Tough Hide
           description: Add +1 Toughness vs. Martial Arts attacks.
         -
-          title: Trample
+          name: Trample
           description: As an interrupt after hitting with an unarmed Martial Arts attack, spend X Chi to add 3 times X to your Damage Value.
         -
-          title: Trumpet
+          name: Trumpet
           description: Spend X Chi to send a psychic distress call to all transformed animals within 10X km. They know where you are and that you are in trouble, but nothing else. How they respond is up to them.
         -
-          title: Wide Frame
+          name: Wide Frame
           description: Spend 0 shots to reduce Wound Points taken as a pedestrian hit by a vehicle to 3.
         -
-          title: Fox Adaptive
+          name: Fox Adaptive
           description: Spend 1 Chi to gain +1 Defense vs. close attacks and –1 against ranged attacks, or vice versa, until end of fight.
         -
-          title: Elusive
+          name: Elusive
           description: As an interrupt when you are hit by an attack, spend 1 Chi to force the reroll of its Swerve.
         -
-          title: Embezzle
+          name: Embezzle
           description: When hit by an attacker with a higher attack AV than yours, you gain the same attack AV as the attacker until the next keyframe.
         -
-          title: Fleet
+          name: Fleet
           description: As an interrupt after Initiative results are determined, spend 1 Chi to switch your opening shot for the sequence with that of any other combatant.
         -
-          title: Fortune of the Fox
+          name: Fortune of the Fox
           description: Treat all Fortune die results of 3 or less as 4s.
         -
-          title: Henhouse prowl
+          name: Henhouse prowl
           description: As an interrupt when an ally deals Wound Points to an enemy, spend 1 Chi to redirect the Wound Points to a different enemy.
         -
-          title: Scamper
+          name: Scamper
           description: As an interrupt after you take Wound Points from an attack, spend 1 Chi and roll a die. Substitute the die roll result for the number of Wound Points you would otherwise take.
         -
-          title: Tricksy
+          name: Tricksy
           description: As an interrupt when you are targeted for attack, spend 1 Chi and designate a different hero as target. Be prepared to explain how you’re doing this.
         -
-          title: very Clever
+          name: very Clever
           description: Spend 1 Chi to automatically succeed at a single skill check, with an Outcome of 2. Attack Checks are not skill checks.
         -
-          title: Zigzag
+          name: Zigzag
           description: Spend 1 Chi to treat all mook hits against you as misses until the next keyframe.
         -
-          title: Monkey Bounce
+          name: Monkey Bounce
           description: Make a 5-shot Martial Arts attack at +3. If successful, opponent loses 1 shot.
         -
-          title: Diversion
+          name: Diversion
           description: Spend 1 Chi and 1 shot to make a Martial Arts Check against a foe’s Will Resistance. On a success, the foe loses 4 shots.
         -
-          title: Fast
+          name: Fast
           description: Spend X Chi to add +2X to an Initiative roll.
         -
-          title: Lime in the Coconut
+          name: Lime in the Coconut
           description: Spend 1 Chi. Until the end of the fight, anyone taking Wound Points from a grenade you threw takes an extra 4 Wound Points.
         -
-          title: Luck of the Monkey
+          name: Luck of the Monkey
           description: Regain a spent Chi point after any Way-Awful Failure.
         -
-          title: Monkey King
+          name: Monkey King
           description: Once per sequence, make an attack with staff or spear at a shot cost of 2.
         -
-          title: Scamper
+          name: Scamper
           description: As an interrupt after you take Wound Points from an attack, spend 1 Chi and roll a die. Substitute the die roll result for the number of Wound Points you would otherwise take.
         -
-          title: Tricksy
+          name: Tricksy
           description: As an interrupt when you are targeted for attack, spend 1 Chi and designate a different hero as target. Be prepared to explain how you’re doing this.
         -
-          title: Throw
+          name: Throw
           description: Add +2 Martial Arts with thrown weapons.
         -
-          title: You Scratch My Back
+          name: You Scratch My Back
           description: When an ally gives you a boost, the ally also gets the boost’s benefit.
     -
       name: Snake
       schticks:
         -
-          title: Coiled Strike
+          name: Coiled Strike
           description: Make a 5-shot Martial Arts attack at +3. If successful, opponent loses 1 shot.
         -
-          title: Constrict
+          name: Constrict
           description: Spend 1 Chi when you hit an opponent with a Martial Arts attack. Opponent takes 5 Wound Points whenever it attacks a target other than you. Lasts until you fail an Up Check, or end of fight, whichever comes first.
         -
-          title: Fast
+          name: Fast
           description: As an interrupt after Initiative results are determined, spend 1 Chi to switch your opening shot for the sequence with that of any other combatant.
         -
-          title: rattle
+          name: rattle
           description: Spend 1 Chi and make a Martial Arts Check against a foe’s Will Resistance. On a success, the foe takes 7 Wound Points the next time it attacks you. The foe is aware of this effect and can avoid it by attacking other heroes.
         -
-          title: riveting Gaze
+          name: riveting Gaze
           description: Spend 6 shots; an opponent of your choice must spend 6 shots.
         -
-          title: Serpent's Tooth
+          name: Serpent's Tooth
           description: Add +2 Defense vs. any foe you have ever made a successful Seduction Check against.
         -
-          title: Shed Skin I
+          name: Shed Skin I
           description: Spend 3 Chi to abandon your current human form in favor of a completely new human appearance of your choice. It may match the same general type as a particular person you have in mind, but the resemblance is glancing at best. You may never return to your former appearance. The transformation itself takes 1 hour and leaves behind a filmy outer layer of discarded skin. Ew.
         -
-          title: Shed Skin II
+          name: Shed Skin II
           description: As per the above, but you can also duplicate particular individuals well enough to be mistaken for them. Spend any amount of Chi. People who know the subject you’re imitating get Notice Checks, one per viewer per scene, to spot the imposture, with the Difficulty equaling the amount of Chi you spent times 3. The transformation conveys no particular ability to imitate the individual’s voice, speech patterns, mannerisms, or anything else beyond visual resemblance.
         -
-          title: Scorpion Hardy
+          name: Scorpion Hardy
           description: Spend 1 Chi when you take Wound Points outside of a fight. Number of Wound Points dealt is cut in half, rounding down.
         -
-          title: Hypnotic Sidling
+          name: Hypnotic Sidling
           description: Spend 6 shots; an opponent of your choice must spend 6 shots.
         -
-          title: poison Sac
+          name: poison Sac
           description: Spend 1 Chi as an interrupt after making a successful Martial Arts attack; your target takes no Wound Points. Until end of fight, each time the target is hit by an attack, its Toughness drops by 1. Opponents suffer no additional ill effect from all further hits with this schtick.
         -
-          title: Scuttle
+          name: Scuttle
           description: Add +2 to Martial Arts vs. featured foes and bosses, if your previous attack was against a different featured foe or boss than the one you’re attacking now.
         -
-          title: Stillness
+          name: Stillness
           description: Add +2 Defense if you have yet to attack during the current sequence.
         -
-          title: Slowing Strike
+          name: Slowing Strike
           description: Spend 1 Chi as an interrupt after making a successful Martial Arts attack. Until the next keyframe, opponent adds 1 to the shot cost of all attacks.
         -
-          title: Sting
+          name: Sting
           description: Spend 1 Chi as an interrupt after making a successful Martial Arts attack. Until end of fight, target takes 3 Wound Points each time it fails an attack.
         -
-          title: Sudden Jab
+          name: Sudden Jab
           description: Add +3 to Initiative, provided your first action in the sequence is a Martial Arts attack.
         -
-          title: Surprise
+          name: Surprise
           description: Add +2 to Martial Arts vs. opponents who have yet to attack during the current sequence.
         -
-          title: Spider Chi Weaver
+          name: Spider Chi Weaver
           description: Add +2 to Martial Arts if you are attacking an enemy feng shui site.
         -
-          title: House proud
+          name: House proud
           description: Add +X bonus to all skill checks in story scenes. X is equal to the number of feng shui sites you are attuned to.
         -
-          title: Lair Dweller
+          name: Lair Dweller
           description: Add +1 to Martial Arts and Defense if you arrived at the fight’s location before the other side did.
         -
-          title: Leap
+          name: Leap
           description: Spend 1 Chi to leap up to 7 m, either horizontally or vertically. Add 7 m to the leap for each feng shui site you are attuned to.
         -
-          title: pounce
+          name: pounce
           description: Add +3 to Initiative, provided your first action in the sequence is a Martial Arts attack.
         -
-          title: Scuttle
+          name: Scuttle
           description: Add +2 to Martial Arts vs. featured foes and bosses, if your previous attack was against a different featured foe or boss than the one you’re attacking now.
         -
-          title: Toxic Strike
+          name: Toxic Strike
           description: Spend 1 Chi as an interrupt after making a successful Martial Arts attack; if at any point during the fight the target reaches 30 or more Wound Points, it then immediately takes another 5 Wound Points.
         -
-          title: Tingle
+          name: Tingle
           description: Spend 1 Chi to know whether anyone who wants you dead, or has designs on a feng shui site you are attuned to, or is currently within 1 km of any feng site you are attuned to. If you are attuned to more than one site, you know which one. Other than that, you only know of the possible danger.
         -
-          title: Web
+          name: Web
           description: If an enemy or supporting character tries to Cheese It, spend 1 Chi to make an attack against that opponent as an interrupt.
         -
-          title: Tortoise rebuke
+          name: Tortoise rebuke
           description: Spend 1 Chi. Until end of fight, the battle zone is treated as hostile to Sorcery.
         -
-          title: reflect
+          name: reflect
           description: As an interrupt when hit by a Sorcery attack, spend 1 Chi and 1 shot. The Sorcerer takes the Smackdown instead of you.
         -
-          title: Slow but Steady
+          name: Slow but Steady
           description: Add +2 to attacks during a sequence’s final 3 shots.
         -
-          title: Shell I
+          name: Shell I
           description: Spend 1 Chi and 3 shots; gain +2 Toughness until the next keyframe.
         -
-          title: Shell II
+          name: Shell II
           description: Spend 1 Chi and 2 shots; gain +2 Toughness until the next keyframe.
         -
-          title: Shell III
+          name: Shell III
           description: Spend 1 Chi or 1 shot; gain +2 Toughness until the next keyframe.
         -
-          title: Wait for an opening
+          name: Wait for an opening
           description: +2 Martial Arts vs. enemies who have made Way- Awful Failures during the current fight. Ask the GM to alert you when this happens.
         -
-          title: Wisdom
+          name: Wisdom
           description: Spend 1 Chi when another player fails a check to gain information or have a contact. You know the answer or a relevant contact.

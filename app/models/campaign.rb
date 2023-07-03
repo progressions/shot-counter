@@ -12,12 +12,12 @@ class Campaign < ApplicationRecord
   has_many :sites
   has_many :factions
 
-  validates :title, presence: true, allow_blank: false
+  validates :name, presence: true, allow_blank: false
 
   def as_json(args={})
     {
       id: id,
-      title: title,
+      name: name,
       description: description,
       gamemaster: user,
       players: players,

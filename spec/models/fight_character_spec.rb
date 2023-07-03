@@ -3,8 +3,8 @@ require 'rails_helper'
 RSpec.describe FightCharacter, type: :model do
   before(:each) do
     @gamemaster = User.create!(email: "email@example.com")
-    @campaign = @gamemaster.campaigns.create!(title: "Adventure")
-    @space = @gamemaster.campaigns.create!(title: "Space")
+    @campaign = @gamemaster.campaigns.create!(name: "Adventure")
+    @space = @gamemaster.campaigns.create!(name: "Space")
     @fight = @campaign.fights.create!(name: "Battle")
   end
 

@@ -28,10 +28,10 @@ module ImportWeapons
       concealment = number_or_nil(match[3])
       reload_value = number_or_nil(match[4])
 
-      weapon = campaign.weapons.find_by(juncture: juncture["name"].titleize, category: category["name"], name: attributes["name"]) || campaign.weapons.new
+      weapon = campaign.weapons.find_by(juncture: juncture["name"].nameize, category: category["name"], name: attributes["name"]) || campaign.weapons.new
 
-      weapon.juncture = juncture["name"].titleize
-      weapon.category = category["name"].titleize
+      weapon.juncture = juncture["name"].nameize
+      weapon.category = category["name"].nameize
       weapon.name = name
       weapon.description = attributes["description"]
       weapon.mook_bonus = attributes["mook_bonus"].to_i

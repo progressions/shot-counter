@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe "Api::V1::CharactersAndVehicles", type: :request do
   before(:each) do
     @gamemaster = User.create!(email: "email@example.com", confirmed_at: Time.now, gamemaster: true)
-    @campaign = @gamemaster.campaigns.create!(title: "Adventure")
+    @campaign = @gamemaster.campaigns.create!(name: "Adventure")
     @fight = @campaign.fights.create!(name: "Big Brawl")
     @brick = Character.create!(name: "Brick Manly", action_values: { "Type" => "PC" }, campaign_id: @campaign.id)
     @boss = Character.create!(name: "Ugly Shing", action_values: { "Type" => "Boss" }, campaign_id: @campaign.id)

@@ -44,6 +44,6 @@ class Api::V1::EffectsController < ApplicationController
   end
 
   def effect_params
-    params.require(:effect).permit(:title, :description, :severity, :start_sequence, :end_sequence, :start_shot, :end_shot, :severity)
+    params.require(:effect).permit(:name, :description, :severity, :start_sequence, :end_sequence, :start_shot, :end_shot, :severity)
   end
 end

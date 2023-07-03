@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_07_03_152116) do
+ActiveRecord::Schema[7.0].define(version: 2023_07_03_185023) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -71,10 +71,10 @@ ActiveRecord::Schema[7.0].define(version: 2023_07_03_152116) do
 
   create_table "campaigns", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.uuid "user_id", null: false
-    t.string "title", null: false
     t.string "description"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "name"
     t.index ["user_id"], name: "index_campaigns_on_user_id"
   end
 
@@ -90,7 +90,6 @@ ActiveRecord::Schema[7.0].define(version: 2023_07_03_152116) do
   create_table "character_effects", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.uuid "character_id"
     t.uuid "vehicle_id"
-    t.string "title", null: false
     t.string "description"
     t.string "severity", default: "info", null: false
     t.string "change"
@@ -98,6 +97,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_07_03_152116) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.uuid "fight_character_id"
+    t.string "name"
     t.index ["character_id"], name: "index_character_effects_on_character_id"
     t.index ["fight_character_id"], name: "index_character_effects_on_fight_character_id"
     t.index ["vehicle_id"], name: "index_character_effects_on_vehicle_id"
@@ -145,6 +145,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_07_03_152116) do
     t.string "description"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "name"
     t.index ["fight_id"], name: "index_effects_on_fight_id"
     t.index ["user_id"], name: "index_effects_on_user_id"
   end
@@ -218,7 +219,6 @@ ActiveRecord::Schema[7.0].define(version: 2023_07_03_152116) do
 
   create_table "schticks", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.uuid "campaign_id", null: false
-    t.string "title", null: false
     t.string "description"
     t.uuid "prerequisite_id"
     t.string "category"
@@ -229,8 +229,9 @@ ActiveRecord::Schema[7.0].define(version: 2023_07_03_152116) do
     t.string "image_url"
     t.boolean "bonus"
     t.jsonb "archetypes"
+    t.string "name"
     t.index ["campaign_id"], name: "index_schticks_on_campaign_id"
-    t.index ["category", "title"], name: "index_schticks_on_category_and_title", unique: true
+    t.index ["category", "name"], name: "index_schticks_on_category_and_name", unique: true
     t.index ["prerequisite_id"], name: "index_schticks_on_prerequisite_id"
   end
 

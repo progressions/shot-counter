@@ -8,7 +8,7 @@ module SlashListFights
     campaigns = Campaign.all
     message = "\n\n**CAMPAIGNS**\n"
     message += "============\n"
-    message += campaigns.map(&:title).join("\n")
+    message += campaigns.map(&:name).join("\n")
 
     event.respond(content: message)
   end
@@ -20,13 +20,13 @@ module SlashListFights
   Bot.application_command(:campaign) do |event|
     name = event.options[:name] || event.options["name"]
 
-    campaign = Campaign.where("title ILIKE ?", "%#{name}%").first
+    campaign = Campaign.where("name ILIKE ?", "%#{name}%").first
     if campaign.nil?
       event.respond(content: "No campaign found with that name.")
       return
     end
     CurrentCampaign.set(campaign)
-    event.respond(content: "Campaign set to #{campaign.title}")
+    event.respond(content: "Campaign set to #{campaign.name}")
   end
 
   Bot.register_application_command(:list, 'List all available fights.') do |cmd|

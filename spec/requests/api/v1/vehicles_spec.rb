@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe "Vehicles", type: :request do
   let!(:user) { User.create!(email: "email@example.com", confirmed_at: Time.now, gamemaster: true) }
-  let!(:action_movie) { user.campaigns.create!(title: "Action Movie") }
+  let!(:action_movie) { user.campaigns.create!(name: "Action Movie") }
   let(:brick) { Character.create!(name: "Brick Manly", campaign: action_movie) }
   let(:headers) { Devise::JWT::TestHelpers.auth_headers({}, user) }
 

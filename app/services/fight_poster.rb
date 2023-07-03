@@ -73,27 +73,27 @@ TEXT
         action_value = effect.character.action_values["MainAttack"]
       end
 
-      title = effect.title
+      name = effect.name
       description = effect.description.present? ? " (#{effect.description})" : ""
       status = SEVERITIES[effect.severity]
 
       if description.present? || effect.change.present?
-        title = "#{title}:"
+        name = "#{name}:"
       end
 
-      "#{status}#{title}#{description} #{action_value} #{effect.change}".strip
+      "#{status}#{name}#{description} #{action_value} #{effect.change}".strip
     end
 
     def fight_effect(effect)
-      title = effect.title
+      name = effect.name
       description = effect.description.present? ? " #{effect.description}" : ""
       status = SEVERITIES[effect.severity]
 
       if description.present?
-        title = "#{title}:"
+        name = "#{name}:"
       end
 
-      "#{status}#{title}#{description} (until sequence #{effect.end_sequence}, shot #{effect.end_shot})"
+      "#{status}#{name}#{description} (until sequence #{effect.end_sequence}, shot #{effect.end_shot})"
     end
 
   end

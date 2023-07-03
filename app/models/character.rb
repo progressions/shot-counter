@@ -103,7 +103,7 @@ class Character < ApplicationRecord
       action_values: action_values.merge("Faction" => faction&.name),
       faction: faction,
       description: description,
-      schticks: schticks.includes(:prerequisite).order(:category, :path, :title),
+      schticks: schticks.includes(:prerequisite).order(:category, :path, :name),
       skills: skills.sort_by { |key, value| [(DEFAULT_SKILLS.keys.include?(key) ? 0 : 1), key] }.to_h,
       color: color,
       impairments: impairments,
@@ -151,8 +151,8 @@ class Character < ApplicationRecord
   def validate_schticks
     self.schticks ||= []
     self.schticks.each do |schtick|
-      if schtick[:title].blank?
-        errors.add(:schticks, "must have a title")
+      if schtick[:name].blank?
+        errors.add(:schticks, "must have a name")
       end
     end
   end

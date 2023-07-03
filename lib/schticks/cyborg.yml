@@ -5,119 +5,119 @@
       name:
       schticks:
         -
-          title: Adrenal Boy-Howdy
+          name: Adrenal Boy-Howdy
           description: Subdermal adrenaline injectors give your nervous system a kick in the pants in crisis situations. If you are Impaired, you make attacks at a shot cost of 2.
         -
-          title: Agony Grenade
+          name: Agony Grenade
           description: A relic of the old regime, this looks like a regular grenade with a demon hand for a pin. Spend 3 shots to deal all combatants 1 Wound Point each shot until end of sequence. Spend 1 Fortune apiece to spare allies (but not yourself ).
         -
-          title: Blow up real Good
+          name: Blow up real Good
           description: Take X Marks of Death to make a Scroungetech attack, Damage Value 20, against X–1 targets, who can be either in close or ranged proximity. Your attack hits every target whose Defense your attack meets or beats. If your result is less than the lowest Defense among any target, gain a retroactive +1 bonus to it.
         -
-          title: Buzzsaw Hand
+          name: Buzzsaw Hand
           description: As an interrupt after a successful close- combat attack fails to do more than 4 Wound Points to an opponent, roll a die. On an even result, target of your attack takes 10 Wound Points. On an odd result, you take 5 Wound Points.
         -
-          title: Cortisol Field Generator
+          name: Cortisol Field Generator
           description: Spend 3 shots; until end of fight, any featured foe reaching 25 or more Wound Points Cheeses It.
         -
-          title: Force Blade
+          name: Force Blade
           description: Make close Scroungetech attacks with a Damage Value of 10. Add +5 Damage vs. targets with Toughness 8 or higher.
         -
-          title: Fluid Spill
+          name: Fluid Spill
           description: If, when you are Impaired, an enemy misses you in close combat, spend 1 Fortune as an interrupt to attack that enemy.  This models a surprise opportunity you get when your opponent slips on the fluid you’re leaking.
         -
-          title: Grav plate
+          name: Grav plate
           description: Make a Scroungetech attack against multiple opponents. If successful, all of your targets take 0 Wound Points but lose 3 shots apiece.
         -
-          title: Helix rethreader
+          name: Helix rethreader
           description: Spend 3 shots; until the next keyframe, any named combatant (including you) who makes a failed attack takes 5 Wound Points.
         -
-          title: Helix ripper
+          name: Helix ripper
           description: The defeat of the Architects left these massive rifles made of demon bone lying around for just anyone to pick up.  Make a +2 ranged Scroungetech attack against a mook or mooks. For each mook you down, you regain a spent Fortune point and take 2 Wound Points.
         -
-          title: Hot Hot Hotspot
+          name: Hot Hot Hotspot
           description: Connect any wi-fi-capable device to the Contemporary Juncture internet from any place on the planet, from the Netherworld, or from any other juncture, including pop-ups.
         -
-          title: Hyperadrenaline patch
+          name: Hyperadrenaline patch
           description: As an interrupt to any action, take 7 Wound Points to give a boost to an ally.
         -
-          title: Improbability Capacitor
+          name: Improbability Capacitor
           description: As an interrupt on an ally’s successful attack, spend 1 Fortune and 1 shot. Ally’s attack fails. Don’t roll your next attack; instead use the ally’s result from this attack.
         -
-          title: Internal Lockbox
+          name: Internal Lockbox
           description: An artificial cavity in your abdomen allows you to store stuff where ordinary searches can’t find it.  A single gun with a Concealment of less than 5 is considered to have a Concealment of 0, until you remove it from your lockbox.
         -
-          title: Intra-reality Goggles
+          name: Intra-reality Goggles
           description: Identify all Innerwalkers in your direct line of sight within 300 m. For Innerwalkers within 15 m, the goggle read-out tells you which other juncture they last visited and how long ago they left it.
         -
-          title: Interceptor Drone
+          name: Interceptor Drone
           description: As an interrupt when an ally is hit by a ranged attack, spend 1 shot to grant that ally +5 Toughness. Bonus applies to the damage from this hit, as well as any other subsequent attacks this shot.
         -
-          title: Kinetic Distributor
+          name: Kinetic Distributor
           description: Spend 1 Fortune as an interrupt when targeted by a close attack. Gain +5 Toughness. If the attack deals you no Wound Points, roll a die. On an odd result, pick an ally to take 12 damage.
         -
-          title: Laser Goggles
+          name: Laser Goggles
           description: Make ranged Scroungetech attacks with a Damage Value of 11.
         -
-          title: Lumbar Scorpion
+          name: Lumbar Scorpion
           description: A processor wired into the base of your spine keeps your body going after brain death.  Ignore the effects of failed Up Checks until end of fight. At the end of a fight in which you made 1 or more Up Checks, gain an additional Mark of Death.
         -
-          title: onboard Flamethrower
+          name: onboard Flamethrower
           description: Make ranged Scroungetech attacks with a Damage Value of 14. Each time you attack with it, take 3 Wound Points.
         -
-          title: Molecular Disturber
+          name: Molecular Disturber
           description: Spend 1 Fortune as an interrupt when targeted by a Guns attack. Gain +3 Defense. If the attack misses, roll a Swerve. If the result is negative, pick an ally to be hit by the attack, with an Outcome of 2.
         -
-          title: Neural Stimulator
+          name: Neural Stimulator
           description: Add +X Speed until end of fight; take 5 times X Wound Points.
         -
-          title: pain uptake Inhibitor
+          name: pain uptake Inhibitor
           description: When you take 10 or more Wound Points from an enemy attack, add a free Fortune die to your next attack.
         -
-          title: personal Copter rig
+          name: personal Copter rig
           description: Spend 1 shot to fly up to 14 m.  An enemy targeting you with a successful stunt attack wrecks your rotor until end of fight, preventing you from flying. Roll a Swerve. On a negative result, take 6 Wound Points.
         -
-          title: plasma Tubules
+          name: plasma Tubules
           description: Make a close combat Scroungetech attack, Damage 9. On a success, spend 1 Fortune to swap your Wound Point total with your target’s.
         -
-          title: pulse Grenade
+          name: pulse Grenade
           description: Any time after the end of sequence 2, spend 3 shots to down all mooks.
         -
-          title: Quantum Manipulator
+          name: Quantum Manipulator
           description: Spend 1 Fortune and 3 of a willing ally’s shots to make an attack as an interrupt. Downed allies can’t give you their shots.
         -
-          title: reflex ramper
+          name: reflex ramper
           description: When an attack misses, take 1 Impairment to make a new attack on the same target as an interrupt. This Impairment goes away at the beginning of the next session.
         -
-          title: robot Arm
+          name: robot Arm
           description: Make close Scroungetech attacks with a Damage Value of 11.
         -
-          title: Schrödinger Circuit
+          name: Schrödinger Circuit
           description: As an interrupt before making an Up Check, swap Wound Point totals with a willing ally. Ally does not have to make an Up Check until next taking Wound Points and gains a +2 bonus on that Up Check.
         -
-          title: Seeker Missile
+          name: Seeker Missile
           description: Make a Scroungetech attack against a mook. If successful, spend 1 Fortune to down an additional number of mooks equal to your Outcome - 13.
         -
-          title: Shower of Sparks
+          name: Shower of Sparks
           description: The Smackdown of your Scroungetech attacks increases by 2 for each point of Impairment you’re currently suffering.
         -
-          title: Smokin'!
+          name: Smokin'!
           description: When you hit multiple opponents with a ranged attack, regain 1 spent Fortune.
         -
-          title: Subatomic Transfuser
+          name: Subatomic Transfuser
           description: Spend 3 shots and take 4 times X Wound Points to remove 10 Wound Points apiece from X allies.
         -
-          title: Subdermal plating
+          name: Subdermal plating
           description: Add +7 Toughness vs. damage from sources other than attacks or the use of schticks.
         -
-          title: Titanium Claws
+          name: Titanium Claws
           description: Spend 1 shot as an interrupt after dealing Wound Points to an enemy. Wound Points dealt increase by 5.
         -
-          title: Tracker pin
+          name: Tracker pin
           description: Once you hit a foe in close combat, you subsequently know precise coordinates of the foe’s whereabouts at all times, provided the two of you are in the same juncture. This works for the duration of the series.
         -
-          title: vampire rounds
+          name: vampire rounds
           description: When you hit multiple opponents with a ranged weapon attack, add a Damage bonus to one particular firearm equal to the number of opponents hit. Bonus lasts until end of fight. This may apply to multiple firearms but will not stack on the same firearm.
         -
-          title: Yowch!
+          name: Yowch!
           description: When you take your first point of Impairment, you suffer an obvious injury to your mechanical parts that others can’t help finding disturbing.  The shot cost of any attack against you increases by your degree of Impairment.

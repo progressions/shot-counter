@@ -29,7 +29,7 @@ class Schtick < ApplicationRecord
   has_many :character_schticks
   has_many :characters, through: :character_schticks
 
-  validates :title, presence: true, uniqueness: { scope: :category }
+  validates :name, presence: true, uniqueness: { scope: :category }
   validates :category, inclusion: { in: CATEGORIES }, allow_nil: true
 
   def self.for_archetype(archetype)
@@ -39,14 +39,14 @@ class Schtick < ApplicationRecord
   def as_json(args={})
     {
       id: id,
-      title: title,
+      name: name,
       description: description,
       category: category,
       path: path,
       color: color,
       prerequisite: {
         id: prerequisite&.id,
-        title: prerequisite&.title,
+        name: prerequisite&.name,
       },
       archetypes: archetypes
     }

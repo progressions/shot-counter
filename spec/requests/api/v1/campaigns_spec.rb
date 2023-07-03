@@ -9,25 +9,25 @@ RSpec.describe "Api::V1::Campaigns", type: :request do
 
   describe "GET /campaigns" do
     it "returns campaigns" do
-      @action_movie = @gamemaster.campaigns.create!(title: "Action Movie")
-      @adventure = @gamemaster.campaigns.create!(title: "Adventure")
+      @action_movie = @gamemaster.campaigns.create!(name: "Action Movie")
+      @adventure = @gamemaster.campaigns.create!(name: "Adventure")
 
       get "/api/v1/campaigns", headers: @headers
       expect(response).to have_http_status(:success)
       campaigns = JSON.parse(response.body)
-      expect(campaigns["gamemaster"].map { |c| c["title"] }).to eq(["Action Movie", "Adventure"])
+      expect(campaigns["gamemaster"].map { |c| c["name"] }).to eq(["Action Movie", "Adventure"])
       expect(campaigns["player"]).to be_empty
     end
 
     it "returns all my campaigns, both ones I run and ones I play in" do
       @third_gamemaster = User.create!(email: "third@example.com", gamemaster: true, confirmed_at: Time.now)
-      @modern = @third_gamemaster.campaigns.create!(title: "Modern")
+      @modern = @third_gamemaster.campaigns.create!(name: "Modern")
 
-      @action_movie = @gamemaster.campaigns.create!(title: "Action Movie")
-      @adventure = @gamemaster.campaigns.create!(title: "Adventure")
+      @action_movie = @gamemaster.campaigns.create!(name: "Action Movie")
+      @adventure = @gamemaster.campaigns.create!(name: "Adventure")
 
-      @scifi = @other_gamemaster.campaigns.create!(title: "Scifi")
-      @fantasy = @other_gamemaster.campaigns.create!(title: "Fantasy")
+      @scifi = @other_gamemaster.campaigns.create!(name: "Scifi")
+      @fantasy = @other_gamemaster.campaigns.create!(name: "Fantasy")
 
       @scifi.players << @gamemaster
       @fantasy.players << @gamemaster
@@ -35,8 +35,8 @@ RSpec.describe "Api::V1::Campaigns", type: :request do
       get "/api/v1/campaigns", headers: @headers
       expect(response).to have_http_status(:success)
       campaigns = JSON.parse(response.body)
-      expect(campaigns["gamemaster"].map { |c| c["title"] }).to eq(["Action Movie", "Adventure"])
-      expect(campaigns["player"].map { |c| c["title"] }).to eq(["Scifi", "Fantasy"])
+      expect(campaigns["gamemaster"].map { |c| c["name"] }).to eq(["Action Movie", "Adventure"])
+      expect(campaigns["player"].map { |c| c["name"] }).to eq(["Scifi", "Fantasy"])
     end
   end
 
@@ -44,12 +44,12 @@ RSpec.describe "Api::V1::Campaigns", type: :request do
     it "creates campaign" do
       post "/api/v1/campaigns", headers: @headers, params: {
         campaign: {
-          title: "Hard to Kill"
+          name: "Hard to Kill"
         }
       }
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
-      expect(body["title"]).to eq("Hard to Kill")
+      expect(body["name"]).to eq("Hard to Kill")
     end
 
     it "returns error if you're unauthorized" do
@@ -58,7 +58,7 @@ RSpec.describe "Api::V1::Campaigns", type: :request do
 
       post "/api/v1/campaigns", headers: @headers, params: {
         campaign: {
-          title: "Hard to Make"
+          name: "Hard to Make"
         }
       }
       expect(response).to have_http_status(:forbidden)
@@ -68,18 +68,18 @@ RSpec.describe "Api::V1::Campaigns", type: :request do
     it "returns errors" do
       post "/api/v1/campaigns", headers: @headers, params: {
         campaign: {
-          title: ""
+          name: ""
         }
       }
       expect(response).to have_http_status(400)
       body = JSON.parse(response.body)
-      expect(body).to eq({"title" => ["can't be blank"]})
+      expect(body).to eq({"name" => ["can't be blank"]})
     end
   end
 
   describe "GET /campaigns/:id" do
     it "fetches campaign you created" do
-      @campaign = @gamemaster.campaigns.create!(title: "Action Movie")
+      @campaign = @gamemaster.campaigns.create!(name: "Action Movie")
 
       @alice = User.create!(email: "alice@example.com", confirmed_at: Time.now)
       @marcie = User.create!(email: "marcie@example.com", confirmed_at: Time.now)
@@ -90,12 +90,12 @@ RSpec.describe "Api::V1::Campaigns", type: :request do
       get "/api/v1/campaigns/#{@campaign.id}", headers: @headers
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
-      expect(body["title"]).to eq("Action Movie")
+      expect(body["name"]).to eq("Action Movie")
       expect(body["players"].map { |u| u["email"] }).to eq(["alice@example.com", "marcie@example.com"])
     end
 
     it "fetches campaign you play in" do
-      @campaign = @gamemaster.campaigns.create!(title: "Action Movie")
+      @campaign = @gamemaster.campaigns.create!(name: "Action Movie")
 
       @alice = User.create!(email: "alice@example.com", confirmed_at: Time.now)
       @campaign.players << @alice
@@ -105,18 +105,18 @@ RSpec.describe "Api::V1::Campaigns", type: :request do
       get "/api/v1/campaigns/#{@campaign.id}", headers: @headers
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
-      expect(body["title"]).to eq("Action Movie")
+      expect(body["name"]).to eq("Action Movie")
     end
 
     it "fetches the current campaign" do
-      @campaign = @gamemaster.campaigns.create!(title: "Action Movie")
+      @campaign = @gamemaster.campaigns.create!(name: "Action Movie")
 
       post "/api/v1/campaigns/current", params: { id: @campaign.id }, headers: @headers
       get "/api/v1/campaigns/#{@campaign.id}", headers: @headers
 
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
-      expect(body["title"]).to eq("Action Movie")
+      expect(body["name"]).to eq("Action Movie")
     end
 
     it "returns 404" do
@@ -127,19 +127,19 @@ RSpec.describe "Api::V1::Campaigns", type: :request do
 
   describe "PATCH /campaigns:id" do
     it "updates campaign" do
-      @campaign = @gamemaster.campaigns.create!(title: "Action Movie")
+      @campaign = @gamemaster.campaigns.create!(name: "Action Movie")
       patch "/api/v1/campaigns/#{@campaign.id}", headers: @headers, params: {
         campaign: {
-          title: "Hard to Kill"
+          name: "Hard to Kill"
         }
       }
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
-      expect(body["title"]).to eq("Hard to Kill")
+      expect(body["name"]).to eq("Hard to Kill")
     end
 
     it "can't update a campaign you're just a player in" do
-      @campaign = @gamemaster.campaigns.create!(title: "Action Movie")
+      @campaign = @gamemaster.campaigns.create!(name: "Action Movie")
       @alice = User.create!(email: "alice@example.com", confirmed_at: Time.now)
       @campaign.players << @alice
 
@@ -147,24 +147,24 @@ RSpec.describe "Api::V1::Campaigns", type: :request do
 
       patch "/api/v1/campaigns/#{@campaign.id}", headers: @headers, params: {
         campaign: {
-          title: "Hard to Change"
+          name: "Hard to Change"
         }
       }
       expect(response).to have_http_status(:forbidden)
-      expect(@campaign.reload.title).to eq("Action Movie")
+      expect(@campaign.reload.name).to eq("Action Movie")
     end
   end
 
   describe "DELETE /campaigns/:id" do
     it "destroys campaign" do
-      @campaign = @gamemaster.campaigns.create!(title: "Action Movie")
+      @campaign = @gamemaster.campaigns.create!(name: "Action Movie")
       delete "/api/v1/campaigns/#{@campaign.id}", headers: @headers
       expect(response).to have_http_status(:success)
       expect(Campaign.find_by(id: @campaign.id)).to be_nil
     end
 
     it "can't destroy a campaign you're just a player in" do
-      @campaign = @gamemaster.campaigns.create!(title: "Action Movie")
+      @campaign = @gamemaster.campaigns.create!(name: "Action Movie")
       @alice = User.create!(email: "alice@example.com", confirmed_at: Time.now)
       @campaign.players << @alice
 
@@ -176,7 +176,7 @@ RSpec.describe "Api::V1::Campaigns", type: :request do
     end
 
     it "even for a gamemaster, can't destroy a campaign you're a player in" do
-      @campaign = @gamemaster.campaigns.create!(title: "Action Movie")
+      @campaign = @gamemaster.campaigns.create!(name: "Action Movie")
       @gm_alice = User.create!(email: "alice@example.com", gamemaster: true, confirmed_at: Time.now)
       @campaign.players << @gm_alice
 
@@ -190,7 +190,7 @@ RSpec.describe "Api::V1::Campaigns", type: :request do
 
   describe "POST /set" do
     it "returns http success" do
-      @campaign = @gamemaster.campaigns.create!(title: "Action Movie")
+      @campaign = @gamemaster.campaigns.create!(name: "Action Movie")
 
       post "/api/v1/campaigns/current", params: { id: @campaign.id }, headers: @headers
       expect(response).to have_http_status(:success)
@@ -211,14 +211,14 @@ RSpec.describe "Api::V1::Campaigns", type: :request do
 
     it "can't set other users' campaigns" do
       @gamemaster = User.create!(email: "someone@else.com", confirmed_at: Time.now)
-      @campaign = @gamemaster.campaigns.create!(title: "Adventure")
+      @campaign = @gamemaster.campaigns.create!(name: "Adventure")
 
       post "/api/v1/campaigns/current", params: { id: @campaign.id }, headers: @headers
       expect(response).to have_http_status(:unauthorized)
     end
 
     it "can set campaign you're a player in" do
-      @campaign = @gamemaster.campaigns.create!(title: "Adventure")
+      @campaign = @gamemaster.campaigns.create!(name: "Adventure")
       @alice = User.create!(email: "alice@example.com", confirmed_at: Time.now)
       @campaign.players << @alice
 

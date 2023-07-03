@@ -13,7 +13,7 @@ class CharacterEffect < ApplicationRecord
   def as_json(args={})
     {
       id: id,
-      title: title,
+      name: name,
       description: description,
       severity: severity,
       action_value: action_value,

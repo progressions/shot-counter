@@ -19,20 +19,20 @@ module ImportSchticks
     end
 
     def find_prerequisite(attributes, campaign)
-      prereq_title = nil
+      prereq_name = nil
 
-      numeral = attributes["title"].split(" ").last
+      numeral = attributes["name"].split(" ").last
       previous_numeral = get_previous_numeral(numeral)
 
       if previous_numeral
-        prereq_title = attributes["title"].gsub(numeral, previous_numeral)
+        prereq_name = attributes["name"].gsub(numeral, previous_numeral)
       end
 
       if attributes["prerequisite"]
-        prereq_title = attributes["prerequisite"].gsub(".", "")
+        prereq_name = attributes["prerequisite"].gsub(".", "")
       end
 
-      campaign.schticks.find_by(title: prereq_title)
+      campaign.schticks.find_by(name: prereq_name)
     end
 
     def parse_category(category, campaign)
@@ -48,17 +48,17 @@ module ImportSchticks
     end
 
     def parse_attributes(attributes, category, path, campaign)
-      schtick = campaign.schticks.find_by(category: category["name"].titleize, title: attributes["title"]) || campaign.schticks.new
+      schtick = campaign.schticks.find_by(category: category["name"].nameize, name: attributes["name"]) || campaign.schticks.new
 
-      schtick.category = category["name"].titleize
-      schtick.title = attributes["title"]
+      schtick.category = category["name"].nameize
+      schtick.name = attributes["name"]
       schtick.description = attributes["description"]
       schtick.bonus = attributes["bonus"]
       schtick.archetypes = category["archetypes"]
       schtick.color = Schtick::COLORS[schtick.category]
 
       if path["name"]
-        schtick.path = path["name"].titleize
+        schtick.path = path["name"].nameize
 
         if schtick.path == "Core"
           schtick.color = Schtick::COLORS["Core"]

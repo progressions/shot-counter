@@ -5,92 +5,92 @@
       name:
       schticks:
         -
-          title: Acid Blood
+          name: Acid Blood
           description: Spend 1 Genome point. Until end of fight, all enemies within close combat range take 2 Wound Points each time you take Wound Points from enemy attacks.
         -
-          title: Adaptive Enzymes
+          name: Adaptive Enzymes
           description: When you take a Mark of Death, spend 1 shot to subtract 10 from your Wound Point total.
         -
-          title: Eyes on the Back of Your Head
+          name: Eyes on the Back of Your Head
           description: You automatically succeed at Notice Checks. Unless you’re wearing a hat, helmet, or other headgear. Yeah, they’re literal eyes literally on the back of your literal head.
         -
-          title: Fear Shift
+          name: Fear Shift
           description: When another hero takes a Mark of Death, give a boost to any ally. When another hero goes down, give a boost to any two allies.
         -
-          title: Force Shield
+          name: Force Shield
           description: Spend 1 Genome point and 1 shot; your Defense increases by 1 until end of sequence.
         -
-          title: Gene Link
+          name: Gene Link
           description: Spend 1 Genome point; until the next keyframe, all allies within close combat range of you gain +1 to attacks.
         -
-          title: Go Cartilaginous
+          name: Go Cartilaginous
           description: You can squeeze through an opening as small as 75 sq cm.
         -
-          title: How Magnets Work
+          name: How Magnets Work
           description: Spend 1 shot and make a Mutant Check against an enemy’s Defense. Until the next keyframe, that enemy must stay within close combat range of you.
         -
-          title: Impossibilist
+          name: Impossibilist
           description: Add 1 shot to the cost of a stunt attack to gain a free Fortune die on it.
         -
-          title: Mjolnirification
+          name: Mjolnirification
           description: Spend 1 shot to make any dropped or unattended weapon teleport into your hand.  Weapons in a Bag Full of Guns are not unattended.
         -
-          title: Nanoportal
+          name: Nanoportal
           description: Spend 1 Genome point and spend 3 shots as an interrupt when an enemy targets an ally with a ranged attack. Pick any combatant as the new target for the attack.
         -
-          title: Noctilucent
+          name: Noctilucent
           description: Spend 1 Genome point to brightly glow until end of scene or end of fight, whichever comes first. +2 Defense vs. close attacks, -2 Defense vs. ranged attacks.  Neither you nor allies within close range suffer penalties from the adverse condition Darkness.
         -
-          title: pain Eater
+          name: pain Eater
           description: When your attack takes a foe from 0 to 1 Impairment, or from 1 to 2 Impairment, regain 3 spent Genome points. When an ally’s attack takes a foe from 0 to 1 Impairment, or from 1 to 2 Impairment, regain 1 spent Genome point.
         -
-          title: precognitive rescue
+          name: precognitive rescue
           description: When one or more characters take Wound Points from a source of damage other than an attack or explosion, spend 1 Genome point to reduce Wound Points dealt to 0.
         -
-          title: probability Wave
+          name: probability Wave
           description: When you attack and miss, you may spend 1 shot to give an ally a boost.
         -
-          title: psychic vampire
+          name: psychic vampire
           description: Spend 1 shot as an interrupt when your attack deals 3 or more Wound Points to an enemy. Subtract 3 from the Wound Points dealt to regain a spent Genome point.
         -
-          title: push
+          name: push
           description: Make a 3-shot ranged attack, Damage Value 11, using your Mutant attack value. If you deliver a Smackdown, the target flies X meters through the air directly away from you, where X = the number of Wound Points you dish out.
         -
-          title: radioactive Exudation
+          name: radioactive Exudation
           description: Spend 1 Genome point; until the next keyframe, all enemies within close combat range of you take a -1 Toughness penalty.
         -
-          title: recuperate
+          name: recuperate
           description: Spend X Genome points and 1 shot; your Wound Point total decreases by five times X.
         -
-          title: resource Sniff
+          name: resource Sniff
           description: Always know the direction to head in to find the nearest source of edible food, clean water, or a particular chemical or element.
         -
-          title: Shared Sight
+          name: Shared Sight
           description: Eat a small sample of skin, hair, or nail from a person or other intelligent being. You see what the target is seeing for the next five minutes. You may renew the effect for five minutes at a time at a cost of 1 Genome point per renewal.
         -
-          title: Silver Lining
+          name: Silver Lining
           description: Spend 1 Genome point; until the next keyframe, all allies within close combat range of you heal 3 Wound Points each time you take any number of Wound Points.
         -
-          title: Skulky
+          name: Skulky
           description: When you take Wound Points from an attack, your Defense increases by 1. This bonus stacks for each consecutive attack dealing Wound Points to you, but drops to 0 the first time an attack on you fails.
         -
-          title: Slow Burn
+          name: Slow Burn
           description: If your Initiative result is less than 10, add a free Fortune die to the first check you make this sequence.
         -
-          title: Some Damn Thing with playing Cards
+          name: Some Damn Thing with playing Cards
           description: When an ally misses an attack, spend 2 shots to allow the ally to attack again as a 0-shot interrupt.
         -
-          title: Teleread
+          name: Teleread
           description: Spend 1 Genome point to know the definitive answer to a single question of 25 words or less, if that answer can be found written down anywhere in your current juncture.
         -
-          title: ultragloat
+          name: ultragloat
           description: When a featured foe drops, spend 1 shot as an interrupt. Regain lost Genome points up to the number of featured foes still in the fight.
         -
-          title: unsplode
+          name: unsplode
           description: Spend 1 Genome point to completely suppress any explosion whose epicenter you can see in person. In combat, is a 1-shot interrupt, when you see that an explosion is about to occur.
         -
-          title: very Fast
+          name: very Fast
           description: Spend 2 Genome points. Until end of sequence, the shot costs of your actions decrease by 1, with a minimum of 1 per action. You can move up to 30 m per sequence.
         -
-          title: very Strong
+          name: very Strong
           description: Spend 1 shot. Until end of fight, add 3 to your Damage on any successful hand-to-hand strike (using your Mutant attack value) including strikes

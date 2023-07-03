@@ -5,104 +5,104 @@
       name:
       schticks:
         -
-          title: Armor plated
+          name: Armor plated
           description: You own and usually drive a customized vehicle whose body you have strategically reinforced. Compared to the standard model, it gets +1 to Frame and Crunch.
         -
-          title: Counterslam I
+          name: Counterslam I
           description: Opposing vehicles take +3 Chase Points from Bumps.
         -
-          title: Counterslam II
+          name: Counterslam II
           description: Opposing vehicles take +6 Chase Points from Bumps.
         -
-          title: Counterslam III
+          name: Counterslam III
           description: Opposing vehicles take +9 Chase Points from Bumps.
         -
-          title: Custom ride
+          name: Custom ride
           description: You own and usually drive a customized vehicle, one you know down to every quirk and rivet. Compared to the standard model, it gets +1 to Handling and Squeal.
         -
-          title: Dazed and Contused
+          name: Dazed and Contused
           description: Until the next keyframe, enemies getting out of a crashed vehicle you at any point rammed or sideswiped take 1 point of Impairment and add 1 to all shot costs.
         -
-          title: Floor It I
+          name: Floor It I
           description: +1 Handling when an opponent narrows the gap with you.
         -
-          title: Floor It II
+          name: Floor It II
           description: +2 Handling when an opponent narrows the gap with you.
         -
-          title: Floor It III
+          name: Floor It III
           description: +3 Handling when an opponent narrows the gap with you.
         -
-          title: Hightailing It
+          name: Hightailing It
           description: Spend 1 Fortune to get +2 Driving until the next keyframe when you are the evader in a vehicle chase. You can’t acquire this schtick if you already have Hot Pursuit.
         -
-          title: Hold on Tight I
+          name: Hold on Tight I
           description: +2 to Chase Points dealt an enemy vehicle when you close or narrow the gap with it.
         -
-          title: Hold on Tight II
+          name: Hold on Tight II
           description: +3 to Chase Points dealt an enemy vehicle when you close or narrow the gap with it.
         -
-          title: Hold on Tight III
+          name: Hold on Tight III
           description: +4 to Chase Points dealt an enemy vehicle when you close or narrow the gap with it.
         -
-          title: Hot pursuit
+          name: Hot pursuit
           description: Spend 1 Fortune to get +2 Driving until the next keyframe when you are the pursuer in a vehicle chase. You can’t acquire this schtick if you already have Hightailing It.
         -
-          title: I Just painted That
+          name: I Just painted That
           description: +2 Martial Arts vs. any character who damaged your vehicle, even superficially, during the current session.
         -
-          title: Laying rubber
+          name: Laying rubber
           description: Pay 1 Fortune as an interrupt when a passenger in a vehicle you’re driving is targeted for attack. All passengers in your vehicle gain +1 Defense until the next keyframe.
         -
-          title: Lightning Speed
+          name: Lightning Speed
           description: Pay 3 Fortune; until the next keyframe, the shot cost of all your Driving actions decreases by 1, with a minimum cost of 1.
         -
-          title: objects in the Mirror
+          name: objects in the Mirror
           description: Pay 1 Fortune as an interrupt after making a Driving Check; all passengers in your vehicle gain +1 to attacks until the next keyframe.
         -
-          title: obstacle Course
+          name: obstacle Course
           description: Pay 1 Fortune to ignore any negative modifiers to Driving from road obstacles and conditions until end of fight.
         -
-          title: oh No You Don't
+          name: oh No You Don't
           description: As an interrupt after your vehicle takes Chase Points from an enemy narrowing or closing its gap with you, spend 1 Fortune and 1 shot to reduce your vehicle’s total Chase Points by 5.
         -
-          title: A ride is a ride
+          name: A ride is a ride
           description: Ignore Unfamiliar Vehicle penalties.
         -
-          title: ram Speed I
+          name: ram Speed I
           description: When you ram or sideswipe a vehicle, gain +1 Crunch. +2 to your Damage Value when you hit a pedestrian.
         -
-          title: ram Speed II
+          name: ram Speed II
           description: When you ram or sideswipe a vehicle, gain +2 Crunch. +4 Damage Value when you hit a pedestrian.
         -
-          title: ram Speed III
+          name: ram Speed III
           description: When you ram or sideswipe a vehicle, gain +3 Crunch. +6 Damage Value when you hit a pedestrian.
         -
-          title: Swerve I
+          name: Swerve I
           description: +1 Frame when rammed or sideswiped.
         -
-          title: Swerve II
+          name: Swerve II
           description: +2 Frame when rammed or sideswiped.
         -
-          title: Swerve III
+          name: Swerve III
           description: +3 Frame when rammed or sideswiped.
         -
-          title: Takes a Licking
+          name: Takes a Licking
           description: As an interrupt after your vehicle takes Chase Points from a ram or sideswipe, or a character attack or stunt, spend 1 Fortune and 1 shot to reduce your vehicle’s total Chase Points by 7.
         -
-          title: Tarmac Warrior
+          name: Tarmac Warrior
           description: If you exit your vehicle after making at least one Driving Check, +2 to your attacks until end of fight.
         -
-          title: Tight roll I
+          name: Tight roll I
           description: When a vehicle you’re driving crashes, you and all occupants gain +2 Toughness against crash damage.
         -
-          title: Tight roll II
+          name: Tight roll II
           description: When a vehicle you’re driving crashes, you and all occupants gain +4 Toughness against crash damage.
         -
-          title: Tight roll III
+          name: Tight roll III
           description: When a vehicle you’re driving crashes, you and all occupants gain +6 Toughness against crash damage.
         -
-          title: Tools of the Trade
+          name: Tools of the Trade
           description: After you make a successful Martial Arts attack with a wrench, tire iron, or improvised blunt weapon, spend 1 Fortune as an interrupt to give it a Damage Value of 15 until the next keyframe.
         -
-          title: vroom!
+          name: vroom!
           description: If you are in the driver’s seat of a vehicle at the beginning of a sequence, spend 1 Fortune to gain an Initiative result 1 higher than that of any other fight participants. Any other heroes with Vroom! go during the same higher shot as you, by player seating order.

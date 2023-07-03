@@ -5,240 +5,240 @@
       name: "Blast"
       schticks:
         -
-          title: Chi Blast
+          name: Chi Blast
           description: As a standard 3-shot action, direct a ranged attack of raw magical energy at a combatant of your choice, using your Sorcery attack value, at a Damage Value of 9.
         -
-          title: Acid Blast
+          name: Acid Blast
           description: "As per Chi Blast. Also: on a successful attack, spend 1 Magic to give the combat area the adverse condition Toxic Fumes until the next keyframe.  Spend a Magic point to destroy or decisively degrade a piece of unwanted evidence, beyond all forensic efforts to reconstruct it."
         -
-          title: Arctic Blast
+          name: Arctic Blast
           description: "As per Chi Blast. Also: on a successful area the adverse condition Snow until the next keyframe. When the condition expires, roll a single die. On an even result, it renews until the next keyframe."
         -
-          title: Conjured Blade
+          name: Conjured Blade
           description: You create a handheld blade of magical force and wade into hand-to-hand combat. As per Chi Blast, but doesn’t count as a ranged attack, and so is useful against an opponent whose schticks somehow thwart ranged attacks.
         -
-          title: Disintegration
+          name: Disintegration
           description: "As per Chi Blast. Also: on a successful attack, spend 2 Magic to utterly destroy a weapon of your choice carried by the target. You can’t choose a signature weapon."
         -
-          title: Escher Blast
+          name: Escher Blast
           description: "As per Chi Blast. Also: on a successful attack, spend 1 Magic to give the combat area the adverse condition Confined Space until the next keyframe."
         -
-          title: Fire Blast
+          name: Fire Blast
           description: As per Chi Blast. When you take out a mook, spend 1 Magic and roll a single die. On an even die result, you take out another mook and roll a single die. If that result is even, you take out yet another mook, and so on, until you roll an odd result or run out of mooks to take out.  This is also useful for setting fires, lighting cigars and cigarettes in an impressive manner, heating up coffee, increasing room temperature, and thawing out frozen foods.
         -
-          title: Flesh Melter
+          name: Flesh Melter
           description: "As per Chi Blast. Also: on a successful attack, spend x Magic to give target 1 Impairment from the horrific sight of her flesh melting off. X varies by foe type: 1 for featured foes, 2 for bosses. Targets never suffer more than 2 Impairment from this or any other source."
         -
-          title: Foggy Tendril
+          name: Foggy Tendril
           description: "As per Chi Blast. Also: on a successful attack, spend 1 Magic to give the combat area the adverse condition Obscured Vision until the next keyframe."
         -
-          title: Flying Weapon
+          name: Flying Weapon
           description: "You create from thin air a glowing, magical weapon or weapons — for example, a sword, spear, or rain of knives — which hurls towards your opponent. As per Chi Blast. Also: on a successful attack, target spends 1 shot."
         -
-          title: Ice Blast
+          name: Ice Blast
           description: As per Chi Blast. Also, on a successful attack, spend 1 Magic, your target must spend 3 shots freeing himself from an encasing layer of ice. Targets with Strength Checks above 7 spend only 1 shot.  Also useful for making ice cubes, freezing or chilling food, making water solid enough to walk on, and cooling the temperature in a hot room.
         -
-          title: Lightning Blast
+          name: Lightning Blast
           description: As per Chi Blast. Also, on a successful attack, spend 1 Magic to require your target to spend 3 shots recovering from a stunning effect. Targets with Constitution Checks above 7 spend only 1 shot.  Spend 1 Magic to recharge or power any electrical device. Device works for one scene.
         -
-          title: Lucky 8 Blast
+          name: Lucky 8 Blast
           description: As per Chi Blast. On an Outcome of 4 or more, regain 1 spent Magic.
         -
-          title: Magnetic Blast
+          name: Magnetic Blast
           description: When you hit a vehicle with a Chi Blast, it takes +3 Condition Points.
         -
-          title: pathogen
+          name: pathogen
           description: "As per Chi Blast. Also: on a successful attack, spend 1 Magic. For the remainder of the adventure, Wound Points dealt by the attack can only be removed by the Sorcery Heal schtick."
     -
       name: "Divination"
       schticks:
         -
-          title: Allegiance
+          name: Allegiance
           description: q Spend 1 shot or 1 Magic to tell if a person you can see (in person) knowingly works for a faction or conspiracy. If you have heard of the faction or conspiracy, you know which one. Otherwise, you only see that the person is a player in the Chi War. Shot cost matters only if you’re seeking this story benefit in mid-fight.
         -
-          title: Assessment
+          name: Assessment
           description: Spend 1 shot or 1 Magic to tell if any of the enemies you face are bosses, and if so, which ones.
         -
-          title: Bullseye
+          name: Bullseye
           description: Spend 1 shot or 1 Magic to identify the named foe you have the best chance of hitting with a Chi Blast.
         -
-          title: Elevated Senses
+          name: Elevated Senses
           description: Spend 1 Magic to gain (your choice) +3 to Notice, or a Notice value of 12, until end of scene.
         -
-          title: Exposure
+          name: Exposure
           description: Spend 2 shots or 1 Magic to tell whether a person you can see is a Transformed Animal.
         -
-          title: Fight Finder
+          name: Fight Finder
           description: Spend 1 Magic to know the location of the nearest group of people who want to kill you. You do not know which group. If no one wants to kill you, it must be early in the series. You get the spent Magic back.
         -
-          title: Ghost Sense
+          name: Ghost Sense
           description: "Ghosts capable of acting on the physical world, like the ones represented by the Ghost archetype, are rare. Ordinary ghosts, trapped in spirit form between this world and the next, mindlessly repeating moments from their living days, swarm through every place where people have lived and died.  Spend 1 Magic to see the ghosts all around you in a single scene. Unless you count the odd grotesque transformation or ineffective lunge in your direction, they can’t really communicate with you. But their presence and appearance may provide clues to past events in the area. Densely populated areas always crawl with ghosts. No refunds on Magic points, even if you see no ghosts or none of them can help you.  Ordinary supporting characters sometimes develop this sense spontaneously, without knowing the first thing about sorcery. They may be victims of curses or physical trauma. Some received tissue transplants from dead donors who have become restless ghosts. They react to their new sense with understandable terror, and can’t choose when they see ghosts."
         -
-          title: prediction
+          name: prediction
           description: "Spend 1 Magic to gain good, if somewhat obscure, advice or information about the future.  Most traditional Chinese mages employ the I Ching (pronounced yee jing), the ancient Book of Changes. You perform the divination by using an apparently random method to select one of its 64 cryptic verses, or hexagrams. The traditional method of invoking randomness has the user dividing yarrow stalks into odd and even clusters, arriving at a pair of trigrams. Trigrams are parallel broken or unbroken lines arranged in threes. Add the two trigrams together and you’ve got your hexagram. Example hexagrams include “Coupling,” “Diminishing,” or “The Well.” The real art comes in connecting the enigmatic verse and its other symbolic associations to the question you’re posing.  Even more traditional mages tell fortunes by throwing tortoise shells into the fire and then interpreting the patterns of cracks that appear on them after they are burned.  The GM provides a cryptic answer to a question posed by the sorcerer. This answer makes the player work to puzzle out its meaning and moves the plot along by providing a clue that gets the characters to the next scene.  If the GM is familiar with I Ching she can choose in advance an applicable hexagram.  If the attempt fails, the sorcerer gets a random hexagram instead. (The I Ching being what it is, the players may well find just as good advice in the random hexagram!)"
         -
-          title: revelation
+          name: revelation
           description: Spend 2 shots or 1 Magic to tell if something you are directly looking at is real, or an illusion.
         -
-          title: Truthseek
+          name: Truthseek
           description: Spend 1 Magic to tell if someone talking to you in person is speaking the truth as he knows it. Spend 1 more Magic to know the real truth, at least as far as the speaker understands it.
         -
-          title: Warning
+          name: Warning
           description: "Spend 1 Magic as you draw a chalk outline on a suitable surface, covering an area of up to 450 square meters (about the size of a convenience store). For the rest of the adventure, you immediately know if anyone crosses the line.  You can direct a Chi Blast (if you have that schtick) at any one target crossing the line, no matter how far away you are from it in space or time."
     -
       name: "Fertility"
       schticks:
         -
-          title: Bend Fate
+          name: Bend Fate
           description: As an interrupt when an enemy makes an Attack or Task Check, spend 3 shots and 1 Magic to add extra negative die to the result.
         -
-          title: Big Luck
+          name: Big Luck
           description: Spend 1 Magic to gain +3 to Fortune Checks until the end of the next scene in which you make a Fortune Check. (Or end of session, if that comes sooner.)
         -
-          title: De-Attunement
+          name: De-Attunement
           description: Spend 2 shots and make a Sorcery Check against the Will Resistance of any foe attuned to one or more feng shui sites. (Featured foes may or may not be; boss foes almost invariably are. Mooks never are.) If successful, target takes 1 Impairment until end of fight.
         -
-          title: Doom Boon
+          name: Doom Boon
           description: qRegain all spent Magic points after succeeding at an Up Check.
         -
-          title: Harvest Chi
+          name: Harvest Chi
           description: After a successful attack against a named foe, you may subtract 3 from its Outcome to regain a spent Magic point.
         -
-          title: observe Chi
+          name: observe Chi
           description: See the flow of chi in an area, noting how strong or weak it is and if it is corrupted or impinged upon by some unnatural force. Immediately identify feng shui sites. Tell whether an individual you can see in person is attuned to at least one feng shui site.
         -
-          title: quid to quo
+          name: quid to quo
           description: When you receive a boost from an ally, roll a die. On an even result, the ally also gains the benefit of the boost.
         -
-          title: radiant Grant
+          name: radiant Grant
           description: When you give an ally a boost, roll a die. On an even result, choose a second ally to also gain the benefit of your boost.
         -
-          title: Superior Evasion
+          name: Superior Evasion
           description: On a failed attack against an enemy with a higher Defense than yours, spend 1 shot. Until the next keyframe, your Defense equals the enemy’s Defense +1.
         -
-          title: Yin to Yang
+          name: Yin to Yang
           description: Spend 1 Magic as an interrupt when you take Wound Points. Your next successful attack deals no fewer than this number of Wound Points.
         -
-          title: Widen the Circle
+          name: Widen the Circle
           description: Spend 1 shot as an interrupt when an ally grants a boost to any other ally. You also gain the benefit of that boost.
     -
       name: "Heal"
       schticks:
         -
-          title: Brew Antidote
+          name: Brew Antidote
           description: Spend 1 Magic to eliminate any one effect of a foe schtick that continues past the end of a fight.
         -
-          title: Cure Disease
+          name: Cure Disease
           description: Spend 3 Magic to cure any terminal illness, 2 to cure any serious non-fatal illness, 1 to cure any minor debilitating ailment.
         -
-          title: Heal object
+          name: Heal object
           description: Make a Sorcery Check to restore a damaged inanimate object to its original condition, using Difficulties suggested by the table below. GMs set Difficulties for unlisted items, with larger objects being harder than small ones, and complicated devices harder than simple ones. You get one try to heal any particular given object, ever.  Due to the well-known mystical principle of, I dunno, uh, transitive numinosity, vehicle healing is its own separate schtick, below. You can’t heal vehicles with Heal Object.
         -
-          title: Healing objects
+          name: Healing objects
           description: object Difficulty Book or paper document 9 Computing device 10 Door 5 Gun 10 Hut 7 Martial arts weapon 7 Office tower 20 Small house 15 Heal vehicle Remember what we just said about transitive numinosity? Reduce the q Condition Points of any vehicle by the result of your Sorcery Check. In combat, takes 3 shots.
         -
-          title: Heal Wounds
+          name: Heal Wounds
           description: Spend 1 Magic to reduce the Wound Points of any character by the result of your q Sorcery Check. In combat, this takes you 4 shots.
         -
-          title: Iron Mind powder
+          name: Iron Mind powder
           description: Spend 1 Magic to cancel a foe schtick effect that does something to an ally and is otherwise due to expire at the end of the sequence, keyframe, or fight.
         -
-          title: Shared Bounty
+          name: Shared Bounty
           description: Spend 1 shot to remove 10 of your own Wound Points. The enemy with the highest Wound Points total also removes 10 Wound Points. You can only use this if at least one enemy has 10 Wound Points.
         -
-          title: vitamin S
+          name: vitamin S
           description: Spend 1 Magic to grant yourself or an ally either +3 to Constitution Checks or a Toughness value of 12 for the purposes of making Constitution Checks (your choice) until end of scene.
         -
-          title: Immortality
+          name: Immortality
           bonus: true
           description: The quest for immortality occupies a central position in Chinese magical lore.  Spend 5 Magic to reverse a year’s worth of aging in any target. If spent in the second half of a game session, your Magic does not reset at the beginning of the next session.  Most often used as an inducement to get powerful, elderly people — sometimes kept alive only by such magics — to aid you.  Chinese mythology inextricably associates sorcery with the pursuit of immortality. Boss sorcerers’ evil schemes may revolve around cracking its secrets. It’s not much use to action movie heroes, though. Accordingly, you get this schtick for free the first time you acquire another Heal schtick as an advancement.
     -
       name: "Influence"
       schticks:
         -
-          title: Influence
+          name: Influence
           description: This schtick allows the spellcaster to affect the emotions, thoughts, and sensory input of humans and other intelligent beings.
         -
-          title: Brain Fortress
+          name: Brain Fortress
           description: Spend 1 Magic to grant yourself or an ally either +3 to Will Checks or a Will value of 12 (your choice) until end of scene.
         -
-          title: Exemplary prostrations
+          name: Exemplary prostrations
           description: Spend 1 Magic to seem trustworthy to all authority figures present in the current scene. Lasts until end of adventure, or until you actively violate their trust, whichever comes first.
         -
-          title: False Memory
+          name: False Memory
           description: Spend 1 Magic and make a Sorcery Check against the Will Resistance of a GMC you are engaged in conversation with, and regards you in a positive or neutral light. In about a hundred words or less, describe an experience the target is supposed to have had, but did not. On a success, the subject believes that this happened to her. +3 to the subject’s Will Resistance if the incident strains credulity, but not the subject’s self- image or sense of reality. +8 if the incident does contravene the subject’s self-image or sense of reality.
         -
-          title: Greed potion
+          name: Greed potion
           description: Spend 1 Magic to formulate a potion which, if ingested by a featured foe or supporting character, causes him to obsessively seek a particular item of value. At the end of each subsequent scene, make a Sorcery Check against the target’s Will Resistance. The effect ends when you fail a check, or at end of session, whichever comes sooner.
         -
-          title: Hate potion
+          name: Hate potion
           description: Spend 1 Magic to formulate a potion which, if ingested by a featured foe or supporting character, causes him to curse and despise another character specified by the sorcerer at time of formulation. At the end of each subsequent scene, make a Sorcery Check against the target’s Will Resistance. The effect ends when you fail a check, or at end of session, whichever comes sooner.
         -
-          title: Illusion
+          name: Illusion
           description: Spend 1 Magic to make one object or person look, smell, and sound like something else of roughly the same size and physical configuration until end of scene. Or create an illusion from thin air, registering to sight, smell, and hearing, but not to touch or taste. Characters encountering the illusion make Notice Checks to identify it as false; if successful, they know something weird or magical is going on. Sorcerers with at least 1 Divination schtick get a +5 bonus to their Notice Checks.  Illusions affect characters’ responses during story scenes but not in combat. During a fight they may not consciously twig to the false vision, but happen to make decisions allowing them to conduct themselves effectively.
         -
-          title: Love potion
+          name: Love potion
           description: Spend 1 Magic to formulate a potion which, if ingested by a featured foe or supporting character, causes him to fall head over heels in love with another character specified by the sorcerer at time of formulation. If attraction to the object of affection contradicts the ingesting character’s orientation, the pull remains powerful but platonic. At the end of each subsequent scene, make a Sorcery Check against the target’s Will Resistance. The effect ends when you fail a check, or at end of session, whichever comes sooner.
         -
-          title: Mind Control
+          name: Mind Control
           description: When a featured foe declares an attack, spend 4 shots as an interrupt to choose a new hero, named character, or mook as target for the attack.
         -
-          title: override Will
+          name: override Will
           description: Spend 1 Magic and make a Sorcery Check against the Will Resistance of a GMC you can see in person, and is in a relaxed state of mind. On a success, the target executes, to the best of his ability, a single instruction of 25 words or less. +3 to the target’s Will Resistance for an instruction that clearly threatens his interests or self-image. +8 for an instruction that violates his safety or that of others.
         -
-          title: Spatial Confusion
+          name: Spatial Confusion
           description: Make yourself appear to be where you aren’t, and not where you are.  Spend 1 Magic and 1 shot to check Sorcery against a target’s Will Resistance value. On a success, gain +1 Sorcery and +1 Defense against that target until the next keyframe.
     -
       name: "Movement"
       schticks:
         -
-          title: Altruistic Switcheroo
+          name: Altruistic Switcheroo
           description: As an interrupt when you or an ally is hit by an attack, spend 2 shots to choose either yourself or another willing ally to take the hit instead. Use the new recipient’s Toughness to determine how many Wound Points get dished out.
         -
-          title: Far Lift
+          name: Far Lift
           description: Cause an inanimate object to rise into the air, move horizontally, and then none-too- q gently set itself down again. Maximum vertical distance and maximum horizontal distance both equal your current Magic points in meters. Difficulty is 1 for every 5 kg the object weighs.  This takes 3 shots, if used in combat. If you’re dropping the object on an enemy, the Damage Value of the dropped object equals the Difficulty of your Sorcery Check. Your check must also exceed the target’s Defense.
         -
-          title: Flight
+          name: Flight
           description: Fly through the air, moving up to 5 m per shot.
         -
-          title: Harsh Switcheroo
+          name: Harsh Switcheroo
           description: As an interrupt when an enemy is hit by an attack, spend 1 shot and make a Sorcery Check against the Defense of another enemy. On a success, the second enemy takes the hit instead. Use the new recipient’s Toughness to determine how many Wound Points get dished out.
         -
-          title: Muscular Infusion
+          name: Muscular Infusion
           description: Spend 1 Magic to grant yourself or an ally either +3 to Strength Checks or a Strength value of 12 (your choice) until end of scene.
         -
-          title: Remote Manipulation
+          name: Remote Manipulation
           description: Perform manual tasks involving distant objects or devices. Difficulty of the Sorcery Check equals your distance in meters from the object, which you must be able to see.
         -
-          title: Slowdown
+          name: Slowdown
           description: Spend X Magic and 3 shots to make a Sorcery Check against an enemy’s Defense; if successful, enemy’s Speed decreases by X until end of fight. Speed can’t be reduced below 1.
     -
       name: "Summoning"
       schticks:
         -
-          title: Banishment
+          name: Banishment
           description: Spend 3 Magic and 3 shots; on a Sorcery success against a supernatural creature’s Defense, it Cheeses It. On a failure, you regain the Magic points.
         -
-          title: Corruption
+          name: Corruption
           description: Spend 1 Magic and 3 shots to grant +1 to the Attacks, Defense, and checks of all creatures engaged in the fight, until the next keyframe.
         -
-          title: Demon Spoor Extract
+          name: Demon Spoor Extract
           description: Spend 1 Magic to cancel a foe schtick effect that directly bolsters a foe and is otherwise due to expire at the end of the sequence, keyframe, or fight.
         -
-          title: Echoes of the past
+          name: Echoes of the past
           description: If you deal Wound Points to a Transformed Animal foe, and it goes down at any later point in the fight, it reverts to its animal form. Transformed Animal heroes present for this take 3 Reversion points.
     -
       name: "Exorcism"
       schticks:
         -
-          title: Invocation
+          name: Invocation
           description: Spend 2 Magic to seize a particular creature through time and space and cause it to appear at your side. You can target a creature if you successfully used Domination against it in the past, or if you have on your person a former body part of the creature, such as a claw, piece of hair, scraping of skin, or severed hand. Requires a Sorcery Check against the creature’s Will Resistance value; on a failure, nothing happens and you get the Magic points back. Merely summoning a creature does not ensure its cooperation. In fact, in most cases guarantees your subject’s extreme displeasure.  You can invoke hero ghosts or supernatural creatures, but only if their players want it to happen. If they do, your attempt automatically succeeds and costs you nothing.  Spend 1 Magic or 3 shots to free a single individual of any effects caused by Sorcery or Creature Powers.
         -
-          title: Purification
+          name: Purification
           description: Spend 1 Magic and 3 shots to levy a –1 penalty to the Attacks, Defense, and checks of all creatures engaged in the fight, until the next keyframe.
         -
-          title: Sustained Domination
+          name: Sustained Domination
           description: Spend 1 Magic and make a Sorcery Check with a creature’s Will Resistance value as the Difficulty. The creature will obey your spoken instructions for a number of hours equal to your Outcome, or until end of session, whichever comes sooner. It will not fight for you but will otherwise obey the letter of your instructions to the best of its abilities. Does not work on bosses or uber-bosses.
         -
-          title: Quick Domination
+          name: Quick Domination
           description: Spend 1 Magic and X shots; make a Sorcery Check with a creature’s Will Resistance value as the Difficulty. The creature fights as your ally for X shots, attacking targets you designate. Does not work on bosses or uber-bosses.
