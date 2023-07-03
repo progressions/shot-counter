@@ -43,6 +43,17 @@ RSpec.describe "Api::V1::Parties", type: :request do
       expect(fight.characters.reload).to include(brick, serena)
       expect(fight.shot_order).to eq([[0, [brick, serena]]])
     end
+
+    it "doesn't double-add characters" do
+      party.characters << brick
+      party.characters << serena
+      fight.fight_characters.create!(character: brick, shot: 5)
+      fight.fight_characters.create!(character: serena, shot: 5)
+      post "/api/v1/parties/#{party.id}/fight/#{fight.id}", headers: headers
+      expect(response).to have_http_status(:success)
+      expect(fight.characters.reload).to include(brick, serena)
+      expect(fight.shot_order).to eq([[5, [brick, serena]]])
+    end
   end
 
   describe "GET /show" do

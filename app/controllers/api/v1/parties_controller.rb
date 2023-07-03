@@ -37,7 +37,10 @@ class Api::V1::PartiesController < ApplicationController
   def fight
     @party = current_campaign.parties.find(params[:party_id])
     @fight = current_campaign.fights.find(params[:fight_id])
+
     @party.characters.each do |character|
+      next if @fight.fight_characters.where(character_id: character.id).exists?
+
       @fight.fight_characters.create!(character: character, shot: 0)
     end
 
