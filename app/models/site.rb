@@ -8,5 +8,20 @@ class Site < ApplicationRecord
 
   def as_json(args = {})
     super(args.merge(include: :faction))
+
+    {
+      id: id,
+      name: name,
+      description: description,
+      faction: faction,
+      created_at: created_at,
+      updated_at: updated_at,
+      characters: characters.map { |character|
+        {
+          id: character.id,
+          name: character.name,
+        }
+      },
+    }
   end
 end
