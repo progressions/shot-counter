@@ -20,8 +20,8 @@ RSpec.describe "Api::V1::Parties", type: :request do
       get "/api/v1/parties", headers: headers
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
-      expect(body.length).to eq(1)
-      expect(body[0]["name"]).to eq("The Party")
+      expect(body["parties"].length).to eq(1)
+      expect(body["parties"][0]["name"]).to eq("The Party")
     end
   end
 

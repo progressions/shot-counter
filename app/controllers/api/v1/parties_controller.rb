@@ -6,7 +6,12 @@ class Api::V1::PartiesController < ApplicationController
   def index
     @parties = current_campaign.parties
 
-    render json: @parties
+    @parties = paginate(@parties, per_page: (params[:per_page] || 50), page: (params[:page] || 1))
+
+    render json: {
+      parties: @parties,
+      meta: pagination_meta(@parties),
+    }
   end
 
   def show
