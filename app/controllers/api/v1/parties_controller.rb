@@ -37,7 +37,9 @@ class Api::V1::PartiesController < ApplicationController
   def fight
     @party = current_campaign.parties.find(params[:party_id])
     @fight = current_campaign.fights.find(params[:fight_id])
-    @fight.characters << @party.characters
+    @party.characters.each do |character|
+      @fight.fight_characters.create!(character: character, shot: 0)
+    end
 
     render json: @party
   end
