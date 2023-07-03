@@ -105,5 +105,35 @@ RSpec.describe "Vehicles", type: :request do
         expect(response).to have_http_status(:not_found)
       end
     end
+
+    describe "PATCH /update" do
+      it "updates a vehicle" do
+        patch "/api/v1/vehicles/#{delorean.id}", params: { vehicle: { name: "Delorean 2.0" } }, headers: headers
+        expect(response).to have_http_status(:success)
+        body = JSON.parse(response.body)
+        expect(body["name"]).to eq("Delorean 2.0")
+      end
+
+      it "doesn't update a vehicle that doesn't belong to the user" do
+        patch "/api/v1/vehicles/#{vehicle.id}", params: { vehicle: { name: "Batmobile 2.0" } }, headers: headers
+        expect(response).to have_http_status(:not_found)
+      end
+    end
+
+    describe "DELETE /destroy" do
+      it "deletes a vehicle" do
+        expect {
+          delete "/api/v1/vehicles/#{delorean.id}", headers: headers
+        }.to change { Vehicle.count }.by(-1)
+        expect(response).to have_http_status(:success)
+      end
+
+      it "doesn't delete a vehicle that doesn't belong to the user" do
+        expect {
+          delete "/api/v1/vehicles/#{vehicle.id}", headers: headers
+        }.to change { Vehicle.count }.by(0)
+        expect(response).to have_http_status(:not_found)
+      end
+    end
   end
 end
