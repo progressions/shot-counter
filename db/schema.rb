@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_07_03_191443) do
+ActiveRecord::Schema[7.0].define(version: 2023_07_04_164807) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -96,10 +96,10 @@ ActiveRecord::Schema[7.0].define(version: 2023_07_03_191443) do
     t.string "action_value"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.uuid "fight_character_id"
     t.string "name"
+    t.uuid "shot_id"
     t.index ["character_id"], name: "index_character_effects_on_character_id"
-    t.index ["fight_character_id"], name: "index_character_effects_on_fight_character_id"
+    t.index ["shot_id"], name: "index_character_effects_on_shot_id"
     t.index ["vehicle_id"], name: "index_character_effects_on_vehicle_id"
   end
 
@@ -158,18 +158,6 @@ ActiveRecord::Schema[7.0].define(version: 2023_07_03_191443) do
     t.index ["campaign_id"], name: "index_factions_on_campaign_id"
   end
 
-  create_table "fight_characters", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
-    t.uuid "character_id"
-    t.uuid "fight_id", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.integer "shot"
-    t.uuid "vehicle_id"
-    t.index ["character_id"], name: "index_fight_characters_on_character_id"
-    t.index ["fight_id"], name: "index_fight_characters_on_fight_id"
-    t.index ["vehicle_id"], name: "index_fight_characters_on_vehicle_id"
-  end
-
   create_table "fights", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.string "name"
     t.datetime "created_at", null: false
@@ -200,11 +188,13 @@ ActiveRecord::Schema[7.0].define(version: 2023_07_03_191443) do
 
   create_table "memberships", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.uuid "party_id", null: false
-    t.uuid "character_id", null: false
+    t.uuid "character_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.uuid "vehicle_id"
     t.index ["character_id"], name: "index_memberships_on_character_id"
     t.index ["party_id"], name: "index_memberships_on_party_id"
+    t.index ["vehicle_id"], name: "index_memberships_on_vehicle_id"
   end
 
   create_table "parties", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -232,6 +222,19 @@ ActiveRecord::Schema[7.0].define(version: 2023_07_03_191443) do
     t.index ["campaign_id"], name: "index_schticks_on_campaign_id"
     t.index ["category", "name"], name: "index_schticks_on_category_and_name", unique: true
     t.index ["prerequisite_id"], name: "index_schticks_on_prerequisite_id"
+  end
+
+  create_table "shots", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "fight_id", null: false
+    t.uuid "character_id"
+    t.uuid "vehicle_id"
+    t.integer "shot"
+    t.string "position"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["character_id"], name: "index_shots_on_character_id"
+    t.index ["fight_id"], name: "index_shots_on_fight_id"
+    t.index ["vehicle_id"], name: "index_shots_on_vehicle_id"
   end
 
   create_table "sites", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -284,7 +287,9 @@ ActiveRecord::Schema[7.0].define(version: 2023_07_03_191443) do
     t.integer "impairments"
     t.uuid "campaign_id"
     t.boolean "active", default: true, null: false
+    t.uuid "faction_id"
     t.index ["campaign_id"], name: "index_vehicles_on_campaign_id"
+    t.index ["faction_id"], name: "index_vehicles_on_faction_id"
     t.index ["user_id"], name: "index_vehicles_on_user_id"
   end
 
@@ -316,7 +321,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_07_03_191443) do
   add_foreign_key "carries", "characters"
   add_foreign_key "carries", "weapons"
   add_foreign_key "character_effects", "characters"
-  add_foreign_key "character_effects", "fight_characters"
+  add_foreign_key "character_effects", "shots"
   add_foreign_key "character_effects", "vehicles"
   add_foreign_key "character_schticks", "characters"
   add_foreign_key "character_schticks", "schticks"
@@ -326,20 +331,23 @@ ActiveRecord::Schema[7.0].define(version: 2023_07_03_191443) do
   add_foreign_key "effects", "fights"
   add_foreign_key "effects", "users"
   add_foreign_key "factions", "campaigns"
-  add_foreign_key "fight_characters", "characters"
-  add_foreign_key "fight_characters", "fights"
   add_foreign_key "fights", "campaigns"
   add_foreign_key "invitations", "campaigns"
   add_foreign_key "invitations", "users"
   add_foreign_key "invitations", "users", column: "pending_user_id"
   add_foreign_key "memberships", "characters"
   add_foreign_key "memberships", "parties"
+  add_foreign_key "memberships", "vehicles"
   add_foreign_key "parties", "campaigns"
   add_foreign_key "schticks", "campaigns"
   add_foreign_key "schticks", "schticks", column: "prerequisite_id"
+  add_foreign_key "shots", "characters"
+  add_foreign_key "shots", "fights"
+  add_foreign_key "shots", "vehicles"
   add_foreign_key "sites", "campaigns"
   add_foreign_key "sites", "factions"
   add_foreign_key "vehicles", "campaigns"
+  add_foreign_key "vehicles", "factions"
   add_foreign_key "vehicles", "users"
   add_foreign_key "weapons", "campaigns"
 end

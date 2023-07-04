@@ -19,7 +19,7 @@ class Api::V1::DriversController < ApplicationController
 
   def add
     @vehicle = current_campaign.vehicles.find(params[:id])
-    @fight_vehicle = @fight.fight_characters.build(vehicle_id: @vehicle.id, shot: shot_params[:current_shot])
+    @fight_vehicle = @fight.shots.build(vehicle_id: @vehicle.id, shot: shot_params[:current_shot])
 
     if @fight_vehicle.save
       render json: @vehicle
@@ -35,7 +35,7 @@ class Api::V1::DriversController < ApplicationController
 
   def create
     @vehicle = current_campaign.vehicles.create!(vehicle_params.merge(user: current_user))
-    @fight_vehicle = @fight.fight_characters.build(vehicle_id: @vehicle.id, shot: shot_params[:current_shot])
+    @fight_vehicle = @fight.shots.build(vehicle_id: @vehicle.id, shot: shot_params[:current_shot])
 
     if @fight_vehicle.save
       render json: @vehicle
@@ -65,7 +65,7 @@ class Api::V1::DriversController < ApplicationController
   end
 
   def set_fight_vehicle
-    @fight_vehicle = @fight.fight_characters.find_or_create_by(vehicle_id: @vehicle.id)
+    @fight_vehicle = @fight.shots.find_or_create_by(vehicle_id: @vehicle.id)
   end
 
   def set_fight

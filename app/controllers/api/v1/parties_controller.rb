@@ -39,9 +39,15 @@ class Api::V1::PartiesController < ApplicationController
     @fight = current_campaign.fights.find(params[:fight_id])
 
     @party.characters.each do |character|
-      next if @fight.fight_characters.where(character_id: character.id).exists?
+      next if @fight.shots.where(character_id: character.id).exists?
 
-      @fight.fight_characters.create!(character: character, shot: 0)
+      @fight.shots.create!(character: character, shot: 0)
+    end
+
+    @party.vehicles.each do |vehicle|
+      next if @fight.shots.where(vehicle_id: vehicle.id).exists?
+
+      @fight.shots.create!(vehicle: vehicle, shot: 0)
     end
 
     render json: @party

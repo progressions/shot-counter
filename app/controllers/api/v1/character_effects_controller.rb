@@ -4,14 +4,14 @@ class Api::V1::CharacterEffectsController < ApplicationController
   before_action :set_fight, only: [:create, :update, :destroy]
 
   def create
-    @fight_character = @fight.fight_characters.find_by(character_id: character_effect_params[:character_id])
-    if @fight_character.nil?
+    @shot = @fight.shots.find_by(character_id: character_effect_params[:character_id])
+    if @shot.nil?
       render json: {
         character: ["must be present if vehicle is not set"],
         vehicle: ["must be present if character is not set"]
       }, status: 400 and return
     end
-    @character_effect = @fight_character.character_effects.new(character_effect_params)
+    @character_effect = @shot.character_effects.new(character_effect_params)
 
     if @character_effect.save
       render json: @character_effect

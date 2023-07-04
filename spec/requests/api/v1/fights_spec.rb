@@ -50,8 +50,8 @@ RSpec.describe "Fights", type: :request do
 
   describe "GET /api/v1/fights/:id" do
     it "returns a fight" do
-      @fight.fight_characters.create!(character_id: @brick.id, shot: 10)
-      @fight.fight_characters.create!(character_id: @boss.id, shot: 8)
+      @fight.shots.create!(character_id: @brick.id, shot: 10)
+      @fight.shots.create!(character_id: @boss.id, shot: 8)
       get "/api/v1/fights/#{@fight.id}", headers: @headers
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
@@ -70,9 +70,9 @@ RSpec.describe "Fights", type: :request do
     end
 
     it "returns the character effects for each character" do
-      fight_character = @fight.fight_characters.create!(character_id: @brick.id, shot: 10)
+      shot = @fight.shots.create!(character_id: @brick.id, shot: 10)
 
-      @character_effect = fight_character.character_effects.create!(name: "Bonus")
+      @character_effect = shot.character_effects.create!(name: "Bonus")
 
       get "/api/v1/fights/#{@fight.id}", headers: @headers
       expect(response).to have_http_status(:success)

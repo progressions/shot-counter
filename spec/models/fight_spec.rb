@@ -9,7 +9,7 @@ RSpec.describe Fight, type: :model do
   it "has a shot order with one character" do
     fight = Fight.create!(name: "Fight", campaign_id: @action_movie.id)
     brick = Character.create!(name: "Brick Manly", action_values: {"Type" => "PC", "Guns" => 15, "Defense" => 14, "Toughness" => 7, "Speed" => 7, "Fortune" => 7}, campaign_id: @action_movie.id)
-    fight.fight_characters.create!(character: brick, shot: 12)
+    fight.shots.create!(character: brick, shot: 12)
     expect(fight.shot_order).to eq([[12, [brick]]])
   end
 
@@ -17,8 +17,8 @@ RSpec.describe Fight, type: :model do
     fight = Fight.create!(name: "Fight", campaign_id: @action_movie.id)
     brick = Character.create!(name: "Brick Manly", action_values: {"Type" => "PC", "Guns" => 15, "Defense" => 14, "Toughness" => 7, "Speed" => 7, "Fortune" => 7}, campaign_id: @action_movie.id)
     serena = Character.create!(name: "Serena", action_values: {"Type" => "PC", "Guns" => 14, "Defense" => 13, "Toughness" => 7, "Speed" => 6, "Fortune" => 7}, campaign_id: @action_movie.id)
-    fight.fight_characters.create!(character: brick, shot: 12)
-    fight.fight_characters.create!(character: serena, shot: 12)
+    fight.shots.create!(character: brick, shot: 12)
+    fight.shots.create!(character: serena, shot: 12)
     expect(fight.shot_order).to eq([[12, [brick, serena]]])
   end
 
@@ -37,12 +37,12 @@ RSpec.describe Fight, type: :model do
     # Mook
     mook = Character.create!(name: "Ninja", action_values: {"Type" => "Mook", "Guns" => 8, "Defense" => 13, "Toughness" => 7, "Speed" => 6}, campaign_id: @action_movie.id)
 
-    fight.fight_characters.create!(character: mook, shot: 12)
-    fight.fight_characters.create!(character: jawbuster, shot: 12)
-    fight.fight_characters.create!(character: hitman, shot: 10)
-    fight.fight_characters.create!(character: shing, shot: nil)
-    fight.fight_characters.create!(character: brick, shot: nil)
-    fight.fight_characters.create!(character: thunder_king, shot: 0)
+    fight.shots.create!(character: mook, shot: 12)
+    fight.shots.create!(character: jawbuster, shot: 12)
+    fight.shots.create!(character: hitman, shot: 10)
+    fight.shots.create!(character: shing, shot: nil)
+    fight.shots.create!(character: brick, shot: nil)
+    fight.shots.create!(character: thunder_king, shot: 0)
 
     expect(fight.shot_order.map { |shot, chars| [shot, chars.map(&:name)] }).to eq([[12, ["Jawbuster", "Ninja"]], [10, ["Hitman"]], [0, ["Thunder King"]], [nil, ["Brick Manly", "Ugly Shing"]]])
   end
@@ -62,12 +62,12 @@ RSpec.describe Fight, type: :model do
     # Mook
     mook = Character.create!(name: "Ninja", action_values: {"Type" => "Mook", "Guns" => 8, "Defense" => 13, "Toughness" => 7, "Speed" => 6}, campaign_id: @action_movie.id)
 
-    fight.fight_characters.create!(character: mook, shot: 12)
-    fight.fight_characters.create!(character: jawbuster, shot: 12)
-    fight.fight_characters.create!(character: hitman, shot: 12)
-    fight.fight_characters.create!(character: shing, shot: 12)
-    fight.fight_characters.create!(character: brick, shot: 12)
-    fight.fight_characters.create!(character: thunder_king, shot: 12)
+    fight.shots.create!(character: mook, shot: 12)
+    fight.shots.create!(character: jawbuster, shot: 12)
+    fight.shots.create!(character: hitman, shot: 12)
+    fight.shots.create!(character: shing, shot: 12)
+    fight.shots.create!(character: brick, shot: 12)
+    fight.shots.create!(character: thunder_king, shot: 12)
 
     expect(fight.shot_order).to eq([[12, [thunder_king, brick, shing, hitman, jawbuster, mook]]])
   end
@@ -79,8 +79,8 @@ RSpec.describe Fight, type: :model do
     # PC
     brick = Character.create!(name: "Brick Manly", action_values: {"Type" => "PC", "Guns" => 15, "Defense" => 14, "Toughness" => 7, "Speed" => 7, "Fortune" => 7}, campaign_id: @action_movie.id)
 
-    fight.fight_characters.create!(vehicle: truck, shot: 12)
-    fight.fight_characters.create!(character: brick, shot: 12)
+    fight.shots.create!(vehicle: truck, shot: 12)
+    fight.shots.create!(character: brick, shot: 12)
 
     expect(fight.shot_order).to eq([[12, [brick, truck]]])
   end
@@ -89,15 +89,15 @@ RSpec.describe Fight, type: :model do
     fight = Fight.create!(name: "Fight", campaign_id: @action_movie.id)
     brick = Character.create!(name: "Brick Manly", action_values: {"Type" => "PC", "Guns" => 15, "Defense" => 14, "Toughness" => 7, "Speed" => 7, "Fortune" => 7}, impairments: 2, campaign_id: @action_movie.id)
     serena = Character.create!(name: "Serena", action_values: {"Type" => "PC", "Guns" => 14, "Defense" => 13, "Toughness" => 7, "Speed" => 6, "Fortune" => 7}, campaign_id: @action_movie.id)
-    fight.fight_characters.create!(character: brick, shot: 12)
-    fight.fight_characters.create!(character: serena, shot: 12)
+    fight.shots.create!(character: brick, shot: 12)
+    fight.shots.create!(character: serena, shot: 12)
     expect(fight.shot_order).to eq([[12, [serena, brick]]])
   end
 
   context "effects" do
     let(:fight) { Fight.create!(name: "Fight", campaign_id: @action_movie.id, sequence: 1) }
     let(:brick) { Character.create!(name: "Brick Manly", action_values: {"Type" => "PC", "Guns" => 15, "Defense" => 14, "Toughness" => 7, "Speed" => 7, "Fortune" => 7}, campaign_id: @action_movie.id) }
-    let!(:brick_shot) { fight.fight_characters.create!(character: brick, shot: 12) }
+    let!(:brick_shot) { fight.shots.create!(character: brick, shot: 12) }
     let!(:effect) {
       fight.effects.create!(name: "Effect", start_sequence: 1, end_sequence: 2, start_shot: 15, end_shot: 15, severity: "info")
     }

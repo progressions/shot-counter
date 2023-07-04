@@ -4,22 +4,46 @@ class Api::V1::MembershipsController < ApplicationController
   before_action :set_current_party
 
   def index
-    @characters = @party.characters
-
-    render json: @characters
+    render json: @party
   end
 
   # Add a character to a party
   def create
-    @character = current_campaign.characters.find(params[:character_id])
-    @party.characters << @character
+    if params[:character_id].present?
+      @character = current_campaign.characters.find(params[:character_id])
+      @party.characters << @character
+    end
 
-    render json: @character
+    if params[:vehicle_id].present?
+      @vehicle = current_campaign.vehicles.find(params[:vehicle_id])
+      @party.vehicles << @vehicle
+    end
+
+    render json: @party
   end
 
   # Remove a character from a party
-  def destroy
+  def remove_character
     @membership = @party.memberships.find_by(character_id: params[:id])
+
+    if @membership.nil?
+      render json: { error: "Membership not found" }, status: :not_found
+      return
+    end
+
+    @membership.destroy!
+
+    render :ok
+  end
+
+  def remove_vehicle
+    @membership = @party.memberships.find_by(vehicle_id: params[:id])
+
+    if @membership.nil?
+      render json: { error: "Membership not found" }, status: :not_found
+      return
+    end
+
     @membership.destroy!
 
     render :ok

@@ -18,14 +18,14 @@ module SlashSetCharacter
     name = event.options["name"]
     value = event.options["shot"]
 
-    fight_character = fight.fight_characters.where("name ILIKE ?", name.downcase).first
+    shot = fight.shots.where("name ILIKE ?", name.downcase).first
 
-    if fight_character.nil?
+    if shot.nil?
       event.respond(content: "Can't find that character!")
       return
     end
 
-    fight_character.update(key => value)
+    shot.update(key => value)
 
     event.respond(content: FightPoster.shots(fight))
   end

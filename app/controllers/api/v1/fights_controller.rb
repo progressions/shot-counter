@@ -8,7 +8,7 @@ class Api::V1::FightsController < ApplicationController
       .fights
       .where(archived: false)
       .order(created_at: :desc)
-      .includes(:fight_characters)
+      .includes(:shots)
       .includes(:vehicles)
       .includes(:characters)
       .includes(characters: :user)
@@ -63,7 +63,7 @@ class Api::V1::FightsController < ApplicationController
   def set_fight
     @fight = current_campaign
       .fights
-      .includes(:fight_characters, :effects, :characters, :vehicles)
+      .includes(:shots, :effects, :characters, :vehicles)
       .includes(characters: [:user, :advancements, :sites, :character_effects, :schticks, :weapons])
       .includes(vehicles: [:user])
       .find(params[:id])

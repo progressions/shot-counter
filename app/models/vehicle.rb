@@ -8,36 +8,29 @@ class Vehicle < ApplicationRecord
     "Condition Points" => 0,
     "Chase Points" => 0,
     "Pursuer" => "true",
-    "Position" => "far",
+    "Position" => "Far",
     "Type" => "PC",
     "Faction" => ""
   }
 
-  has_many :fight_characters, dependent: :destroy
-  has_many :fights, through: :fight_characters
+  has_many :shots, dependent: :destroy
+  has_many :fights, through: :shots
   belongs_to :user, optional: true
   belongs_to :campaign
+  belongs_to :faction, optional: true
   has_many :character_effects
+  has_many :memberships
+  has_many :parties, through: :memberships
 
   POSITIONS = ["Near", "Far"]
 
-  before_save :ensure_default_action_values
-  before_save :ensure_integer_values
-  before_save :ensure_non_integer_values
+  before_validation :ensure_default_action_values
+  before_validation :ensure_integer_values
+  before_validation :ensure_non_integer_values
+  # before_validation :validate_position
+  before_validation :ensure_faction
 
   validates :name, presence: true, uniqueness: { scope: :campaign_id }
-
-  def sort_order
-    character_type = action_values.fetch("Type")
-    speed = action_values.fetch("Acceleration", 0).to_i - impairments.to_i
-    [1, Fight::SORT_ORDER.index(character_type), speed * -1, name]
-  end
-
-  def act!(fight:, shot_cost: Fight::DEFAULT_SHOT_COUNT)
-    self.current_shot ||= 0
-    self.current_shot -= shot_cost.to_i
-    save!
-  end
 
   def as_json(args=nil)
     {
@@ -54,11 +47,44 @@ class Vehicle < ApplicationRecord
     }
   end
 
+  def sort_order
+    character_type = action_values.fetch("Type")
+    speed = action_values.fetch("Acceleration", 0).to_i - impairments.to_i
+    [1, Fight::SORT_ORDER.index(character_type), speed * -1, name]
+  end
+
+  def good_guy?
+    action_values.fetch("Type") == "PC" || action_values.fetch("Type") == "Ally"
+  end
+
+  def bad_guy?
+    !good_guy?
+  end
+
+  def category
+    "vehicle"
+  end
+
   private
+
+  def ensure_faction
+    if action_values.fetch("Faction").present?
+      self.faction = self.campaign.factions.find_or_create_by(name: action_values.fetch("Faction"))
+    else
+      self.faction = nil
+    end
+  end
 
   def ensure_default_action_values
     self.action_values ||= {}
     self.action_values = DEFAULT_ACTION_VALUES.merge(self.action_values)
+  end
+
+  def validate_position
+    self.action_values = DEFAULT_ACTION_VALUES.merge(self.action_values)
+    unless POSITIONS.include?(self.action_values["Position"])
+      errors.add(:base, "Position must be one of #{POSITIONS.join(', ')}")
+    end
   end
 
   def ensure_integer_values

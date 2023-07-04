@@ -25,7 +25,7 @@ RSpec.describe Character, type: :model do
     end
 
     it "has many character_effects" do
-      shot = fight.fight_characters.create!(character: brick, shot: 10)
+      shot = fight.shots.create!(character: brick, shot: 10)
       effect = shot.character_effects.create!(name: "Injured", character: brick)
       expect(brick.character_effects).to include(effect)
     end
@@ -201,12 +201,12 @@ RSpec.describe Character, type: :model do
 
     describe "#effects_for_fight" do
       it "returns an empty array if the character has no effects" do
-        shot = fight.fight_characters.create!(character: brick, shot: 10)
+        shot = fight.shots.create!(character: brick, shot: 10)
         expect(brick.effects_for_fight(fight)).to eq([])
       end
 
       it "returns an array of effects that are active in the fight" do
-        shot = fight.fight_characters.create!(character: brick, shot: 10)
+        shot = fight.shots.create!(character: brick, shot: 10)
         shot.character_effects.create!(name: "Effect 1")
         shot.character_effects.create!(name: "Effect 3")
         expect(brick.effects_for_fight(fight).map(&:name)).to eq(["Effect 1", "Effect 3"])

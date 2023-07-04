@@ -13,7 +13,7 @@ RSpec.describe "CharacterEffects", type: :request do
 
   describe "POST /api/v1/fights/:fight_id/character_effects" do
     it "creates a character effect for a fight and character" do
-      @fight.fight_characters.create!(character_id: @brick.id, shot: 10)
+      @fight.shots.create!(character_id: @brick.id, shot: 10)
       post "/api/v1/fights/#{@fight.id}/character_effects", headers: @headers, params: {
         character_effect: {
           name: "Bonus",
@@ -27,7 +27,7 @@ RSpec.describe "CharacterEffects", type: :request do
     end
 
     it "creates a character effect for a fight and a vehicle" do
-      @fight.fight_characters.create!(vehicle_id: @speedboat.id, shot: 10)
+      @fight.shots.create!(vehicle_id: @speedboat.id, shot: 10)
       post "/api/v1/fights/#{@fight.id}/character_effects", headers: @headers, params: {
         character_effect: {
           name: "Bonus",
@@ -82,7 +82,7 @@ RSpec.describe "CharacterEffects", type: :request do
     end
 
     it "requires authentication" do
-      @fight.fight_characters.create!(character_id: @brick.id, shot: 10)
+      @fight.shots.create!(character_id: @brick.id, shot: 10)
       post "/api/v1/fights/#{@fight.id}/character_effects", params: {
         character_effect: {
           name: "Bonus",
@@ -96,8 +96,8 @@ RSpec.describe "CharacterEffects", type: :request do
 
   describe "PATCH /api/v1/fights/:fight_id/character_effects/:id" do
     it "updates a character_effect" do
-      fight_character = @fight.fight_characters.create!(character_id: @brick.id, shot: 10)
-      @character_effect = fight_character.character_effects.create!(name: "Bonuss")
+      shot = @fight.shots.create!(character_id: @brick.id, shot: 10)
+      @character_effect = shot.character_effects.create!(name: "Bonuss")
       patch "/api/v1/fights/#{@fight.id}/character_effects/#{@character_effect.id}", headers: @headers, params: {
         character_effect: {
           name: "Bonus",
@@ -110,8 +110,8 @@ RSpec.describe "CharacterEffects", type: :request do
     end
 
     it "updates a character_effect on a vehicle" do
-      fight_character = @fight.fight_characters.create!(vehicle_id: @speedboat.id, shot: 10)
-      @character_effect = fight_character.character_effects.create!(name: "Bonuss")
+      shot = @fight.shots.create!(vehicle_id: @speedboat.id, shot: 10)
+      @character_effect = shot.character_effects.create!(name: "Bonuss")
       patch "/api/v1/fights/#{@fight.id}/character_effects/#{@character_effect.id}", headers: @headers, params: {
         character_effect: {
           name: "Bonus",
@@ -124,8 +124,8 @@ RSpec.describe "CharacterEffects", type: :request do
     end
 
     it "requires authentication" do
-      fight_character = @fight.fight_characters.create!(character_id: @brick.id, shot: 10)
-      @character_effect = fight_character.character_effects.create!(name: "Bonuss")
+      shot = @fight.shots.create!(character_id: @brick.id, shot: 10)
+      @character_effect = shot.character_effects.create!(name: "Bonuss")
       patch "/api/v1/fights/#{@fight.id}/character_effects/#{@character_effect.id}", params: {
         character_effect: {
           name: "Bonus",
@@ -138,24 +138,24 @@ RSpec.describe "CharacterEffects", type: :request do
 
   describe "DELETE /api/v1/fights/:fight_id/character_effects/:id" do
     it "deletes the effect" do
-      fight_character = @fight.fight_characters.create!(character_id: @brick.id, shot: 10)
-      @character_effect = fight_character.character_effects.create!(name: "Bonuss")
+      shot = @fight.shots.create!(character_id: @brick.id, shot: 10)
+      @character_effect = shot.character_effects.create!(name: "Bonuss")
       delete "/api/v1/fights/#{@fight.id}/character_effects/#{@character_effect.id}", headers: @headers
       expect(response).to have_http_status(:success)
       expect(@brick.reload.character_effects).to be_empty
     end
 
     it "deletes the effect from a vehicle" do
-      fight_character = @fight.fight_characters.create!(vehicle_id: @speedboat.id, shot: 10)
-      @character_effect = fight_character.character_effects.create!(name: "Bonuss")
+      shot = @fight.shots.create!(vehicle_id: @speedboat.id, shot: 10)
+      @character_effect = shot.character_effects.create!(name: "Bonuss")
       delete "/api/v1/fights/#{@fight.id}/character_effects/#{@character_effect.id}", headers: @headers
       expect(response).to have_http_status(:success)
       expect(@speedboat.reload.character_effects).to be_empty
     end
 
     it "requires authentication" do
-      fight_character = @fight.fight_characters.create!(character_id: @brick.id, shot: 10)
-      @character_effect = fight_character.character_effects.create!(name: "Bonuss")
+      shot = @fight.shots.create!(character_id: @brick.id, shot: 10)
+      @character_effect = shot.character_effects.create!(name: "Bonuss")
       delete "/api/v1/fights/#{@fight.id}/character_effects/#{@character_effect.id}"
       expect(response).to have_http_status(:unauthorized)
       expect(@character_effect.reload).to be_present

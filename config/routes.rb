@@ -11,7 +11,9 @@ Rails.application.routes.draw do
       resources :schticks
       resources :weapons
       resources :parties do
-        resources :memberships
+        resources :memberships, except: [:destroy]
+        delete "memberships/:id/character", to: "memberships#remove_character"
+        delete "memberships/:id/vehicle", to: "memberships#remove_vehicle"
         post "fight/:fight_id", to: "parties#fight"
       end
       resources :sites

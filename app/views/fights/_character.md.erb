@@ -1,0 +1,26 @@
+- **<%= character.name %>**
+<% if character.good_guy? -%>
+<% if wounds_and_impairments(character).present? -%>
+ <%= wounds_and_impairments(character) %>
+<% end -%>
+<%-
+  main_attack = character.main_attack
+  secondary_attack = character.secondary_attack
+  fortune_type = character.fortune_type
+-%>
+ <%=
+ [
+   action_value(character, main_attack),
+   action_value(character, secondary_attack),
+   action_value(character, "Defense"),
+   fortune_value(character),
+   action_value(character, "Toughness"),
+   action_value(character, "Speed"),
+ ].compact.join(" ")
+%>
+<% if character.effects_for_fight(@fight).any? -%>
+  ```diff
+ <%= character.effects_for_fight(@fight).map { |effect| character_effect(effect) }.join("\n ") %>
+ ```
+<% end -%>
+<% end -%>

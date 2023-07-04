@@ -8,8 +8,8 @@ RSpec.describe "Api::V1::Actors", type: :request do
   let(:shing) { Character.create!(name: "Ugly Shing", campaign: action_movie) }
   let(:headers) { Devise::JWT::TestHelpers.auth_headers({}, user) }
   let!(:fight) { action_movie.fights.create!(name: "Fight") }
-  let!(:fight_brick) { FightCharacter.create!(fight: fight, character: brick, shot: 10) }
-  let!(:fight_shing) { FightCharacter.create!(fight: fight, character: shing, shot: 15) }
+  let!(:fight_brick) { Shot.create!(fight: fight, character: brick, shot: 10) }
+  let!(:fight_shing) { Shot.create!(fight: fight, character: shing, shot: 15) }
 
   before(:each) do
     set_current_campaign(user, action_movie)

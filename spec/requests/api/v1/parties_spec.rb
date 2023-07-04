@@ -7,6 +7,7 @@ RSpec.describe "Api::V1::Parties", type: :request do
   let(:fight) { Fight.create!(name: "Museum Fight", campaign: action_movie) }
   let(:brick) { Character.create!(name: "Brick Manly", campaign: action_movie) }
   let(:serena) { Character.create!(name: "Serena Tessaro", campaign: action_movie) }
+  let(:truck) { Vehicle.create!(name: "Truck", campaign: action_movie) }
   let!(:party) { Party.create!(name: "The Party", campaign: action_movie) }
   let!(:gang) { Party.create!(name: "The Gang", campaign: action_movie) }
   let!(:crew) { Party.create!(name: "The Pirate Crew", campaign: pirates) }
@@ -38,17 +39,19 @@ RSpec.describe "Api::V1::Parties", type: :request do
     it "adds a party to a fight" do
       party.characters << brick
       party.characters << serena
+      party.vehicles << truck
       post "/api/v1/parties/#{party.id}/fight/#{fight.id}", headers: headers
       expect(response).to have_http_status(:success)
       expect(fight.characters.reload).to include(brick, serena)
-      expect(fight.shot_order).to eq([[0, [brick, serena]]])
+      expect(fight.shot_order).to eq([[0, [brick, serena, truck]]])
+      expect(fight.vehicles.reload).to include(truck)
     end
 
     it "doesn't double-add characters" do
       party.characters << brick
       party.characters << serena
-      fight.fight_characters.create!(character: brick, shot: 5)
-      fight.fight_characters.create!(character: serena, shot: 5)
+      fight.shots.create!(character: brick, shot: 5)
+      fight.shots.create!(character: serena, shot: 5)
       post "/api/v1/parties/#{party.id}/fight/#{fight.id}", headers: headers
       expect(response).to have_http_status(:success)
       expect(fight.characters.reload).to include(brick, serena)

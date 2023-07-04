@@ -1,0 +1,15 @@
+- **<%= vehicle.name %>**
+ <%= vehicle.action_values["Pursuer"] ? "Pursuer" : "Evader" %> - <%= vehicle.action_values["Position"] %>
+<% if vehicle.good_guy? -%>
+<% if chase_points_and_impairments(vehicle).present? -%>
+ <%= chase_points_and_impairments(vehicle) %>
+<% end -%>
+ <%=
+ [
+   action_value(vehicle, "Acceleration"),
+   action_value(vehicle, "Handling"),
+   action_value(vehicle, "Squeal"),
+   action_value(vehicle, "Frame"),
+ ].compact.join(" ")
+%>
+<% end -%>

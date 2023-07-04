@@ -1,4 +1,4 @@
-class FightCharacter < ApplicationRecord
+class Shot < ApplicationRecord
   belongs_to :fight
   belongs_to :character, optional: true
   belongs_to :vehicle, optional: true

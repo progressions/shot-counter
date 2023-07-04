@@ -1,10 +1,10 @@
 class Fight < ApplicationRecord
   belongs_to :campaign
-  has_many :fight_characters, dependent: :destroy
-  has_many :characters, through: :fight_characters
-  has_many :vehicles, through: :fight_characters
+  has_many :shots, dependent: :destroy
+  has_many :characters, through: :shots
+  has_many :vehicles, through: :shots
   has_many :effects, dependent: :destroy
-  has_many :character_effects, through: :fight_characters
+  has_many :character_effects, through: :shots
 
   scope :active, -> { where(active: true) }
 
@@ -29,7 +29,7 @@ class Fight < ApplicationRecord
   end
 
   def current_shot
-    fight_characters.maximum(:shot) || 0
+    shots.maximum(:shot) || 0
   end
 
   #    return fight.effects.filter((effect: Effect) => {
@@ -49,7 +49,7 @@ class Fight < ApplicationRecord
   end
 
   def shot_order
-    fight_characters
+    shots
       .group_by { |fc| fc.shot }
       .sort_by { |shot, fight_chars| shot.nil? ? 1000 : -shot.to_i }
       .map { |shot, fight_chars|

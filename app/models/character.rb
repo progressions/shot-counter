@@ -61,8 +61,8 @@ class Character < ApplicationRecord
     "Strength" => 0
   }
 
-  has_many :fight_characters, dependent: :destroy
-  has_many :fights, through: :fight_characters
+  has_many :shots, dependent: :destroy
+  has_many :fights, through: :shots
   belongs_to :faction, optional: true
   belongs_to :user, optional: true
   belongs_to :campaign
@@ -108,6 +108,10 @@ class Character < ApplicationRecord
     }
   end
 
+  def category
+    "character"
+  end
+
   def sort_order
     character_type = action_values.fetch("Type")
     speed = action_values.fetch("Speed", 0).to_i - impairments.to_i
@@ -123,7 +127,7 @@ class Character < ApplicationRecord
   end
 
   def effects_for_fight(fight)
-    fight_characters
+    shots
       .find_by(fight_id: fight.id)
       .character_effects
   end

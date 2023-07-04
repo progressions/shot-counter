@@ -40,12 +40,12 @@ RSpec.describe Vehicle, type: :model do
       truck = Vehicle.create!(name: "Truck", campaign_id: @action_movie.id)
       fight = @action_movie.fights.create!(name: "Big Brawl")
       fight.vehicles << truck
-      shot = fight.fight_characters.create!(vehicle: truck, shot: 10)
+      shot = fight.shots.create!(vehicle: truck, shot: 10)
       effect = shot.character_effects.create!(name: "Injured", vehicle: truck)
       expect(truck.character_effects).to include(effect)
     end
 
-    xit "has many parties" do
+    it "has many parties" do
       truck = Vehicle.create!(name: "Truck", campaign_id: @action_movie.id)
       party = @action_movie.parties.create!(name: "The Dragons")
       party.vehicles << truck
@@ -57,16 +57,42 @@ RSpec.describe Vehicle, type: :model do
     it "requires a name" do
       truck = Vehicle.new(campaign_id: @action_movie.id)
       expect(truck).to_not be_valid
+      expect(truck.errors[:name]).to include("can't be blank")
     end
 
     it "requires a campaign" do
       truck = Vehicle.new(name: "Truck")
       expect(truck).to_not be_valid
+      expect(truck.errors[:campaign]).to include("must exist")
     end
 
     it "doesn't require a user" do
       truck = Vehicle.new(name: "Truck", campaign_id: @action_movie.id)
       expect(truck).to be_valid
+      expect(truck.errors[:user]).to be_empty
+    end
+
+    xit "requires valid position" do
+      truck = Vehicle.new(name: "Truck", campaign_id: @action_movie.id)
+      truck.save
+      truck.action_values["Position"] = "Invalid"
+      expect(truck).to_not be_valid
+      expect(truck.errors[:base]).to include("Position must be one of Near, Far")
+    end
+
+    it "creates a faction by name" do
+      truck = Vehicle.create!(name: "Truck", campaign_id: @action_movie.id)
+      truck.action_values["Faction"] = "Rogues"
+      truck.save!
+      expect(truck.faction.name).to eq("Rogues")
+    end
+
+    it "finds a faction by name" do
+      truck = Vehicle.create!(name: "Truck", campaign_id: @action_movie.id)
+      rogues = @action_movie.factions.create!(name: "Rogues")
+      truck.action_values["Faction"] = "Rogues"
+      truck.save!
+      expect(truck.faction).to eq(rogues)
     end
   end
 end

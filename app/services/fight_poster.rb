@@ -42,6 +42,18 @@ TEXT
       ERB.new(filename.read, trim_mode: "-").result(binding)
     end
 
+    def show_character(character)
+      @character = character
+      filename = Rails.root.join("app", "views", "fights", "_character.md.erb")
+      ERB.new(filename.read, trim_mode: "-").result(binding)
+    end
+
+    def show_vehicle(vehicle)
+      @vehicle = vehicle
+      filename = Rails.root.join("app", "views", "fights", "_vehicle.md.erb")
+      ERB.new(filename.read, trim_mode: "-").result(binding)
+    end
+
     def action_value(character, key)
       if character.action_values[key].to_i > 0
         asterisk = character.impairments.to_i > 0 ? "*" : ""
@@ -64,6 +76,15 @@ TEXT
       [
         character.action_values["Wounds"].to_i > 0 ? "#{character.action_values["Wounds"]} Wounds" : nil,
         character.impairments.to_i > 0 ? "(#{character.impairments} #{impairments})" : nil
+      ].compact.join(" ")
+    end
+
+    def chase_points_and_impairments(vehicle)
+      impairments = "Impairment".pluralize(vehicle.impairments.to_i)
+      [
+        vehicle.action_values["Chase Points"].to_i > 0 ? "#{vehicle.action_values["Chase Points"]} Chase" : nil,
+        vehicle.action_values["Condition Points"].to_i > 0 ? "#{vehicle.action_values["Condition Points"]} Condition Points" : nil,
+        vehicle.impairments.to_i > 0 ? "(#{vehicle.impairments} #{impairments})" : nil
       ].compact.join(" ")
     end
 

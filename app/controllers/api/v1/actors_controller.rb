@@ -3,14 +3,14 @@ class Api::V1::ActorsController < ApplicationController
   before_action :require_current_campaign
   before_action :set_fight
   before_action :set_character, only: [:update, :destroy, :act, :reveal, :hide]
-  before_action :set_fight_character, only: [:update, :destroy, :act, :reveal, :hide]
+  before_action :set_shot, only: [:update, :destroy, :act, :reveal, :hide]
 
   def index
     render json: @fight.characters.order(:name)
   end
 
   def act
-    if @fight_character.act!(shot_cost: params[:shots] || 3)
+    if @shot.act!(shot_cost: params[:shots] || 3)
       render json: @character
     else
       render json: @character.errors, status: 400
@@ -19,9 +19,9 @@ class Api::V1::ActorsController < ApplicationController
 
   def add
     @character = current_campaign.characters.find(params[:id])
-    @fight_character = @fight.fight_characters.build(character_id: @character.id, shot: shot_params[:current_shot])
+    @shot = @fight.shots.build(character_id: @character.id, shot: shot_params[:current_shot])
 
-    if @fight_character.save
+    if @shot.save
       render json: @character
     else
       render status: 400
@@ -35,9 +35,9 @@ class Api::V1::ActorsController < ApplicationController
 
   def create
     @character = current_campaign.characters.create!(character_params.merge(user: current_user))
-    @fight_character = @fight.fight_characters.build(character_id: @character.id, shot: shot_params[:current_shot])
+    @shot = @fight.shots.build(character_id: @character.id, shot: shot_params[:current_shot])
 
-    if @fight_character.save
+    if @shot.save
       render json: @character
     else
       render status: 400
@@ -46,7 +46,7 @@ class Api::V1::ActorsController < ApplicationController
 
   def update
     current_shot = shot_params[:current_shot] == "hidden" ? nil : shot_params[:current_shot]
-    @fight_character.update(shot: current_shot) if shot_params[:current_shot]
+    @shot.update(shot: current_shot) if shot_params[:current_shot]
     if @character.update(character_params)
       render json: @character
     else
@@ -55,19 +55,19 @@ class Api::V1::ActorsController < ApplicationController
   end
 
   def reveal
-    @fight_character.update(shot: 0)
+    @shot.update(shot: 0)
 
     render json: @character
   end
 
   def hide
-    @fight_character.update(shot: nil)
+    @shot.update(shot: nil)
 
     render json: @character
   end
 
   def destroy
-    @fight_character.destroy!
+    @shot.destroy!
     render :ok
   end
 
@@ -77,8 +77,8 @@ class Api::V1::ActorsController < ApplicationController
     @character = @fight.characters.find(params[:id])
   end
 
-  def set_fight_character
-    @fight_character = @fight.fight_characters.find_or_create_by(character_id: @character.id)
+  def set_shot
+    @shot = @fight.shots.find_or_create_by(character_id: @character.id)
   end
 
   def set_fight
