@@ -187,8 +187,8 @@ RSpec.describe FightPoster do
       serena_in_fight = fight.shots.create!(character: serena, shot: 14)
       fight.shots.create!(character: thunder_king, shot: 12)
 
-      fight.shots.create!(vehicle: boss_vehicle, shot: 10)
-      fight.shots.create!(vehicle: pc_vehicle, shot: 8)
+      boss_vehicle_in_fight = fight.shots.create!(vehicle: boss_vehicle, shot: 10)
+      pc_vehicle_in_fight = fight.shots.create!(vehicle: pc_vehicle, shot: 8)
       fight.shots.create!(vehicle: mini, shot: 8)
 
       brick_in_other_fight = other_fight.shots.create!(character: brick, shot: 12)
@@ -197,6 +197,9 @@ RSpec.describe FightPoster do
       brick_in_fight.character_effects.create!(:name=>"Blinded", :description=>"", :severity=>"error", :action_value=>"Defense", :change=>"-1")
       brick_in_other_fight.character_effects.create!(:name=>"Effect in Other Fight", :description=>"", :severity=>"error", :action_value=>"Defense", :change=>"-1")
       serena_in_fight.character_effects.create!(name: "Feeling weird")
+
+      boss_vehicle_in_fight.character_effects.create!(:name=>"Bonus", :description=>"Got lucky", :severity=>"info", :action_value=>"Acceleration", :change=>"+1")
+      pc_vehicle_in_fight.character_effects.create!(:name=>"Blinded", :description=>"", :severity=>"error", :action_value=>"Handling", :change=>"-1")
 
       fight.effects.create!(name: "Shadow of the Sniper", description: "+1 Attack", severity: "success", start_sequence: 1, end_sequence: 2, start_shot: 14, end_shot: 14)
       fight.effects.create!(name: "Some effect", description: "", severity: "error", start_sequence: 1, end_sequence: 2, start_shot: 16, end_shot: 16)
@@ -240,6 +243,9 @@ RSpec.describe FightPoster do
  Evader - far
  12 Chase 14 Condition Points
  Acceleration 7 Handling 10 Squeal 12 Frame 8
+  ```diff
+ - Blinded: Handling -1
+ ```
 - **PC Mini**
  Evader - near
  19 Chase 26 Condition Points (1 Impairment)

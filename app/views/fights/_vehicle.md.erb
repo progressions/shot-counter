@@ -12,4 +12,9 @@
    action_value(vehicle, "Frame"),
  ].compact.join(" ")
 %>
+<% if vehicle.effects_for_fight(@fight).any? -%>
+  ```diff
+ <%= vehicle.effects_for_fight(@fight).map { |effect| character_effect(effect) }.join("\n ") %>
+ ```
+<% end -%>
 <% end -%>

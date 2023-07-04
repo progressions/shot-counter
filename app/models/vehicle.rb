@@ -65,6 +65,12 @@ class Vehicle < ApplicationRecord
     "vehicle"
   end
 
+  def effects_for_fight(fight)
+    shots
+      .find_by(fight_id: fight.id)
+      .character_effects
+  end
+
   private
 
   def ensure_faction
