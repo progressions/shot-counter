@@ -77,7 +77,7 @@ RSpec.describe Vehicle, type: :model do
       truck.save
       truck.action_values["Position"] = "Invalid"
       expect(truck).to_not be_valid
-      expect(truck.errors[:base]).to include("Position must be one of Near, Far")
+      expect(truck.errors[:base]).to include("Position must be one of near, far")
     end
 
     it "creates a faction by name" do

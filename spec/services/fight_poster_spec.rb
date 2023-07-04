@@ -173,11 +173,11 @@ RSpec.describe FightPoster do
       # PC
       serena = Character.create!(name: "Serena", action_values: {"Type" => "PC", "MainAttack" => "Sorcery", "FortuneType" => "Magic", "Sorcery" => 14, "Defense" => 13, "Toughness" => 7, "Speed" => 6, "Fortune" => 5, "Max Fortune" => 7, "Wounds" => 39}, campaign_id: action_movie.id, impairments: 2)
       # Boss Vehicle
-      boss_vehicle = Vehicle.create!(name: "Boss Vehicle", action_values: {"Type" => "Boss", "Acceleration" => 7, "Handling" => 10, "Squeal" => 12, "Frame" => 8, "Crunch" => 10, "Condition Points" => 10, "Chase Points" => 24, "Pursuer" => true, "Position" => "Far"}, campaign_id: action_movie.id)
+      boss_vehicle = Vehicle.create!(name: "Boss Vehicle", action_values: {"Type" => "Boss", "Acceleration" => 7, "Handling" => 10, "Squeal" => 12, "Frame" => 8, "Crunch" => 10, "Condition Points" => 10, "Chase Points" => 24, "Pursuer" => true, "Position" => "far"}, campaign_id: action_movie.id)
       # PC Vehicle
-      pc_vehicle = Vehicle.create!(name: "PC Vehicle", action_values: {"Type" => "PC", "Acceleration" => 7, "Handling" => 10, "Squeal" => 12, "Frame" => 8, "Crunch" => 10, "Condition Points" => 14, "Chase Points" => 12, "Pursuer" => false, "Position" => "Far"}, campaign_id: action_movie.id)
+      pc_vehicle = Vehicle.create!(name: "PC Vehicle", action_values: {"Type" => "PC", "Acceleration" => 7, "Handling" => 10, "Squeal" => 12, "Frame" => 8, "Crunch" => 10, "Condition Points" => 14, "Chase Points" => 12, "Pursuer" => false, "Position" => "far"}, campaign_id: action_movie.id)
       # PC Vehicle
-      mini = Vehicle.create!(name: "PC Mini", impairments: 1, action_values: {"Type" => "PC", "Acceleration" => 7, "Handling" => 10, "Squeal" => 12, "Frame" => 8, "Crunch" => 10, "Condition Points" => 26, "Chase Points" => 19, "Pursuer" => false, "Position" => "Near"}, campaign_id: action_movie.id)
+      mini = Vehicle.create!(name: "PC Mini", impairments: 1, action_values: {"Type" => "PC", "Acceleration" => 7, "Handling" => 10, "Squeal" => 12, "Frame" => 8, "Crunch" => 10, "Condition Points" => 26, "Chase Points" => 19, "Pursuer" => false, "Position" => "near"}, campaign_id: action_movie.id)
 
       fight.shots.create!(character: mook, shot: nil)
       fight.shots.create!(character: jawbuster, shot: 10)
@@ -232,16 +232,16 @@ RSpec.describe FightPoster do
  12 Wounds
  Guns 15 Defense 14 Fortune 0/0 Toughness 7 Speed 7
 - **Boss Vehicle**
- Pursuer - Far
+ Pursuer - far
 ## Shot 9
 - **Hitman**
 ## Shot 8
 - **PC Vehicle**
- Evader - Far
+ Evader - far
  12 Chase 14 Condition Points
  Acceleration 7 Handling 10 Squeal 12 Frame 8
 - **PC Mini**
- Evader - Near
+ Evader - near
  19 Chase 26 Condition Points (1 Impairment)
  Acceleration 6* Handling 9* Squeal 11* Frame 7*
       TEXT

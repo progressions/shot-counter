@@ -8,7 +8,7 @@ class Vehicle < ApplicationRecord
     "Condition Points" => 0,
     "Chase Points" => 0,
     "Pursuer" => "true",
-    "Position" => "Far",
+    "Position" => "far",
     "Type" => "PC",
     "Faction" => ""
   }
@@ -22,7 +22,7 @@ class Vehicle < ApplicationRecord
   has_many :memberships
   has_many :parties, through: :memberships
 
-  POSITIONS = ["Near", "Far"]
+  POSITIONS = %w(near far)
 
   before_validation :ensure_default_action_values
   before_validation :ensure_integer_values
