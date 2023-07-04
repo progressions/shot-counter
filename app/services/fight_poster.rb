@@ -43,14 +43,15 @@ TEXT
     end
 
     def show_character(character)
-      @character = character
-      filename = Rails.root.join("app", "views", "fights", "_character.md.erb")
-      ERB.new(filename.read, trim_mode: "-").result(binding)
+      render_partial("character", binding)
     end
 
     def show_vehicle(vehicle)
-      @vehicle = vehicle
-      filename = Rails.root.join("app", "views", "fights", "_vehicle.md.erb")
+      render_partial("vehicle", binding)
+    end
+
+    def render_partial(filename, binding)
+      filename = Rails.root.join("app", "views", "fights", "_#{filename}.md.erb")
       ERB.new(filename.read, trim_mode: "-").result(binding)
     end
 
