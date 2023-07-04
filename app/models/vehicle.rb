@@ -25,6 +25,8 @@ class Vehicle < ApplicationRecord
   before_save :ensure_integer_values
   before_save :ensure_non_integer_values
 
+  validates :name, presence: true, uniqueness: { scope: :campaign_id }
+
   def sort_order
     character_type = action_values.fetch("Type")
     speed = action_values.fetch("Acceleration", 0).to_i - impairments.to_i
