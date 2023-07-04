@@ -141,7 +141,7 @@ RSpec.describe FightPoster do
 - **Ugly Shing**
 - **Jawbuster**
  12 Wounds
- Guns 15 Defense 14 Fortune 0/0 Toughness 7 Speed 7
+ Guns 15 Defense 14 Toughness 7 Speed 7
 ## Shot 9
 - **Hitman**
       TEXT
@@ -230,7 +230,7 @@ RSpec.describe FightPoster do
 - **Ugly Shing**
 - **Jawbuster**
  12 Wounds
- Guns 15 Defense 14 Fortune 0/0 Toughness 7 Speed 7
+ Guns 15 Defense 14 Toughness 7 Speed 7
 - **Boss Vehicle**
  Pursuer - far
 ## Shot 9
