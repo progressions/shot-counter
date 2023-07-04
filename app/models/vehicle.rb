@@ -1,10 +1,4 @@
 class Vehicle < ApplicationRecord
-  has_many :fight_characters, dependent: :destroy
-  has_many :fights, through: :fight_characters
-  belongs_to :user, optional: true
-  belongs_to :campaign
-  has_many :character_effects
-
   DEFAULT_ACTION_VALUES = {
     "Acceleration" => 0,
     "Handling" => 0,
@@ -18,6 +12,12 @@ class Vehicle < ApplicationRecord
     "Type" => "PC",
     "Faction" => ""
   }
+
+  has_many :fight_characters, dependent: :destroy
+  has_many :fights, through: :fight_characters
+  belongs_to :user, optional: true
+  belongs_to :campaign
+  has_many :character_effects
 
   POSITIONS = ["Near", "Far"]
 

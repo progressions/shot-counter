@@ -86,12 +86,6 @@ class Character < ApplicationRecord
   before_save :ensure_non_integer_values
   before_save :ensure_faction
 
-  def act!(fight:, shot_cost: Fight::DEFAULT_SHOT_COUNT)
-    self.current_shot ||= 0
-    self.current_shot -= shot_cost.to_i
-    save!
-  end
-
   def as_json(args={})
     {
       id: id,
@@ -147,15 +141,6 @@ class Character < ApplicationRecord
   end
 
   private
-
-  def validate_schticks
-    self.schticks ||= []
-    self.schticks.each do |schtick|
-      if schtick[:name].blank?
-        errors.add(:schticks, "must have a name")
-      end
-    end
-  end
 
   def ensure_faction
     if action_values.fetch("Faction").present?
