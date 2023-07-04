@@ -17,8 +17,9 @@ class Api::V1::CharactersAndVehiclesController < ApplicationController
 
     # Make this query once rather than repeating it for each action_value we're trying to pluck.
     @action_values = @characters.select(:id, :user_id, Arel.sql("action_values->'Archetype' as archetype"))
-    @factions = @characters.map(&:faction).uniq.reject(&:blank?).sort
     @archetypes = @action_values.map(&:archetype).uniq.reject(&:blank?).sort
+
+    @factions = current_campaign.factions.joins(:characters).where(characters: @characters).order("factions.name")
 
     if params[:fight_id]
       @characters = @characters.where.not(id: FightCharacter.where(fight_id: params[:fight_id]).pluck(:character_id))
@@ -27,7 +28,7 @@ class Api::V1::CharactersAndVehiclesController < ApplicationController
       @characters = @characters.where(active: true)
     end
     if params[:faction].present?
-      @characters = @characters.where("action_values->'Faction' = ?", params[:faction].to_json)
+      @characters = @characters.joins(:faction).where("factions.name ILIKE ?", "%#{params[:faction]}%")
     end
     if params[:archetype].present?
       @characters = @characters.where("action_values->'Archetype' = ?", params[:archetype].to_json)
