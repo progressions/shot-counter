@@ -80,6 +80,13 @@ RSpec.describe "Api::V1::CharactersAndVehicles", type: :request do
       expect(body["characters"].map { |c| c["name"] }).to eq(["Brick Manly", "Speedboat"])
     end
 
+    it "filters characters by faction_id" do
+      get "/api/v1/characters_and_vehicles?faction_id=#{@good_guys[:id]}", headers: @headers
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["characters"].map { |c| c["name"] }).to eq(["Brick Manly"])
+    end
+
     it "filters characters by search string matching name" do
       get "/api/v1/characters_and_vehicles?search=Brick", headers: @headers
       expect(response).to have_http_status(:success)

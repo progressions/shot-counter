@@ -30,6 +30,9 @@ class Api::V1::CharactersAndVehiclesController < ApplicationController
     if params[:faction].present?
       @characters = @characters.joins(:faction).where("factions.name ILIKE ?", "%#{params[:faction]}%")
     end
+    if params[:faction_id].present?
+      @characters = @characters.where(faction_id: params[:faction_id])
+    end
     if params[:archetype].present?
       @characters = @characters.where("action_values->'Archetype' = ?", params[:archetype].to_json)
     end
@@ -52,6 +55,9 @@ class Api::V1::CharactersAndVehiclesController < ApplicationController
     end
     if params[:faction].present?
       @vehicles = @vehicles.joins(:faction).where("factions.name ILIKE ?", "%#{params[:faction]}%")
+    end
+    if params[:faction_id].present?
+      @vehicles = @vehicles.where(faction_id: params[:faction_id])
     end
     if params[:archetype].present?
       @vehicles = @vehicles.where("action_values->'Archetype' = ?", params[:archetype].to_json)

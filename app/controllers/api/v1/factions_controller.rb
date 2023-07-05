@@ -7,7 +7,7 @@ class Api::V1::FactionsController < ApplicationController
       .factions
       .order(:name)
 
-    render json: @factions.map(&:name)
+    render json: @factions
   end
 
 end
