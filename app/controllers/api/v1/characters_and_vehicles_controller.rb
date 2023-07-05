@@ -51,7 +51,7 @@ class Api::V1::CharactersAndVehiclesController < ApplicationController
       @characters = @characters.where(active: true)
     end
     if params[:faction].present?
-      @vehicles = @vehicles.where("action_values->'Faction' = ?", params[:faction].to_json)
+      @vehicles = @vehicles.joins(:faction).where("factions.name ILIKE ?", "%#{params[:faction]}%")
     end
     if params[:archetype].present?
       @vehicles = @vehicles.where("action_values->'Archetype' = ?", params[:archetype].to_json)

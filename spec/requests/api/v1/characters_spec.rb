@@ -8,6 +8,7 @@ RSpec.describe "Api::V1::Characters", type: :request do
     @brick = Character.create!(name: "Brick Manly", action_values: { "Type" => "PC" }, campaign_id: @campaign.id)
     @boss = Character.create!(name: "Ugly Shing", action_values: { "Type" => "Boss" }, campaign_id: @campaign.id)
     @headers = Devise::JWT::TestHelpers.auth_headers({}, @gamemaster)
+    @dragons = @campaign.factions.create!(name: "The Dragons")
     set_current_campaign(@gamemaster, @campaign)
   end
 
@@ -22,11 +23,11 @@ RSpec.describe "Api::V1::Characters", type: :request do
 
   describe "POST /create" do
     it "creates a character" do
-      post "/api/v1/characters", params: { character: { name: "Serena Tessaro", action_values: { "Type" => "PC", "Faction" => "The Dragons" } } }, headers: @headers
+      post "/api/v1/characters", params: { character: { name: "Serena Tessaro", faction_id: @dragons.id, action_values: { "Type" => "PC" } } }, headers: @headers
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
       expect(body["name"]).to eq("Serena Tessaro")
-      expect(body["action_values"]["Faction"]).to eq("The Dragons")
+      expect(body["faction"]["name"]).to eq("The Dragons")
       character = Character.find(body["id"])
       expect(character.faction.name).to eq("The Dragons")
     end
@@ -50,19 +51,19 @@ RSpec.describe "Api::V1::Characters", type: :request do
     end
 
     it "updates a character's faction" do
-      put "/api/v1/characters/#{@brick[:id]}", params: { character: { action_values: { "Faction" => "The Dragons" } } }, headers: @headers
+      put "/api/v1/characters/#{@brick[:id]}", params: { character: { faction_id: @dragons.id } }, headers: @headers
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
-      expect(body["action_values"]["Faction"]).to eq("The Dragons")
+      expect(body["faction"]["name"]).to eq("The Dragons")
       character = Character.find(body["id"])
       expect(character.faction.name).to eq("The Dragons")
     end
 
     it "removes a character's faction" do
-      put "/api/v1/characters/#{@boss[:id]}", params: { character: { action_values: { "Faction" => "" } } }, headers: @headers
+      put "/api/v1/characters/#{@boss[:id]}", params: { character: { faction_id: nil } }, headers: @headers
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
-      expect(body["action_values"]["Faction"]).to eq(nil)
+      expect(body["faction"]).to eq(nil)
       character = Character.find(body["id"])
       expect(character.faction).to eq(nil)
     end

@@ -20,7 +20,6 @@ class Character < ApplicationRecord
     "Marks of Death" => 0,
     "Archetype" => "",
     "Damage" => 0,
-    "Faction" => ""
   }
   CHARACTER_TYPES=[
     "PC",
@@ -77,14 +76,15 @@ class Character < ApplicationRecord
   has_many :attunements
   has_many :sites, through: :attunements
 
-  validates :name, presence: true, uniqueness: { scope: :campaign_id, message: "must be unique" }
+  accepts_nested_attributes_for :faction
 
   before_save :ensure_default_action_values
   before_save :ensure_default_description
   before_save :ensure_default_skills
   before_save :ensure_integer_values
   before_save :ensure_non_integer_values
-  before_save :ensure_faction
+
+  validates :name, presence: true, uniqueness: { scope: :campaign_id }
 
   def as_json(args={})
     {
@@ -94,7 +94,7 @@ class Character < ApplicationRecord
       created_at: created_at,
       updated_at: updated_at,
       user: user,
-      action_values: action_values.merge("Faction" => faction&.name),
+      action_values: action_values,
       faction: faction,
       description: description,
       schticks: schticks.includes(:prerequisite).order(:category, :path, :name),
@@ -145,14 +145,6 @@ class Character < ApplicationRecord
   end
 
   private
-
-  def ensure_faction
-    if action_values.fetch("Faction").present?
-      self.faction = self.campaign.factions.find_or_create_by(name: action_values.fetch("Faction"))
-    else
-      self.faction = nil
-    end
-  end
 
   def ensure_default_action_values
     self.action_values ||= {}

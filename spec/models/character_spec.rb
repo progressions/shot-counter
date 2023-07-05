@@ -110,19 +110,6 @@ RSpec.describe Character, type: :model do
       expect(brick).to_not be_valid
       expect(brick.errors[:schticks]).to include("is invalid")
     end
-
-    it "creates a faction by name" do
-      brick.action_values["Faction"] = "Rogues"
-      brick.save!
-      expect(brick.faction.name).to eq("Rogues")
-    end
-
-    it "finds a faction by name" do
-      rogues = action_movie.factions.create!(name: "Rogues")
-      brick.action_values["Faction"] = "Rogues"
-      brick.save!
-      expect(brick.faction).to eq(rogues)
-    end
   end
 
   describe "instance methods" do
