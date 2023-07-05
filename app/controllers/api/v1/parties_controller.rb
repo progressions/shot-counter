@@ -6,14 +6,14 @@ class Api::V1::PartiesController < ApplicationController
   def index
     @parties = current_campaign.parties
 
+    @factions = current_campaign.factions.joins(:parties).where(parties: @parties).order("factions.name").distinct
+
     if params[:search].present?
       @parties = @parties.where("name ILIKE ?", "%#{params[:search]}%")
     end
     if params[:faction_id].present?
       @parties = @parties.where(faction_id: params[:faction_id])
     end
-
-    @factions = current_campaign.factions.joins(:parties).where(parties: @parties).order("factions.name").distinct
 
     @parties = paginate(@parties, per_page: (params[:per_page] || 50), page: (params[:page] || 1))
 

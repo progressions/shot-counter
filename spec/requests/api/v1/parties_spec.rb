@@ -11,7 +11,8 @@ RSpec.describe "Api::V1::Parties", type: :request do
   let!(:party) { Party.create!(name: "The Party", campaign: action_movie) }
   let!(:gang) { Party.create!(name: "The Gang", campaign: action_movie) }
   let!(:crew) { Party.create!(name: "The Pirate Crew", campaign: pirates) }
-  let(:dragons) { Faction.create!(name: "The Dragons", campaign: action_movie) }
+  let!(:dragons) { Faction.create!(name: "The Dragons", campaign: action_movie) }
+  let!(:ascended) { Faction.create!(name: "Ascended", campaign: action_movie) }
   let(:headers) { Devise::JWT::TestHelpers.auth_headers({}, user) }
 
   before(:each) do
@@ -45,13 +46,15 @@ RSpec.describe "Api::V1::Parties", type: :request do
       expect(body["parties"][0]["name"]).to eq("The Party")
     end
 
-    it "returns factions for selected parties" do
+    it "returns factions for parties" do
+      gang.faction = ascended
+      gang.save!
       party.faction = dragons
       party.save!
       get "/api/v1/parties", headers: headers
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
-      expect(body["factions"][0]["name"]).to eq("The Dragons")
+      expect(body["factions"].map { |f| f["name"] }).to eq(["Ascended", "The Dragons"])
     end
   end
 
