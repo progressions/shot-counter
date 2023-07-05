@@ -6,6 +6,7 @@ RSpec.describe "Api::V1::Sites", type: :request do
   let(:brick) { Character.create!(name: "Brick Manly", campaign: action_movie) }
   let(:headers) { Devise::JWT::TestHelpers.auth_headers({}, user) }
   let!(:site) { Site.create!(name: "The Site", campaign: action_movie) }
+  let(:dragons) { Faction.create!(name: "The Dragons", campaign: action_movie) }
   let!(:baseball_field) { Site.create!(name: "Baseball Field", campaign: action_movie) }
 
   before(:each) do
@@ -40,20 +41,36 @@ RSpec.describe "Api::V1::Sites", type: :request do
   end
 
   describe "POST /create" do
-    it "returns http success" do
+    it "creates a site" do
       post "/api/v1/sites", params: { site: { name: "The Site" } }, headers: headers
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
       expect(body["name"]).to eq("The Site")
     end
+
+    it "creates a site with a faction" do
+      post "/api/v1/sites", params: { site: { name: "The Site", faction_id: dragons.id } }, headers: headers
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["name"]).to eq("The Site")
+      expect(body["faction"]["name"]).to eq(dragons.name)
+    end
   end
 
   describe "PUT /update" do
-    it "returns http success" do
+    it "updates a site" do
       put "/api/v1/sites/#{site.id}", params: { site: { name: "The Best Site" } }, headers: headers
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
       expect(body["name"]).to eq("The Best Site")
+    end
+
+    it "adds a faction to a site" do
+      put "/api/v1/sites/#{site.id}", params: { site: { faction_id: dragons.id } }, headers: headers
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["name"]).to eq("The Site")
+      expect(body["faction"]["name"]).to eq(dragons.name)
     end
   end
 

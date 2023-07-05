@@ -10,7 +10,7 @@ class Party < ApplicationRecord
       id: id,
       name: name,
       description: description,
-      faction: faction&.as_json,
+      faction: faction,
       characters: characters.map { |character|
         {
           id: character.id,
