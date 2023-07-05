@@ -11,6 +11,7 @@ RSpec.describe "Api::V1::Parties", type: :request do
   let!(:party) { Party.create!(name: "The Party", campaign: action_movie) }
   let!(:gang) { Party.create!(name: "The Gang", campaign: action_movie) }
   let!(:crew) { Party.create!(name: "The Pirate Crew", campaign: pirates) }
+  let(:dragons) { Faction.create!(name: "The Dragons", campaign: action_movie) }
   let(:headers) { Devise::JWT::TestHelpers.auth_headers({}, user) }
 
   before(:each) do
@@ -57,6 +58,14 @@ RSpec.describe "Api::V1::Parties", type: :request do
       expect(fight.characters.reload).to include(brick, serena)
       expect(fight.shot_order).to eq([[5, [brick, serena]]])
     end
+
+    it "creates a party with a faction" do
+      post "/api/v1/parties", params: { party: { name: "The Dragons", faction_id: dragons.id } }, headers: headers
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["name"]).to eq("The Dragons")
+      expect(body["faction"]["name"]).to eq("The Dragons")
+    end
   end
 
   describe "GET /show" do
@@ -85,6 +94,13 @@ RSpec.describe "Api::V1::Parties", type: :request do
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
       expect(body["name"]).to eq("The Dragons")
+    end
+
+    it "adds a faction" do
+      put "/api/v1/parties/#{party.id}", params: { party: { faction_id: dragons.id } }, headers: headers
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["faction"]["name"]).to eq("The Dragons")
     end
   end
 

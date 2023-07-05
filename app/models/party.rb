@@ -2,6 +2,7 @@ class Party < ApplicationRecord
   has_many :memberships, dependent: :destroy
   has_many :characters, through: :memberships
   has_many :vehicles, through: :memberships
+  belongs_to :faction, optional: true
   belongs_to :campaign
 
   def as_json(options = {})
@@ -9,6 +10,7 @@ class Party < ApplicationRecord
       id: id,
       name: name,
       description: description,
+      faction: faction&.as_json,
       characters: characters.map { |character|
         {
           id: character.id,

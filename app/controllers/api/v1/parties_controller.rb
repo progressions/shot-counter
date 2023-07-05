@@ -66,6 +66,6 @@ class Api::V1::PartiesController < ApplicationController
   end
 
   def party_params
-    params.require(:party).permit(:name, :description)
+    params.require(:party).permit(:name, :description, :faction_id)
   end
 end
