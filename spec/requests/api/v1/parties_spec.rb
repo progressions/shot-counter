@@ -34,6 +34,15 @@ RSpec.describe "Api::V1::Parties", type: :request do
       expect(body["parties"].length).to eq(1)
       expect(body["parties"][0]["name"]).to eq("The Gang")
     end
+
+    it "returns factions for selected parties" do
+      party.faction = dragons
+      party.save!
+      get "/api/v1/parties", headers: headers
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["factions"][0]["name"]).to eq("The Dragons")
+    end
   end
 
   describe "POST /fight" do

@@ -10,10 +10,13 @@ class Api::V1::PartiesController < ApplicationController
       @parties = @parties.where("name ILIKE ?", "%#{params[:search]}%")
     end
 
+    @factions = current_campaign.factions.joins(:parties).where(parties: @parties).order("factions.name").distinct
+
     @parties = paginate(@parties, per_page: (params[:per_page] || 50), page: (params[:page] || 1))
 
     render json: {
       parties: @parties,
+      factions: @factions,
       meta: pagination_meta(@parties),
     }
   end
