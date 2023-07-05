@@ -4,6 +4,7 @@ RSpec.describe "Vehicles", type: :request do
   let!(:user) { User.create!(email: "email@example.com", confirmed_at: Time.now, gamemaster: true) }
   let!(:action_movie) { user.campaigns.create!(name: "Action Movie") }
   let(:brick) { Character.create!(name: "Brick Manly", campaign: action_movie) }
+  let(:dragons) { action_movie.factions.create!(name: "Dragons") }
   let(:headers) { Devise::JWT::TestHelpers.auth_headers({}, user) }
 
   context "with a gamemaster" do
@@ -31,6 +32,16 @@ RSpec.describe "Vehicles", type: :request do
         body = JSON.parse(response.body)
         expect(body["name"]).to eq("Delorean")
       end
+
+      it "creates a vehicle with a faction" do
+        expect {
+          post "/api/v1/vehicles", params: { vehicle: { name: "Delorean", faction_id: dragons.id } }, headers: headers
+        }.to change { Vehicle.count }.by(1)
+        expect(response).to have_http_status(:success)
+        body = JSON.parse(response.body)
+        expect(body["name"]).to eq("Delorean")
+        expect(body["faction"]["name"]).to eq("Dragons")
+      end
     end
 
     describe "GET /show" do
@@ -48,6 +59,13 @@ RSpec.describe "Vehicles", type: :request do
         expect(response).to have_http_status(:success)
         body = JSON.parse(response.body)
         expect(body["name"]).to eq("Batmobile 2.0")
+      end
+
+      it "adds a faction" do
+        patch "/api/v1/vehicles/#{vehicle.id}", params: { vehicle: { faction_id: dragons.id } }, headers: headers
+        expect(response).to have_http_status(:success)
+        body = JSON.parse(response.body)
+        expect(body["faction"]["name"]).to eq("Dragons")
       end
     end
 

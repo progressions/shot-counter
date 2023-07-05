@@ -10,7 +10,6 @@ class Vehicle < ApplicationRecord
     "Pursuer" => "true",
     "Position" => "far",
     "Type" => "PC",
-    "Faction" => ""
   }
 
   has_many :shots, dependent: :destroy
@@ -27,8 +26,6 @@ class Vehicle < ApplicationRecord
   before_validation :ensure_default_action_values
   before_validation :ensure_integer_values
   before_validation :ensure_non_integer_values
-  # before_validation :validate_position
-  before_validation :ensure_faction
 
   validates :name, presence: true, uniqueness: { scope: :campaign_id }
 
@@ -38,6 +35,8 @@ class Vehicle < ApplicationRecord
       name: name,
       active: active,
       created_at: created_at,
+      faction_id: faction_id,
+      faction: { name: faction&.name },
       updated_at: updated_at,
       user: user,
       action_values: action_values,
@@ -72,14 +71,6 @@ class Vehicle < ApplicationRecord
   end
 
   private
-
-  def ensure_faction
-    if action_values.fetch("Faction").present?
-      self.faction = self.campaign.factions.find_or_create_by(name: action_values.fetch("Faction"))
-    else
-      self.faction = nil
-    end
-  end
 
   def ensure_default_action_values
     self.action_values ||= {}

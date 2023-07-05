@@ -4,6 +4,7 @@ RSpec.describe Vehicle, type: :model do
   before(:each) do
     @user = User.create!(email: "email@example.com")
     @action_movie = @user.campaigns.create!(name: "Action Movie")
+    @rogues = @action_movie.factions.create!(name: "Rogues")
   end
 
   it "sets default action values" do
@@ -51,6 +52,11 @@ RSpec.describe Vehicle, type: :model do
       party.vehicles << truck
       expect(truck.parties).to include(party)
     end
+
+    it "has a faction" do
+      truck = Vehicle.create!(name: "Truck", campaign_id: @action_movie.id, faction_id: @rogues.id)
+      expect(truck.faction).to eq(@rogues)
+    end
   end
 
   describe "validations" do
@@ -70,29 +76,6 @@ RSpec.describe Vehicle, type: :model do
       truck = Vehicle.new(name: "Truck", campaign_id: @action_movie.id)
       expect(truck).to be_valid
       expect(truck.errors[:user]).to be_empty
-    end
-
-    xit "requires valid position" do
-      truck = Vehicle.new(name: "Truck", campaign_id: @action_movie.id)
-      truck.save
-      truck.action_values["Position"] = "Invalid"
-      expect(truck).to_not be_valid
-      expect(truck.errors[:base]).to include("Position must be one of near, far")
-    end
-
-    it "creates a faction by name" do
-      truck = Vehicle.create!(name: "Truck", campaign_id: @action_movie.id)
-      truck.action_values["Faction"] = "Rogues"
-      truck.save!
-      expect(truck.faction.name).to eq("Rogues")
-    end
-
-    it "finds a faction by name" do
-      truck = Vehicle.create!(name: "Truck", campaign_id: @action_movie.id)
-      rogues = @action_movie.factions.create!(name: "Rogues")
-      truck.action_values["Faction"] = "Rogues"
-      truck.save!
-      expect(truck.faction).to eq(rogues)
     end
   end
 end

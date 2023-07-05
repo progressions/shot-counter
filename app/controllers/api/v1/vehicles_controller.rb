@@ -53,7 +53,7 @@ class Api::V1::VehiclesController < ApplicationController
   end
 
   def vehicle_params
-    params.require(:vehicle).permit(:name, :defense, :impairments, :color, :user_id, :active, action_values: Vehicle::DEFAULT_ACTION_VALUES.keys)
+    params.require(:vehicle).permit(:name, :faction_id, :defense, :impairments, :color, :user_id, :active, action_values: Vehicle::DEFAULT_ACTION_VALUES.keys)
   end
 
 end
