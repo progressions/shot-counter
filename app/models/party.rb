@@ -5,6 +5,8 @@ class Party < ApplicationRecord
   belongs_to :faction, optional: true
   belongs_to :campaign
 
+  validates :name, presence: true, uniqueness: { scope: :campaign_id }
+
   def as_json(options = {})
     {
       id: id,
