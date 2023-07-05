@@ -5,8 +5,15 @@ class Api::V1::SitesController < ApplicationController
   def index
     @sites = current_campaign.sites
 
+    @factions = current_campaign.factions.joins(:sites).where(sites: @sites).order("factions.name").distinct
+
+    if params[:search].present?
+      @sites = @sites.where("name ILIKE ?", "%#{params[:search]}%")
+    end
+    if params[:faction_id].present?
+      @sites = @sites.where(faction_id: params[:faction_id])
+    end
     if params[:character_id].present?
-      @sites = current_campaign.sites
       @site_ids = Attunement.where(site_id: @sites).where(character_id: params[:character_id]).pluck(:site_id)
       @sites = @sites.where.not(id: @site_ids)
     end
@@ -15,6 +22,7 @@ class Api::V1::SitesController < ApplicationController
 
     render json: {
       sites: @sites,
+      factions: @factions,
       meta: pagination_meta(@sites),
     }
   end

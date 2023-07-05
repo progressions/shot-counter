@@ -7,6 +7,7 @@ RSpec.describe "Api::V1::Sites", type: :request do
   let(:headers) { Devise::JWT::TestHelpers.auth_headers({}, user) }
   let!(:site) { Site.create!(name: "The Site", campaign: action_movie) }
   let(:dragons) { Faction.create!(name: "The Dragons", campaign: action_movie) }
+  let!(:ascended) { Faction.create!(name: "Ascended", campaign: action_movie) }
   let!(:baseball_field) { Site.create!(name: "Baseball Field", campaign: action_movie) }
 
   before(:each) do
@@ -28,6 +29,30 @@ RSpec.describe "Api::V1::Sites", type: :request do
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
       expect(body["sites"].length).to eq(1)
+    end
+
+    it "returns sites matching a search string" do
+      get "/api/v1/sites", headers: headers, params: { search: "Baseball" }
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["sites"][0]["name"]).to eq("Baseball Field")
+    end
+
+    it "returns sites by faction_id" do
+      site.update(faction: dragons)
+      get "/api/v1/sites", headers: headers, params: { faction_id: dragons.id }
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["sites"].map { |s| s["name"] }).to eq(["The Site"])
+    end
+
+    it "returns factions" do
+      site.update(faction: dragons)
+      baseball_field.update(faction: ascended)
+      get "/api/v1/sites", headers: headers
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["factions"].map { |f| f["name"] }).to eq(["Ascended", "The Dragons"])
     end
   end
 
