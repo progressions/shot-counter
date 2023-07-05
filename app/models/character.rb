@@ -95,7 +95,10 @@ class Character < ApplicationRecord
       updated_at: updated_at,
       user: user,
       action_values: action_values,
-      faction: faction,
+      faction_id: faction_id,
+      faction: {
+        name: faction&.name,
+      },
       description: description,
       schticks: schticks.includes(:prerequisite).order(:category, :path, :name),
       skills: skills.sort_by { |key, value| [(DEFAULT_SKILLS.keys.include?(key) ? 0 : 1), key] }.to_h,

@@ -5,6 +5,7 @@ RSpec.describe Character, type: :model do
   let!(:action_movie) { user.campaigns.create!(name: "Action Movie") }
   let(:brick) { user.characters.create!(name: "Brick Manly", campaign: action_movie) }
   let(:fight) { action_movie.fights.create!(name: "Big Brawl") }
+  let(:dragons) { action_movie.factions.create!(name: "Dragons") }
 
   describe "associations" do
     it "belongs to a user" do

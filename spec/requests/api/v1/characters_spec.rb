@@ -63,7 +63,8 @@ RSpec.describe "Api::V1::Characters", type: :request do
       put "/api/v1/characters/#{@boss[:id]}", params: { character: { faction_id: nil } }, headers: @headers
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
-      expect(body["faction"]).to eq(nil)
+      expect(body["faction_id"]).to eq(nil)
+      expect(body["faction"]["name"]).to eq(nil)
       character = Character.find(body["id"])
       expect(character.faction).to eq(nil)
     end
