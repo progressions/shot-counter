@@ -25,7 +25,7 @@ RSpec.describe "Api::V1::Parties", type: :request do
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
       expect(body["parties"].length).to eq(2)
-      expect(body["parties"][0]["name"]).to eq("The Party")
+      expect(body["parties"].map { |p| p["name"] }).to eq(["The Gang", "The Party"])
     end
 
     it "returns parties matching a search string" do
