@@ -22,7 +22,7 @@ RSpec.describe Party, type: :model do
     end
 
     it "requires a unique name within a campaign" do
-      party2 = Party.new(name: "The Party", campaign: action_movie)
+      party2 = Party.new(name: party.name, campaign: action_movie)
       expect(party2).to_not be_valid
     end
   end
