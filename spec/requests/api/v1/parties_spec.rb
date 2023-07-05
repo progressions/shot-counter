@@ -35,6 +35,16 @@ RSpec.describe "Api::V1::Parties", type: :request do
       expect(body["parties"][0]["name"]).to eq("The Gang")
     end
 
+    it "returns parties by faction_id" do
+      party.faction = dragons
+      party.save!
+      get "/api/v1/parties?faction_id=#{dragons.id}", headers: headers
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["parties"].length).to eq(1)
+      expect(body["parties"][0]["name"]).to eq("The Party")
+    end
+
     it "returns factions for selected parties" do
       party.faction = dragons
       party.save!

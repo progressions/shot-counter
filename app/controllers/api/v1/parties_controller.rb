@@ -9,6 +9,9 @@ class Api::V1::PartiesController < ApplicationController
     if params[:search].present?
       @parties = @parties.where("name ILIKE ?", "%#{params[:search]}%")
     end
+    if params[:faction_id].present?
+      @parties = @parties.where(faction_id: params[:faction_id])
+    end
 
     @factions = current_campaign.factions.joins(:parties).where(parties: @parties).order("factions.name").distinct
 
