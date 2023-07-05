@@ -3,7 +3,7 @@ class Api::V1::SitesController < ApplicationController
   before_action :require_current_campaign
 
   def index
-    @sites = current_campaign.sites
+    @sites = current_campaign.sites.order(:name)
 
     @factions = current_campaign.factions.joins(:sites).where(sites: @sites).order("factions.name").distinct
 

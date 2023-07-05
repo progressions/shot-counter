@@ -19,7 +19,7 @@ RSpec.describe "Api::V1::Sites", type: :request do
       get "/api/v1/sites", headers: headers
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
-      expect(body["sites"][0]["name"]).to eq("The Site")
+      expect(body["sites"].map { |s| s["name"] }).to eq(["Baseball Field", "The Site"])
     end
 
     it "returns all sites that are not the current character's site" do
