@@ -17,12 +17,14 @@ class Party < ApplicationRecord
         {
           id: character.id,
           name: character.name,
+          category: "character",
         }
       },
       vehicles: vehicles.map { |vehicle|
         {
           id: vehicle.id,
           name: vehicle.name,
+          category: "vehicle",
         }
       },
     }
