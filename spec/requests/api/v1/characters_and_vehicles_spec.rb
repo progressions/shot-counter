@@ -26,7 +26,7 @@ RSpec.describe "Api::V1::CharactersAndVehicles", type: :request do
       get "/api/v1/characters_and_vehicles", headers: @headers
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
-      expect(body["factions"]).to eq(["The Bad Guys", "The Good Guys"])
+      expect(body["factions"].map { |f| f["name"] }).to eq(["The Bad Guys", "The Good Guys"])
     end
 
     it "gets archetypes for characters" do
