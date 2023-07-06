@@ -10,10 +10,10 @@
 ## Shot <%= shot %>
 <% characters.each do |character| -%>
 <% if character.category == "vehicle" -%>
-<%= show_vehicle(character) -%>
+<%= show_vehicle(character, @fight) -%>
 <% end -%>
 <% if character.category == "character" -%>
-<%= show_character(character) -%>
+<%= show_character(character, @fight) -%>
 <% end -%>
 <% end -%>
 <% end -%>

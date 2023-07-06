@@ -42,11 +42,11 @@ TEXT
       ERB.new(filename.read, trim_mode: "-").result(binding)
     end
 
-    def show_character(character)
+    def show_character(character, fight)
       render_partial("character", binding)
     end
 
-    def show_vehicle(vehicle)
+    def show_vehicle(vehicle, fight)
       render_partial("vehicle", binding)
     end
 
@@ -118,5 +118,18 @@ TEXT
       "#{status}#{name}#{description} (until sequence #{effect.end_sequence}, shot #{effect.end_shot})"
     end
 
+    def character_location(character, fight)
+      @location = fight.shots.find_by(character_id: character.id).locations.first
+      if @location
+        " (#{@location.name})"
+      end
+    end
+
+    def vehicle_location(vehicle, fight)
+      @location = fight.shots.find_by(vehicle_id: vehicle.id).locations.first
+      if @location
+        " (#{@location.name})"
+      end
+    end
   end
 end

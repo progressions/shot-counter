@@ -187,9 +187,13 @@ RSpec.describe FightPoster do
       serena_in_fight = fight.shots.create!(character: serena, shot: 14)
       fight.shots.create!(character: thunder_king, shot: 12)
 
+      brick_in_fight.locations.create!(name: "Control Room")
+
       boss_vehicle_in_fight = fight.shots.create!(vehicle: boss_vehicle, shot: 10)
       pc_vehicle_in_fight = fight.shots.create!(vehicle: pc_vehicle, shot: 8)
       fight.shots.create!(vehicle: mini, shot: 8)
+
+      pc_vehicle_in_fight.locations.create!(name: "Highway")
 
       brick_in_other_fight = other_fight.shots.create!(character: brick, shot: 12)
 
@@ -223,7 +227,7 @@ RSpec.describe FightPoster do
  ```
 ## Shot 12
 - **Thunder King**
-- **Brick Manly**
+- **Brick Manly** (Control Room)
  Guns 15 Defense 14 Fortune 7/7 Toughness 7 Speed 7
   ```diff
  Bonus: (Got lucky) Guns +1
@@ -239,7 +243,7 @@ RSpec.describe FightPoster do
 ## Shot 9
 - **Hitman**
 ## Shot 8
-- **PC Vehicle**
+- **PC Vehicle** (Highway)
  Evader - far
  12 Chase 14 Condition Points
  Acceleration 7 Handling 10 Squeal 12 Frame 8
