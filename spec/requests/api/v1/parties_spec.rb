@@ -102,11 +102,11 @@ RSpec.describe "Api::V1::Parties", type: :request do
   describe "POST /create" do
     it "creates a party" do
       expect {
-        post "/api/v1/parties", params: { party: { name: "The Party" } }, headers: headers
+        post "/api/v1/parties", params: { party: { name: "The Group" } }, headers: headers
       }.to change { Party.count }.by(1)
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
-      expect(body["name"]).to eq("The Party")
+      expect(body["name"]).to eq("The Group")
     end
   end
 
