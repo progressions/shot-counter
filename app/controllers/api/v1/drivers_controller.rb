@@ -2,15 +2,15 @@ class Api::V1::DriversController < ApplicationController
   before_action :authenticate_user!
   before_action :require_current_campaign
   before_action :set_fight
-  before_action :set_vehicle, only: [:update, :destroy, :act]
-  before_action :set_fight_vehicle, only: [:update, :destroy, :act]
+  before_action :set_vehicle, only: [:update, :destroy, :act, :reveal, :hide]
+  before_action :set_shot, only: [:update, :destroy, :act, :reveal, :hide]
 
   def index
     render json: @fight.vehicles
   end
 
   def act
-    if @fight_vehicle.act!(shot_cost: params[:shots] || 3)
+    if @shot.act!(shot_cost: params[:shots] || 3)
       render json: @vehicle
     else
       render json: @vehicle.errors, status: 400
@@ -19,9 +19,9 @@ class Api::V1::DriversController < ApplicationController
 
   def add
     @vehicle = current_campaign.vehicles.find(params[:id])
-    @fight_vehicle = @fight.shots.build(vehicle_id: @vehicle.id, shot: shot_params[:current_shot])
+    @shot = @fight.shots.build(vehicle_id: @vehicle.id, shot: shot_params[:current_shot])
 
-    if @fight_vehicle.save
+    if @shot.save
       render json: @vehicle
     else
       render status: 400
@@ -35,9 +35,9 @@ class Api::V1::DriversController < ApplicationController
 
   def create
     @vehicle = current_campaign.vehicles.create!(vehicle_params.merge(user: current_user))
-    @fight_vehicle = @fight.shots.build(vehicle_id: @vehicle.id, shot: shot_params[:current_shot])
+    @shot = @fight.shots.build(vehicle_id: @vehicle.id, shot: shot_params[:current_shot])
 
-    if @fight_vehicle.save
+    if @shot.save
       render json: @vehicle
     else
       render status: 400
@@ -45,7 +45,7 @@ class Api::V1::DriversController < ApplicationController
   end
 
   def update
-    @fight_vehicle.update(shot: shot_params[:current_shot]) if shot_params[:current_shot]
+    @shot.update(shot: shot_params[:current_shot]) if shot_params[:current_shot]
     if @vehicle.update(vehicle_params)
       render json: @vehicle
     else
@@ -53,8 +53,20 @@ class Api::V1::DriversController < ApplicationController
     end
   end
 
+  def reveal
+    @shot.update(shot: 0)
+
+    render json: @vehicle
+  end
+
+  def hide
+    @shot.update(shot: nil)
+
+    render json: @vehicle
+  end
+
   def destroy
-    @fight_vehicle.destroy!
+    @shot.destroy!
     render :ok
   end
 
@@ -64,8 +76,8 @@ class Api::V1::DriversController < ApplicationController
     @vehicle = @fight.vehicles.find(params[:id])
   end
 
-  def set_fight_vehicle
-    @fight_vehicle = @fight.shots.find_or_create_by(vehicle_id: @vehicle.id)
+  def set_shot
+    @shot = @fight.shots.find_or_create_by(vehicle_id: @vehicle.id)
   end
 
   def set_fight

@@ -47,6 +47,8 @@ Rails.application.routes.draw do
           member do
             patch :act
             post :add
+            patch :hide
+            patch :reveal
           end
         end
         resources :actors do
