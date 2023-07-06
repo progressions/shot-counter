@@ -6,6 +6,7 @@ RSpec.describe "Fights", type: :request do
     @campaign = @gamemaster.campaigns.create!(name: "Adventure")
     @fight = @campaign.fights.create!(name: "Big Brawl")
     @brick = Character.create!(name: "Brick Manly", action_values: { "Type" => "PC" }, campaign_id: @campaign.id)
+    @truck = Vehicle.create!(name: "Truck", action_values: { "Acceleration" => "7" }, campaign_id: @campaign.id)
     @boss = Character.create!(name: "Ugly Shing", action_values: { "Type" => "Boss" }, campaign_id: @campaign.id)
     @headers = Devise::JWT::TestHelpers.auth_headers({}, @gamemaster)
     set_current_campaign(@gamemaster, @campaign)
@@ -71,14 +72,17 @@ RSpec.describe "Fights", type: :request do
 
     it "returns the character effects for each character" do
       shot = @fight.shots.create!(character_id: @brick.id, shot: 10)
+      truck_shot = @fight.shots.create!(vehicle_id: @truck.id, shot: 8)
 
       @character_effect = shot.character_effects.create!(name: "Bonus")
+      @vehicle_effect = truck_shot.character_effects.create!(name: "Blizzard")
 
       get "/api/v1/fights/#{@fight.id}", headers: @headers
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
 
-      expect(body["character_effects"][@brick.id][0]["name"]).to eq("Bonus")
+      expect(body["character_effects"][@brick.id].map { |e| e["name"] }).to eq(["Bonus"])
+      expect(body["vehicle_effects"][@truck.id].map { |e| e["name"] }).to eq(["Blizzard"])
     end
   end
 end
