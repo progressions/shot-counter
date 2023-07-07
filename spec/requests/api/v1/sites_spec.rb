@@ -22,8 +22,8 @@ RSpec.describe "Api::V1::Sites", type: :request do
       expect(body["sites"].map { |s| s["name"] }).to eq(["Baseball Field", "The Site"])
     end
 
-    it "doesn't return private sites by default" do
-      site.private = true
+    it "doesn't return secret sites by default" do
+      site.secret = true
       site.save!
       get "/api/v1/sites", headers: headers
       expect(response).to have_http_status(:success)
@@ -31,21 +31,21 @@ RSpec.describe "Api::V1::Sites", type: :request do
       expect(body["sites"].map { |s| s["name"] }).to eq(["Baseball Field"])
     end
 
-    it "doesn't return private sites for a player" do
-      site.private = true
+    it "doesn't return secret sites for a player" do
+      site.secret = true
       site.save!
-      get "/api/v1/sites?private=true", headers: headers
+      get "/api/v1/sites?secret=true", headers: headers
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
       expect(body["sites"].map { |s| s["name"] }).to eq(["Baseball Field"])
     end
 
-    it "returns private sites for a gamemaster" do
-      site.private = true
+    it "returns secret sites for a gamemaster" do
+      site.secret = true
       site.save!
       user.gamemaster = true
       user.save!
-      get "/api/v1/sites?private=true", headers: headers
+      get "/api/v1/sites?secret=true", headers: headers
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
       expect(body["sites"].map { |s| s["name"] }).to eq(["Baseball Field", "The Site"])
@@ -127,12 +127,12 @@ RSpec.describe "Api::V1::Sites", type: :request do
       expect(body["faction"]["name"]).to eq(dragons.name)
     end
 
-    it "updates private flag" do
-      put "/api/v1/sites/#{site.id}", params: { site: { private: true } }, headers: headers
+    it "updates secret flag" do
+      put "/api/v1/sites/#{site.id}", params: { site: { secret: true } }, headers: headers
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
       expect(body["name"]).to eq("The Site")
-      expect(body["private"]).to eq(true)
+      expect(body["secret"]).to eq(true)
     end
   end
 

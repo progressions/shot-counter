@@ -28,8 +28,8 @@ RSpec.describe "Api::V1::Parties", type: :request do
       expect(body["parties"].map { |p| p["name"] }).to eq(["The Gang", "The Party"])
     end
 
-    it "doesn't return private parties by default" do
-      party.private = true
+    it "doesn't return secret parties by default" do
+      party.secret = true
       party.save!
       get "/api/v1/parties", headers: headers
       expect(response).to have_http_status(:success)
@@ -38,21 +38,21 @@ RSpec.describe "Api::V1::Parties", type: :request do
       expect(body["parties"][0]["name"]).to eq("The Gang")
     end
 
-    it "doesn't return private parties for a player" do
-      party.private = true
+    it "doesn't return secret parties for a player" do
+      party.secret = true
       party.save!
-      get "/api/v1/parties?private=true", headers: headers
+      get "/api/v1/parties?secret=true", headers: headers
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
       expect(body["parties"].map { |p| p["name"] }).to eq(["The Gang"])
     end
 
-    it "returns private parties for a gamemaster" do
-      party.private = true
+    it "returns secret parties for a gamemaster" do
+      party.secret = true
       party.save!
       user.gamemaster = true
       user.save!
-      get "/api/v1/parties?private=true", headers: headers
+      get "/api/v1/parties?secret=true", headers: headers
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
       expect(body["parties"].map { |p| p["name"] }).to eq(["The Gang", "The Party"])
@@ -155,11 +155,11 @@ RSpec.describe "Api::V1::Parties", type: :request do
       expect(body["faction"]["name"]).to eq("The Dragons")
     end
 
-    it "updates the private flag" do
-      put "/api/v1/parties/#{party.id}", params: { party: { private: true } }, headers: headers
+    it "updates the secret flag" do
+      put "/api/v1/parties/#{party.id}", params: { party: { secret: true } }, headers: headers
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
-      expect(body["private"]).to eq(true)
+      expect(body["secret"]).to eq(true)
     end
   end
 

@@ -13,7 +13,7 @@ class Party < ApplicationRecord
       name: name,
       description: description,
       faction: faction,
-      private: private,
+      secret: secret,
       characters: characters.map { |character|
         {
           id: character.id,

@@ -8,10 +8,10 @@ class Api::V1::PartiesController < ApplicationController
 
     @factions = current_campaign.factions.joins(:parties).where(parties: @parties).order("factions.name").distinct
 
-    if params[:private] == "true" && current_user.gamemaster?
-      @parties = @parties.where(private: [true, false])
+    if params[:secret] == "true" && current_user.gamemaster?
+      @parties = @parties.where(secret: [true, false])
     else
-      @parties = @parties.where(private: false)
+      @parties = @parties.where(secret: false)
     end
     if params[:search].present?
       @parties = @parties.where("name ILIKE ?", "%#{params[:search]}%")
@@ -77,6 +77,6 @@ class Api::V1::PartiesController < ApplicationController
   end
 
   def party_params
-    params.require(:party).permit(:name, :description, :faction_id, :private)
+    params.require(:party).permit(:name, :description, :faction_id, :secret)
   end
 end
