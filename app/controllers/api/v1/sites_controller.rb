@@ -7,6 +7,11 @@ class Api::V1::SitesController < ApplicationController
 
     @factions = current_campaign.factions.joins(:sites).where(sites: @sites).order("factions.name").distinct
 
+    if params[:private] == "true" && current_user.gamemaster?
+      @sites = @sites.where(private: [true, false])
+    else
+      @sites = @sites.where(private: false)
+    end
     if params[:search].present?
       @sites = @sites.where("name ILIKE ?", "%#{params[:search]}%")
     end
@@ -54,6 +59,6 @@ class Api::V1::SitesController < ApplicationController
   private
 
   def site_params
-    params.require(:site).permit(:name, :description, :faction_id)
+    params.require(:site).permit(:name, :description, :faction_id, :private)
   end
 end

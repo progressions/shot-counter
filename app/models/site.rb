@@ -12,6 +12,7 @@ class Site < ApplicationRecord
       name: name,
       description: description,
       faction: faction,
+      private: self.private,
       created_at: created_at,
       updated_at: updated_at,
       characters: characters.map { |character|

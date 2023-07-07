@@ -28,6 +28,36 @@ RSpec.describe "Api::V1::Parties", type: :request do
       expect(body["parties"].map { |p| p["name"] }).to eq(["The Gang", "The Party"])
     end
 
+    it "doesn't return private parties by default" do
+      party.private = true
+      party.save!
+      get "/api/v1/parties", headers: headers
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["parties"].length).to eq(1)
+      expect(body["parties"][0]["name"]).to eq("The Gang")
+    end
+
+    it "doesn't return private parties for a player" do
+      party.private = true
+      party.save!
+      get "/api/v1/parties?private=true", headers: headers
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["parties"].map { |p| p["name"] }).to eq(["The Gang"])
+    end
+
+    it "returns private parties for a gamemaster" do
+      party.private = true
+      party.save!
+      user.gamemaster = true
+      user.save!
+      get "/api/v1/parties?private=true", headers: headers
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["parties"].map { |p| p["name"] }).to eq(["The Gang", "The Party"])
+    end
+
     it "returns parties matching a search string" do
       get "/api/v1/parties?search=gang", headers: headers
       expect(response).to have_http_status(:success)
@@ -123,6 +153,13 @@ RSpec.describe "Api::V1::Parties", type: :request do
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
       expect(body["faction"]["name"]).to eq("The Dragons")
+    end
+
+    it "updates the private flag" do
+      put "/api/v1/parties/#{party.id}", params: { party: { private: true } }, headers: headers
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["private"]).to eq(true)
     end
   end
 

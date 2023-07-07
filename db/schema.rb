@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_07_06_153522) do
+ActiveRecord::Schema[7.0].define(version: 2023_07_07_180918) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -212,6 +212,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_07_06_153522) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.uuid "faction_id"
+    t.boolean "private", default: false
     t.index ["campaign_id"], name: "index_parties_on_campaign_id"
     t.index ["faction_id"], name: "index_parties_on_faction_id"
   end
@@ -254,6 +255,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_07_06_153522) do
     t.uuid "campaign_id"
     t.string "name"
     t.uuid "faction_id"
+    t.boolean "private", default: false
     t.index ["campaign_id", "name"], name: "index_sites_on_campaign_id_and_name", unique: true
     t.index ["campaign_id"], name: "index_sites_on_campaign_id"
     t.index ["faction_id"], name: "index_sites_on_faction_id"
