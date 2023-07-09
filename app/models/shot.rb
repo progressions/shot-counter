@@ -1,9 +1,9 @@
 class Shot < ApplicationRecord
   belongs_to :fight
+  belongs_to :location, optional: true
   belongs_to :character, optional: true
   belongs_to :vehicle, optional: true
   has_many :character_effects, dependent: :destroy
-  has_many :locations, dependent: :destroy
 
   validate :ensure_campaign
 

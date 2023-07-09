@@ -21,4 +21,9 @@ RSpec.describe Shot, type: :model do
     expect(@shot).not_to be_valid
     expect(@shot.errors[:vehicle]).to eq(["must belong to the same campaign as its fight"])
   end
+
+  it "has one location" do
+    @shot = @fight.shots.new
+    expect(@shot).to respond_to(:location)
+  end
 end

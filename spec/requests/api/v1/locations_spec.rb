@@ -28,8 +28,7 @@ RSpec.describe "Locations", type: :request do
 
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
-      expect(body.length).to eq(1)
-      expect(body.map { |l| l["name"] }).to match_array(["Ranch"])
+      expect(body["name"]).to eq("Ranch")
     end
 
     it "returns location for a vehicle's shot" do
@@ -40,8 +39,7 @@ RSpec.describe "Locations", type: :request do
 
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
-      expect(body.length).to eq(1)
-      expect(body.map { |l| l["name"] }).to match_array(["Highway"])
+      expect(body["name"]).to eq("Highway")
     end
   end
 
@@ -58,7 +56,7 @@ RSpec.describe "Locations", type: :request do
       expect(response).to have_http_status(:created)
       body = JSON.parse(response.body)
       expect(body["name"]).to eq("Ranch")
-      expect(body["shot_id"]).to eq(brick_shot.id)
+      expect(body["shot"]["id"]).to eq(brick_shot.id)
     end
 
     it "creates a new location for a vehicle" do
@@ -73,7 +71,7 @@ RSpec.describe "Locations", type: :request do
       expect(response).to have_http_status(:created)
       body = JSON.parse(response.body)
       expect(body["name"]).to eq("Highway")
-      expect(body["shot_id"]).to eq(truck_shot.id)
+      expect(body["shot"]["id"]).to eq(truck_shot.id)
     end
   end
 

@@ -5,19 +5,19 @@ class Api::V1::LocationsController < ApplicationController
   before_action :set_shot, only: [:index, :create]
 
   def index
-    @locations = @shot.locations
+    @location = @shot.location
 
-    render json: @locations
+    render json: @location
   end
 
   def create
     if location_params[:name].blank?
-      @shot.locations.destroy_all
+      @shot.location.destroy!
 
       render :ok and return
     end
 
-    @location = @shot.locations.new(location_params)
+    @location = @shot.build_location(location_params)
 
     if @location.save
       render json: @location, status: :created
@@ -28,6 +28,7 @@ class Api::V1::LocationsController < ApplicationController
 
   def destroy
     @location = Location.find(params[:id])
+    @location.shot.update(location_id: nil)
     @location.destroy
   end
 

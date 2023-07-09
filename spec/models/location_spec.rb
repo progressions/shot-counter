@@ -15,11 +15,15 @@ RSpec.describe Location, type: :model do
     end
 
     it "is not valid without a name" do
-      expect(Location.new(name: nil, shot: brick_shot)).to_not be_valid
+      location = Location.new(name: nil, shot: brick_shot)
+      expect(location).to_not be_valid
+      expect(location.errors[:name]).to eq(["can't be blank"])
     end
 
     it "is not valid without a shot" do
-      expect(Location.new(name: "Location", shot: nil)).to_not be_valid
+      location = Location.new(name: "Location", shot: nil)
+      expect(location).to_not be_valid
+      expect(location.errors[:shot]).to eq(["can't be blank"])
     end
 
     it "returns character from shot" do
