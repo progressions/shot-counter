@@ -28,23 +28,13 @@ module DiceRoller
         positives: positives,
         negatives: negatives,
         total: positives[:sum] - negatives[:sum],
-        boxcars: boxcars
+        boxcars: boxcars,
+        rolled_at: DateTime.now
       }
     end
 
-    def post_swerve
-      swerve = DiceRoller.swerve
-      message = ["Rolling swerve"]
-      message << "# #{swerve[:total]}"
-      message << "BOXCARS!" if swerve[:boxcars]
-      message << "Positives: #{swerve[:positives][:sum]} (#{swerve[:positives][:rolls].join(", ")})"
-      message << "Negatives: #{swerve[:negatives][:sum]} (#{swerve[:negatives][:rolls].join(", ")})"
-
-      message.join("\n")
-    end
-
     def discord(swerve, username=nil)
-      message = ["Rolling swerve #{username ? 'for ' + username : ''}"]
+      message = []
       message << "# #{swerve[:total]}"
       message << "BOXCARS!" if swerve[:boxcars]
       message << "```diff"
@@ -52,6 +42,26 @@ module DiceRoller
       message << "- #{swerve[:negatives][:sum]} (#{swerve[:negatives][:rolls].join(", ")})"
       message << "```"
       message.join("\n")
+    end
+
+    def save_swerve(swerve, username)
+      redis.lpush("rolls #{username}", swerve.to_json)
+    end
+
+    def load_swerves(username)
+      redis.lrange("rolls #{username}", 0, -1).map do |swerve|
+        JSON.parse(swerve, symbolize_names: true)
+      end
+    end
+
+    def clear_swerves(username)
+      redis.del("rolls #{username}")
+    end
+
+    private
+
+    def redis
+      @redis ||= Redis.new
     end
   end
 end
