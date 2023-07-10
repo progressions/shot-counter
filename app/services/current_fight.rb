@@ -10,6 +10,8 @@ module CurrentFight
       redis.set("current_fight_id", fight&.id)
     end
 
+    # Add functions to save and get current character for a username
+
     private
 
     def redis
