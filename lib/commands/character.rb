@@ -39,8 +39,12 @@ module Roll
       .by_type("PC")
 
     character = characters.find_by(name: event.options["name"])
-    CharacterPoster.set_character(event.user.id, character.id)
-    event.respond(content: "Using character: #{character.name}")
+    if !character
+      event.respond(content: "Character not found")
+    else
+      CharacterPoster.set_character(event.user.id, character.id)
+      event.respond(content: "Using character: #{character.name}")
+    end
   end
 
   Bot.register_application_command(:stats, "List character stats") do |cmd|
