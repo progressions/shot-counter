@@ -37,7 +37,7 @@ module SchticksCommands
       if schticks.empty?
         event.respond(content: "No schticks")
       else
-        if schticks.length <= 10
+        if schticks.length <= 5
           messages = schticks.map do |schtick|
             SchtickPoster.show(schtick)
           end
