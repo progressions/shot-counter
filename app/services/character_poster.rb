@@ -16,7 +16,7 @@ module CharacterPoster
     end
 
     def skill(character, key)
-      if character.skills[key].to_i > 0
+      if character.skills[key].to_i > 7
         asterisk = character.impairments.to_i > 0 ? "*" : ""
         value = character.skills[key].to_i - character.impairments.to_i
 
