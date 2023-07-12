@@ -67,7 +67,9 @@ module ImportSchticks
 
       schtick.prerequisite = find_prerequisite(attributes, category, path, campaign)
 
-      schtick.save
+      schtick.save!
+    rescue => e
+      binding.pry
     end
 
   end

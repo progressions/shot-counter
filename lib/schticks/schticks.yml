@@ -1663,7 +1663,7 @@
     - Highway Ronin
   paths:
     -
-      name:
+      name: Core
       schticks:
         -
           name: Adrenal Boy-Howdy
@@ -2155,7 +2155,7 @@
     - Gene Freak
   paths:
     -
-      name:
+      name: Core
       schticks:
         -
           name: Acid Blood

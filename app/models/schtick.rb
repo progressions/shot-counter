@@ -30,7 +30,7 @@ class Schtick < ApplicationRecord
   has_many :characters, through: :character_schticks
 
   validates :name, presence: true, uniqueness: { scope: :category }
-  validates :category, inclusion: { in: CATEGORIES }, allow_nil: true
+  validates :category, inclusion: { in: CATEGORIES }, allow_nil: true, unless: -> { path == "Core" }
   validate :prerequisite_must_be_in_same_category_and_path
 
   def self.for_archetype(archetype)
