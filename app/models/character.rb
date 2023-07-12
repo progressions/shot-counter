@@ -111,6 +111,12 @@ class Character < ApplicationRecord
     }
   end
 
+  scope :active, -> { where(active: true) }
+
+  scope :by_type, -> (player_type) do
+    where("action_values->'Type' = ?", player_type.to_json)
+  end
+
   def category
     "character"
   end

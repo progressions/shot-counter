@@ -11,8 +11,8 @@ module Roll
     else
       characters = campaign
         .characters
-        .where(active: true)
-        .where("action_values->'Type' = ?", "PC".to_json)
+        .active
+        .by_type("PC")
 
       if characters.empty?
         event.respond(content: "No characters")
@@ -35,8 +35,8 @@ module Roll
 
     characters = campaign
       .characters
-      .where(active: true)
-      .where("action_values->'Type' = ?", "PC".to_json)
+      .active
+      .by_type("PC")
 
     character = characters.find_by(name: event.options["name"])
     CharacterPoster.set_character(event.user.id, character.id)
