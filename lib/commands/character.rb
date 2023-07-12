@@ -31,6 +31,8 @@ module Roll
     if event.options["name"]
       if (character = campaign.characters.find_by(name: event.options["name"]))
         message = CharacterPoster.show(character)
+        Rails.logger.info("Message: #{message}")
+        Rails.logger.info("Message length: #{message.length}")
         event.respond(content: message)
         return
       end
