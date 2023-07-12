@@ -1,25 +1,30 @@
 # <%= @character.name %>
 ## <%= @character.action_values["Archetype"] %>
+<% if @character.faction %>
 ## <%= @character.faction&.name %>
+<% end -%>
 <%= FightPoster.wounds_and_impairments(@character) %>
+## Action Values
 <%-
   main_attack = character.main_attack
   secondary_attack = character.secondary_attack
   fortune_type = character.fortune_type
 -%>
- <%=
- [
-   FightPoster.action_value(character, main_attack),
-   FightPoster.action_value(character, secondary_attack),
-   FightPoster.action_value(character, "Defense"),
-   character.action_values["Type"] == "PC" ? FightPoster.fortune_value(character) : nil,
-   FightPoster.action_value(character, "Toughness"),
-   FightPoster.action_value(character, "Speed"),
- ].compact.join(" ")
+- <%=
+[
+ FightPoster.action_value(character, main_attack),
+ FightPoster.action_value(character, secondary_attack),
+ FightPoster.action_value(character, "Defense"),
+ character.action_values["Type"] == "PC" ? FightPoster.fortune_value(character) : nil,
+ FightPoster.action_value(character, "Toughness"),
+ FightPoster.action_value(character, "Speed"),
+].compact.join("\n- ")
 %>
+## Weapons
 <% character.weapons.first(10).each do |weapon| -%>
-  <%= weapon.name %> (<%= weapon.damage %>/<%= weapon.concealment || "-" %>/<%= weapon.reload_value || "-" %>)
+ - <%= weapon.name %> (<%= weapon.damage %>/<%= weapon.concealment || "-" %>/<%= weapon.reload_value || "-" %>)
 <% end -%>
+## Schticks
 <% character.schticks.first(20).each do |schtick| -%>
-  <%= schtick.name %>
+ - <%= schtick.name %>
 <% end -%>

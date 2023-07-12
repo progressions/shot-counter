@@ -33,14 +33,12 @@ module Roll
         message = CharacterPoster.show(character)
         Rails.logger.info("Message: #{message}")
         Rails.logger.info("Message length: #{message.length}")
-        event.respond(content: message)
-        return
+        return event.respond(content: message)
       end
     end
     if character = CharacterPoster.get_character(event.user.id)
       message = CharacterPoster.show(character)
-      event.respond(content: message)
-      return
+      return event.respond(content: message)
     end
 
     event.respond(content: "Character not found")
