@@ -23,7 +23,7 @@
 <% if character.skills.any? { |name, value| value.to_i > 7 } -%>
 ## Skills
 - <%= character.skills.map { |name, value| skill(character, name) }.compact.join("\n- ") -%>
-<% end -%>
+<% end %>
 ## Weapons
 <% character.weapons.first(10).each do |weapon| -%>
  - <%= weapon.name %> (<%= weapon.damage %>/<%= weapon.concealment || "-" %>/<%= weapon.reload_value || "-" %>)
