@@ -25,23 +25,25 @@ module Roll
     campaign = CurrentCampaign.get(event.server.id)
     if (!campaign)
       event.respond(content: "No campaign set")
-      return
-    end
-
-    if event.options["name"]
-      if (character = campaign.characters.find_by(name: event.options["name"]))
-        message = CharacterPoster.show(character)
-        Rails.logger.info("Message: #{message}")
-        Rails.logger.info("Message length: #{message.length}")
-        return event.respond(content: message)
+    else
+      if event.options["name"]
+        if (character = campaign.characters.find_by(name: event.options["name"]))
+          message = CharacterPoster.show(character)
+          Rails.logger.info("Message: #{message}")
+          Rails.logger.info("Message length: #{message.length}")
+          event.respond(content: message)
+        else
+          event.respond(content: "Character not found")
+        end
+      else
+        if character = CharacterPoster.get_character(event.user.id)
+          message = CharacterPoster.show(character)
+          event.respond(content: message)
+        else
+          event.respond(content: "Character not found")
+        end
       end
     end
-    if character = CharacterPoster.get_character(event.user.id)
-      message = CharacterPoster.show(character)
-      return event.respond(content: message)
-    end
-
-    event.respond(content: "Character not found")
   end
 
   class << self
