@@ -15,6 +15,15 @@ module CharacterPoster
       ERB.new(filename.read, trim_mode: "-").result(binding)
     end
 
+    def skill(character, key)
+      if character.skills[key].to_i > 0
+        asterisk = character.impairments.to_i > 0 ? "*" : ""
+        value = character.skills[key].to_i - character.impairments.to_i
+
+        "#{key} #{value}#{asterisk}"
+      end
+    end
+
     private
 
     def redis

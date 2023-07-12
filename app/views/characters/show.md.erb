@@ -20,6 +20,9 @@
  FightPoster.action_value(character, "Speed"),
 ].compact.join("\n- ")
 %>
+## Skills
+<% character.skills.first(10).each do |name, value| -%>
+ - <%= skill(name, value) %>
 ## Weapons
 <% character.weapons.first(10).each do |weapon| -%>
  - <%= weapon.name %> (<%= weapon.damage %>/<%= weapon.concealment || "-" %>/<%= weapon.reload_value || "-" %>)
