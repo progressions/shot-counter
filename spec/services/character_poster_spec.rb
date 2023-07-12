@@ -16,7 +16,6 @@ RSpec.describe CharacterPoster do
 - Fortune 7/7
 - Toughness 7
 - Speed 7
-
 TEXT
     end
 
@@ -43,7 +42,6 @@ TEXT
 - Speed 7
 ## Skills
 - Info: Classic Rock 15
-
 TEXT
     end
 
@@ -72,10 +70,8 @@ TEXT
 - Speed 7
 ## Skills
 - Info: Classic Rock 15
-
 ## Weapons
 - Guitar (10/4/2)
-
 ## Schticks
 - Rocker
 TEXT
