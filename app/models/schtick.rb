@@ -31,6 +31,7 @@ class Schtick < ApplicationRecord
 
   validates :name, presence: true, uniqueness: { scope: :category }
   validates :category, inclusion: { in: CATEGORIES }, allow_nil: true
+  validate :prerequisite_must_be_in_same_category_and_path
 
   def self.for_archetype(archetype)
     where("schticks.archetypes @> ?", [archetype].flatten.to_json)
@@ -50,6 +51,13 @@ class Schtick < ApplicationRecord
       },
       archetypes: archetypes
     }
+  end
+
+  def prerequisite_must_be_in_same_category_and_path
+    return unless prerequisite
+    return if prerequisite.category == category && prerequisite.path == path
+
+    errors.add(:prerequisite, "must be in the same category and path")
   end
 
 end

@@ -23,6 +23,13 @@ RSpec.describe Schtick, type: :model do
       schtick.valid?
       expect(schtick.errors[:category]).to include("is not included in the list")
     end
+
+    it "prerequisite must be in the same category and path" do
+      schtick = Schtick.new(name: "Schtick", category: "Martial Arts", campaign: action_movie)
+      schtick.prerequisite = Schtick.new(name: "Prerequisite", category: "Guns", campaign: action_movie)
+      expect(schtick).not_to be_valid
+      expect(schtick.errors[:prerequisite]).to include("must be in the same category and path")
+    end
   end
 
   describe "associations" do
@@ -32,9 +39,10 @@ RSpec.describe Schtick, type: :model do
     end
 
     it "has a prerequisite" do
-      schtick = Schtick.new(name: "Schtick", campaign: action_movie)
-      schtick.prerequisite = Schtick.new(name: "Prerequisite", campaign: action_movie)
+      schtick = Schtick.new(name: "Schtick", category: "Martial Arts", campaign: action_movie)
+      schtick.prerequisite = Schtick.new(name: "Prerequisite", category: "Martial Arts", campaign: action_movie)
       expect(schtick.prerequisite.name).to eq("Prerequisite")
+      expect(schtick).to be_valid
     end
 
     it "has characters" do
