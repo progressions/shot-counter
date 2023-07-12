@@ -30,7 +30,7 @@ module Roll
 
     if event.options["name"]
       if (character = campaign.characters.find_by(name: event.options["name"]))
-        message = CharacterPoster.stats(character)
+        message = CharacterPoster.show(character)
         event.respond(content: message)
         return
       end
@@ -40,6 +40,7 @@ module Roll
       event.respond(content: message)
       return
     end
+
     event.respond(content: "Character not found")
   end
 
