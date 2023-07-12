@@ -36,7 +36,7 @@ module Roll
     characters = campaign
       .characters
       .where(active: true)
-      .where("action_values->'Type' = ?", "PC")
+      .where("action_values->'Type' = ?", "PC".to_json)
 
     character = characters.find_by(name: event.options["name"])
     CharacterPoster.set_character(event.user.id, character.id)
@@ -69,12 +69,6 @@ module Roll
           event.respond(content: "Character not found")
         end
       end
-    end
-  end
-
-  class << self
-    def redis
-      @redis ||= Redis.new
     end
   end
 end
