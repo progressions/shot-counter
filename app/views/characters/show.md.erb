@@ -1,9 +1,11 @@
-# <%= @character.name %>
-## <%= @character.action_values["Archetype"] %>
-<% if @character.faction %>
-## <%= @character.faction&.name %>
+# <%= character.name %>
+<% if character.action_values["Archetype"].present? -%>
+## <%= character.action_values["Archetype"] %>
 <% end -%>
-<%= FightPoster.wounds_and_impairments(@character) %>
+<% if character.faction -%>
+## <%= character.faction&.name %>
+<% end -%>
+<%= FightPoster.wounds_and_impairments(character) %>
 ## Action Values
 <%-
   main_attack = character.main_attack
@@ -22,19 +24,23 @@
 %>
 <% if character.skills.any? { |name, value| value.to_i > 7 } -%>
 ## Skills
-- <%= character.skills.map { |name, value| skill(character, name) }.compact.join("\n- ") -%>
+- <%= character.skills.map { |name, value| skill(character, name) }.compact.join("\n- ") %>
 <% end %>
+<% if character.weapons.any? -%>
 ## Weapons
 <% character.weapons.first(10).each do |weapon| -%>
- - <%= weapon.name %> (<%= weapon.damage %>/<%= weapon.concealment || "-" %>/<%= weapon.reload_value || "-" %>)
+- <%= weapon.name %> (<%= weapon.damage %>/<%= weapon.concealment || "-" %>/<%= weapon.reload_value || "-" %>)
 <% end -%>
 <% if character.weapons.count > 10 -%>
  - ...
 <% end -%>
+<% end -%>
+<% if character.schticks.any? %>
 ## Schticks
 <% character.schticks.first(10).each do |schtick| -%>
- - <%= schtick.name %>
+- <%= schtick.name %>
 <% end -%>
 <% if character.schticks.count > 10 -%>
  - ...
+<% end -%>
 <% end -%>
