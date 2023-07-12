@@ -1224,7 +1224,7 @@
 -
   name: "Transformed Animal"
   archetypes:
-    - Transformed
+    - Transformed Animal
   paths:
     -
       name: Bear

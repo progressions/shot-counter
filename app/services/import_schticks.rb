@@ -18,7 +18,7 @@ module ImportSchticks
       end
     end
 
-    def find_prerequisite(attributes, campaign)
+    def find_prerequisite(attributes, category, path, campaign)
       prereq_name = nil
 
       numeral = attributes["name"].split(" ").last
@@ -32,7 +32,7 @@ module ImportSchticks
         prereq_name = attributes["prerequisite"].gsub(".", "")
       end
 
-      campaign.schticks.find_by(name: prereq_name)
+      campaign.schticks.find_by(category: category["name"].titleize, name: prereq_name)
     end
 
     def parse_category(category, campaign)
@@ -48,9 +48,9 @@ module ImportSchticks
     end
 
     def parse_attributes(attributes, category, path, campaign)
-      schtick = campaign.schticks.find_by(category: category["name"].nameize, name: attributes["name"]) || campaign.schticks.new
+      schtick = campaign.schticks.find_by(category: category["name"].titleize, name: attributes["name"]) || campaign.schticks.new
 
-      schtick.category = category["name"].nameize
+      schtick.category = category["name"].titleize
       schtick.name = attributes["name"]
       schtick.description = attributes["description"]
       schtick.bonus = attributes["bonus"]
@@ -58,14 +58,14 @@ module ImportSchticks
       schtick.color = Schtick::COLORS[schtick.category]
 
       if path["name"]
-        schtick.path = path["name"].nameize
+        schtick.path = path["name"].titleize
 
         if schtick.path == "Core"
           schtick.color = Schtick::COLORS["Core"]
         end
       end
 
-      schtick.prerequisite = find_prerequisite(attributes, campaign)
+      schtick.prerequisite = find_prerequisite(attributes, category, path, campaign)
 
       schtick.save
     end
