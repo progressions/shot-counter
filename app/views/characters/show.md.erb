@@ -1,0 +1,25 @@
+# <%= @character.name %>
+## <%= @character.action_values["Archetype"] %>
+## <%= @character.faction&.name %>
+<%= FightPoster.wounds_and_impairments(@character) %>
+<%-
+  main_attack = character.main_attack
+  secondary_attack = character.secondary_attack
+  fortune_type = character.fortune_type
+-%>
+ <%=
+ [
+   FightPoster.action_value(character, main_attack),
+   FightPoster.action_value(character, secondary_attack),
+   FightPoster.action_value(character, "Defense"),
+   character.action_values["Type"] == "PC" ? FightPoster.fortune_value(character) : nil,
+   FightPoster.action_value(character, "Toughness"),
+   FightPoster.action_value(character, "Speed"),
+ ].compact.join(" ")
+%>
+<% character.weapons.each do |weapon| -%>
+  <%= weapon.name %> (<%= weapon.damage %>/<%= weapon.concealment || "-" %>/<%= weapon.reload_value || "-" %>)
+<% end -%>
+<% character.schticks.each do |schtick| -%>
+  <%= schtick.name %>
+<% end -%>
