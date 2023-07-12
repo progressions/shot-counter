@@ -25,7 +25,7 @@ module SlashListFights
       event.respond(content: "No campaign found with that name.")
       return
     end
-    CurrentCampaign.set(event.server.id, campaign)
+    CurrentCampaign.set(event.server_id, campaign)
     event.respond(content: "Campaign set to #{campaign.name}")
   end
 
@@ -33,7 +33,7 @@ module SlashListFights
   end
 
   Bot.application_command(:list) do |event|
-    campaign = CurrentCampaign.get(event.server.id)
+    campaign = CurrentCampaign.get(event.server_id)
     fights = campaign.fights.active.order("created_at DESC")
 
     message = "\n\n**FIGHTS**\n"

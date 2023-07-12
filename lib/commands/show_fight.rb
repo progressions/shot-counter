@@ -6,7 +6,7 @@ module SlashShowFight
   end
 
   Bot.application_command(:show) do |event|
-    fight = CurrentFight.get(event.server.id)
+    fight = CurrentFight.get(event.server_id)
     if !fight
       event.respond(content: "There is no current fight.")
       return

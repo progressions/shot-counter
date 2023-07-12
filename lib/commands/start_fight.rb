@@ -6,7 +6,7 @@ module SlashStartFight
   end
 
   Bot.application_command(:start) do |event|
-    campaign = CurrentCampaign.get(event.server.id)
+    campaign = CurrentCampaign.get(event.server_id)
 
     fight_name = event.options["name"]
     fight = campaign
@@ -19,7 +19,7 @@ module SlashStartFight
       return
     end
 
-    CurrentFight.set(event.server.id, fight)
+    CurrentFight.set(event.server_id, fight)
     event.respond(content: "Starting fight: #{fight.name}")
     event.respond(content: FightPoster.shots(fight))
   end

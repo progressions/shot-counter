@@ -5,13 +5,13 @@ module SlashHaltFight
   end
 
   Bot.application_command(:halt) do |event|
-    fight = CurrentFight.get(event.server.id)
+    fight = CurrentFight.get(event.server_id)
     if !fight
       event.respond(content: "There is no current fight.")
       return
     end
 
-    CurrentFight.set(event.server.id, nil)
+    CurrentFight.set(event.server_id, nil)
     event.respond(content: "Stopping fight: #{fight.name}")
   end
 end

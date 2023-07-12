@@ -1,18 +1,44 @@
 module Roll
   extend Discordrb::Commands::CommandContainer
 
+  Bot.register_application_command(:characters, "List characters") do |cmd|
+  end
+
+  Bot.application_command(:characters) do |event|
+    campaign = CurrentCampaign.get(event.server_id)
+    if (!campaign)
+      event.respond(content: "No campaign set")
+    else
+      characters = campaign
+        .characters
+        .where(active: true)
+        .where("action_values->'Type' = ?", "PC".to_json)
+
+      if characters.empty?
+        event.respond(content: "No characters")
+      else
+        event.respond(content: characters.map(&:name).join("\n"))
+      end
+    end
+  end
+
   Bot.register_application_command(:character, "Use character") do |cmd|
     cmd.string(:name, "Character name")
   end
 
   Bot.application_command(:character) do |event|
-    campaign = CurrentCampaign.get(event.server.id)
+    campaign = CurrentCampaign.get(event.server_id)
     if (!campaign)
       event.respond(content: "No campaign set")
       return
     end
 
-    character = campaign.characters.find_by(name: event.options["name"])
+    characters = campaign
+      .characters
+      .where(active: true)
+      .where("action_values->'Type' = ?", "PC")
+
+    character = characters.find_by(name: event.options["name"])
     CharacterPoster.set_character(event.user.id, character.id)
     event.respond(content: "Using character: #{character.name}")
   end
@@ -22,12 +48,12 @@ module Roll
   end
 
   Bot.application_command(:stats) do |event|
-    campaign = CurrentCampaign.get(event.server.id)
+    campaign = CurrentCampaign.get(event.server_id)
     if (!campaign)
       event.respond(content: "No campaign set")
     else
       if event.options["name"]
-        if (character = campaign.characters.find_by(name: event.options["name"]))
+        if (character = campaign.characters.where(active: true).find_by(name: event.options["name"]))
           message = CharacterPoster.show(character)
           Rails.logger.info("Message: #{message}")
           Rails.logger.info("Message length: #{message.length}")

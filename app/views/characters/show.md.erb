@@ -24,7 +24,13 @@
 <% character.weapons.first(10).each do |weapon| -%>
  - <%= weapon.name %> (<%= weapon.damage %>/<%= weapon.concealment || "-" %>/<%= weapon.reload_value || "-" %>)
 <% end -%>
+<% if character.weapons.count > 10 -%>
+ - ...
+<% end -%>
 ## Schticks
-<% character.schticks.first(20).each do |schtick| -%>
+<% character.schticks.first(10).each do |schtick| -%>
  - <%= schtick.name %>
+<% end -%>
+<% if character.schticks.count > 10 -%>
+ - ...
 <% end -%>
