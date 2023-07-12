@@ -1,4 +1,4 @@
-module Roll
+module CharacterCommands
   extend Discordrb::Commands::CommandContainer
 
   Bot.register_application_command(:characters, "List characters") do |cmd|
