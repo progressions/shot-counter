@@ -1,5 +1,5 @@
 class Location < ApplicationRecord
-  has_one :shot
+  has_one :shot, dependent: :nullify
 
   validates :name, presence: true
   validates :shot, presence: true
