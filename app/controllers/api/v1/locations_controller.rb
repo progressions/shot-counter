@@ -12,7 +12,9 @@ class Api::V1::LocationsController < ApplicationController
 
   def create
     if location_params[:name].blank?
-      @shot.location.destroy!
+      location = @shot.location
+      @shot.update(location_id: nil)
+      location&.destroy!
 
       render :ok and return
     end
