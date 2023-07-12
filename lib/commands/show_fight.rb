@@ -1,36 +1,21 @@
-module ShowFight
+module SlashShowFight
   extend Discordrb::Commands::CommandContainer
 
-  class << self
-    def description
-      "Show the shot counter for the current fight."
-    end
-
-    def aliases
-      [:fight, :shots, :display]
-    end
-
-    def usage
-      <<-TEXT
-'/show'
-      TEXT
-    end
-
-    def rescue_message
-      "There was a problem."
-    end
-
-    def attributes
-      {
-        aliases: aliases,
-        description: description,
-        usage: usage,
-        rescue: rescue_message
-      }
-    end
+  Bot.register_application_command(:show, "Show current fight") do |cmd|
+    cmd.boolean(:url, "Show url")
   end
 
-  Bot.command(:show, attributes) do |event|
-    event.respond("Wut")
+  Bot.application_command(:show) do |event|
+    fight = CurrentFight.get(event.server.id)
+    if !fight
+      event.respond(content: "There is no current fight.")
+      return
+    end
+
+    if event.options["url"]
+      event.respond(content: FightPoster.url(fight))
+    else
+      event.respond(content: FightPoster.shots(fight))
+    end
   end
 end

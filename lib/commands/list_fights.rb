@@ -1,42 +1,44 @@
-# I don't remember if we need this.
-module ListFights
+module SlashListFights
   extend Discordrb::Commands::CommandContainer
 
-  class << self
-    def description
-      "List all available fights."
-    end
-
-    def aliases
-      [:list_fights]
-    end
-
-    def usage
-      <<-TEXT
-'/fights'
-      TEXT
-    end
-
-    def rescue_message
-      "There was a problem."
-    end
-
-    def attributes
-      {
-        aliases: aliases,
-        description: description,
-        usage: usage,
-        rescue: rescue_message
-      }
-    end
+  Bot.register_application_command(:campaigns, 'List campaigns') do |cmd|
   end
 
-  Bot.command(:fights, attributes) do |event|
-    fights = Fight.all
+  Bot.application_command(:campaigns) do |event|
+    campaigns = Campaign.all
+    message = "\n\n**CAMPAIGNS**\n"
+    message += "============\n"
+    message += campaigns.map(&:name).join("\n")
 
-    message = "FIGHTS\n"
+    event.respond(content: message)
+  end
+
+  Bot.register_application_command(:campaign, 'Start a campaign.') do |cmd|
+    cmd.string(:name, "Campaign name")
+  end
+
+  Bot.application_command(:campaign) do |event|
+    name = event.options[:name] || event.options["name"]
+
+    campaign = Campaign.where("name ILIKE ?", "%#{name}%").first
+    if campaign.nil?
+      event.respond(content: "No campaign found with that name.")
+      return
+    end
+    CurrentCampaign.set(event.server.id, campaign)
+    event.respond(content: "Campaign set to #{campaign.name}")
+  end
+
+  Bot.register_application_command(:list, 'List all available fights.') do |cmd|
+  end
+
+  Bot.application_command(:list) do |event|
+    campaign = CurrentCampaign.get(event.server.id)
+    fights = campaign.fights.active.order("created_at DESC")
+
+    message = "\n\n**FIGHTS**\n"
     message += "=========\n"
     message += fights.map(&:name).join("\n")
-    event.respond(message)
+    event.respond(content: message)
   end
 end
