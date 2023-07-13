@@ -20,6 +20,9 @@ class Api::V1::ActorsController < ApplicationController
   def add
     @character = current_campaign.characters.find(params[:id])
     @shot = @fight.shots.build(character_id: @character.id, shot: shot_params[:current_shot])
+    if @character.action_values["Type"] == "Mook"
+      @shot.mook = Mook.new(count: @character.action_values["Wounds"], color: character_params[:color])
+    end
 
     if @shot.save
       render json: @character
