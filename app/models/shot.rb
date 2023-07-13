@@ -14,6 +14,10 @@ class Shot < ApplicationRecord
     save!
   end
 
+  # must have a character or a vehicle
+  validates :character, presence: true, if: -> { vehicle.nil? }
+  validates :vehicle, presence: true, if: -> { character.nil? }
+
   private
 
   def ensure_campaign
