@@ -109,6 +109,7 @@ class Character < ApplicationRecord
       sites: sites.order(:created_at),
       weapons: weapons,
       category: "character",
+      count: args[:count],
     }
   end
 
