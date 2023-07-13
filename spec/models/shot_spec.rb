@@ -26,4 +26,16 @@ RSpec.describe Shot, type: :model do
     @shot = @fight.shots.new
     expect(@shot).to respond_to(:location)
   end
+
+  it "destroys its location when it is destroyed" do
+    @shot = @fight.shots.create!
+    @location = @shot.create_location!(name: "Location")
+    expect { @shot.destroy }.to change { Location.count }.by(-1)
+  end
+
+  it "destroys its mook when it is destroyed" do
+    @shot = @fight.shots.create!(character: @campaign.characters.create!(name: "Mook"))
+    @mook = @shot.create_mook!(count: 10)
+    expect { @shot.destroy }.to change { Mook.count }.by(-1)
+  end
 end
