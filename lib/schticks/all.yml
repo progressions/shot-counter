@@ -2392,7 +2392,7 @@
           description: Remember what we just said about transitive numinosity? Reduce the Condition Points of any vehicle by the result of your Sorcery Check. In combat, takes 3 shots.
         -
           name: Heal Wounds
-          description: Spend 1 Magic to reduce the Wound Points of any character by the result of your q Sorcery Check. In combat, this takes you 4 shots.
+          description: Spend 1 Magic to reduce the Wound Points of any character by the result of your Sorcery Check. In combat, this takes you 4 shots.
         -
           name: Iron Mind powder
           description: Spend 1 Magic to cancel a foe schtick effect that does something to an ally and is otherwise due to expire at the end of the sequence, keyframe, or fight.
@@ -2450,7 +2450,7 @@
           description: As an interrupt when you or an ally is hit by an attack, spend 2 shots to choose either yourself or another willing ally to take the hit instead. Use the new recipient’s Toughness to determine how many Wound Points get dished out.
         -
           name: Far Lift
-          description: Cause an inanimate object to rise into the air, move horizontally, and then none-too- q gently set itself down again. Maximum vertical distance and maximum horizontal distance both equal your current Magic points in meters. Difficulty is 1 for every 5 kg the object weighs.  This takes 3 shots, if used in combat. If you’re dropping the object on an enemy, the Damage Value of the dropped object equals the Difficulty of your Sorcery Check. Your check must also exceed the target’s Defense.
+          description: Cause an inanimate object to rise into the air, move horizontally, and then none-too-gently set itself down again. Maximum vertical distance and maximum horizontal distance both equal your current Magic points in meters. Difficulty is 1 for every 5 kg the object weighs.  This takes 3 shots, if used in combat. If you’re dropping the object on an enemy, the Damage Value of the dropped object equals the Difficulty of your Sorcery Check. Your check must also exceed the target’s Defense.
         -
           name: Flight
           description: Fly through the air, moving up to 5 m per shot.
