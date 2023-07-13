@@ -103,6 +103,11 @@ RSpec.describe Fight, type: :model do
     it "shows mook count" do
       expect(fight.shot_order).to eq([[12, [grunts.as_json(count: 25)]]])
     end
+
+    it "shows a mook with a custom color" do
+      mook.update(color: "red")
+      expect(fight.shot_order).to eq([[12, [grunts.as_json(count: 25, color: "red")]]])
+    end
   end
 
   context "effects" do

@@ -103,7 +103,7 @@ class Character < ApplicationRecord
       description: description,
       schticks: schticks.includes(:prerequisite).order(:category, :path, :name),
       skills: skills.sort_by { |key, value| [(DEFAULT_SKILLS.keys.include?(key) ? 0 : 1), key] }.to_h,
-      color: color,
+      color: args[:color] || color,
       impairments: impairments,
       advancements: advancements.order(:created_at),
       sites: sites.order(:created_at),
