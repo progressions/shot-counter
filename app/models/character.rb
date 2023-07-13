@@ -75,6 +75,7 @@ class Character < ApplicationRecord
   has_many :parties, through: :memberships
   has_many :attunements
   has_many :sites, through: :attunements
+  has_many :mooks, through: :shots
 
   accepts_nested_attributes_for :faction
 

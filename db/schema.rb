@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_07_09_191117) do
+ActiveRecord::Schema[7.0].define(version: 2023_07_13_204100) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -205,6 +205,13 @@ ActiveRecord::Schema[7.0].define(version: 2023_07_09_191117) do
     t.index ["vehicle_id"], name: "index_memberships_on_vehicle_id"
   end
 
+  create_table "mooks", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.integer "count"
+    t.string "color"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "parties", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.string "name"
     t.string "description"
@@ -244,9 +251,11 @@ ActiveRecord::Schema[7.0].define(version: 2023_07_09_191117) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.uuid "location_id"
+    t.uuid "mook_id"
     t.index ["character_id"], name: "index_shots_on_character_id"
     t.index ["fight_id"], name: "index_shots_on_fight_id"
     t.index ["location_id"], name: "index_shots_on_location_id"
+    t.index ["mook_id"], name: "index_shots_on_mook_id"
     t.index ["vehicle_id"], name: "index_shots_on_vehicle_id"
   end
 
@@ -360,6 +369,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_07_09_191117) do
   add_foreign_key "shots", "characters"
   add_foreign_key "shots", "fights"
   add_foreign_key "shots", "locations"
+  add_foreign_key "shots", "mooks"
   add_foreign_key "shots", "vehicles"
   add_foreign_key "sites", "campaigns"
   add_foreign_key "sites", "factions"
