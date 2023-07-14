@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_07_13_204100) do
+ActiveRecord::Schema[7.0].define(version: 2023_07_14_185357) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -252,6 +252,8 @@ ActiveRecord::Schema[7.0].define(version: 2023_07_13_204100) do
     t.datetime "updated_at", null: false
     t.uuid "location_id"
     t.uuid "mook_id"
+    t.integer "count", default: 0
+    t.string "color"
     t.index ["character_id"], name: "index_shots_on_character_id"
     t.index ["fight_id"], name: "index_shots_on_fight_id"
     t.index ["location_id"], name: "index_shots_on_location_id"
