@@ -21,11 +21,12 @@ class Api::V1::DriversController < ApplicationController
     @vehicle = current_campaign.vehicles.find(params[:id])
     @shot = @fight.shots.build(vehicle_id: @vehicle.id, shot: shot_params[:current_shot])
     if @vehicle.action_values["Type"] == "Mook"
-      @shot.mook = Mook.new(count: @vehicle.action_values["Chase Points"], color: character_params[:color])
+      @shot.count = @vehicle.action_values["Chase Points"]
+      @shot.color = vehicle_params[:color]
     end
 
     if @shot.save
-      render json: @vehicle
+      render json: @vehicle.as_json.merge(count: @shot.count, color: @shot.color, shot_id: @shot.id)
     else
       render status: 400
     end
@@ -40,20 +41,33 @@ class Api::V1::DriversController < ApplicationController
     @vehicle = current_campaign.vehicles.create!(vehicle_params.merge(user: current_user))
     @shot = @fight.shots.build(vehicle_id: @vehicle.id, shot: shot_params[:current_shot])
     if @vehicle.action_values["Type"] == "Mook"
-      @shot.mook = Mook.new(count: @vehicle.action_values["Chase Points"], color: character_params[:color])
+      @shot.count = @vehicle.action_values["Chase Points"]
+      @shot.color = vehicle_params[:color]
     end
 
     if @shot.save
-      render json: @vehicle
+      render json: @vehicle.as_json.merge(count: @shot.count, color: @shot.color, shot_id: @shot.id)
     else
       render status: 400
     end
   end
 
   def update
-    @shot.update(shot: shot_params[:current_shot]) if shot_params[:current_shot]
-    if @vehicle.update(vehicle_params)
-      render json: @vehicle
+    current_shot = shot_params[:current_shot] == "hidden" ? nil : shot_params[:current_shot]
+    @shot.update(shot: current_shot) if shot_params[:current_shot]
+
+    parms = vehicle_params
+
+    if @vehicle.action_values["Type"] == "Mook"
+      count = params[:vehicle][:count]
+      @shot.count = count
+      @shot.color = vehicle_params[:color]
+
+      parms = mook_params
+    end
+
+    if @vehicle.update(parms)
+      render json: @vehicle.as_json.merge(count: @shot.count, color: @shot.color, shot_id: @shot.id)
     else
       render @vehicle.errors, status: 400
     end

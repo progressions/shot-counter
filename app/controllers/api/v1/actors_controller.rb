@@ -11,7 +11,7 @@ class Api::V1::ActorsController < ApplicationController
 
   def act
     if @shot.act!(shot_cost: params[:shots] || 3)
-      render json: @character
+      render json: @character.as_json.merge(count: @shot.count, color: @shot.color, shot_id: @shot.id)
     else
       render json: @character.errors, status: 400
     end
@@ -21,11 +21,12 @@ class Api::V1::ActorsController < ApplicationController
     @character = current_campaign.characters.find(params[:id])
     @shot = @fight.shots.build(character_id: @character.id, shot: shot_params[:current_shot])
     if @character.action_values["Type"] == "Mook"
-      @shot.mook = Mook.new(count: @character.action_values["Wounds"], color: character_params[:color])
+      @shot.count = @character.action_values["Wounds"]
+      @shot.color = character_params[:color]
     end
 
     if @shot.save
-      render json: @character
+      render json: @character.as_json.merge(count: @shot.count, color: @shot.color, shot_id: @shot.id)
     else
       render status: 400
     end
@@ -40,11 +41,12 @@ class Api::V1::ActorsController < ApplicationController
     @character = current_campaign.characters.create!(character_params.merge(user: current_user))
     @shot = @fight.shots.build(character_id: @character.id, shot: shot_params[:current_shot])
     if @character.action_values["Type"] == "Mook"
-      @shot.mook = Mook.new(count: @character.action_values["Wounds"], color: character_params[:color])
+      @shot.count = @character.action_values["Wounds"]
+      @shot.color = character_params[:color]
     end
 
     if @shot.save
-      render json: @character
+      render json: @character.as_json.merge(count: @shot.count, color: @shot.color, shot_id: @shot.id)
     else
       render status: 400
     end
@@ -58,13 +60,14 @@ class Api::V1::ActorsController < ApplicationController
 
     if @character.action_values["Type"] == "Mook"
       count = params[:character][:count]
-      @shot.mook ||= Mook.new(count: @character.action_values["Wounds"], color: character_params[:color])
-      @shot.mook.update(count: count, color: character_params[:color])
+      @shot.count = count
+      @shot.color = character_params[:color]
+
       parms = mook_params
     end
 
     if @character.update(parms)
-      render json: @character
+      render json: @character.as_json.merge(count: @shot.count, color: @shot.color, shot_id: @shot.id)
     else
       render @character.errors, status: 400
     end
@@ -73,13 +76,13 @@ class Api::V1::ActorsController < ApplicationController
   def reveal
     @shot.update(shot: 0)
 
-    render json: @character
+    render json: @character.as_json.merge(count: @shot.count, color: @shot.color, shot_id: @shot.id)
   end
 
   def hide
     @shot.update(shot: nil)
 
-    render json: @character
+    render json: @character.as_json.merge(count: @shot.count, color: @shot.color, shot_id: @shot.id)
   end
 
   def destroy

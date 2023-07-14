@@ -37,16 +37,16 @@ RSpec.describe "Api::V1::Actors", type: :request do
     end
 
     it "adds a mook to a fight" do
-      expect {
-        post "/api/v1/fights/#{fight.id}/actors/#{grunts.id}/add", headers: headers, params: { character: { current_shot: 20, color: "red" } }
-      }.to change { Mook.count }.by(1)
+      post "/api/v1/fights/#{fight.id}/actors/#{grunts.id}/add", headers: headers, params: { character: { current_shot: 20, color: "red" } }
 
       expect(response).to have_http_status(200)
       body = JSON.parse(response.body)
       expect(body["name"]).to eq("Grunts")
+      expect(body["color"]).to eq("red")
+      shot = Shot.find(body["shot_id"])
+      expect(shot.count).to eq(25)
+      expect(shot.color).to eq("red")
       expect(fight.reload.characters.order(:name).map(&:name)).to eq(["Brick Manly", "Grunts", "Ugly Shing"])
-      expect(Mook.last.character.name).to eq("Grunts")
-      expect(Mook.last.color).to eq("red")
     end
   end
 
