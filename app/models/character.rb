@@ -127,7 +127,7 @@ class Character < ApplicationRecord
   def sort_order
     character_type = action_values.fetch("Type")
     speed = action_values.fetch("Speed", 0).to_i - impairments.to_i
-    [0, Fight::SORT_ORDER.index(character_type), speed * -1, name, id]
+    [0, Fight::SORT_ORDER.index(character_type), speed * -1, name]
   end
 
   def good_guy?
