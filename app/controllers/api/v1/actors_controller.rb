@@ -60,8 +60,8 @@ class Api::V1::ActorsController < ApplicationController
 
     if @character.action_values["Type"] == "Mook"
       count = params[:character][:count]
-      @shot.count = count
-      @shot.color = character_params[:color]
+      @shot.update(count: count, color: character_params[:color])
+
 
       parms = mook_params
     end
@@ -97,7 +97,7 @@ class Api::V1::ActorsController < ApplicationController
   end
 
   def set_shot
-    @shot = @fight.shots.find_or_create_by(character_id: @character.id)
+    @shot = @fight.shots.find_or_create_by(id: params[:character][:shot_id], character_id: params[:id])
   end
 
   def set_fight

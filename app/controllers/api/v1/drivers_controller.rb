@@ -97,7 +97,7 @@ class Api::V1::DriversController < ApplicationController
   end
 
   def set_shot
-    @shot = @fight.shots.find_or_create_by(vehicle_id: @vehicle.id)
+    @shot = @fight.shots.find_or_create_by(id: params[:vehicle][:shot_id], vehicle_id: params[:id])
   end
 
   def set_fight

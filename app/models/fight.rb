@@ -55,7 +55,7 @@ class Fight < ApplicationRecord
       .sort_by { |shot, _shot_chars| shot.nil? ? 1000 : -shot.to_i }
       .map { |shot, shot_chars|
         [shot, shot_chars
-                 .sort_by { |sh| sh.character&.sort_order || sh.vehicle&.sort_order }
+          .sort_by { |sh| sh.character&.sort_order(sh.id) || sh.vehicle&.sort_order(sh.id) }
                  .map { |sh|
                    sh.character.as_json(
                      count: sh.count,
