@@ -122,15 +122,8 @@ TEXT
       "#{status}#{name}#{description} (until sequence #{effect.end_sequence}, shot #{effect.end_shot})"
     end
 
-    def character_location(character, fight)
-      @location = fight.shots.find_by(character_id: character.id).location
-      if @location
-        " (#{@location.name})"
-      end
-    end
-
-    def vehicle_location(vehicle, fight)
-      @location = fight.shots.find_by(vehicle_id: vehicle.id).location
+    def find_location(attributes)
+      @location = Shot.find_by(id: attributes[:shot_id]).location
       if @location
         " (#{@location.name})"
       end

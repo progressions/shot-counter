@@ -1,4 +1,4 @@
-- **<%= character.name %>**<%= character_location(character, fight) %>
+- **<%= character.name %>**<%= find_location(attributes) %>
 <% if character.good_guy? -%>
 <% if wounds_and_impairments(character).present? -%>
  <%= wounds_and_impairments(character) %>

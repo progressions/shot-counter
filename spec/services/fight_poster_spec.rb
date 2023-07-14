@@ -94,10 +94,9 @@ RSpec.describe FightPoster do
       # PC
       serena = Character.create!(name: "Serena", action_values: {"Type" => "PC", "MainAttack" => "Sorcery", "FortuneType" => "Magic", "Sorcery" => 14, "Defense" => 13, "Toughness" => 7, "Speed" => 6, "Fortune" => 5, "Max Fortune" => 7, "Wounds" => 39}, campaign_id: action_movie.id, impairments: 2)
 
-      red_ninja_shot = fight.shots.create!(character: ninja, shot: nil)
-      red_ninja_shot.mook = Mook.new(count: 10, color: "red")
-      blue_ninja_shot = fight.shots.create!(character: ninja, shot: nil)
-      blue_ninja_shot.mook = Mook.new(count: 10, color: "blue")
+      red_ninja_shot = fight.shots.create!(character: ninja, shot: 5)
+      blue_ninja_shot = fight.shots.create!(character: ninja, shot: 10)
+      green_ninja_shot = fight.shots.create!(character: ninja, shot: nil)
       fight.shots.create!(character: jawbuster, shot: 10)
       fight.shots.create!(character: hitman, shot: 9)
       fight.shots.create!(character: shing, shot: 10)
@@ -145,8 +144,11 @@ RSpec.describe FightPoster do
 - **Jawbuster**
  12 Wounds
  Guns 15 Defense 14 Toughness 7 Speed 7
+- **Ninja**
 ## Shot 9
 - **Hitman**
+## Shot 5
+- **Ninja**
       TEXT
     end
 
