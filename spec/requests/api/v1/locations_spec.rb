@@ -17,8 +17,6 @@ RSpec.describe "Locations", type: :request do
   let!(:truck_shot) { fight.shots.create!(vehicle: truck, shot: 12) }
   let(:red_grunts_shot) { fight.shots.create!(character: grunts, shot: 10) }
   let(:blue_grunts_shot) { fight.shots.create!(character: grunts, shot: 10) }
-  let(:red_mook) { Mook.create!(shot: red_grunts_shot, count: 20, color: "red") }
-  let(:blue_mook) { Mook.create!(shot: blue_grunts_shot, count: 15, color: "blue") }
 
   before(:each) do
     set_current_campaign(user, action_movie)
@@ -78,8 +76,6 @@ RSpec.describe "Locations", type: :request do
     end
 
     it "creates a separate location for two instances of the same mook" do
-      red_mook; blue_mook
-
       expect {
         post "/api/v1/locations", params: {
           shot_id: red_grunts_shot.id,
