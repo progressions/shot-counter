@@ -58,13 +58,13 @@ class Fight < ApplicationRecord
                  .sort_by { |sh| sh.character&.sort_order || sh.vehicle&.sort_order }
                  .map { |sh|
                    sh.character.as_json(
-                     count: sh.mook&.count,
-                     color: sh.mook&.color,
+                     count: sh.count,
+                     color: sh.color,
                      shot_id: sh.id
                    ) ||
                      sh.vehicle.as_json(
-                       count: sh.mook&.count,
-                       color: sh.mook&.color,
+                       count: sh.count,
+                       color: sh.color,
                        shot_id: sh.id
                      )
                  }

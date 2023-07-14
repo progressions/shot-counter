@@ -111,8 +111,7 @@ RSpec.describe Fight, type: :model do
   context "mooks" do
     let(:fight) { Fight.create!(name: "Fight", campaign_id: @action_movie.id, sequence: 1) }
     let(:grunts) { Character.create!(name: "Grunts", action_values: {"Type" => "Mook", "Guns" => 8, "Defense" => 13, "Toughness" => 7, "Speed" => 6}, campaign_id: @action_movie.id) }
-    let!(:grunts_shot) { fight.shots.create!(character: grunts, shot: 12) }
-    let!(:mook) { grunts_shot.create_mook(count: 25) }
+    let!(:grunts_shot) { fight.shots.create!(character: grunts, shot: 12, count: 25) }
 
     it "shows mook count" do
       expected = [[12, [25]]]
@@ -120,7 +119,7 @@ RSpec.describe Fight, type: :model do
     end
 
     it "shows a mook with a custom color" do
-      mook.update(color: "red")
+      grunts_shot.update(color: "red")
       expected = [[12, ["red"]]]
       expect(fight.shot_order.map { |shot, chars| [shot, chars.map { |c| c[:color] }] }).to eq(expected)
     end
