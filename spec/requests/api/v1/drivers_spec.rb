@@ -9,8 +9,8 @@ RSpec.describe "Api::V1::Actors", type: :request do
   let(:grunts) { Vehicle.create!(name: "Grunts", action_values: { "Type" => "Mook", "Chase Points" => 25 }, campaign: action_movie) }
   let(:headers) { Devise::JWT::TestHelpers.auth_headers({}, user) }
   let!(:fight) { action_movie.fights.create!(name: "Fight") }
-  let!(:fight_brick) { Shot.create!(fight: fight, vehicle: brick, shot: 10) }
-  let!(:fight_shing) { Shot.create!(fight: fight, vehicle: shing, shot: 15) }
+  let!(:brick_shot) { Shot.create!(fight: fight, vehicle: brick, shot: 10) }
+  let!(:shing_shot) { Shot.create!(fight: fight, vehicle: shing, shot: 15) }
 
   before(:each) do
     set_current_campaign(user, action_movie)
@@ -52,10 +52,10 @@ RSpec.describe "Api::V1::Actors", type: :request do
 
   describe "POST /api/v1/fights/:id/drivers/:vehicle_id/act" do
     it "acts a vehicle" do
-      patch "/api/v1/fights/#{fight.id}/drivers/#{brick.id}/act", headers: headers, params: { shots: 3 }
+      patch "/api/v1/fights/#{fight.id}/drivers/#{brick.id}/act", headers: headers, params: { shots: 3, vehicle: { shot_id: brick_shot.id } }
 
       expect(response).to have_http_status(200)
-      expect(fight_brick.reload.shot).to eq(7)
+      expect(brick_shot.reload.shot).to eq(7)
     end
   end
 
@@ -71,26 +71,26 @@ RSpec.describe "Api::V1::Actors", type: :request do
 
   describe "PATCH /api/v1/fights/:id/drivers/:vehicle_id/reveal" do
     it "reveals a vehicle" do
-      fight_brick.update(shot: nil)
-      patch "/api/v1/fights/#{fight.id}/drivers/#{brick.id}/reveal", headers: headers
+      brick_shot.update(shot: nil)
+      patch "/api/v1/fights/#{fight.id}/drivers/#{brick.id}/reveal", headers: headers, params: { vehicle: { shot_id: brick_shot.id } }
 
       expect(response).to have_http_status(200)
-      expect(fight_brick.reload.shot).to eq(0)
+      expect(brick_shot.reload.shot).to eq(0)
     end
   end
 
   describe "PATCH /api/v1/fights/:id/drivers/:vehicle_id/hide" do
     it "hides a vehicle" do
-      patch "/api/v1/fights/#{fight.id}/drivers/#{brick.id}/hide", headers: headers
+      patch "/api/v1/fights/#{fight.id}/drivers/#{brick.id}/hide", headers: headers, params: { vehicle: { shot_id: brick_shot.id } }
 
       expect(response).to have_http_status(200)
-      expect(fight_brick.reload.shot).to eq(nil)
+      expect(brick_shot.reload.shot).to eq(nil)
     end
   end
 
   describe "DELETE /api/v1/fights/:id/drivers/:vehicle_id" do
     it "removes a vehicle from a fight" do
-      delete "/api/v1/fights/#{fight.id}/drivers/#{brick.id}", headers: headers
+      delete "/api/v1/fights/#{fight.id}/drivers/#{brick.id}", headers: headers, params: { vehicle: { shot_id: brick_shot.id } }
 
       expect(response).to have_http_status(200)
       expect(fight.reload.vehicles.order(:name).map(&:name)).to eq(["Ugly Shing"])
