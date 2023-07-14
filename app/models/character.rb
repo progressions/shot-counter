@@ -110,6 +110,7 @@ class Character < ApplicationRecord
       weapons: weapons,
       category: "character",
       count: args[:count],
+      shot_id: args[:shot_id],
     }
   end
 
