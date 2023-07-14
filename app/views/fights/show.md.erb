@@ -9,10 +9,10 @@
 <% next if shot.nil? -%>
 ## Shot <%= shot %>
 <% characters.each do |character| -%>
-<% if character.category == "vehicle" -%>
+<% if character[:category] == "vehicle" -%>
 <%= show_vehicle(character, @fight) -%>
 <% end -%>
-<% if character.category == "character" -%>
+<% if character[:category] == "character" -%>
 <%= show_character(character, @fight) -%>
 <% end -%>
 <% end -%>

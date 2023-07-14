@@ -42,11 +42,13 @@ TEXT
       ERB.new(filename.read, trim_mode: "-").result(binding)
     end
 
-    def show_character(character, fight)
+    def show_character(attributes, fight)
+      character = Character.find(attributes[:id])
       render_partial("character", binding)
     end
 
-    def show_vehicle(vehicle, fight)
+    def show_vehicle(attributes, fight)
+      vehicle = Vehicle.find(attributes[:id])
       render_partial("vehicle", binding)
     end
 
