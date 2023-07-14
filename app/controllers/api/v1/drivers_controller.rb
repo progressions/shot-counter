@@ -20,6 +20,9 @@ class Api::V1::DriversController < ApplicationController
   def add
     @vehicle = current_campaign.vehicles.find(params[:id])
     @shot = @fight.shots.build(vehicle_id: @vehicle.id, shot: shot_params[:current_shot])
+    if @vehicle.action_values["Type"] == "Mook"
+      @shot.mook = Mook.new(count: @vehicle.action_values["Chase Points"], color: character_params[:color])
+    end
 
     if @shot.save
       render json: @vehicle
@@ -36,6 +39,9 @@ class Api::V1::DriversController < ApplicationController
   def create
     @vehicle = current_campaign.vehicles.create!(vehicle_params.merge(user: current_user))
     @shot = @fight.shots.build(vehicle_id: @vehicle.id, shot: shot_params[:current_shot])
+    if @vehicle.action_values["Type"] == "Mook"
+      @shot.mook = Mook.new(count: @vehicle.action_values["Chase Points"], color: character_params[:color])
+    end
 
     if @shot.save
       render json: @vehicle
