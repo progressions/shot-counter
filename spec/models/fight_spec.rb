@@ -10,7 +10,16 @@ RSpec.describe Fight, type: :model do
     fight = Fight.create!(name: "Fight", campaign_id: @action_movie.id)
     brick = Character.create!(name: "Brick Manly", action_values: {"Type" => "PC", "Guns" => 15, "Defense" => 14, "Toughness" => 7, "Speed" => 7, "Fortune" => 7}, campaign_id: @action_movie.id)
     fight.shots.create!(character: brick, shot: 12)
-    expect(fight.shot_order).to eq([[12, [brick]]])
+    expected = [[12, ["Brick Manly"]]]
+    expect(fight.shot_order.map { |shot, chars| [shot, chars.map { |c| c[:name] }] }).to eq(expected)
+  end
+
+  it "includes shot ID" do
+    fight = Fight.create!(name: "Fight", campaign_id: @action_movie.id)
+    brick = Character.create!(name: "Brick Manly", action_values: {"Type" => "PC", "Guns" => 15, "Defense" => 14, "Toughness" => 7, "Speed" => 7, "Fortune" => 7}, campaign_id: @action_movie.id)
+    shot = fight.shots.create!(character: brick, shot: 12)
+    expected = [[12, [shot.id]]]
+    expect(fight.shot_order.map { |shot, chars| [shot, chars.map { |c| c[:shot_id] }] }).to eq(expected)
   end
 
   it "has a shot order with two PCs, orders them by Speed" do
@@ -19,7 +28,8 @@ RSpec.describe Fight, type: :model do
     serena = Character.create!(name: "Serena", action_values: {"Type" => "PC", "Guns" => 14, "Defense" => 13, "Toughness" => 7, "Speed" => 6, "Fortune" => 7}, campaign_id: @action_movie.id)
     fight.shots.create!(character: brick, shot: 12)
     fight.shots.create!(character: serena, shot: 12)
-    expect(fight.shot_order).to eq([[12, [brick, serena]]])
+    expected = [[12, ["Brick Manly", "Serena"]]]
+    expect(fight.shot_order.map { |shot, chars| [shot, chars.map { |c| c[:name] }] }).to eq(expected)
   end
 
   it "has a short order with hidden characters, orders them last" do
@@ -44,7 +54,7 @@ RSpec.describe Fight, type: :model do
     fight.shots.create!(character: brick, shot: nil)
     fight.shots.create!(character: thunder_king, shot: 0)
 
-    expect(fight.shot_order.map { |shot, chars| [shot, chars.map(&:name)] }).to eq([[12, ["Jawbuster", "Ninja"]], [10, ["Hitman"]], [0, ["Thunder King"]], [nil, ["Brick Manly", "Ugly Shing"]]])
+    expect(fight.shot_order.map { |shot, chars| [shot, chars.map { |c| c[:name] }] }).to eq([[12, ["Jawbuster", "Ninja"]], [10, ["Hitman"]], [0, ["Thunder King"]], [nil, ["Brick Manly", "Ugly Shing"]]])
   end
 
   it "orders characters by Type" do
@@ -69,10 +79,12 @@ RSpec.describe Fight, type: :model do
     fight.shots.create!(character: brick, shot: 12)
     fight.shots.create!(character: thunder_king, shot: 12)
 
-    expect(fight.shot_order).to eq([[12, [thunder_king, brick, shing, hitman, jawbuster, mook]]])
+    # expect(fight.shot_order).to eq([[12, [thunder_king, brick, shing, hitman, jawbuster, mook]]].as_json)
+    expected = [[12, ["Thunder King", "Brick Manly", "Ugly Shing", "Hitman", "Jawbuster", "Ninja"]]]
+    expect(fight.shot_order.map { |shot, chars| [shot, chars.map { |c| c[:name] }] }).to eq(expected)
   end
 
-  it "orders vehicles before characters" do
+  it "orders characters before vehicles" do
     fight = Fight.create!(name: "Fight", campaign_id: @action_movie.id)
     # Vehicle
     truck = Vehicle.create!(name: "Battletruck", action_values: {"Type" => "Featured Foe", "Acceleration" => 6}, campaign_id: @action_movie.id)
@@ -82,7 +94,8 @@ RSpec.describe Fight, type: :model do
     fight.shots.create!(vehicle: truck, shot: 12)
     fight.shots.create!(character: brick, shot: 12)
 
-    expect(fight.shot_order).to eq([[12, [brick, truck]]])
+    expected = [[12, ["Brick Manly", "Battletruck"]]]
+    expect(fight.shot_order.map { |shot, chars| [shot, chars.map { |c| c[:name] }] }).to eq(expected)
   end
 
   it "orders by Speed, considering impairments" do
@@ -91,7 +104,25 @@ RSpec.describe Fight, type: :model do
     serena = Character.create!(name: "Serena", action_values: {"Type" => "PC", "Guns" => 14, "Defense" => 13, "Toughness" => 7, "Speed" => 6, "Fortune" => 7}, campaign_id: @action_movie.id)
     fight.shots.create!(character: brick, shot: 12)
     fight.shots.create!(character: serena, shot: 12)
-    expect(fight.shot_order).to eq([[12, [serena, brick]]])
+    expected = [[12, ["Serena", "Brick Manly"]]]
+    expect(fight.shot_order.map { |shot, chars| [shot, chars.map { |c| c[:name] }] }).to eq(expected)
+  end
+
+  context "mooks" do
+    let(:fight) { Fight.create!(name: "Fight", campaign_id: @action_movie.id, sequence: 1) }
+    let(:grunts) { Character.create!(name: "Grunts", action_values: {"Type" => "Mook", "Guns" => 8, "Defense" => 13, "Toughness" => 7, "Speed" => 6}, campaign_id: @action_movie.id) }
+    let!(:grunts_shot) { fight.shots.create!(character: grunts, shot: 12, count: 25) }
+
+    it "shows mook count" do
+      expected = [[12, [25]]]
+      expect(fight.shot_order.map { |shot, chars| [shot, chars.map { |c| c[:count] }] }).to eq(expected)
+    end
+
+    it "shows a mook with a custom color" do
+      grunts_shot.update(color: "red")
+      expected = [[12, ["red"]]]
+      expect(fight.shot_order.map { |shot, chars| [shot, chars.map { |c| c[:color] }] }).to eq(expected)
+    end
   end
 
   context "effects" do

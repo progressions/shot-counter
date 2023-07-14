@@ -1,4 +1,4 @@
-- **<%= vehicle.name %>**<%= vehicle_location(vehicle, fight) %>
+- **<%= vehicle.name %>**<%= find_location(attributes) %>
  <%= vehicle.action_values["Pursuer"] ? "Pursuer" : "Evader" %> - <%= vehicle.action_values["Position"] %>
 <% if vehicle.good_guy? -%>
 <% if chase_points_and_impairments(vehicle).present? -%>

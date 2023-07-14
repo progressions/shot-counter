@@ -1,6 +1,7 @@
 class Shot < ApplicationRecord
   belongs_to :fight
-  belongs_to :location, optional: true
+  belongs_to :location, optional: true, dependent: :destroy
+  belongs_to :mook, optional: true, dependent: :destroy
   belongs_to :character, optional: true
   belongs_to :vehicle, optional: true
   has_many :character_effects, dependent: :destroy
@@ -12,6 +13,10 @@ class Shot < ApplicationRecord
     self.shot -= shot_cost.to_i
     save!
   end
+
+  # must have a character or a vehicle
+  validates :character, presence: true, if: -> { vehicle.nil? }
+  validates :vehicle, presence: true, if: -> { character.nil? }
 
   private
 

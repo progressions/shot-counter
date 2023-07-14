@@ -6,6 +6,7 @@ RSpec.describe "Api::V1::Actors", type: :request do
   let(:serena) { Character.create!(name: "Serena Tessaro", campaign: action_movie) }
   let(:brick) { Character.create!(name: "Brick Manly", campaign: action_movie) }
   let(:shing) { Character.create!(name: "Ugly Shing", campaign: action_movie) }
+  let(:grunts) { Character.create!(name: "Grunts", action_values: { "Type" => "Mook", "Wounds" => 25 }, campaign: action_movie) }
   let(:headers) { Devise::JWT::TestHelpers.auth_headers({}, user) }
   let!(:fight) { action_movie.fights.create!(name: "Fight") }
   let!(:fight_brick) { Shot.create!(fight: fight, character: brick, shot: 10) }
@@ -33,6 +34,19 @@ RSpec.describe "Api::V1::Actors", type: :request do
       body = JSON.parse(response.body)
       expect(body["name"]).to eq("Serena Tessaro")
       expect(fight.reload.characters.order(:name).map(&:name)).to eq(["Brick Manly", "Serena Tessaro", "Ugly Shing"])
+    end
+
+    it "adds a mook to a fight" do
+      post "/api/v1/fights/#{fight.id}/actors/#{grunts.id}/add", headers: headers, params: { character: { current_shot: 20, color: "red" } }
+
+      expect(response).to have_http_status(200)
+      body = JSON.parse(response.body)
+      expect(body["name"]).to eq("Grunts")
+      expect(body["color"]).to eq("red")
+      shot = Shot.find(body["shot_id"])
+      expect(shot.count).to eq(25)
+      expect(shot.color).to eq("red")
+      expect(fight.reload.characters.order(:name).map(&:name)).to eq(["Brick Manly", "Grunts", "Ugly Shing"])
     end
   end
 

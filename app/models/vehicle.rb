@@ -29,7 +29,7 @@ class Vehicle < ApplicationRecord
 
   validates :name, presence: true, uniqueness: { scope: :campaign_id }
 
-  def as_json(args=nil)
+  def as_json(args={})
     {
       id: id,
       name: name,
@@ -40,9 +40,11 @@ class Vehicle < ApplicationRecord
       updated_at: updated_at,
       user: user,
       action_values: action_values,
-      color: color,
+      color: args[:color] || color,
       impairments: impairments,
-      category: "vehicle"
+      category: "vehicle",
+      count: args[:count],
+      shot_id: args[:shot_id],
     }
   end
 

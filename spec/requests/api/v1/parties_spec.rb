@@ -96,7 +96,8 @@ RSpec.describe "Api::V1::Parties", type: :request do
       post "/api/v1/parties/#{party.id}/fight/#{fight.id}", headers: headers
       expect(response).to have_http_status(:success)
       expect(fight.characters.reload).to include(brick, serena)
-      expect(fight.shot_order).to eq([[0, [brick, serena, truck]]])
+      expected = [[0, ["Brick Manly", "Serena Tessaro", "Truck"]]]
+      expect(fight.shot_order.map { |shot, chars| [shot, chars.map { |c| c[:name] }] }).to eq(expected)
       expect(fight.vehicles.reload).to include(truck)
     end
 
@@ -108,7 +109,8 @@ RSpec.describe "Api::V1::Parties", type: :request do
       post "/api/v1/parties/#{party.id}/fight/#{fight.id}", headers: headers
       expect(response).to have_http_status(:success)
       expect(fight.characters.reload).to include(brick, serena)
-      expect(fight.shot_order).to eq([[5, [brick, serena]]])
+      expected = [[5, ["Brick Manly", "Serena Tessaro"]]]
+      expect(fight.shot_order.map { |shot, chars| [shot, chars.map { |c| c[:name] }] }).to eq(expected)
     end
 
     it "creates a party with a faction" do

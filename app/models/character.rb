@@ -75,6 +75,7 @@ class Character < ApplicationRecord
   has_many :parties, through: :memberships
   has_many :attunements
   has_many :sites, through: :attunements
+  has_many :mooks, through: :shots
 
   accepts_nested_attributes_for :faction
 
@@ -102,12 +103,14 @@ class Character < ApplicationRecord
       description: description,
       schticks: schticks.includes(:prerequisite).order(:category, :path, :name),
       skills: skills.sort_by { |key, value| [(DEFAULT_SKILLS.keys.include?(key) ? 0 : 1), key] }.to_h,
-      color: color,
+      color: args[:color] || color,
       impairments: impairments,
       advancements: advancements.order(:created_at),
       sites: sites.order(:created_at),
       weapons: weapons,
       category: "character",
+      count: args[:count],
+      shot_id: args[:shot_id],
     }
   end
 
@@ -121,10 +124,10 @@ class Character < ApplicationRecord
     "character"
   end
 
-  def sort_order
+  def sort_order(shot_id)
     character_type = action_values.fetch("Type")
     speed = action_values.fetch("Speed", 0).to_i - impairments.to_i
-    [0, Fight::SORT_ORDER.index(character_type), speed * -1, name]
+    [0, Fight::SORT_ORDER.index(character_type), speed * -1, name, shot_id]
   end
 
   def good_guy?
