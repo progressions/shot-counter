@@ -28,7 +28,7 @@ RSpec.describe Shot, type: :model do
   end
 
   it "destroys its location when it is destroyed" do
-    @shot = @fight.shots.create!
+    @shot = @fight.shots.create!(character: @campaign.characters.create!(name: "Brick Manly"))
     @location = @shot.create_location!(name: "Location")
     expect { @shot.destroy }.to change { Location.count }.by(-1)
   end

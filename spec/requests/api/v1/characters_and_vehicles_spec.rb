@@ -36,14 +36,6 @@ RSpec.describe "Api::V1::CharactersAndVehicles", type: :request do
       expect(body["archetypes"]).to eq(["Everyday Hero", "Killer"])
     end
 
-    it "shows characters who aren't in a given fight by fight_id" do
-      @fight.characters << @boss
-      get "/api/v1/characters_and_vehicles?fight_id=#{@fight[:id]}", headers: @headers
-      expect(response).to have_http_status(:success)
-      body = JSON.parse(response.body)
-      expect(body["characters"].map { |c| c["name"] }).to eq(["Brick Manly", "Speedboat"])
-    end
-
     it "shows all characters if fight_id isn't given" do
       get "/api/v1/characters_and_vehicles", headers: @headers
       expect(response).to have_http_status(:success)

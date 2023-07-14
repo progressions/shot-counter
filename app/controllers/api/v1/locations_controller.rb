@@ -1,7 +1,6 @@
 class Api::V1::LocationsController < ApplicationController
   before_action :authenticate_user!
   before_action :require_current_campaign
-  before_action :set_fight, only: [:index, :create]
   before_action :set_shot, only: [:index, :create]
 
   def index
@@ -39,14 +38,6 @@ class Api::V1::LocationsController < ApplicationController
   end
 
   def set_shot
-    if params[:character_id]
-      @shot = @fight.shots.find_by(character_id: params[:character_id])
-    elsif params[:vehicle_id]
-      @shot = @fight.shots.find_by(vehicle_id: params[:vehicle_id])
-    end
-  end
-
-  def set_fight
-    @fight = current_campaign.fights.find(params[:fight_id])
+    @shot = Shot.find(params[:shot_id])
   end
 end

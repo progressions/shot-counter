@@ -15,9 +15,10 @@ RSpec.describe "Locations", type: :request do
   let!(:speedboat_shot) { fight.shots.create!(vehicle: speedboat, shot: 10) }
   let!(:brick_shot) { fight.shots.create!(character: brick, shot: 12) }
   let!(:truck_shot) { fight.shots.create!(vehicle: truck, shot: 12) }
-  let(:grunts_shot) { fight.shots.create!(character: grunts, shot: 10) }
-  let(:red_mook) { Mook.create!(shot: grunts_shot, count: 20, color: "red") }
-  let(:blue_mook) { Mook.create!(shot: grunts_shot, count: 15, color: "blue") }
+  let(:red_grunts_shot) { fight.shots.create!(character: grunts, shot: 10) }
+  let(:blue_grunts_shot) { fight.shots.create!(character: grunts, shot: 10) }
+  let(:red_mook) { Mook.create!(shot: red_grunts_shot, count: 20, color: "red") }
+  let(:blue_mook) { Mook.create!(shot: blue_grunts_shot, count: 15, color: "blue") }
 
   before(:each) do
     set_current_campaign(user, action_movie)
@@ -28,7 +29,7 @@ RSpec.describe "Locations", type: :request do
       Location.create!(name: "Ranch", shot: brick_shot)
       Location.create!(name: "Highway", shot: truck_shot)
 
-      get "/api/v1/locations", params: { fight_id: fight.id, character_id: brick.id }, headers: headers
+      get "/api/v1/locations", params: { shot_id: brick_shot.id }, headers: headers
 
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
@@ -39,7 +40,7 @@ RSpec.describe "Locations", type: :request do
       Location.create!(name: "Ranch", shot: brick_shot)
       Location.create!(name: "Highway", shot: truck_shot)
 
-      get "/api/v1/locations", params: { fight_id: fight.id, vehicle_id: truck.id }, headers: headers
+      get "/api/v1/locations", params: { shot_id: truck_shot.id }, headers: headers
 
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
@@ -51,8 +52,7 @@ RSpec.describe "Locations", type: :request do
     it "creates a new Location for a character" do
       expect {
         post "/api/v1/locations", params: {
-          fight_id: fight.id,
-          character_id: brick.id,
+          shot_id: brick_shot.id,
           location: { name: "Ranch" }
         }, headers: headers
       }.to change(Location, :count).by(1)
@@ -66,8 +66,7 @@ RSpec.describe "Locations", type: :request do
     it "creates a new location for a vehicle" do
       expect {
         post "/api/v1/locations", params: {
-          fight_id: fight.id,
-          vehicle_id: truck.id,
+          shot_id: truck_shot.id,
           location: { name: "Highway" }
         }, headers: headers
       }.to change(Location, :count).by(1)
@@ -83,8 +82,7 @@ RSpec.describe "Locations", type: :request do
 
       expect {
         post "/api/v1/locations", params: {
-          fight_id: fight.id,
-          character_id: grunts.id,
+          shot_id: red_grunts_shot.id,
           location: { name: "Highway" }
         }, headers: headers
       }.to change(Location, :count).by(1)
@@ -92,7 +90,19 @@ RSpec.describe "Locations", type: :request do
       expect(response).to have_http_status(:created)
       body = JSON.parse(response.body)
       expect(body["name"]).to eq("Highway")
-      expect(body["shot"]["id"]).to eq(grunts_shot.id)
+      expect(body["shot"]["id"]).to eq(red_grunts_shot.id)
+
+      expect {
+        post "/api/v1/locations", params: {
+          shot_id: blue_grunts_shot.id,
+          location: { name: "Museum" }
+        }, headers: headers
+      }.to change(Location, :count).by(1)
+
+      expect(response).to have_http_status(:created)
+      body = JSON.parse(response.body)
+      expect(body["name"]).to eq("Museum")
+      expect(body["shot"]["id"]).to eq(blue_grunts_shot.id)
     end
   end
 

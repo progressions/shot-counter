@@ -88,13 +88,16 @@ RSpec.describe FightPoster do
       # Ally
       jawbuster = Character.create!(name: "Jawbuster", action_values: {"Type" => "Ally", "Guns" => 15, "Defense" => 14, "Toughness" => 7, "Speed" => 7, "Wounds" => 12}, campaign_id: action_movie.id)
       # Mook
-      mook = Character.create!(name: "Ninja", action_values: {"Type" => "Mook", "Guns" => 8, "Defense" => 13, "Toughness" => 7, "Speed" => 6}, campaign_id: action_movie.id)
+      ninja = Character.create!(name: "Ninja", action_values: {"Type" => "Mook", "Guns" => 8, "Defense" => 13, "Toughness" => 7, "Speed" => 6}, campaign_id: action_movie.id)
       # PC
       brick = Character.create!(name: "Brick Manly", action_values: {"Type" => "PC", "Guns" => 15, "Defense" => 14, "Toughness" => 7, "Speed" => 7, "Fortune" => 7, "Max Fortune" => 7}, campaign_id: action_movie.id)
       # PC
       serena = Character.create!(name: "Serena", action_values: {"Type" => "PC", "MainAttack" => "Sorcery", "FortuneType" => "Magic", "Sorcery" => 14, "Defense" => 13, "Toughness" => 7, "Speed" => 6, "Fortune" => 5, "Max Fortune" => 7, "Wounds" => 39}, campaign_id: action_movie.id, impairments: 2)
 
-      fight.shots.create!(character: mook, shot: nil)
+      red_ninja_shot = fight.shots.create!(character: ninja, shot: nil)
+      red_ninja_shot.mook = Mook.new(count: 10, color: "red")
+      blue_ninja_shot = fight.shots.create!(character: ninja, shot: nil)
+      blue_ninja_shot.mook = Mook.new(count: 10, color: "blue")
       fight.shots.create!(character: jawbuster, shot: 10)
       fight.shots.create!(character: hitman, shot: 9)
       fight.shots.create!(character: shing, shot: 10)
