@@ -9,8 +9,8 @@ RSpec.describe "Api::V1::Actors", type: :request do
   let(:grunts) { Character.create!(name: "Grunts", action_values: { "Type" => "Mook", "Wounds" => 25 }, campaign: action_movie) }
   let(:headers) { Devise::JWT::TestHelpers.auth_headers({}, user) }
   let!(:fight) { action_movie.fights.create!(name: "Fight") }
-  let!(:fight_brick) { Shot.create!(fight: fight, character: brick, shot: 10) }
-  let!(:fight_shing) { Shot.create!(fight: fight, character: shing, shot: 15) }
+  let!(:brick_shot) { Shot.create!(fight: fight, character: brick, shot: 10) }
+  let!(:shing_shot) { Shot.create!(fight: fight, character: shing, shot: 15) }
 
   before(:each) do
     set_current_campaign(user, action_movie)
@@ -52,10 +52,13 @@ RSpec.describe "Api::V1::Actors", type: :request do
 
   describe "POST /api/v1/fights/:id/actors/:character_id/act" do
     it "acts a character" do
-      patch "/api/v1/fights/#{fight.id}/actors/#{brick.id}/act", headers: headers, params: { shots: 3 }
+      patch "/api/v1/fights/#{fight.id}/actors/#{brick.id}/act", headers: headers, params: {
+        shots: 3,
+        character: { shot_id: brick_shot.id }
+      }
 
       expect(response).to have_http_status(200)
-      expect(fight_brick.reload.shot).to eq(7)
+      expect(brick_shot.reload.shot).to eq(7)
     end
   end
 
@@ -71,26 +74,32 @@ RSpec.describe "Api::V1::Actors", type: :request do
 
   describe "PATCH /api/v1/fights/:id/actors/:character_id/reveal" do
     it "reveals a character" do
-      fight_brick.update(shot: nil)
-      patch "/api/v1/fights/#{fight.id}/actors/#{brick.id}/reveal", headers: headers
+      brick_shot.update(shot: nil)
+      patch "/api/v1/fights/#{fight.id}/actors/#{brick.id}/reveal", headers: headers, params: {
+        character: { shot_id: brick_shot.id }
+      }
 
       expect(response).to have_http_status(200)
-      expect(fight_brick.reload.shot).to eq(0)
+      expect(brick_shot.reload.shot).to eq(0)
     end
   end
 
   describe "PATCH /api/v1/fights/:id/actors/:character_id/hide" do
     it "hides a character" do
-      patch "/api/v1/fights/#{fight.id}/actors/#{brick.id}/hide", headers: headers
+      patch "/api/v1/fights/#{fight.id}/actors/#{brick.id}/hide", headers: headers, params: {
+        character: { shot_id: brick_shot.id }
+      }
 
       expect(response).to have_http_status(200)
-      expect(fight_brick.reload.shot).to eq(nil)
+      expect(brick_shot.reload.shot).to eq(nil)
     end
   end
 
   describe "DELETE /api/v1/fights/:id/actors/:character_id" do
     it "removes a character from a fight" do
-      delete "/api/v1/fights/#{fight.id}/actors/#{brick.id}", headers: headers
+      delete "/api/v1/fights/#{fight.id}/actors/#{brick.id}", headers: headers, params: {
+        character: { shot_id: brick_shot.id }
+      }
 
       expect(response).to have_http_status(200)
       expect(fight.reload.characters.order(:name).map(&:name)).to eq(["Ugly Shing"])

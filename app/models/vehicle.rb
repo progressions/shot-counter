@@ -48,10 +48,10 @@ class Vehicle < ApplicationRecord
     }
   end
 
-  def sort_order
+  def sort_order(shot_id=nil)
     character_type = action_values.fetch("Type")
     speed = action_values.fetch("Acceleration", 0).to_i - impairments.to_i
-    [1, Fight::SORT_ORDER.index(character_type), speed * -1, name]
+    [1, Fight::SORT_ORDER.index(character_type), speed * -1, name, shot_id].compact
   end
 
   def good_guy?
