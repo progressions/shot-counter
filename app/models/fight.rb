@@ -11,7 +11,7 @@ class Fight < ApplicationRecord
   SORT_ORDER = ["Uber-Boss", "PC", "Boss", "Featured Foe", "Ally", "Mook"]
   DEFAULT_SHOT_COUNT = 3
 
-  def as_json(args)
+  def as_json(args={})
     {
       id: id,
       name: name,

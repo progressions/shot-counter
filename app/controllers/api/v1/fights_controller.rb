@@ -8,11 +8,6 @@ class Api::V1::FightsController < ApplicationController
       .fights
       .where(archived: false)
       .order(created_at: :desc)
-      .includes(:shots)
-      .includes(:vehicles)
-      .includes(:characters)
-      .includes(characters: :user)
-      .includes(:character_effects)
 
     if params[:show_all] != "true"
       @fights = @fights.where(active: true)
@@ -20,8 +15,12 @@ class Api::V1::FightsController < ApplicationController
 
     @fights = paginate(@fights, per_page: (params[:per_page] || 24), page: (params[:page] || 1))
 
+    @fights_json = @fights.map do |fight|
+      fight.as_json.slice(:id, :name, :sequence, :active, :archived, :description)
+    end
+
     render json: {
-      fights: @fights,
+      fights: @fights_json,
       meta: pagination_meta(@fights)
     }
   end
