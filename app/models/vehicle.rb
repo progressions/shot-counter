@@ -48,6 +48,12 @@ class Vehicle < ApplicationRecord
     }
   end
 
+  scope :active, -> { where(active: true) }
+
+  scope :by_type, -> (player_type) do
+    where("action_values->>'Type' IN (?)", player_type)
+  end
+
   def sort_order(shot_id=nil)
     character_type = action_values.fetch("Type")
     speed = action_values.fetch("Acceleration", 0).to_i - impairments.to_i

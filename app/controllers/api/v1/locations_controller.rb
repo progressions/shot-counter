@@ -38,6 +38,10 @@ class Api::V1::LocationsController < ApplicationController
   end
 
   def set_shot
-    @shot = Shot.find(params[:shot_id])
+    @shot = Shot.find_by(id: params[:shot_id])
+
+    if @shot.nil?
+      render json: nil, status: :ok and return
+    end
   end
 end

@@ -24,8 +24,8 @@ class Fight < ApplicationRecord
       shot_order: shot_order,
       sequence: sequence,
       effects: effects,
-      character_effects: character_effects.where("character_effects.character_id IS NOT NULL").group_by { |ce| ce.character_id },
-      vehicle_effects: character_effects.where("character_effects.vehicle_id IS NOT NULL").group_by { |ce| ce.vehicle_id }
+      character_effects: character_effects.where("character_effects.character_id IS NOT NULL").group_by { |ce| ce.shot_id },
+      vehicle_effects: character_effects.where("character_effects.vehicle_id IS NOT NULL").group_by { |ce| ce.shot_id }
     }
   end
 

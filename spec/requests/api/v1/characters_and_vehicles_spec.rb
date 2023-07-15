@@ -98,4 +98,28 @@ RSpec.describe "Api::V1::CharactersAndVehicles", type: :request do
       expect(body["meta"]).to eq({"current_page"=>1, "next_page"=>2, "prev_page"=>nil, "total_count"=>63, "total_pages"=>2})
     end
   end
+
+  describe "GET /enemies" do
+    before(:each) do
+      @fight.shots.create!(character_id: @brick.id, shot: 10)
+      @fight.shots.create!(character_id: @boss.id, shot: 10)
+      @fight.shots.create!(vehicle_id: @speedboat.id, shot: 10)
+    end
+
+    it "returns characters in a fight" do
+      get "/api/v1/characters_and_vehicles/#{@fight.id}/characters", headers: @headers
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body.map { |c| c["name"] }).to eq(["Brick Manly"])
+      expect(body.first.keys).to eq(["id", "name", "action_values"])
+    end
+
+    it "returns vehicles in a fight" do
+      get "/api/v1/characters_and_vehicles/#{@fight.id}/vehicles", headers: @headers
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body.map { |c| c["name"] }).to eq(["Speedboat"])
+      expect(body.first.keys).to eq(["id", "name", "action_values"])
+    end
+  end
 end

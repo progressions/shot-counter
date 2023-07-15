@@ -13,31 +13,48 @@ RSpec.describe "CharacterEffects", type: :request do
 
   describe "POST /api/v1/fights/:fight_id/character_effects" do
     it "creates a character effect for a fight and character" do
-      @fight.shots.create!(character_id: @brick.id, shot: 10)
+      shot = @fight.shots.create!(character_id: @brick.id, shot: 10)
       post "/api/v1/fights/#{@fight.id}/character_effects", headers: @headers, params: {
         character_effect: {
           name: "Bonus",
-          character_id: @brick.id
+          shot_id: shot.id
         }
       }
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
       expect(body["name"]).to eq("Bonus")
-      expect(@brick.reload.character_effects.first.name).to eq("Bonus")
+      expect(shot.reload.character_effects.first.name).to eq("Bonus")
     end
 
     it "creates a character effect for a fight and a vehicle" do
-      @fight.shots.create!(vehicle_id: @speedboat.id, shot: 10)
+      shot = @fight.shots.create!(vehicle_id: @speedboat.id, shot: 10)
       post "/api/v1/fights/#{@fight.id}/character_effects", headers: @headers, params: {
         character_effect: {
           name: "Bonus",
-          vehicle_id: @speedboat.id
+          shot_id: shot.id
         }
       }
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
       expect(body["name"]).to eq("Bonus")
-      expect(@speedboat.reload.character_effects.first.name).to eq("Bonus")
+      expect(shot.reload.character_effects.first.name).to eq("Bonus")
+    end
+
+    it "creates a character effect for one of two mooks" do
+      @brick.update(action_values: { "Type" => "Mook" })
+      shot = @fight.shots.create!(character_id: @brick.id, shot: 10)
+      mook = @fight.shots.create!(character_id: @brick.id, shot: 10)
+      post "/api/v1/fights/#{mook.fight.id}/character_effects", headers: @headers, params: {
+        character_effect: {
+          name: "Bonus",
+          shot_id: shot.id
+        }
+      }
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["name"]).to eq("Bonus")
+      expect(shot.reload.character_effects.first.name).to eq("Bonus")
+      expect(mook.reload.character_effects).to be_empty
     end
 
     it "returns an error if there's no character_id" do

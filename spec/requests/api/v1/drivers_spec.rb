@@ -90,7 +90,7 @@ RSpec.describe "Api::V1::Actors", type: :request do
 
   describe "DELETE /api/v1/fights/:id/drivers/:vehicle_id" do
     it "removes a vehicle from a fight" do
-      delete "/api/v1/fights/#{fight.id}/drivers/#{brick.id}", headers: headers, params: { vehicle: { shot_id: brick_shot.id } }
+      delete "/api/v1/fights/#{fight.id}/drivers/#{brick_shot.id}", headers: headers
 
       expect(response).to have_http_status(200)
       expect(fight.reload.vehicles.order(:name).map(&:name)).to eq(["Ugly Shing"])

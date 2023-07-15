@@ -117,7 +117,7 @@ class Character < ApplicationRecord
   scope :active, -> { where(active: true) }
 
   scope :by_type, -> (player_type) do
-    where("action_values->'Type' = ?", player_type.to_json)
+    where("action_values->>'Type' IN (?)", player_type)
   end
 
   def category

@@ -81,6 +81,32 @@ class Api::V1::CharactersAndVehiclesController < ApplicationController
     }
   end
 
+  def characters
+    @fight = current_campaign.fights.find(params[:id])
+    @characters = @fight
+      .characters
+      .by_type(["PC", "Ally"])
+      .order(:name)
+      .map { |c|
+        c.as_json.slice(:id, :name, :action_values)
+      }
+
+    render json: @characters
+  end
+
+  def vehicles
+    @fight = current_campaign.fights.find(params[:id])
+    @vehicles = @fight
+      .vehicles
+      .by_type(["PC", "Ally"])
+      .order(:name)
+      .map { |c|
+        c.as_json.slice(:id, :name, :action_values)
+      }
+
+    render json: @vehicles
+  end
+
   private
 
   def set_scoped_characters

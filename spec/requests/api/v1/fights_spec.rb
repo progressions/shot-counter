@@ -81,8 +81,8 @@ RSpec.describe "Fights", type: :request do
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
 
-      expect(body["character_effects"][@brick.id].map { |e| e["name"] }).to eq(["Bonus"])
-      expect(body["vehicle_effects"][@truck.id].map { |e| e["name"] }).to eq(["Blizzard"])
+      expect(body["character_effects"][shot.id].map { |e| e["name"] }).to eq(["Bonus"])
+      expect(body["vehicle_effects"][truck_shot.id].map { |e| e["name"] }).to eq(["Blizzard"])
     end
   end
 end

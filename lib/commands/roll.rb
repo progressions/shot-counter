@@ -5,8 +5,10 @@ module Roll
   end
 
   Bot.application_command(:roll) do |event|
+    puts "Channel ID, #{event.channel_id}"
     roll = DiceRoller.die_roll
     event.respond(content: "Rolling dice: #{roll}")
+    Bot.send_message(event.channel_id, "Thanks for rolling")
   end
 
   Bot.register_application_command(:swerve, "Roll a swerve, positive and negative exploding dice") do |cmd|

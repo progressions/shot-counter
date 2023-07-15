@@ -9,7 +9,12 @@ Rails.application.routes.draw do
     namespace :v1 do
       resources :mooks
       resources :locations
-      resources :characters_and_vehicles, only: [:index]
+      resources :characters_and_vehicles, only: [:index] do
+        member do
+          get :characters
+          get :vehicles
+        end
+      end
       resources :schticks
       resources :weapons
       resources :parties do

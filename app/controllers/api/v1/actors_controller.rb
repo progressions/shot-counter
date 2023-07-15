@@ -2,8 +2,8 @@ class Api::V1::ActorsController < ApplicationController
   before_action :authenticate_user!
   before_action :require_current_campaign
   before_action :set_fight
-  before_action :set_character, only: [:update, :destroy, :act, :reveal, :hide]
-  before_action :set_shot, only: [:update, :destroy, :act, :reveal, :hide]
+  before_action :set_character, only: [:update, :act, :reveal, :hide]
+  before_action :set_shot, only: [:update, :act, :reveal, :hide]
 
   def index
     render json: @fight.characters.order(:name)
@@ -21,8 +21,7 @@ class Api::V1::ActorsController < ApplicationController
     @character = current_campaign.characters.find(params[:id])
     @shot = @fight.shots.build(character_id: @character.id, shot: shot_params[:current_shot])
     if @character.action_values["Type"] == "Mook"
-      @shot.count = @character.action_values["Wounds"]
-      @shot.color = character_params[:color]
+      @shot.update(count: @character.action_values["Wounds"], color: character_params[:color])
     end
 
     if @shot.save
@@ -41,8 +40,7 @@ class Api::V1::ActorsController < ApplicationController
     @character = current_campaign.characters.create!(character_params.merge(user: current_user))
     @shot = @fight.shots.build(character_id: @character.id, shot: shot_params[:current_shot])
     if @character.action_values["Type"] == "Mook"
-      @shot.count = @character.action_values["Wounds"]
-      @shot.color = character_params[:color]
+      @shot.update(count: @character.action_values["Wounds"], color: character_params[:color])
     end
 
     if @shot.save
@@ -86,6 +84,7 @@ class Api::V1::ActorsController < ApplicationController
   end
 
   def destroy
+    @shot = Shot.find(params[:id])
     @shot.destroy!
     render :ok
   end

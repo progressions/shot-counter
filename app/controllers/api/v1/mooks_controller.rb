@@ -1,2 +1,0 @@
-class MooksController < ApplicationController
-end

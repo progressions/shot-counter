@@ -2,8 +2,8 @@ class Api::V1::DriversController < ApplicationController
   before_action :authenticate_user!
   before_action :require_current_campaign
   before_action :set_fight
-  before_action :set_vehicle, only: [:update, :destroy, :act, :reveal, :hide]
-  before_action :set_shot, only: [:update, :destroy, :act, :reveal, :hide]
+  before_action :set_vehicle, only: [:update, :act, :reveal, :hide]
+  before_action :set_shot, only: [:update, :act, :reveal, :hide]
 
   def index
     render json: @fight.vehicles
@@ -21,8 +21,7 @@ class Api::V1::DriversController < ApplicationController
     @vehicle = current_campaign.vehicles.find(params[:id])
     @shot = @fight.shots.build(vehicle_id: @vehicle.id, shot: shot_params[:current_shot])
     if @vehicle.action_values["Type"] == "Mook"
-      @shot.count = @vehicle.action_values["Chase Points"]
-      @shot.color = vehicle_params[:color]
+      @shot.update(count: @vehicle.action_values["Chase Points"], color: vehicle_params[:color])
     end
 
     if @shot.save
@@ -41,8 +40,7 @@ class Api::V1::DriversController < ApplicationController
     @vehicle = current_campaign.vehicles.create!(vehicle_params.merge(user: current_user))
     @shot = @fight.shots.build(vehicle_id: @vehicle.id, shot: shot_params[:current_shot])
     if @vehicle.action_values["Type"] == "Mook"
-      @shot.count = @vehicle.action_values["Chase Points"]
-      @shot.color = vehicle_params[:color]
+      @shot.update(count: @vehicle.action_values["Chase Points"], color: vehicle_params[:color])
     end
 
     if @shot.save
@@ -60,8 +58,7 @@ class Api::V1::DriversController < ApplicationController
 
     if @vehicle.action_values["Type"] == "Mook"
       count = params[:vehicle][:count]
-      @shot.count = count
-      @shot.color = vehicle_params[:color]
+      @shot.update(count: count, color: vehicle_params[:color])
 
       parms = mook_params
     end
@@ -86,6 +83,7 @@ class Api::V1::DriversController < ApplicationController
   end
 
   def destroy
+    @shot = Shot.find(params[:id])
     @shot.destroy!
     render :ok
   end
@@ -109,6 +107,17 @@ class Api::V1::DriversController < ApplicationController
   end
 
   def vehicle_params
-    params.require(:vehicle).permit(:name, :defense, :impairments, :color, :user_id, action_values: Vehicle::DEFAULT_ACTION_VALUES.keys)
+    params.require(:vehicle).permit(:name, :impairments,
+                                    :color, :user_id, action_values: Vehicle::DEFAULT_ACTION_VALUES.keys)
   end
+
+  def mook_params
+    params
+      .require(:vehicle)
+      .permit(:name, :defense, :impairments, :color,
+              :user_id, :active, skills: [],
+              action_values: Vehicle::DEFAULT_ACTION_VALUES.keys - ["Chase Points"],
+              schticks: [])
+  end
+
 end

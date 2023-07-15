@@ -44,6 +44,14 @@ RSpec.describe "Locations", type: :request do
       body = JSON.parse(response.body)
       expect(body["name"]).to eq("Highway")
     end
+
+    it "returns nil if there is no shot" do
+      get "/api/v1/locations", params: { shot_id: "not-a-real-id" }, headers: headers
+
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body).to be_nil
+    end
   end
 
   describe "POST /create" do
