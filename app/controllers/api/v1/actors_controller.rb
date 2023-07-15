@@ -96,7 +96,11 @@ class Api::V1::ActorsController < ApplicationController
   end
 
   def set_shot
-    @shot = @fight.shots.find_or_create_by(id: params[:character][:shot_id], character_id: params[:id])
+    if params[:character][:shot_id]
+      @shot = @fight.shots.find_or_create_by(id: params[:character][:shot_id], character_id: params[:id])
+    else
+      @shot = @fight.shots.find_by(character_id: params[:id])
+    end
   end
 
   def set_fight

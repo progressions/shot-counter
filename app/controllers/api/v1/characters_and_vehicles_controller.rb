@@ -88,7 +88,7 @@ class Api::V1::CharactersAndVehiclesController < ApplicationController
       .by_type(["PC", "Ally"])
       .order(:name)
       .map { |c|
-        c.as_json.slice(:id, :name, :action_values)
+        c.as_json.slice(:id, :name, :impairments, :action_values)
       }
 
     render json: @characters
@@ -101,7 +101,7 @@ class Api::V1::CharactersAndVehiclesController < ApplicationController
       .by_type(["PC", "Ally"])
       .order(:name)
       .map { |c|
-        c.as_json.slice(:id, :name, :action_values)
+        c.as_json.slice(:id, :name, :impairments, :action_values)
       }
 
     render json: @vehicles
