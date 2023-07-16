@@ -13,8 +13,9 @@ class Api::V1::WeaponsController < ApplicationController
 
     if params[:juncture].present?
       @weapons = @weapons.where(juncture: params[:juncture])
-      @categories = @weapons.pluck(:category).uniq.compact
     end
+
+    @categories = @weapons.where("category != ?", "").pluck(:category).uniq.compact
 
     if params[:category].present?
       @weapons = @weapons.where(category: params[:category])
