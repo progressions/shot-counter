@@ -19,8 +19,8 @@ module SlashStartFight
       return
     end
 
-    CurrentFight.set(event.server_id, fight)
+    CurrentFight.set(server_id: event.server_id, fight: fight, channel_id: event.channel_id)
     event.respond(content: "Starting fight: #{fight.name}")
-    event.respond(content: FightPoster.shots(fight))
+    Bot.send_message(event.channel_id, FightPoster.shots(fight))
   end
 end
