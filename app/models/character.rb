@@ -82,8 +82,9 @@ class Character < ApplicationRecord
   before_save :ensure_default_action_values
   before_save :ensure_default_description
   before_save :ensure_default_skills
-  before_save :ensure_integer_values
-  before_save :ensure_non_integer_values
+  before_save :ensure_integer_action_values
+  before_save :ensure_integer_skills
+  before_save :ensure_non_integer_action_values
 
   validates :name, presence: true, uniqueness: { scope: :campaign_id }
 
@@ -175,7 +176,13 @@ class Character < ApplicationRecord
     self.skills = DEFAULT_SKILLS.merge(self.skills)
   end
 
-  def ensure_integer_values
+  def ensure_integer_skills
+    skills.each do |key, value|
+      self.skills[key] = self.skills[key].to_i
+    end
+  end
+
+  def ensure_integer_action_values
     DEFAULT_ACTION_VALUES.select do |key, value|
       value == 0
     end.each do |key, value|
@@ -183,7 +190,7 @@ class Character < ApplicationRecord
     end
   end
 
-  def ensure_non_integer_values
+  def ensure_non_integer_action_values
     DEFAULT_ACTION_VALUES.reject do |key, value|
       value == 0
     end.each do |key, value|

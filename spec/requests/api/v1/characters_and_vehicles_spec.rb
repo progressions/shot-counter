@@ -111,7 +111,7 @@ RSpec.describe "Api::V1::CharactersAndVehicles", type: :request do
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
       expect(body.map { |c| c["name"] }).to eq(["Brick Manly", "Ugly Shing"])
-      expect(body.first.keys).to eq(["id", "name", "impairments", "action_values"])
+      expect(body.first.keys).to eq(["id", "name", "impairments", "action_values", "location"])
     end
 
     it "returns vehicles in a fight" do
@@ -119,7 +119,7 @@ RSpec.describe "Api::V1::CharactersAndVehicles", type: :request do
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
       expect(body.map { |c| c["name"] }).to eq(["Speedboat"])
-      expect(body.first.keys).to eq(["id", "name", "impairments", "action_values", "driver"])
+      expect(body.first.keys).to eq(["id", "name", "impairments", "action_values", "driver", "location"])
     end
   end
 end
