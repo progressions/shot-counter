@@ -96,12 +96,17 @@ class Api::V1::CharactersAndVehiclesController < ApplicationController
 
   def vehicles
     @fight = current_campaign.fights.find(params[:id])
+
     @vehicles = @fight
-      .vehicles
-      .by_type(["PC", "Ally"])
-      .order(:name)
-      .map { |c|
-        c.as_json.slice(:id, :name, :impairments, :action_values)
+      .shots
+      .joins(:vehicle)
+      .merge(Vehicle.by_type(["PC", "Ally"]))
+      .order("vehicles.name")
+      .map { |shot|
+        shot
+          .vehicle
+          .as_json(shot: shot)
+          .slice(:id, :name, :impairments, :action_values, :driver)
       }
 
     render json: @vehicles

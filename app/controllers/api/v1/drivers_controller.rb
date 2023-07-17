@@ -34,8 +34,6 @@ class Api::V1::DriversController < ApplicationController
     else
       render status: 400
     end
-  rescue StandardError => e
-    binding.pry
   end
 
   def show

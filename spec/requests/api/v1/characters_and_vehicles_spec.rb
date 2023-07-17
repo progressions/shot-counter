@@ -99,7 +99,7 @@ RSpec.describe "Api::V1::CharactersAndVehicles", type: :request do
     end
   end
 
-  describe "GET /enemies" do
+  describe "GET /characters" do
     before(:each) do
       @fight.shots.create!(character_id: @brick.id, shot: 10)
       @fight.shots.create!(character_id: @boss.id, shot: 10)
@@ -119,7 +119,7 @@ RSpec.describe "Api::V1::CharactersAndVehicles", type: :request do
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
       expect(body.map { |c| c["name"] }).to eq(["Speedboat"])
-      expect(body.first.keys).to eq(["id", "name", "impairments", "action_values"])
+      expect(body.first.keys).to eq(["id", "name", "impairments", "action_values", "driver"])
     end
   end
 end
