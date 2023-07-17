@@ -111,6 +111,7 @@ class Character < ApplicationRecord
       weapons: weapons,
       category: "character",
       count: shot&.count,
+      location: shot&.location&.name,
       shot_id: shot&.id,
     }
   end
