@@ -89,6 +89,7 @@ class Character < ApplicationRecord
   validates :name, presence: true, uniqueness: { scope: :campaign_id }
 
   def as_json(args={})
+    shot = args[:shot]
     {
       id: id,
       name: name,
@@ -104,14 +105,14 @@ class Character < ApplicationRecord
       description: description,
       schticks: schticks.includes(:prerequisite).order(:category, :path, :name),
       skills: skills.sort_by { |key, value| [(DEFAULT_SKILLS.keys.include?(key) ? 0 : 1), key] }.to_h,
-      color: args[:color] || color,
+      color: shot&.color || color,
       impairments: impairments,
       advancements: advancements.order(:created_at),
       sites: sites.order(:created_at),
       weapons: weapons,
       category: "character",
-      count: args[:count],
-      shot_id: args[:shot_id],
+      count: shot&.count,
+      shot_id: shot&.id,
     }
   end
 

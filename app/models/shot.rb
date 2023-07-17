@@ -4,6 +4,7 @@ class Shot < ApplicationRecord
   belongs_to :mook, optional: true, dependent: :destroy
   belongs_to :character, optional: true
   belongs_to :vehicle, optional: true
+  belongs_to :driver, optional: true, class_name: "Character", foreign_key: "driver_id"
   has_many :character_effects, dependent: :destroy
 
   validate :ensure_campaign

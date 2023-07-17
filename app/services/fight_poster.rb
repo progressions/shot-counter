@@ -123,7 +123,7 @@ TEXT
     end
 
     def find_location(attributes)
-      @location = Shot.find_by(id: attributes[:shot_id]).location
+      @location = Shot.find_by(id: attributes[:shot_id])&.location
       if @location
         " (#{@location.name})"
       end

@@ -20,15 +20,22 @@ class Api::V1::DriversController < ApplicationController
   def add
     @vehicle = current_campaign.vehicles.find(params[:id])
     @shot = @fight.shots.build(vehicle_id: @vehicle.id, shot: shot_params[:current_shot])
+
     if @vehicle.action_values["Type"] == "Mook"
       @shot.update(count: @vehicle.action_values["Chase Points"], color: vehicle_params[:color])
     end
 
+    if driver_params[:id]
+      @shot.update(driver_id: driver_params[:id])
+    end
+
     if @shot.save
-      render json: @vehicle.as_json.merge(count: @shot.count, color: @shot.color, shot_id: @shot.id)
+      render json: @vehicle.as_json(shot: @shot)
     else
       render status: 400
     end
+  rescue StandardError => e
+    binding.pry
   end
 
   def show
@@ -44,7 +51,7 @@ class Api::V1::DriversController < ApplicationController
     end
 
     if @shot.save
-      render json: @vehicle.as_json.merge(count: @shot.count, color: @shot.color, shot_id: @shot.id)
+      render json: @vehicle.as_json(shot: @shot)
     else
       render status: 400
     end
@@ -63,8 +70,12 @@ class Api::V1::DriversController < ApplicationController
       parms = mook_params
     end
 
+    if driver_params[:id]
+      @shot.update(driver_id: driver_params[:id])
+    end
+
     if @vehicle.update(parms)
-      render json: @vehicle.as_json.merge(count: @shot.count, color: @shot.color, shot_id: @shot.id)
+      render json: @vehicle.as_json(shot: @shot)
     else
       render @vehicle.errors, status: 400
     end
@@ -107,17 +118,24 @@ class Api::V1::DriversController < ApplicationController
   end
 
   def vehicle_params
-    params.require(:vehicle).permit(:name, :impairments, :character_id,
+    params.require(:vehicle).permit(:name, :impairments,
                                     :color, :user_id, action_values: Vehicle::DEFAULT_ACTION_VALUES.keys)
   end
 
   def mook_params
     params
       .require(:vehicle)
-      .permit(:name, :defense, :impairments, :color, :character_id,
+      .permit(:name, :defense, :impairments, :color,
               :user_id, :active, skills: [],
               action_values: Vehicle::DEFAULT_ACTION_VALUES.keys - ["Chase Points"],
               schticks: [])
+  end
+
+  def driver_params
+    params
+      .require(:vehicle)
+      .permit(driver: [:id])
+      &.dig(:driver) || {}
   end
 
 end

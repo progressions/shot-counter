@@ -20,7 +20,6 @@ class Vehicle < ApplicationRecord
   has_many :character_effects
   has_many :memberships
   has_many :parties, through: :memberships
-  belongs_to :driver, class_name: "Character", optional: true, foreign_key: "character_id"
 
   POSITIONS = %w(near far)
 
@@ -31,6 +30,7 @@ class Vehicle < ApplicationRecord
   validates :name, presence: true, uniqueness: { scope: :campaign_id }
 
   def as_json(args={})
+    shot = args[:shot]
     {
       id: id,
       name: name,
@@ -41,12 +41,12 @@ class Vehicle < ApplicationRecord
       updated_at: updated_at,
       user: user,
       action_values: action_values,
-      color: args[:color] || color,
+      color: shot&.color || color,
       impairments: impairments,
       category: "vehicle",
-      count: args[:count],
-      shot_id: args[:shot_id],
-      driver: driver_json(driver)
+      count: shot&.count,
+      shot_id: shot&.id,
+      driver: driver_json(shot&.driver)
     }
   end
 
