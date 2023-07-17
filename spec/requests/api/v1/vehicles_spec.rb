@@ -67,6 +67,13 @@ RSpec.describe "Vehicles", type: :request do
         body = JSON.parse(response.body)
         expect(body["faction"]["name"]).to eq("Dragons")
       end
+
+      it "adds a driver" do
+        patch "/api/v1/vehicles/#{vehicle.id}", params: { vehicle: { character_id: brick.id } }, headers: headers
+        expect(response).to have_http_status(:success)
+        body = JSON.parse(response.body)
+        expect(body["driver"]["name"]).to eq("Brick Manly")
+      end
     end
 
     describe "DELETE /destroy" do

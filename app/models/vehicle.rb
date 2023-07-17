@@ -20,6 +20,7 @@ class Vehicle < ApplicationRecord
   has_many :character_effects
   has_many :memberships
   has_many :parties, through: :memberships
+  belongs_to :driver, class_name: "Character", optional: true, foreign_key: "character_id"
 
   POSITIONS = %w(near far)
 
@@ -45,6 +46,16 @@ class Vehicle < ApplicationRecord
       category: "vehicle",
       count: args[:count],
       shot_id: args[:shot_id],
+      driver: driver_json(driver)
+    }
+  end
+
+  def driver_json(driver)
+    return {} unless driver
+    {
+      id: driver.id,
+      name: driver.name,
+      skills: driver.skills.slice("Driving")
     }
   end
 

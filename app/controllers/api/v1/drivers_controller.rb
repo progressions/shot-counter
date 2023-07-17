@@ -6,7 +6,7 @@ class Api::V1::DriversController < ApplicationController
   before_action :set_shot, only: [:update, :act, :reveal, :hide]
 
   def index
-    render json: @fight.vehicles
+    render json: @fight.vehicles.order(:name)
   end
 
   def act
@@ -107,14 +107,14 @@ class Api::V1::DriversController < ApplicationController
   end
 
   def vehicle_params
-    params.require(:vehicle).permit(:name, :impairments,
+    params.require(:vehicle).permit(:name, :impairments, :character_id,
                                     :color, :user_id, action_values: Vehicle::DEFAULT_ACTION_VALUES.keys)
   end
 
   def mook_params
     params
       .require(:vehicle)
-      .permit(:name, :defense, :impairments, :color,
+      .permit(:name, :defense, :impairments, :color, :character_id,
               :user_id, :active, skills: [],
               action_values: Vehicle::DEFAULT_ACTION_VALUES.keys - ["Chase Points"],
               schticks: [])

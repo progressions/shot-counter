@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_07_14_185357) do
+ActiveRecord::Schema[7.0].define(version: 2023_07_17_140354) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -304,7 +304,9 @@ ActiveRecord::Schema[7.0].define(version: 2023_07_14_185357) do
     t.uuid "campaign_id"
     t.boolean "active", default: true, null: false
     t.uuid "faction_id"
+    t.uuid "character_id"
     t.index ["campaign_id"], name: "index_vehicles_on_campaign_id"
+    t.index ["character_id"], name: "index_vehicles_on_character_id"
     t.index ["faction_id"], name: "index_vehicles_on_faction_id"
     t.index ["user_id"], name: "index_vehicles_on_user_id"
   end
@@ -366,6 +368,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_07_14_185357) do
   add_foreign_key "sites", "campaigns"
   add_foreign_key "sites", "factions"
   add_foreign_key "vehicles", "campaigns"
+  add_foreign_key "vehicles", "characters"
   add_foreign_key "vehicles", "factions"
   add_foreign_key "vehicles", "users"
   add_foreign_key "weapons", "campaigns"

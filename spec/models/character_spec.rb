@@ -57,6 +57,11 @@ RSpec.describe Character, type: :model do
       site.characters << brick
       expect(brick.sites).to include(site)
     end
+
+    it "has many vehicles" do
+      vehicle = brick.vehicles.create!(name: "Car", campaign: action_movie)
+      expect(brick.vehicles).to include(vehicle)
+    end
   end
 
   describe "validations" do

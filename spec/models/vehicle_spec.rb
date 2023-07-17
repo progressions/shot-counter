@@ -57,6 +57,12 @@ RSpec.describe Vehicle, type: :model do
       truck = Vehicle.create!(name: "Truck", campaign_id: @action_movie.id, faction_id: @rogues.id)
       expect(truck.faction).to eq(@rogues)
     end
+
+    it "has a driver" do
+      truck = Vehicle.create!(name: "Truck", campaign_id: @action_movie.id)
+      driver = truck.driver = Character.create!(name: "Driver", campaign_id: @action_movie.id)
+      expect(truck.driver).to eq(driver)
+    end
   end
 
   describe "validations" do
@@ -76,6 +82,19 @@ RSpec.describe Vehicle, type: :model do
       truck = Vehicle.new(name: "Truck", campaign_id: @action_movie.id)
       expect(truck).to be_valid
       expect(truck.errors[:user]).to be_empty
+    end
+  end
+
+  describe "driver" do
+    it "includes driver in JSON" do
+      truck = Vehicle.create!(name: "Truck", campaign_id: @action_movie.id)
+      driver = truck.driver = Character.create!(name: "Driver", campaign_id: @action_movie.id)
+      driver.skills["Driving"] = 13
+      driver.save!
+
+      expect(truck.as_json[:driver][:name]).to eq(driver.name)
+      expect(truck.as_json[:driver][:id]).to eq(driver.id)
+      expect(truck.as_json[:driver][:skills]).to eq({"Driving" => 13})
     end
   end
 end
