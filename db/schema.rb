@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_07_17_163818) do
+ActiveRecord::Schema[7.0].define(version: 2023_07_19_115659) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -324,6 +324,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_07_17_163818) do
     t.integer "mook_bonus", default: 0, null: false
     t.string "category"
     t.boolean "kachunk"
+    t.string "image_url"
     t.index ["campaign_id", "name"], name: "index_weapons_on_campaign_id_and_name", unique: true
     t.index ["campaign_id"], name: "index_weapons_on_campaign_id"
   end

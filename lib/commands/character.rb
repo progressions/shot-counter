@@ -59,8 +59,6 @@ module CharacterCommands
       if event.options["name"]
         if (character = campaign.characters.where(active: true).find_by(name: event.options["name"]))
           message = CharacterPoster.show(character)
-          Rails.logger.info("Message: #{message}")
-          Rails.logger.info("Message length: #{message.length}")
           event.respond(content: message)
         else
           event.respond(content: "Character not found")

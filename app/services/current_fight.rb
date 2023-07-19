@@ -13,6 +13,15 @@ module CurrentFight
     def set(server_id:, channel_id:, fight: nil)
       data = payload(fight || Fight.create, channel_id)
       redis.set("current_fight_id:#{server_id}", data.to_json)
+      set_channel_id(server_id: server_id, fight_id: data[:fight_id], channel_id: channel_id)
+    end
+
+    def get_channel_id(server_id:, fight:)
+      redis.get("channel_id:#{server_id}:#{fight.id}")
+    end
+
+    def set_channel_id(server_id:, fight_id:, channel_id: nil)
+      redis.set("channel_id:#{server_id}:#{fight_id}", channel_id)
     end
 
     # Add functions to save and get current character for a username
