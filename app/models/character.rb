@@ -114,6 +114,7 @@ class Character < ApplicationRecord
       count: shot&.count,
       location: shot&.location&.name,
       shot_id: shot&.id,
+      image_url: image_url,
     }
   end
 

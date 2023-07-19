@@ -47,7 +47,8 @@ class Vehicle < ApplicationRecord
       count: shot&.count,
       shot_id: shot&.id,
       location: shot&.location&.name,
-      driver: driver_json(shot&.driver)
+      driver: driver_json(shot&.driver),
+      image_url: image_url
     }
   end
 
