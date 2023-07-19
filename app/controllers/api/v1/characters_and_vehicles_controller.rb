@@ -97,7 +97,7 @@ class Api::V1::CharactersAndVehiclesController < ApplicationController
         shot
           .character
           .as_json(shot: shot)
-          .slice(:id, :name, :impairments, :action_values, :location)
+          .slice(:id, :name, :impairments, :action_values, :location, :shot_id)
       }
 
     render json: @characters
@@ -120,7 +120,7 @@ class Api::V1::CharactersAndVehiclesController < ApplicationController
         shot
           .vehicle
           .as_json(shot: shot)
-          .slice(:id, :name, :impairments, :action_values, :driver, :location)
+          .slice(:id, :name, :impairments, :action_values, :driver, :location, :shot_id)
       }
 
     render json: @vehicles
