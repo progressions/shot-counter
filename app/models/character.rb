@@ -60,6 +60,7 @@ class Character < ApplicationRecord
     "Strength" => 0
   }
 
+  has_one_attached :image
   has_many :shots, dependent: :destroy
   has_many :fights, through: :shots
   belongs_to :faction, optional: true
@@ -89,6 +90,7 @@ class Character < ApplicationRecord
   validates :name, presence: true, uniqueness: { scope: :campaign_id }
 
   def as_json(args={})
+    ActiveStorage::Current.url_options = Rails.configuration.x.active_storage_url_options
     shot = args[:shot]
     {
       id: id,
@@ -114,7 +116,7 @@ class Character < ApplicationRecord
       count: shot&.count,
       location: shot&.location&.name,
       shot_id: shot&.id,
-      image_url: image_url,
+      image_url: image.attached? ? image.url : nil,
     }
   end
 

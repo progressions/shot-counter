@@ -23,5 +23,10 @@ module ShotServer
     # Middleware like session, flash, cookies can be added back manually.
     # Skip views, helpers and assets when generating a new resource.
     config.api_only = true
+
+    config.after_initialize do
+      Rails.application.routes.default_url_options = Rails.configuration.x.active_storage_url_options
+      ActiveStorage::Current.url_options = Rails.configuration.x.active_storage_url_options
+    end
   end
 end

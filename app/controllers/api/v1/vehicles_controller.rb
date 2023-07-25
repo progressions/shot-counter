@@ -54,7 +54,7 @@ class Api::V1::VehiclesController < ApplicationController
 
   def vehicle_params
     params.require(:vehicle).permit(:name, :character_id, :faction_id, :defense,
-      :impairments, :count, :color, :user_id, :active, :image_url,
+      :impairments, :count, :color, :user_id, :active, :image_url, :image,
       action_values: Vehicle::DEFAULT_ACTION_VALUES.keys)
   end
 
