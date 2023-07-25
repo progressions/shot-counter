@@ -117,7 +117,6 @@ class Character < ApplicationRecord
       location: shot&.location&.name,
       shot_id: shot&.id,
       image_url: image_url,
-      avatar_url: image.attached? ? image.variant(resize: "100x100").processed.url : nil,
     }
   end
 
