@@ -12,6 +12,7 @@ class Vehicle < ApplicationRecord
     "Type" => "PC",
   }
 
+  has_one_attached :image
   has_many :shots, dependent: :destroy
   has_many :fights, through: :shots
   belongs_to :user, optional: true
@@ -65,6 +66,10 @@ class Vehicle < ApplicationRecord
 
   scope :by_type, -> (player_type) do
     where("vehicles.action_values->>'Type' IN (?)", player_type)
+  end
+
+  def image_url
+    image.attached? ? image.url : nil
   end
 
   def sort_order(shot_id=nil)

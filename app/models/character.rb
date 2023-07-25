@@ -116,7 +116,8 @@ class Character < ApplicationRecord
       count: shot&.count,
       location: shot&.location&.name,
       shot_id: shot&.id,
-      image_url: image.attached? ? image.url : nil,
+      image_url: image_url,
+      avatar_url: image.attached? ? image.variant(resize: "100x100").processed.url : nil,
     }
   end
 
@@ -124,6 +125,10 @@ class Character < ApplicationRecord
 
   scope :by_type, -> (player_type) do
     where("action_values->>'Type' IN (?)", player_type)
+  end
+
+  def image_url
+    image.attached? ? image.url : nil
   end
 
   def category

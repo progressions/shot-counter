@@ -7,6 +7,7 @@ ruby "3.1.0"
 gem "rails", "~> 7.0.4"
 
 gem "aws-sdk-s3", require: false
+gem "ruby-vips"
 
 # Use postgresql as the database for Active Record
 gem "pg", "~> 1.1"
