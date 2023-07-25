@@ -314,7 +314,6 @@ DEPENDENCIES
   rails (~> 7.0.4)
   redis (~> 4.0)
   rspec-rails
-  ruby-vips
   tzinfo-data
 
 RUBY VERSION
