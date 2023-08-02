@@ -88,6 +88,13 @@ RSpec.describe "Api::V1::Actors", type: :request do
       expect(truck.reload.name).to eq("Truck")
     end
 
+    it "sets a vehicle as a task" do
+      patch "/api/v1/fights/#{fight.id}/drivers/#{truck.id}", headers: headers, params: { vehicle: { task: true } }
+
+      expect(response).to have_http_status(200)
+      expect(truck.reload.task).to be_truthy
+    end
+
     it "adds a driver to a vehicle" do
       patch "/api/v1/fights/#{fight.id}/drivers/#{truck.id}",
         headers: headers,

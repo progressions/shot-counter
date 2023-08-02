@@ -114,7 +114,7 @@ class Api::V1::ActorsController < ApplicationController
   def character_params
     params
       .require(:character)
-      .permit(:name, :defense, :impairments, :color,
+      .permit(:name, :defense, :impairments, :color, :task,
               :user_id, :active, skills: [],
               action_values: Character::DEFAULT_ACTION_VALUES.keys,
               description: Character::DEFAULT_DESCRIPTION.keys,

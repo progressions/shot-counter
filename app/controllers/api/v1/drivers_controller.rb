@@ -116,7 +116,7 @@ class Api::V1::DriversController < ApplicationController
   end
 
   def vehicle_params
-    params.require(:vehicle).permit(:name, :impairments,
+    params.require(:vehicle).permit(:name, :impairments, :task,
                                     :color, :user_id, action_values: Vehicle::DEFAULT_ACTION_VALUES.keys)
   end
 

@@ -72,6 +72,17 @@ RSpec.describe "Api::V1::Actors", type: :request do
     end
   end
 
+  describe "PATCH /api/v1/fights/:id/actors/:character_id" do
+    it "sets a character as a task" do
+      patch "/api/v1/fights/#{fight.id}/actors/#{brick.id}", headers: headers, params: {
+        character: { task: true }
+      }
+
+      expect(response).to have_http_status(200)
+      expect(brick.reload.task).to be_truthy
+    end
+  end
+
   describe "PATCH /api/v1/fights/:id/actors/:character_id/reveal" do
     it "reveals a character" do
       brick_shot.update(shot: nil)
