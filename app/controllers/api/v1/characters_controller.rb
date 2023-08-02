@@ -56,7 +56,7 @@ class Api::V1::CharactersController < ApplicationController
     params
       .require(:character)
       .permit(:name, :defense, :impairments, :color,
-              :user_id, :active, :faction_id, :image_url, :image,
+              :user_id, :active, :faction_id, :image_url, :image, :task,
               action_values: Character::DEFAULT_ACTION_VALUES.keys,
               description: Character::DEFAULT_DESCRIPTION.keys,
               schticks: [], skills: params.fetch(:character, {}).fetch(:skills, {}).keys || [])

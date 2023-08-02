@@ -31,6 +31,16 @@ RSpec.describe "Api::V1::Characters", type: :request do
       character = Character.find(body["id"])
       expect(character.faction.name).to eq("The Dragons")
     end
+
+    it "creates a task" do
+      post "/api/v1/characters", params: { character: { name: "Defuse the Bomb", task: true, action_values: { "Type" => "PC" } } }, headers: @headers
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["name"]).to eq("Defuse the Bomb")
+      expect(body["task"]).to eq(true)
+      character = Character.find(body["id"])
+      expect(character.task).to eq(true)
+    end
   end
 
   describe "GET /show" do

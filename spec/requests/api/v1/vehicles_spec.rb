@@ -33,6 +33,18 @@ RSpec.describe "Vehicles", type: :request do
         expect(body["name"]).to eq("Delorean")
       end
 
+      it "creates a task" do
+        expect {
+          post "/api/v1/vehicles", params: { vehicle: { name: "Catch the Train", task: true } }, headers: headers
+        }.to change { Vehicle.count }.by(1)
+        expect(response).to have_http_status(:success)
+        body = JSON.parse(response.body)
+        expect(body["name"]).to eq("Catch the Train")
+        expect(body["task"]).to eq(true)
+        vehicle = Vehicle.find(body["id"])
+        expect(vehicle.task).to eq(true)
+      end
+
       it "creates a vehicle with a faction" do
         expect {
           post "/api/v1/vehicles", params: { vehicle: { name: "Delorean", faction_id: dragons.id } }, headers: headers

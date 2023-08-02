@@ -117,6 +117,7 @@ class Character < ApplicationRecord
       location: shot&.location&.name,
       shot_id: shot&.id,
       image_url: image_url,
+      task: task,
     }
   end
 
