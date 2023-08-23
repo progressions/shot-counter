@@ -10,4 +10,16 @@ class Api::V1::FactionsController < ApplicationController
     render json: @factions
   end
 
+  def create
+    @faction = current_campaign.factions.create!(faction_params)
+
+    render json: @faction
+  end
+
+  private
+
+  def faction_params
+    params.require(:faction).permit(:name)
+  end
+
 end

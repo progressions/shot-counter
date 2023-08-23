@@ -22,4 +22,13 @@ RSpec.describe "Api::V1::Factions", type: :request do
       expect(body.map { |f| f["name"] }).to eq(["The Ascended", "The Dragons"])
     end
   end
+
+  describe "POST /create" do
+    it "returns http success" do
+      post "/api/v1/factions", params: { faction: { name: "The Fallen" } }, headers: @headers
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["name"]).to eq("The Fallen")
+    end
+  end
 end
