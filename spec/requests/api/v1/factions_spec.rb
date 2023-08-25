@@ -31,4 +31,36 @@ RSpec.describe "Api::V1::Factions", type: :request do
       expect(body["name"]).to eq("The Fallen")
     end
   end
+
+  describe "GET /show" do
+    let(:faction) { @campaign.factions.create!(name: "The Fallen") }
+
+    it "returns http success" do
+      get "/api/v1/factions/#{faction.id}", headers: @headers
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["name"]).to eq("The Fallen")
+    end
+  end
+
+  describe "PATCH /update" do
+    let(:faction) { @campaign.factions.create!(name: "The Fallen") }
+
+    it "returns http success" do
+      patch "/api/v1/factions/#{faction.id}", params: { faction: { name: "The Fallen Ones" } }, headers: @headers
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["name"]).to eq("The Fallen Ones")
+    end
+  end
+
+  describe "DELETE /destroy" do
+    let(:faction) { @campaign.factions.create!(name: "The Fallen") }
+
+    it "returns http success" do
+      delete "/api/v1/factions/#{faction.id}", headers: @headers
+      expect(response).to have_http_status(:success)
+      expect(Faction.find_by(id: faction.id)).to be_nil
+    end
+  end
 end
