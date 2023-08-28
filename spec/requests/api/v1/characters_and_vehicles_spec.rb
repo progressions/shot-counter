@@ -86,6 +86,20 @@ RSpec.describe "Api::V1::CharactersAndVehicles", type: :request do
       expect(body["characters"].map { |c| c["name"] }).to eq(["Brick Manly"])
     end
 
+    it "filters list by character ID" do
+      get "/api/v1/characters_and_vehicles?character_id=#{@brick[:id]}", headers: @headers
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["characters"].map { |c| c["name"] }).to eq(["Brick Manly"])
+    end
+
+    it "filters list by vehicle ID" do
+      get "/api/v1/characters_and_vehicles?vehicle_id=#{@speedboat[:id]}", headers: @headers
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["characters"].map { |c| c["name"] }).to eq(["Speedboat"])
+    end
+
     it "paginates the combined collection" do
       30.times { |i|
         Character.create!(name: "Enforcer #{i}", action_values: { "Type" => "Featured Foe" }, campaign_id: @campaign.id)
