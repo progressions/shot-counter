@@ -5,68 +5,75 @@ class Api::V1::CharactersAndVehiclesController < ApplicationController
   before_action :set_scoped_vehicles
 
   def index
-    @characters = @scoped_characters
-      .includes(:user)
-      .includes(:carries)
-      .includes(:weapons)
-      .includes(:character_schticks)
-      .includes(:schticks)
-      .includes(:advancements)
-      .includes(:sites)
-      .order(:name)
+    @characters = []
+    @vehicles = []
 
-    # Make this query once rather than repeating it for each action_value we're trying to pluck.
-    @action_values = @characters.select(:id, :user_id, Arel.sql("action_values->'Archetype' as archetype"))
-    @archetypes = @action_values.map(&:archetype).uniq.reject(&:blank?).sort
+    if params[:vehicle_id].blank?
+      @characters = @scoped_characters
+        .includes(:user)
+        .includes(:carries)
+        .includes(:weapons)
+        .includes(:character_schticks)
+        .includes(:schticks)
+        .includes(:advancements)
+        .includes(:sites)
+        .order(:name)
 
-    @factions = current_campaign.factions.joins(:characters).where(characters: @characters).order("factions.name").distinct
+      # Make this query once rather than repeating it for each action_value we're trying to pluck.
+      @action_values = @characters.select(:id, :user_id, Arel.sql("action_values->'Archetype' as archetype"))
+      @archetypes = @action_values.map(&:archetype).uniq.reject(&:blank?).sort
 
-    if params[:fight_id]
-      # @characters = @characters.where.not(id: Shot.where(fight_id: params[:fight_id]).pluck(:character_id))
-    end
-    if params[:show_all] != "true"
-      @characters = @characters.where(active: true)
-    end
-    if params[:faction].present?
-      @characters = @characters.joins(:faction).where("factions.name ILIKE ?", "%#{params[:faction]}%")
-    end
-    if params[:faction_id].present?
-      @characters = @characters.where(faction_id: params[:faction_id])
-    end
-    if params[:archetype].present?
-      @characters = @characters.where("action_values->'Archetype' = ?", params[:archetype].to_json)
-    end
-    if params[:character_type].present?
-      @characters = @characters.where("action_values->'Type' = ?", params[:character_type].to_json)
-    end
-    if params[:search].present?
-      @characters = @characters.where("name ILIKE ?", "%#{params[:search]}%")
+      @factions = current_campaign.factions.joins(:characters).where(characters: @characters).order("factions.name").distinct
+
+      if params[:show_all] != "true"
+        @characters = @characters.where(active: true)
+      end
+      if params[:faction].present?
+        @characters = @characters.joins(:faction).where("factions.name ILIKE ?", "%#{params[:faction]}%")
+      end
+      if params[:faction_id].present?
+        @characters = @characters.where(faction_id: params[:faction_id])
+      end
+      if params[:archetype].present?
+        @characters = @characters.where("action_values->'Archetype' = ?", params[:archetype].to_json)
+      end
+      if params[:character_type].present?
+        @characters = @characters.where("action_values->'Type' = ?", params[:character_type].to_json)
+      end
+      if params[:character_id].present?
+        @characters = @characters.where(id: params[:character_id])
+      end
+      if params[:search].present?
+        @characters = @characters.where("name ILIKE ?", "%#{params[:search]}%")
+      end
     end
 
-    @vehicles = @scoped_vehicles
-      .includes(:user)
-      .order(:name)
+    if params[:character_id].blank?
+      @vehicles = @scoped_vehicles
+        .includes(:user)
+        .order(:name)
 
-    if params[:fight_id]
-      # @vehicles = @vehicles.where.not(id: Shot.where(fight_id: params[:fight_id]).pluck(:vehicle_id))
-    end
-    if params[:show_all] != "true"
-      @characters = @characters.where(active: true)
-    end
-    if params[:faction].present?
-      @vehicles = @vehicles.joins(:faction).where("factions.name ILIKE ?", "%#{params[:faction]}%")
-    end
-    if params[:faction_id].present?
-      @vehicles = @vehicles.where(faction_id: params[:faction_id])
-    end
-    if params[:archetype].present?
-      @vehicles = @vehicles.where("action_values->'Archetype' = ?", params[:archetype].to_json)
-    end
-    if params[:character_type].present?
-      @vehicles = @vehicles.where("action_values->'Type' = ?", params[:character_type].to_json)
-    end
-    if params[:search].present?
-      @vehicles = @vehicles.where("name ILIKE ?", "%#{params[:search]}%")
+      if params[:show_all] != "true"
+        @vehicles = @vehicles.where(active: true)
+      end
+      if params[:faction].present?
+        @vehicles = @vehicles.joins(:faction).where("factions.name ILIKE ?", "%#{params[:faction]}%")
+      end
+      if params[:faction_id].present?
+        @vehicles = @vehicles.where(faction_id: params[:faction_id])
+      end
+      if params[:archetype].present?
+        @vehicles = @vehicles.where("action_values->'Archetype' = ?", params[:archetype].to_json)
+      end
+      if params[:character_type].present?
+        @vehicles = @vehicles.where("action_values->'Type' = ?", params[:character_type].to_json)
+      end
+      if params[:vehicle_id].present?
+        @vehicles = @vehicles.where(id: params[:vehicle_id])
+      end
+      if params[:search].present?
+        @vehicles = @vehicles.where("name ILIKE ?", "%#{params[:search]}%")
+      end
     end
 
     @characters_and_vehicles = (@characters + @vehicles).sort_by(&:name)

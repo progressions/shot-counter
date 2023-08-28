@@ -90,7 +90,6 @@ class Character < ApplicationRecord
   validates :name, presence: true, uniqueness: { scope: :campaign_id }
 
   def as_json(args={})
-    ActiveStorage::Current.url_options = Rails.configuration.x.active_storage_url_options
     shot = args[:shot]
     {
       id: id,

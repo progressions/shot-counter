@@ -26,7 +26,7 @@ Rails.application.routes.draw do
       resources :sites
       post "schticks/import", to: "schticks#import"
       post "weapons/import", to: "weapons#import"
-      resources :factions, only: [:index]
+      resources :factions
       resources :invitations do
         member do
           patch :redeem
