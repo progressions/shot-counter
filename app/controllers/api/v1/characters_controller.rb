@@ -2,7 +2,7 @@ class Api::V1::CharactersController < ApplicationController
   before_action :authenticate_user!
   before_action :require_current_campaign
   before_action :set_scoped_characters
-  before_action :set_character, only: [:update, :destroy, :show]
+  before_action :set_character, only: [:update, :destroy, :show, :remove_image]
 
   def index
     @characters = @scoped_characters.includes(:user).order(:name).all
@@ -36,6 +36,16 @@ class Api::V1::CharactersController < ApplicationController
   def destroy
     @character.destroy!
     render :ok
+  end
+
+  def remove_image
+    @character.image.purge
+
+    if @character.save
+      render json: @character
+    else
+      render @character.errors, status: 400
+    end
   end
 
   private
