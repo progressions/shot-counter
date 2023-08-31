@@ -98,7 +98,7 @@ class Character < ApplicationRecord
       created_at: created_at,
       updated_at: updated_at,
       user: user,
-      action_values: action_values,
+      action_values: is_pc? ? action_values : action_values.merge("Wounds" => shot&.count),
       faction_id: faction_id,
       faction: {
         name: faction&.name,
@@ -106,17 +106,18 @@ class Character < ApplicationRecord
       description: description,
       schticks: schticks.includes(:prerequisite).order(:category, :path, :name),
       skills: skills.sort_by { |key, value| [(DEFAULT_SKILLS.keys.include?(key) ? 0 : 1), key] }.to_h,
-      color: shot&.color || color,
-      impairments: impairments,
       advancements: advancements.order(:created_at),
       sites: sites.order(:created_at),
       weapons: weapons,
       category: "character",
-      count: shot&.count,
-      location: shot&.location&.name,
-      shot_id: shot&.id,
       image_url: image_url,
       task: task,
+
+      impairments: is_pc? ? impairments : shot&.impairments,
+      count: shot&.count,
+      color: shot&.color || color,
+      location: shot&.location&.name,
+      shot_id: shot&.id,
     }
   end
 
@@ -138,6 +139,10 @@ class Character < ApplicationRecord
     character_type = action_values.fetch("Type")
     speed = action_values.fetch("Speed", 0).to_i - impairments.to_i
     [0, Fight::SORT_ORDER.index(character_type), speed * -1, name, shot_id].compact
+  end
+
+  def is_pc?
+    action_values.fetch("Type") == "PC"
   end
 
   def good_guy?

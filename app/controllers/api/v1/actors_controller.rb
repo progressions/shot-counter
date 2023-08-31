@@ -20,7 +20,7 @@ class Api::V1::ActorsController < ApplicationController
   def add
     @character = current_campaign.characters.find(params[:id])
     @shot = @fight.shots.build(character_id: @character.id, shot: shot_params[:current_shot])
-    if @character.action_values["Type"] == "Mook"
+    if !@character.is_pc?
       @shot.update(count: @character.action_values["Wounds"], color: character_params[:color])
     end
 
@@ -39,7 +39,7 @@ class Api::V1::ActorsController < ApplicationController
   def create
     @character = current_campaign.characters.create!(character_params.merge(user: current_user))
     @shot = @fight.shots.build(character_id: @character.id, shot: shot_params[:current_shot])
-    if @character.action_values["Type"] == "Mook"
+    if !@character.is_pc?
       @shot.update(count: @character.action_values["Wounds"], color: character_params[:color])
     end
 
@@ -56,10 +56,9 @@ class Api::V1::ActorsController < ApplicationController
 
     parms = character_params
 
-    if @character.action_values["Type"] == "Mook"
+    if !@character.is_pc?
       count = params[:character][:count]
-      @shot.update(count: count, color: character_params[:color])
-
+      @shot.update(count: count, color: character_params[:color], impairments: character_params[:impairments])
 
       parms = mook_params
     end
@@ -125,7 +124,7 @@ class Api::V1::ActorsController < ApplicationController
   def mook_params
     params
       .require(:character)
-      .permit(:name, :defense, :impairments, :color,
+      .permit(:name, :defense, :color,
               :user_id, :active, skills: [],
               action_values: Character::DEFAULT_ACTION_VALUES.keys - ["Wounds"],
               description: Character::DEFAULT_DESCRIPTION.keys,

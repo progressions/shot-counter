@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_08_02_231432) do
+ActiveRecord::Schema[7.0].define(version: 2023_08_31_204046) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -248,6 +248,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_08_02_231432) do
     t.integer "count", default: 0
     t.string "color"
     t.uuid "driver_id"
+    t.integer "impairments", default: 0
     t.index ["character_id"], name: "index_shots_on_character_id"
     t.index ["driver_id"], name: "index_shots_on_driver_id"
     t.index ["fight_id"], name: "index_shots_on_fight_id"
