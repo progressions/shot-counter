@@ -24,6 +24,7 @@ Rails.application.routes.draw do
         post "fight/:fight_id", to: "parties#fight"
       end
       resources :sites
+      delete "sites/:id/image", to: "sites#remove_image"
       post "schticks/import", to: "schticks#import"
       post "weapons/import", to: "weapons#import"
       resources :factions

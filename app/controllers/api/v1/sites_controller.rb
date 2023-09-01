@@ -56,6 +56,17 @@ class Api::V1::SitesController < ApplicationController
     render :ok
   end
 
+  def remove_image
+    @site = current_campaign.sites.find(params[:id])
+    @site.image.purge
+
+    if @site.save
+      render json: @site
+    else
+      render @site.errors, status: 400
+    end
+  end
+
   private
 
   def site_params
