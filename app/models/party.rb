@@ -4,6 +4,7 @@ class Party < ApplicationRecord
   has_many :vehicles, through: :memberships
   belongs_to :faction, optional: true
   belongs_to :campaign
+  has_one_attached :image
 
   validates :name, presence: true, uniqueness: { scope: :campaign_id }
 

@@ -3,6 +3,7 @@ class Location < ApplicationRecord
 
   validates :name, presence: true
   validates :shot, presence: true
+  has_one_attached :image
 
   delegate :character, :vehicle, to: :shot
 

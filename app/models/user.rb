@@ -13,6 +13,7 @@ class User < ApplicationRecord
   has_many :campaign_memberships, dependent: :destroy
   has_many :player_campaigns, through: :campaign_memberships, source: "campaign"
   has_many :invitations
+  has_one_attached :image
   validates :email,
     uniqueness: true,
     allow_nil: true,
