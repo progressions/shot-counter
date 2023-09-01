@@ -11,6 +11,7 @@ class Campaign < ApplicationRecord
   has_many :parties
   has_many :sites
   has_many :factions
+  has_one_attached :image
 
   validates :name, presence: true, allow_blank: false
 
