@@ -122,6 +122,7 @@ GEM
     diff-lcs (1.5.0)
     domain_name (0.5.20190701)
       unf (>= 0.0.5, < 1.0.0)
+    dotenv (2.8.1)
     dry-auto_inject (1.0.1)
       dry-core (~> 1.0)
       zeitwerk (~> 2.6)
@@ -133,9 +134,19 @@ GEM
       zeitwerk (~> 2.6)
     erubi (1.11.0)
     event_emitter (0.2.6)
+    faraday (2.7.10)
+      faraday-net_http (>= 2.0, < 3.1)
+      ruby2_keywords (>= 0.0.4)
+    faraday-mashify (0.1.1)
+      faraday (~> 2.0)
+      hashie
+    faraday-multipart (1.0.4)
+      multipart-post (~> 2)
+    faraday-net_http (3.0.2)
     ffi (1.15.5)
     globalid (1.0.0)
       activesupport (>= 5.0)
+    hashie (5.0.0)
     http-accept (1.7.0)
     http-cookie (1.0.5)
       domain_name (~> 0.5)
@@ -202,6 +213,12 @@ GEM
       racc (~> 1.4)
     nokogiri (1.13.10-x86_64-darwin)
       racc (~> 1.4)
+    notion-ruby-client (1.2.1)
+      dotenv
+      faraday (>= 2.0)
+      faraday-mashify (>= 0.1.1)
+      faraday-multipart (>= 1.0.4)
+      hashie (~> 5)
     opus-ruby (1.0.1)
       ffi
     orm_adapter (0.5.0)
@@ -277,6 +294,7 @@ GEM
     rspec-support (3.12.0)
     ruby-vips (2.1.4)
       ffi (~> 1.12)
+    ruby2_keywords (0.0.5)
     thor (1.2.1)
     timeout (0.3.1)
     tzinfo (2.0.5)
@@ -316,6 +334,7 @@ DEPENDENCIES
   imagekitio
   kaminari
   letter_opener
+  notion-ruby-client
   pg (~> 1.1)
   pry-rails
   puma (~> 5.6.5)
