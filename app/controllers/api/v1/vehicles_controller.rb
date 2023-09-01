@@ -38,6 +38,16 @@ class Api::V1::VehiclesController < ApplicationController
     render :ok
   end
 
+  def remove_image
+    @vehicle.image.purge
+
+    if @vehicle.save
+      render json: @vehicle
+    else
+      render @vehicle.errors, status: 400
+    end
+  end
+
   private
 
   def set_vehicle
