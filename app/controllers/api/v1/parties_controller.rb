@@ -1,7 +1,7 @@
 class Api::V1::PartiesController < ApplicationController
   before_action :authenticate_user!
   before_action :require_current_campaign
-  before_action :set_party, only: [:show, :update, :destroy]
+  before_action :set_party, only: [:show, :update, :destroy, :remove_image]
 
   def index
     @parties = current_campaign.parties.order(:name)
@@ -70,6 +70,16 @@ class Api::V1::PartiesController < ApplicationController
     render :ok
   end
 
+  def remove_image
+    @party.image.purge
+
+    if @party.save
+      render json: @party
+    else
+      render @party.errors, status: 400
+    end
+  end
+
   private
 
   def set_party
@@ -77,6 +87,6 @@ class Api::V1::PartiesController < ApplicationController
   end
 
   def party_params
-    params.require(:party).permit(:name, :description, :faction_id, :secret)
+    params.require(:party).permit(:name, :description, :faction_id, :secret, :image)
   end
 end

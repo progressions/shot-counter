@@ -29,6 +29,7 @@ class Party < ApplicationRecord
           category: "vehicle",
         }
       },
+      image_url: image.attached? ? image.url : nil,
     }
   end
 end
