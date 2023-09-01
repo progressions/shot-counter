@@ -59,6 +59,6 @@ class Api::V1::SitesController < ApplicationController
   private
 
   def site_params
-    params.require(:site).permit(:name, :description, :faction_id, :secret)
+    params.require(:site).permit(:name, :description, :faction_id, :secret, :image)
   end
 end

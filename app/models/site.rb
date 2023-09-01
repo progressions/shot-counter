@@ -22,6 +22,7 @@ class Site < ApplicationRecord
           name: character.name,
         }
       },
+      image_url: image.attached? ? image.url : nil,
     }
   end
 end
