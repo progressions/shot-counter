@@ -257,6 +257,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_08_31_204046) do
   end
 
   create_table "sites", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "character_id"
     t.string "description"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -266,6 +267,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_08_31_204046) do
     t.boolean "secret", default: false
     t.index ["campaign_id", "name"], name: "index_sites_on_campaign_id_and_name", unique: true
     t.index ["campaign_id"], name: "index_sites_on_campaign_id"
+    t.index ["character_id"], name: "index_sites_on_character_id"
     t.index ["faction_id"], name: "index_sites_on_faction_id"
   end
 
@@ -372,6 +374,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_08_31_204046) do
   add_foreign_key "shots", "locations"
   add_foreign_key "shots", "vehicles"
   add_foreign_key "sites", "campaigns"
+  add_foreign_key "sites", "characters"
   add_foreign_key "sites", "factions"
   add_foreign_key "vehicles", "campaigns"
   add_foreign_key "vehicles", "factions"
