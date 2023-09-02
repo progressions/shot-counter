@@ -20,6 +20,9 @@ class Party < ApplicationRecord
           id: character.id,
           name: character.name,
           category: "character",
+          image_url: character.image.attached? ? character.image.url : nil,
+          action_values: character.action_values,
+          faction: character.faction,
         }
       },
       vehicles: vehicles.map { |vehicle|
@@ -27,6 +30,9 @@ class Party < ApplicationRecord
           id: vehicle.id,
           name: vehicle.name,
           category: "vehicle",
+          image_url: vehicle.image.attached? ? vehicle.image.url : nil,
+          action_values: vehicle.action_values,
+          faction: vehicle.faction,
         }
       },
       image_url: image.attached? ? image.url : nil,
