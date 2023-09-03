@@ -104,6 +104,8 @@ module NotionService
         page_id: character.notion_page_id,
         properties: properties
       )
+
+      character.update(last_synced_to_notion_at: Time.now)
     end
 
     # private
