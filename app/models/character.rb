@@ -164,33 +164,29 @@ class Character < ApplicationRecord
   end
 
   def attributes_from_notion(page)
-    av = self.action_values
+    av = {
+      "Archetype" => page.dig("properties", "Type", "rich_text", 0, "text", "content"),
+      "Type" => page.dig("properties", "Enemy Type", "select", "name"),
+      "MainAttack" => av_or_new("MainAttack", page.dig("properties", "MainAttack", "select", "name")),
+      "SecondaryAttack" => av_or_new("SecondaryAttack", page.dig("properties", "SecondaryAttack", "select", "name")),
+      "FortuneType" => page.dig("properties", "FortuneType", "select", "name"),
+
+      "Wounds" => av_or_new("Wounds", page.dig("properties", "Wounds", "number")),
+      "Defense" => av_or_new("Defense", page.dig("properties", "Defense", "number")),
+      "Toughness" => av_or_new("Toughness", page.dig("properties", "Toughness", "number")),
+      "Speed" => av_or_new("Speed", page.dig("properties", "Speed", "number")),
+      "Guns" => av_or_new("Guns", page.dig("properties", "Guns", "number")),
+      "Martial Arts" => av_or_new("Martial Arts", page.dig("properties", "Martial Arts", "number")),
+      "Sorcery" => av_or_new("Sorcery", page.dig("properties", "Sorcery", "number")),
+      "Creature" => av_or_new("Creature", page.dig("properties", "Creature", "number")),
+      "Scroungetech" => av_or_new("Scroungetech", page.dig("properties", "Scroungetech", "number")),
+      "Mutant" => av_or_new("Mutant", page.dig("properties", "Mutant", "number")),
+    }
     self.attributes.symbolize_keys.merge({
       notion_page_id: page["id"],
       name: page.dig("properties", "Name", "title")&.first&.dig("plain_text"),
-      action_values: only_new_action_values({
-        "Archetype" => page.dig("properties", "Type", "rich_text", 0, "text", "content"),
-        "Type" => page.dig("properties", "Enemy Type", "select", "name"),
-        "MainAttack" => av_or_new(page.dig("properties", "MainAttack", "select", "name")),
-        "SecondaryAttack" => av_or_new(page.dig("properties", "SecondaryAttack", "select", "name")),
-        "FortuneType" => page.dig("properties", "FortuneType", "select", "name"),
-
-        "Wounds" => av_or_new("Wounds", page.dig("properties", "Wounds", "number")),
-        "Defense" => av_or_new("Defense", page.dig("properties", "Defense", "number")),
-        "Toughness" => av_or_new("Toughness", page.dig("properties", "Toughness", "number")),
-        "Speed" => av_or_new("Speed", page.dig("properties", "Speed", "number")),
-        "Guns" => av_or_new("Guns", page.dig("properties", "Guns", "number")),
-        "Martial Arts" => av_or_new("Martial Arts", page.dig("properties", "Martial Arts", "number")),
-        "Sorcery" => av_or_new("Sorcery", page.dig("properties", "Sorcery", "number")),
-        "Creature" => av_or_new("Creature", page.dig("properties", "Creature", "number")),
-        "Scroungetech" => av_or_new("Scroungetech", page.dig("properties", "Scroungetech", "number")),
-        "Mutant" => av_or_new("Mutant", page.dig("properties", "Mutant", "number")),
-      }),
+      action_values: self.action_values.merge(av)
     })
-  end
-
-  def only_new_action_values(values)
-    values #.select { |key, _value| self.action_values[key].blank? }
   end
 
   def av_or_new(key, new_value=nil)

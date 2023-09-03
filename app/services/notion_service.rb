@@ -81,7 +81,6 @@ module NotionService
       character.update(attributes)
 
       add_faction(page, character)
-
       add_image(page, character)
 
       character.save
