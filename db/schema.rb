@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_09_03_001030) do
+ActiveRecord::Schema[7.0].define(version: 2023_09_03_191203) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -129,6 +129,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_09_03_001030) do
     t.string "image_url"
     t.boolean "task"
     t.uuid "notion_page_id"
+    t.datetime "last_synced_to_notion_at"
     t.index ["campaign_id"], name: "index_characters_on_campaign_id"
     t.index ["created_at"], name: "index_characters_on_created_at"
     t.index ["faction_id"], name: "index_characters_on_faction_id"
@@ -312,6 +313,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_09_03_001030) do
     t.string "image_url"
     t.boolean "task"
     t.uuid "notion_page_id"
+    t.datetime "last_synced_to_notion_at"
     t.index ["campaign_id"], name: "index_vehicles_on_campaign_id"
     t.index ["faction_id"], name: "index_vehicles_on_faction_id"
     t.index ["user_id"], name: "index_vehicles_on_user_id"
