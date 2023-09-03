@@ -2,6 +2,8 @@ require 'open-uri'
 
 module NotionService
   class << self
+    DATABASE_ID = "f6fa27ac-19cd-4b17-b218-55acc6d077be"
+    FACTIONS_DATABASE_ID = "0ae94bfa1a754c8fbda28ea50afa5fd5"
 
     def create_characters_from_notion(type: "PC")
       campaign = Campaign.find_by(name: "Born to Revengeance")
@@ -12,7 +14,6 @@ module NotionService
     end
 
     def find_pages_by_enemy_type(tag)
-      database_id = "f6fa27ac-19cd-4b17-b218-55acc6d077be"
       filter = {
         and: [
           {
@@ -23,7 +24,7 @@ module NotionService
           }
         ]
       }
-      client.database_query(database_id: database_id, filter: filter)
+      client.database_query(database_id: DATABASE_ID, filter: filter)
     end
 
     def find_character(character)
@@ -32,6 +33,17 @@ module NotionService
 
     def find_page_by_name(name)
       response = client.search(query: name, filter: { property: 'object', value: 'page' })
+      if response["results"].length == 1
+        response["results"]
+      else
+        response["results"]
+      end
+    end
+
+    def find_faction_by_name(name)
+      filter = { and: [{ property: "Name", rich_text: { equals: name } }] }
+      response = client.database_query(database_id: FACTIONS_DATABASE_ID, filter: filter)
+
       if response["results"].length == 1
         response["results"]
       else
@@ -99,6 +111,10 @@ module NotionService
     def create_notion_from_character(character)
       properties = character.as_notion
 
+      if character.faction.present?
+        properties["Faction"] = notion_faction_properties(character.faction.name)
+      end
+
       page = client.create_page(
         parent: { database_id: "f6fa27ac-19cd-4b17-b218-55acc6d077be" },
         properties: properties
@@ -112,10 +128,21 @@ module NotionService
 
       properties = character.as_notion
 
+      if character.faction.present?
+        properties["Faction"] = notion_faction_properties(character.faction.name)
+      end
+
       client.update_page(
         page_id: character.notion_page_id,
         properties: properties
       )
+    end
+
+    def notion_faction_properties(name)
+      faction = find_faction_by_name(name).first
+      if faction.present?
+        { "relation" => [{ "id" => faction["id"] }] }
+      end
     end
 
     # private
