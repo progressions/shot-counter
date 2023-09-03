@@ -259,6 +259,14 @@ class Character < ApplicationRecord
     action_values.fetch("FortuneType")
   end
 
+  def sync_to_notion
+    return unless notion_page_id.present?
+
+    if NotionService.update_notion_from_character(self)
+      update(last_synced_to_notion_at: Time.current)
+    end
+  end
+
   private
 
   def ensure_default_action_values
@@ -297,14 +305,6 @@ class Character < ApplicationRecord
       if self.action_values[key] == 0
         self.action_values[key] = DEFAULT_ACTION_VALUES[key]
       end
-    end
-  end
-
-  def sync_to_notion
-    return unless notion_page_id.present?
-
-    if NotionService.update_notion_from_character(self)
-      update(last_synced_to_notion_at: Time.current)
     end
   end
 end

@@ -64,6 +64,7 @@ class Api::V1::ActorsController < ApplicationController
     end
 
     if @character.update(parms)
+      SyncCharacterToNotionJob.perform_later(@character.id)
       render json: @character.as_json(shot: @shot)
     else
       render @character.errors, status: 400

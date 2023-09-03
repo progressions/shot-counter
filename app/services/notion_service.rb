@@ -70,6 +70,7 @@ module NotionService
       name = page.dig("properties", "Name", "title")&.first&.dig("plain_text")
       character = campaign.characters.find_or_create_by(name: name)
       character.save
+
       attributes = character.attributes_from_notion(page)
       character.notion_page_id = page["id"]
       character.update(attributes)
