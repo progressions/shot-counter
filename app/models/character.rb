@@ -122,7 +122,7 @@ class Character < ApplicationRecord
   end
 
   def as_notion(args={})
-    {
+    values = {
       "Name" => { "title"=>[{"text"=>{"content"=> self.name}}] },
       "Enemy Type" => { "select"=>{"name"=> self.action_values.fetch("Type")} },
       "Wounds" => { "number" => self.action_values.fetch("Wounds", 0) },
@@ -138,20 +138,28 @@ class Character < ApplicationRecord
       "Damage" => {
         "rich_text" => [{"text" => { "content" => self.action_values.fetch("Damage", "").to_s} }]
       },
-      "Type" => {
-        "rich_text" => [{"text" => { "content" => self.action_values.fetch("Archetype", "")} }]
-      },
-      "MainAttack" => {
-        "select"=>{"name"=>self.action_values.fetch("MainAttack", "")}
-      },
-      # "SecondaryAttack" => {
-        # "select"=>{"name"=>self.action_values.fetch("SecondaryAttack", "")}
-      # },
-      "FortuneType" => {
-        "select"=>{"name"=>self.action_values.fetch("FortuneType", "")}
-      },
       "Inactive" => { "checkbox"=> !self.active },
     }
+    if self.action_values["SecondaryAttack"]
+      values["SecondaryAttack"] = {
+        "select"=>{"name"=>self.action_values.fetch("SecondaryAttack", "")}
+      }
+    end
+    if self.action_values["FortuneType"]
+      values["FortuneType"] = {
+        "select"=>{"name"=>self.action_values.fetch("FortuneType", "")}
+      }
+    end
+    if self.action_values["Archetype"]
+      values["Type"] = {
+        "rich_text" => [{"text" => { "content" => self.action_values.fetch("Archetype", "")} }]
+      }
+    end
+    if self.action_values["MainAttack"]
+      values["MainAttack"] = {
+        "select"=>{"name"=>self.action_values.fetch("MainAttack", "")}
+      }
+    end
   end
 
   def attributes_from_notion(page)
