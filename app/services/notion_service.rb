@@ -96,6 +96,17 @@ module NotionService
       character.reload
     end
 
+    def create_notion_from_character(character)
+      properties = character.as_notion
+
+      page = client.create_page(
+        parent: { database_id: "f6fa27ac-19cd-4b17-b218-55acc6d077be" },
+        properties: properties
+      )
+      character.notion_page_id = page["id"]
+      character.save
+    end
+
     def update_notion_from_character(character)
       return unless character.notion_page_id.present?
 
