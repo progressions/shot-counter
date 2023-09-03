@@ -88,7 +88,7 @@ class Character < ApplicationRecord
 
   validates :name, presence: true, uniqueness: { scope: :campaign_id }
 
-  after_save :sync_to_notion, if: -> { Rails.env.production? && notion_page_id.present? }
+  # after_save :sync_to_notion, if: -> { Rails.env.production? && notion_page_id.present? }
 
   scope :active, -> { where(active: true) }
 
