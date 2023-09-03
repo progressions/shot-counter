@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_08_31_204046) do
+ActiveRecord::Schema[7.0].define(version: 2023_09_03_001030) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -128,6 +128,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_08_31_204046) do
     t.uuid "faction_id"
     t.string "image_url"
     t.boolean "task"
+    t.uuid "notion_page_id"
     t.index ["campaign_id"], name: "index_characters_on_campaign_id"
     t.index ["created_at"], name: "index_characters_on_created_at"
     t.index ["faction_id"], name: "index_characters_on_faction_id"
@@ -257,7 +258,6 @@ ActiveRecord::Schema[7.0].define(version: 2023_08_31_204046) do
   end
 
   create_table "sites", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
-    t.uuid "character_id"
     t.string "description"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -267,7 +267,6 @@ ActiveRecord::Schema[7.0].define(version: 2023_08_31_204046) do
     t.boolean "secret", default: false
     t.index ["campaign_id", "name"], name: "index_sites_on_campaign_id_and_name", unique: true
     t.index ["campaign_id"], name: "index_sites_on_campaign_id"
-    t.index ["character_id"], name: "index_sites_on_character_id"
     t.index ["faction_id"], name: "index_sites_on_faction_id"
   end
 
@@ -312,6 +311,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_08_31_204046) do
     t.uuid "faction_id"
     t.string "image_url"
     t.boolean "task"
+    t.uuid "notion_page_id"
     t.index ["campaign_id"], name: "index_vehicles_on_campaign_id"
     t.index ["faction_id"], name: "index_vehicles_on_faction_id"
     t.index ["user_id"], name: "index_vehicles_on_user_id"
@@ -374,7 +374,6 @@ ActiveRecord::Schema[7.0].define(version: 2023_08_31_204046) do
   add_foreign_key "shots", "locations"
   add_foreign_key "shots", "vehicles"
   add_foreign_key "sites", "campaigns"
-  add_foreign_key "sites", "characters"
   add_foreign_key "sites", "factions"
   add_foreign_key "vehicles", "campaigns"
   add_foreign_key "vehicles", "factions"

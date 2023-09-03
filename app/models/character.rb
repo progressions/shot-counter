@@ -111,6 +111,7 @@ class Character < ApplicationRecord
       category: "character",
       image_url: image_url,
       task: task,
+      notion_page_id: notion_page_id,
 
       impairments: is_pc? ? impairments : shot&.impairments,
       count: shot&.count,
@@ -120,10 +121,85 @@ class Character < ApplicationRecord
     }
   end
 
+  def as_notion(args={})
+    {
+      "Name" => { "title"=>[{"text"=>{"content"=> self.name}}] },
+      "Enemy Type" => { "select"=>{"name"=> self.action_values.fetch("Type")} },
+      "Wounds" => { "number" => self.action_values.fetch("Wounds", 0) },
+      "Defense" => { "number" => self.action_values.fetch("Defense", 0) },
+      "Toughness" => { "number" => self.action_values.fetch("Toughness", 0) },
+      "Speed" => { "number" => self.action_values.fetch("Speed", 0) },
+      "Fortune" => { "number" => self.action_values.fetch("Max Fortune", 0) },
+      "Guns" => { "number" => self.action_values.fetch("Guns", 0) },
+      "Sorcery" => { "number" => self.action_values.fetch("Sorcery", 0) },
+      "Mutant" => { "number" => self.action_values.fetch("Mutant", 0) },
+      "Scroungetech" => { "number" => self.action_values.fetch("Scroungetech", 0) },
+      "Creature" => { "number" => self.action_values.fetch("Creature", 0) },
+      "Damage" => {
+        "rich_text" => [{"text" => { "content" => self.action_values.fetch("Damage", "").to_s} }]
+      },
+      "Type" => {
+        "rich_text" => [{"text" => { "content" => self.action_values.fetch("Archetype", "")} }]
+      },
+      "MainAttack" => {
+        "select"=>{"name"=>self.action_values.fetch("MainAttack", "")}
+      },
+      # "SecondaryAttack" => {
+        # "select"=>{"name"=>self.action_values.fetch("SecondaryAttack", "")}
+      # },
+      "FortuneType" => {
+        "select"=>{"name"=>self.action_values.fetch("FortuneType", "")}
+      },
+      "Inactive" => { "checkbox"=> !self.active },
+    }
+  end
+
+  def attributes_from_notion(page)
+    av = self.action_values
+    self.attributes.symbolize_keys.merge({
+      notion_page_id: page["id"],
+      name: page.dig("properties", "Name", "title")&.first&.dig("plain_text"),
+      action_values: only_new_action_values({
+        "Archetype" => page.dig("properties", "Type", "rich_text", 0, "text", "content"),
+        "Type" => page.dig("properties", "Enemy Type", "select", "name"),
+        "MainAttack" => av_or_new(page.dig("properties", "MainAttack", "select", "name")),
+        "SecondaryAttack" => av_or_new(page.dig("properties", "SecondaryAttack", "select", "name")),
+        "FortuneType" => page.dig("properties", "FortuneType", "select", "name"),
+
+        "Wounds" => av_or_new("Wounds", page.dig("properties", "Wounds", "number")),
+        "Defense" => av_or_new("Defense", page.dig("properties", "Defense", "number")),
+        "Toughness" => av_or_new("Toughness", page.dig("properties", "Toughness", "number")),
+        "Speed" => av_or_new("Speed", page.dig("properties", "Speed", "number")),
+        "Guns" => av_or_new("Guns", page.dig("properties", "Guns", "number")),
+        "Martial Arts" => av_or_new("Martial Arts", page.dig("properties", "Martial Arts", "number")),
+        "Sorcery" => av_or_new("Sorcery", page.dig("properties", "Sorcery", "number")),
+        "Creature" => av_or_new("Creature", page.dig("properties", "Creature", "number")),
+        "Scroungetech" => av_or_new("Scroungetech", page.dig("properties", "Scroungetech", "number")),
+        "Mutant" => av_or_new("Mutant", page.dig("properties", "Mutant", "number")),
+      }),
+    })
+  end
+
+  def only_new_action_values(values)
+    values #.select { |key, _value| self.action_values[key].blank? }
+  end
+
+  def av_or_new(key, new_value=nil)
+    if self.action_values[key].to_s.to_i == self.action_values[key]
+      return self.action_values[key].to_i > 7 ? self.action_values[key] : new_value
+    end
+    self.action_values[key] ? self.action_values[key] : new_value
+  end
+
   scope :active, -> { where(active: true) }
 
   scope :by_type, -> (player_type) do
     where("action_values->>'Type' IN (?)", player_type)
+  end
+
+  def primary_attack
+    main = action_values.fetch("MainAttack")
+    action_values.fetch(main)
   end
 
   def image_url
