@@ -140,6 +140,11 @@ class Character < ApplicationRecord
       },
       "Inactive" => { "checkbox"=> !self.active },
     }
+    if self.action_values["MainAttack"]
+      values["MainAttack"] = {
+        "select"=>{"name"=>self.action_values.fetch("MainAttack", "")}
+      }
+    end
     if self.action_values["SecondaryAttack"]
       values["SecondaryAttack"] = {
         "select"=>{"name"=>self.action_values.fetch("SecondaryAttack", "")}
@@ -155,11 +160,7 @@ class Character < ApplicationRecord
         "rich_text" => [{"text" => { "content" => self.action_values.fetch("Archetype", "")} }]
       }
     end
-    if self.action_values["MainAttack"]
-      values["MainAttack"] = {
-        "select"=>{"name"=>self.action_values.fetch("MainAttack", "")}
-      }
-    end
+    values
   end
 
   def attributes_from_notion(page)
