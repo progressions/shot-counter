@@ -88,6 +88,14 @@ class Character < ApplicationRecord
 
   validates :name, presence: true, uniqueness: { scope: :campaign_id }
 
+  after_save :sync_to_notion, if: -> { Rails.env.production? && notion_page_id.present? }
+
+  scope :active, -> { where(active: true) }
+
+  scope :by_type, -> (player_type) do
+    where("action_values->>'Type' IN (?)", player_type)
+  end
+
   def as_json(args={})
     shot = args[:shot]
     {
@@ -202,12 +210,6 @@ class Character < ApplicationRecord
     self.action_values[key] ? self.action_values[key] : new_value
   end
 
-  scope :active, -> { where(active: true) }
-
-  scope :by_type, -> (player_type) do
-    where("action_values->>'Type' IN (?)", player_type)
-  end
-
   def primary_attack
     main = action_values.fetch("MainAttack")
     action_values.fetch(main)
@@ -295,6 +297,14 @@ class Character < ApplicationRecord
       if self.action_values[key] == 0
         self.action_values[key] = DEFAULT_ACTION_VALUES[key]
       end
+    end
+  end
+
+  def sync_to_notion
+    return unless notion_page_id.present?
+
+    if NotionService.update_notion_from_character(self)
+      update(last_synced_to_notion_at: Time.current)
     end
   end
 end
