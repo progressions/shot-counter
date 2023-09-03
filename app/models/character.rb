@@ -146,22 +146,22 @@ class Character < ApplicationRecord
       url = "#{protocol}://#{host}/characters/#{self.id}"
       values["Chi War Link"] = { "url" => url }
     end
-    if self.action_values["MainAttack"]
+    if self.action_values["MainAttack"].present?
       values["MainAttack"] = {
         "select"=>{"name"=>self.action_values.fetch("MainAttack", "")}
       }
     end
-    if self.action_values["SecondaryAttack"]
+    if self.action_values["SecondaryAttack"].present?
       values["SecondaryAttack"] = {
         "select"=>{"name"=>self.action_values.fetch("SecondaryAttack", "")}
       }
     end
-    if self.action_values["FortuneType"]
+    if self.action_values["FortuneType"].present?
       values["FortuneType"] = {
         "select"=>{"name"=>self.action_values.fetch("FortuneType", "")}
       }
     end
-    if self.action_values["Archetype"]
+    if self.action_values["Archetype"].present?
       values["Type"] = {
         "rich_text" => [{"text" => { "content" => self.action_values.fetch("Archetype", "")} }]
       }
