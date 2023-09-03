@@ -140,6 +140,12 @@ class Character < ApplicationRecord
       },
       "Inactive" => { "checkbox"=> !self.active },
     }
+    if Rails.env.production?
+      protocol = Rails.configuration.action_mailer.default_url_options[:protocol]
+      host = Rails.configuration.action_mailer.default_url_options[:host]
+      url = "#{protocol}://#{host}/characters/#{self.id}"
+      values["Chi War Link"] = { "url" => url }
+    end
     if self.action_values["MainAttack"]
       values["MainAttack"] = {
         "select"=>{"name"=>self.action_values.fetch("MainAttack", "")}

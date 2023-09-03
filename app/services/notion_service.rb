@@ -40,36 +40,30 @@ module NotionService
     end
 
     def add_faction(page, character)
-      # faction
-      begin
-        faction_id = page.properties.dig("Faction", "relation", 0, "id")
-        if faction_id
-          faction = client.page(page_id: faction_id)
-          faction_name = faction.dig("properties", "Name", "title")&.first&.dig("text", "content")
-          character.faction = Faction.find_or_create_by(name: faction_name, campaign: character.campaign)
-        end
-      rescue
-      end
+      faction_id = page.properties.dig("Faction", "relation", 0, "id")
+      return unless faction_id.present?
+
+      faction = client.page(page_id: faction_id)
+      faction_name = faction.dig("properties", "Name", "title")&.first&.dig("text", "content")
+      character.faction = Faction.find_or_create_by(name: faction_name, campaign: character.campaign)
+    rescue
     end
 
     def add_image(page, character)
-      begin
-        if !character.image.attached?
-          response = client.block_children(block_id: page["id"])
-          results = response["results"]
-          if results.present?
-            image = results.find { |block| block["type"] == "image" }
-            if image.present?
-              image_url = image.dig("image", "file", "url")
-              if image_url.present?
-                file = URI.open(image_url)
-                character.image.attach(io: file, filename: "#{character.name.downcase.gsub(' ', '_')}.png")
-              end
-            end
-          end
-        end
-      rescue
+      return if character.image.attached?
+
+      response = client.block_children(block_id: page["id"])
+      results = response["results"]
+      image = results&.find { |block| block["type"] == "image" }
+
+      return unless image.present?
+
+      image_url = image.dig("image", "file", "url")
+      if image_url.present?
+        file = URI.open(image_url)
+        character.image.attach(io: file, filename: "#{character.name.downcase.gsub(' ', '_')}.png")
       end
+    rescue
     end
 
     def find_or_create_character_from_notion(page, campaign:)
