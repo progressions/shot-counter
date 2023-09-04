@@ -139,6 +139,7 @@ class Character < ApplicationRecord
       "Speed" => { "number" => self.action_values.fetch("Speed", 0) },
       "Fortune" => { "number" => self.action_values.fetch("Max Fortune", 0) },
       "Guns" => { "number" => self.action_values.fetch("Guns", 0) },
+      "Martial Arts" => { "number" => self.action_values.fetch("Martial Arts", 0) },
       "Sorcery" => { "number" => self.action_values.fetch("Sorcery", 0) },
       "Mutant" => { "number" => self.action_values.fetch("Mutant", 0) },
       "Scroungetech" => { "number" => self.action_values.fetch("Scroungetech", 0) },
@@ -147,7 +148,9 @@ class Character < ApplicationRecord
         "rich_text" => [{"text" => { "content" => self.action_values.fetch("Damage", "").to_s} }]
       },
       "Inactive" => { "checkbox"=> !self.active },
+      "Tags" => { "multi_select" => tags_for_notion },
     }
+
     if Rails.env.production?
       protocol = Rails.configuration.action_mailer.default_url_options[:protocol]
       host = Rails.configuration.action_mailer.default_url_options[:host]
@@ -174,7 +177,21 @@ class Character < ApplicationRecord
         "rich_text" => [{"text" => { "content" => self.action_values.fetch("Archetype", "")} }]
       }
     end
+    if self.faction.present?
+      values["Faction Tag"] = { "multi_select" => [{ "name" => self.faction.name }] }
+    end
     values
+  end
+
+  def tags_for_notion
+    tags = []
+    if self.action_values["Type"].present?
+      tags << { "name" => self.action_values.fetch("Type") }
+    end
+    if self.faction.present?
+      tags << { "name" => self.faction.name }
+    end
+    tags.compact
   end
 
   def attributes_from_notion(page)
