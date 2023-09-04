@@ -190,6 +190,9 @@ class Character < ApplicationRecord
 
   def tags_for_notion
     tags = []
+    if self.action_values.dig("Type") != "PC"
+      tags << { "name" => "NPC" }
+    end
     if self.action_values["Type"].present?
       tags << { "name" => self.action_values.fetch("Type") }
     end
