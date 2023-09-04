@@ -61,12 +61,16 @@ module NotionService
     rescue
     end
 
+    def find_image_block(page)
+      response = client.block_children(block_id: page["id"])
+      results = response["results"]
+      results&.find { |block| block["type"] == "image" }
+    end
+
     def add_image(page, character)
       return if character.image.attached?
 
-      response = client.block_children(block_id: page["id"])
-      results = response["results"]
-      image = results&.find { |block| block["type"] == "image" }
+      image = find_image_block(page)
 
       return unless image.present?
 
@@ -121,6 +125,8 @@ module NotionService
       )
       character.notion_page_id = page["id"]
       character.save
+
+      add_image_to_notion(character)
     end
 
     def update_notion_from_character(character)
@@ -136,6 +142,18 @@ module NotionService
         page_id: character.notion_page_id,
         properties: properties
       )
+
+      image = find_image_block(get_page(character.notion_page_id))
+      if !image.present?
+        add_image_to_notion(character)
+      end
+    end
+
+    def add_image_to_notion(character)
+      return unless character.image_url.present?
+      child = {"object" => "block", "type" => "image", "image" => { "type" => "external", "external" => { "url" => character.image_url } } }
+
+      client.block_append_children(block_id: character.notion_page_id, children: [child])
     end
 
     def notion_faction_properties(name)
