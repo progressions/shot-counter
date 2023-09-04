@@ -157,6 +157,11 @@ class Character < ApplicationRecord
       url = "#{protocol}://#{host}/characters/#{self.id}"
       values["Chi War Link"] = { "url" => url }
     end
+    if self.description.present?
+      values["Description"] = {
+        "rich_text" => [{"text" => { "content" => self.description} }]
+      }
+    end
     if self.action_values["MainAttack"].present?
       values["MainAttack"] = {
         "select"=>{"name"=>self.action_values.fetch("MainAttack", "")}
@@ -216,7 +221,8 @@ class Character < ApplicationRecord
     self.attributes.symbolize_keys.merge({
       notion_page_id: page["id"],
       name: page.dig("properties", "Name", "title")&.first&.dig("plain_text"),
-      action_values: self.action_values.merge(av)
+      action_values: self.action_values.merge(av),
+      summary: page.dig("properties", "Description", "rich_text", 0, "text", "content"),
     })
   end
 
