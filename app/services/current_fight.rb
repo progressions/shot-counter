@@ -2,7 +2,14 @@ module CurrentFight
   class << self
 
     def get(server_id:)
-      data = JSON.parse(redis.get("current_fight_id:#{server_id}")).with_indifferent_access
+      json = redis.get("current_fight_id:#{server_id}")
+      if json.nil?
+        return {
+          fight: nil,
+          channel_id: nil
+        }
+      end
+      data = JSON.parse(json).with_indifferent_access
       fight = Fight.find_by(id: data[:fight_id])
       {
         fight: fight,
@@ -30,7 +37,7 @@ module CurrentFight
 
     def payload(fight, channel_id)
       {
-        fight_id: fight.id,
+        fight_id: fight&.id,
         channel_id: channel_id
       }
     end

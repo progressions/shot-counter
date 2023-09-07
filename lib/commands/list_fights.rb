@@ -33,7 +33,12 @@ module SlashListFights
   end
 
   Bot.application_command(:list) do |event|
+    puts "event.server_id: #{event.server_id}"
     campaign = CurrentCampaign.get(event.server_id)
+    if campaign.nil?
+      event.respond(content: "No current campaign.")
+      return
+    end
     fights = campaign.fights.active.order("created_at DESC")
 
     message = "\n\n**FIGHTS**\n"
