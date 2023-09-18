@@ -157,9 +157,9 @@ class Character < ApplicationRecord
       url = "#{protocol}://#{host}/characters/#{self.id}"
       values["Chi War Link"] = { "url" => url }
     end
-    if self.description.present?
+    if self.summary.present?
       values["Description"] = {
-        "rich_text" => [{"text" => { "content" => self.description} }]
+        "rich_text" => [{"text" => { "content" => self.summary} }]
       }
     end
     if self.action_values["MainAttack"].present?

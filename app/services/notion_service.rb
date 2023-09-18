@@ -74,7 +74,7 @@ module NotionService
 
       return unless image.present?
 
-      image_url = image.dig("image", "file", "url")
+      image_url = image.dig("image", "file", "url") || image.dig("image", "external", "url")
       if image_url.present?
         file = URI.open(image_url)
         character.image.attach(io: file, filename: "#{character.name.downcase.gsub(' ', '_')}.png")
