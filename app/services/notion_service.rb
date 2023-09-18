@@ -163,6 +163,27 @@ module NotionService
       end
     end
 
+    def get_description(page)
+      children = client.block_children(block_id: page["id"])
+      name_block = children.results.find { |p| p["type"] == "bulleted_list_item" && p.dig("bulleted_list_item", "rich_text", 0, "text", "content") =~ /Name: / }
+      nicknames_block = children.results.find { |p| p["type"] == "bulleted_list_item" && p.dig("bulleted_list_item", "rich_text", 0, "text", "content") =~ /Nicknames: / }
+      age_block = children.results.find { |p| p["type"] == "bulleted_list_item" && p.dig("bulleted_list_item", "rich_text", 0, "text", "content") =~ /Age: / }
+      height_block = children.results.find { |p| p["type"] == "bulleted_list_item" && p.dig("bulleted_list_item", "rich_text", 0, "text", "content") =~ /Height: / }
+      weight_block = children.results.find { |p| p["type"] == "bulleted_list_item" && p.dig("bulleted_list_item", "rich_text", 0, "text", "content") =~ /Weight: / }
+      hair_color_block = children.results.find { |p| p["type"] == "bulleted_list_item" && p.dig("bulleted_list_item", "rich_text", 0, "text", "content") =~ /Hair color: / }
+      eye_color_block = children.results.find { |p| p["type"] == "bulleted_list_item" && p.dig("bulleted_list_item", "rich_text", 0, "text", "content") =~ /Eye color: / }
+      dress_block = children.results.find { |p| p["type"] == "bulleted_list_item" && p.dig("bulleted_list_item", "rich_text", 0, "text", "content") =~ /Dress: / }
+      {
+        "Age" => age_block&.dig("bulleted_list_item", "rich_text", 0, "text", "content")&.gsub("Age: ", ""),
+        "Nicknames" => nicknames_block&.dig("bulleted_list_item", "rich_text", 0, "text", "content")&.gsub("Nicknames: ", ""),
+        "Height" => height_block&.dig("bulleted_list_item", "rich_text", 0, "text", "content")&.gsub("Height: ", ""),
+        "Weight" => weight_block&.dig("bulleted_list_item", "rich_text", 0, "text", "content")&.gsub("Weight: ", ""),
+        "Hair Color" => hair_color_block&.dig("bulleted_list_item", "rich_text", 0, "text", "content")&.gsub("Hair color: ", ""),
+        "Eye Color" => eye_color_block&.dig("bulleted_list_item", "rich_text", 0, "text", "content")&.gsub("Eye color: ", ""),
+        "Style of Dress" => dress_block&.dig("bulleted_list_item", "rich_text", 0, "text", "content")&.gsub("Dress: ", ""),
+      }
+    end
+
     # private
 
     def client
