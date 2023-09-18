@@ -91,6 +91,9 @@ module NotionService
       character.notion_page_id = page["id"]
       character.update(attributes)
 
+      description = get_description(page)
+      character.description = description.merge(character.description.reject { |k, v| v.blank? })
+
       add_faction(page, character)
       add_image(page, character)
 
