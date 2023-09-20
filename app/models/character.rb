@@ -149,6 +149,27 @@ class Character < ApplicationRecord
       },
       "Inactive" => { "checkbox"=> !self.active },
       "Tags" => { "multi_select" => tags_for_notion },
+      "Age" => {
+        "rich_text" => [{"text" => { "content" => self.description.fetch("Age", "").to_s} }]
+      },
+      "Nicknames" => {
+        "rich_text" => [{"text" => { "content" => self.description.fetch("Nicknames", "").to_s} }]
+      },
+      "Height" => {
+        "rich_text" => [{"text" => { "content" => self.description.fetch("Height", "").to_s} }]
+      },
+      "Weight" => {
+        "rich_text" => [{"text" => { "content" => self.description.fetch("Weight", "").to_s} }]
+      },
+      "Hair Color" => {
+        "rich_text" => [{"text" => { "content" => self.description.fetch("Hair color", "").to_s} }]
+      },
+      "Eye Color" => {
+        "rich_text" => [{"text" => { "content" => self.description.fetch("Eye color", "").to_s} }]
+      },
+      "Style of Dress" => {
+        "rich_text" => [{"text" => { "content" => self.description.fetch("Style of Dress", "").to_s} }]
+      },
     }
 
     if Rails.env.production?
