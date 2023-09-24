@@ -1,4 +1,5 @@
-require 'rails_helper'
+require "rails_helper"
+require "securerandom"
 
 RSpec.describe "Api::V1::Characters", type: :request do
   before(:each) do
@@ -77,6 +78,16 @@ RSpec.describe "Api::V1::Characters", type: :request do
       expect(body["faction"]["name"]).to eq(nil)
       character = Character.find(body["id"])
       expect(character.faction).to eq(nil)
+    end
+
+    it "updates a character's notion_page_id" do
+      put "/api/v1/characters/#{@brick[:id]}", params: { character: { notion_page_id: "abc123" } }, headers: @headers
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      uuid = SecureRandom.uuid
+      expect(body["notion_page_id"]).to eq(uuid)
+      character = Character.find(body["id"])
+      expect(character.notion_page_id).to eq(uuid)
     end
   end
 
