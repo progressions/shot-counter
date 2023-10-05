@@ -81,10 +81,10 @@ RSpec.describe "Api::V1::Characters", type: :request do
     end
 
     it "updates a character's notion_page_id" do
-      put "/api/v1/characters/#{@brick[:id]}", params: { character: { notion_page_id: "abc123" } }, headers: @headers
+      uuid = SecureRandom.uuid
+      put "/api/v1/characters/#{@brick[:id]}", params: { character: { notion_page_id: uuid } }, headers: @headers
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
-      uuid = SecureRandom.uuid
       expect(body["notion_page_id"]).to eq(uuid)
       character = Character.find(body["id"])
       expect(character.notion_page_id).to eq(uuid)

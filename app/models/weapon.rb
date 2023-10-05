@@ -6,4 +6,20 @@ class Weapon < ApplicationRecord
 
   validates :name, presence: true, uniqueness: { scope: :campaign_id }
   validates :damage, presence: true
+
+  def as_json(args = {})
+    {
+      id: id,
+      name: name,
+      description: description,
+      damage: damage,
+      concealment: concealment,
+      reload_value: reload_value,
+      category: category,
+      juncture: juncture,
+      mook_bonus: mook_bonus,
+      kachunk: kachunk,
+      image_url: image.attached? ? image.url : nil
+    }
+  end
 end
