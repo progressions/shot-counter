@@ -2,7 +2,7 @@ class Api::V1::CharactersController < ApplicationController
   before_action :authenticate_user!
   before_action :require_current_campaign
   before_action :set_scoped_characters
-  before_action :set_character, only: [:update, :destroy, :show, :remove_image]
+  before_action :set_character, only: [:update, :destroy, :show, :remove_image, :sync]
 
   def index
     @characters = @scoped_characters.includes(:user).order(:name).all
@@ -38,6 +38,12 @@ class Api::V1::CharactersController < ApplicationController
   def destroy
     @character.destroy!
     render :ok
+  end
+
+  def sync
+    NotionService.update_character_from_notion(@character)
+
+    render json: @character.reload
   end
 
   def remove_image

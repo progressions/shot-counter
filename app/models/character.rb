@@ -88,8 +88,6 @@ class Character < ApplicationRecord
 
   validates :name, presence: true, uniqueness: { scope: :campaign_id }
 
-  # after_save :sync_to_notion, if: -> { Rails.env.production? && notion_page_id.present? }
-
   scope :active, -> { where(active: true) }
 
   scope :by_type, -> (player_type) do
@@ -227,8 +225,8 @@ class Character < ApplicationRecord
     av = {
       "Archetype" => page.dig("properties", "Type", "rich_text", 0, "text", "content"),
       "Type" => page.dig("properties", "Enemy Type", "select", "name"),
-      "MainAttack" => av_or_new("MainAttack", page.dig("properties", "MainAttack", "select", "name")),
-      "SecondaryAttack" => av_or_new("SecondaryAttack", page.dig("properties", "SecondaryAttack", "select", "name")),
+      "MainAttack" => page.dig("properties", "MainAttack", "select", "name"),
+      "SecondaryAttack" => page.dig("properties", "SecondaryAttack", "select", "name"),
       "FortuneType" => page.dig("properties", "FortuneType", "select", "name"),
 
       "Wounds" => av_or_new("Wounds", page.dig("properties", "Wounds", "number")),

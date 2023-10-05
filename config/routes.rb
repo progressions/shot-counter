@@ -43,6 +43,7 @@ Rails.application.routes.draw do
       get "campaigns/current", to: "campaigns#current"
       delete "characters/:id/image", to: "characters#remove_image"
       delete "vehicles/:id/image", to: "vehicles#remove_image"
+      post "characters/:id/sync", to: "characters#sync"
       resources :characters do
         resources :schticks, controller: "character_schticks"
         resources :advancements
