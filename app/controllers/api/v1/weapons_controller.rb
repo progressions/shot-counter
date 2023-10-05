@@ -1,6 +1,7 @@
 class Api::V1::WeaponsController < ApplicationController
   before_action :authenticate_user!
   before_action :require_current_campaign
+  before_action :set_weapon, only: [:show, :update, :destroy, :remove_image]
 
   def index
     @weapons = current_campaign
@@ -36,8 +37,6 @@ class Api::V1::WeaponsController < ApplicationController
   end
 
   def show
-    @weapon = current_campaign.weapons.find(params[:id])
-
     render json: @weapon
   end
 
@@ -60,7 +59,6 @@ class Api::V1::WeaponsController < ApplicationController
   end
 
   def update
-    @weapon = current_campaign.weapons.find(params[:id])
     if @weapon.update(weapon_params)
       render json: @weapon
     else
@@ -69,7 +67,6 @@ class Api::V1::WeaponsController < ApplicationController
   end
 
   def destroy
-    @weapon = current_campaign.weapons.find(params[:id])
     if @weapon.destroy!
       render :ok
     else
@@ -77,7 +74,21 @@ class Api::V1::WeaponsController < ApplicationController
     end
   end
 
+  def remove_image
+    @weapon.image.purge
+
+    if @weapon.save
+      render json: @weapon
+    else
+      render @weapon.errors, status: 400
+    end
+  end
+
   private
+
+  def set_weapon
+    @weapon = current_campaign.weapons.find(params[:id])
+  end
 
   def import_params
     params.require(:weapon).permit(:yaml)
