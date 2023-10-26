@@ -41,7 +41,9 @@ class Vehicle < ApplicationRecord
       faction: { name: faction&.name },
       updated_at: updated_at,
       user: user,
-      action_values: action_values,
+      action_values: action_values.merge({
+        "Type" => vehicle_type(shot&.driver),
+      }),
       color: shot&.color || color,
       impairments: impairments,
       category: "vehicle",
@@ -54,12 +56,20 @@ class Vehicle < ApplicationRecord
     }
   end
 
+  def vehicle_type(driver)
+    return action_values.fetch("Type") unless driver
+    driver.
+      action_values.
+      fetch("Type", "Featured Foe")
+  end
+
   def driver_json(driver)
     return {} unless driver
     {
       id: driver.id,
       name: driver.name,
-      skills: driver.skills.slice("Driving")
+      skills: driver.skills.slice("Driving"),
+      action_values: driver.action_values.slice("Type")
     }
   end
 
