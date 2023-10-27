@@ -68,7 +68,10 @@ class Vehicle < ApplicationRecord
     {
       id: driver.id,
       name: driver.name,
-      skills: driver.skills.slice("Driving")
+      skills: driver.skills.slice("Driving"),
+      action_values: driver.action_values.merge({
+        "Type" => driver.action_values.fetch("Type", "Featured Foe"),
+      }),
     }
   end
 
