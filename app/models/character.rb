@@ -124,6 +124,24 @@ class Character < ApplicationRecord
       color: shot&.color || color,
       location: shot&.location&.name,
       shot_id: shot&.id,
+
+      driving: driving_json(shot),
+    }
+  end
+
+  def driving_json(shot)
+    return {} unless shot
+
+    vehicle_shot = shot.fight.shots.find_by(driver_id: id)
+    vehicle = vehicle_shot&.vehicle
+
+    return {} unless vehicle
+
+    {
+      id: vehicle.id,
+      name: vehicle.name,
+      shot_id: vehicle_shot&.id,
+      action_values: vehicle.action_values.slice("Acceleration"),
     }
   end
 
