@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_09_08_143200) do
+ActiveRecord::Schema[7.0].define(version: 2023_10_28_003454) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -252,8 +252,10 @@ ActiveRecord::Schema[7.0].define(version: 2023_09_08_143200) do
     t.string "color"
     t.uuid "driver_id"
     t.integer "impairments", default: 0
+    t.uuid "driving_id"
     t.index ["character_id"], name: "index_shots_on_character_id"
     t.index ["driver_id"], name: "index_shots_on_driver_id"
+    t.index ["driving_id"], name: "index_shots_on_driving_id"
     t.index ["fight_id"], name: "index_shots_on_fight_id"
     t.index ["location_id"], name: "index_shots_on_location_id"
     t.index ["vehicle_id"], name: "index_shots_on_vehicle_id"
@@ -377,6 +379,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_09_08_143200) do
   add_foreign_key "shots", "fights"
   add_foreign_key "shots", "locations"
   add_foreign_key "shots", "vehicles"
+  add_foreign_key "shots", "vehicles", column: "driving_id"
   add_foreign_key "sites", "campaigns"
   add_foreign_key "sites", "factions"
   add_foreign_key "vehicles", "campaigns"

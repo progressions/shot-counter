@@ -27,6 +27,8 @@ class Api::V1::DriversController < ApplicationController
 
     if driver_params[:id]
       @shot.update(driver_id: driver_params[:id])
+      @driver_shot = @fight.shots.find_by(character_id: driver_params[:id])
+      @driver_shot.update(driving_id: @vehicle.id) if @driver_shot
     end
 
     if @shot.save
@@ -70,6 +72,8 @@ class Api::V1::DriversController < ApplicationController
 
     if driver_params[:id]
       @shot.update(driver_id: driver_params[:id])
+      @driver_shot = @fight.shots.find_by(character_id: driver_params[:id])
+      @driver_shot.update(driving_id: @vehicle.id) if @driver_shot
     end
 
     if @vehicle.update(parms)
@@ -93,6 +97,8 @@ class Api::V1::DriversController < ApplicationController
 
   def destroy
     @shot = Shot.find(params[:id])
+    # @fight.shots.where(driving_id: @shot.vehicle_id).update_all(driving_id: nil)
+
     @shot.destroy!
     render :ok
   end
