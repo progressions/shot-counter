@@ -19,6 +19,9 @@ class Api::V1::DriversController < ApplicationController
 
   def add
     @vehicle = current_campaign.vehicles.find(params[:id])
+    if @fight.shots.find_by(vehicle_id: @vehicle.id)
+      @vehicle = DuplicateVehicleService.duplicate(@vehicle)
+    end
     @shot = @fight.shots.build(vehicle_id: @vehicle.id, shot: shot_params[:current_shot])
 
     if @vehicle.action_values["Type"] == "Mook"
@@ -97,7 +100,6 @@ class Api::V1::DriversController < ApplicationController
 
   def destroy
     @shot = Shot.find(params[:id])
-    # @fight.shots.where(driving_id: @shot.vehicle_id).update_all(driving_id: nil)
 
     @shot.destroy!
     render :ok
