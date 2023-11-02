@@ -74,7 +74,7 @@ class Fight < ApplicationRecord
           .flatten
           .compact
         ]
-      }
+      }.reject { |shot, shot_chars| shot_chars.empty? }
   end
 
 end
