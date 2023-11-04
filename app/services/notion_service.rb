@@ -110,6 +110,7 @@ module NotionService
       page = get_page(character.notion_page_id)
       attributes = character.attributes_from_notion(page)
 
+      add_image(page, character)
       character.update(attributes)
 
       character.reload
