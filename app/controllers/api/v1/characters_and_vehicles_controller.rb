@@ -92,6 +92,7 @@ class Api::V1::CharactersAndVehiclesController < ApplicationController
     @fight = current_campaign.fights.find(params[:id])
     @characters = @fight
       .shots
+      .where("shot IS NOT NULL")
       .joins(:character)
 
     if params[:type]
@@ -115,6 +116,7 @@ class Api::V1::CharactersAndVehiclesController < ApplicationController
 
     @vehicles = @fight
       .shots
+      .where("shot IS NOT NULL")
       .joins(:vehicle)
 
     if params[:type]
