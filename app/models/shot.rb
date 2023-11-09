@@ -33,21 +33,21 @@ class Shot < ApplicationRecord
   private
 
   # When deleting a shot which contains a vehicle, we need to find the
-  # other shot(s) with this vehicle_id as the `driving_id` and set them to
+  # other shot with this id as the `driving_id` and set them to
   # nil.
   def unlink_driver
     return unless vehicle_id
 
-    # fight.shots.where(driving_id: vehicle_id).update_all(driving_id: nil)
+    fight.shots.where(driving_id: id).update_all(driving_id: nil)
   end
 
   # When deleting a shot which contains a character, we need to find the
-  # other shot(s) with this character_id as the `driver_id` and set them to
+  # other shot with this id as the `driver_id` and set them to
   # nil.
   def unlink_vehicle
     return unless character_id
 
-    # fight.shots.where(driver_id: character_id).update_all(driver_id: nil)
+    fight.shots.where(driver_id: id).update_all(driver_id: nil)
   end
 
   def ensure_campaign
