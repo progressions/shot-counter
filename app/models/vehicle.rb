@@ -51,7 +51,7 @@ class Vehicle < ApplicationRecord
       count: shot&.count,
       shot_id: shot&.id,
       location: shot&.location&.name,
-      driver: driver_json(shot),
+      driver: driver_json(shot&.driver_shot),
       image_url: image_url,
       task: task
     }
@@ -68,7 +68,7 @@ class Vehicle < ApplicationRecord
   def driver_json(driver_shot)
     return {} unless driver_shot
 
-    driver = driver_shot.driver
+    driver = driver_shot.character
 
     return {} unless driver
 
