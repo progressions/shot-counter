@@ -59,7 +59,7 @@ class Fight < ApplicationRecord
           .sort_by { |sh| sh.character&.sort_order(sh.id) || sh.vehicle&.sort_order(sh.id) }
           .map { |sh|
             if sh.driving.present? || sh.driving.present?
-              vehicle_shot = shots.find_by(vehicle_id: sh.driving_id)
+              vehicle_shot = shots.find_by(id: sh.driving_id)
               if vehicle_shot.present?
                 [sh.character.as_json(shot: sh), sh.driving.as_json(shot: vehicle_shot)]
               else
