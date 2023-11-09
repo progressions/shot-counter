@@ -12,6 +12,16 @@ class Shot < ApplicationRecord
 
   validate :ensure_campaign
 
+  def as_json(args={})
+    if character.present?
+      character.as_json(args.merge(shot: self))
+    elsif vehicle.present?
+      vehicle.as_json(args.merge(shot: self))
+    else
+      {}
+    end
+  end
+
   def driver
     driver_shot&.character
   end

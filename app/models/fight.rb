@@ -60,13 +60,10 @@ class Fight < ApplicationRecord
           .map { |sh|
             if sh.driving_shot
               # Shot contains a character who is driving a vehicle
-              [sh.character.as_json(shot: sh), sh.driving.as_json(shot: sh.driving_shot)]
-            elsif sh.character.present?
-              # Shot contains a character who is not driving a vehicle
-              sh.character.as_json(shot: sh)
-            elsif sh.driver_shot.blank? && sh.vehicle.present?
-              # Shot contains a vehicle that is not being driven
-              sh.vehicle.as_json(shot: sh)
+              [sh.as_json, sh.driving_shot.as_json]
+            elsif sh.character.present? || (sh.driver_shot.blank? && sh.vehicle.present?)
+              # Shot contains a character OR a vehicle that is not being driven
+              sh.as_json
             end
           }
           .flatten
