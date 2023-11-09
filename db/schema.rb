@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_10_28_003454) do
+ActiveRecord::Schema[7.0].define(version: 2023_11_09_200752) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
@@ -375,11 +375,11 @@ ActiveRecord::Schema[7.0].define(version: 2023_10_28_003454) do
   add_foreign_key "schticks", "campaigns"
   add_foreign_key "schticks", "schticks", column: "prerequisite_id"
   add_foreign_key "shots", "characters"
-  add_foreign_key "shots", "characters", column: "driver_id"
   add_foreign_key "shots", "fights"
   add_foreign_key "shots", "locations"
+  add_foreign_key "shots", "shots", column: "driver_id"
+  add_foreign_key "shots", "shots", column: "driving_id"
   add_foreign_key "shots", "vehicles"
-  add_foreign_key "shots", "vehicles", column: "driving_id"
   add_foreign_key "sites", "campaigns"
   add_foreign_key "sites", "factions"
   add_foreign_key "vehicles", "campaigns"

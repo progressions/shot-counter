@@ -129,15 +129,15 @@ class Character < ApplicationRecord
     }
   end
 
-  def driving_json(shot)
-    return {} unless shot
+  def driving_json(vehicle_shot)
+    return {} unless vehicle_shot
 
-    vehicle_shot = shot.fight.shots.find_by(driver_id: id)
-    vehicle = vehicle_shot&.vehicle
+    vehicle = vehicle_shot&.driving
 
     return {} unless vehicle
 
     {
+      shot_id: vehicle_shot&.id,
       id: vehicle.id,
       name: vehicle.name,
       shot_id: vehicle_shot&.id,

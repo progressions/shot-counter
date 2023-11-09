@@ -73,10 +73,10 @@ class Api::V1::DriversController < ApplicationController
       parms = mook_params
     end
 
-    if driver_params[:id]
-      @shot.update(driver_id: driver_params[:id])
-      @driver_shot = @fight.shots.find_by(character_id: driver_params[:id])
-      @driver_shot.update(driving_id: @vehicle.id) if @driver_shot
+    if driver_params[:shot_id]
+      @shot.update(driver_id: driver_params[:shot_id])
+      @driver_shot = @fight.shots.find_by(id: driver_params[:shot_id])
+      @driver_shot.update(driving_id: @shot.id) if @driver_shot
     end
 
     if @vehicle.update(parms)
@@ -84,6 +84,8 @@ class Api::V1::DriversController < ApplicationController
     else
       render @vehicle.errors, status: 400
     end
+  rescue
+    binding.pry
   end
 
   def reveal
@@ -140,7 +142,7 @@ class Api::V1::DriversController < ApplicationController
   def driver_params
     params
       .require(:vehicle)
-      .permit(driver: [:id])
+      .permit(driver: [:id, :shot_id])
       &.dig(:driver) || {}
   end
 

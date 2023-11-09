@@ -50,7 +50,7 @@ class Vehicle < ApplicationRecord
       count: shot&.count,
       shot_id: shot&.id,
       location: shot&.location&.name,
-      driver: driver_json(shot&.driver),
+      driver: driver_json(shot&.driver_shot),
       image_url: image_url,
       task: task
     }
@@ -58,14 +58,21 @@ class Vehicle < ApplicationRecord
 
   def vehicle_type(driver)
     return action_values.fetch("Type") unless driver
-    driver.
-      action_values.
-      fetch("Type", "Featured Foe")
+
+    driver
+      .action_values
+      .fetch("Type", "Featured Foe")
   end
 
-  def driver_json(driver)
+  def driver_json(driver_shot)
+    return {} unless driver_shot
+
+    driver = driver_shot.character
+
     return {} unless driver
+
     {
+      shot_id: driver_shot.id,
       id: driver.id,
       name: driver.name,
       skills: driver.skills.slice("Driving"),
