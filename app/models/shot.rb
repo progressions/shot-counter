@@ -14,8 +14,12 @@ class Shot < ApplicationRecord
 
   def as_json(args={})
     if driving_shot.present?
-      # If the character is driving a vehicle, show them both
-      [character.as_json(args.merge(shot: self)), driving.as_json(args.merge(shot: driving_shot))]
+      # If the character is driving a vehicle, show them both. Send the vehicle's
+      # shot to its JSON method, so it includes the correct shot_id.
+      [
+        character.as_json(args.merge(shot: self)),
+        driving.as_json(args.merge(shot: driving_shot))
+      ]
     elsif character.present?
       # A character is not driving a vehicle, so just show the character
       character.as_json(args.merge(shot: self))
