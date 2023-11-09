@@ -1,0 +1,233 @@
+vehicles:
+  -
+    name: Motorcycle
+    Acceleration: 8
+    Handling: 8
+    Squeal: 10
+    Frame: 0
+    Crunch: 0
+  -
+    name: Snowmobile
+    Acceleration: 6
+    Handling: 6
+    Squeal: 8
+    Frame: 0
+    Crunch: 2
+  -
+    name: Horse
+    Acceleration: 6
+    Handling: 6
+    Squeal: 8
+    Frame: 0
+    Crunch: 0
+  -
+    name: Family Sedan
+    Acceleration: 6
+    Handling: 6
+    Squeal: 8
+    Frame: 7
+    Crunch: 9
+  -
+    name: Compact Car
+    Acceleration: 6
+    Handling: 7
+    Squeal: 9
+    Frame: 6
+    Crunch: 8
+  -
+    name: Civilian SUV
+    Acceleration: 6
+    Handling: 6
+    Squeal: 8
+    Frame: 7
+    Crunch: 9
+  -
+    name: Security SUV
+    Acceleration: 7
+    Handling: 6
+    Squeal: 8
+    Frame: 7
+    Crunch: 10
+  -
+    name: Pickup Truck
+    Acceleration: 6
+    Handling: 6
+    Squeal: 8
+    Frame: 8
+    Crunch: 10
+  -
+    name: Luxury Sedan
+    Acceleration: 8
+    Handling: 7
+    Squeal: 9
+    Frame: 7
+    Crunch: 9
+  -
+    name: Police Car
+    Acceleration: 8
+    Handling: 8
+    Squeal: 10
+    Frame: 6
+    Crunch: 8
+  -
+    name: Muscle Car
+    Acceleration: 8
+    Handling: 8
+    Squeal: 10
+    Frame: 6
+    Crunch: 8
+  -
+    name: Sports Car
+    Acceleration: 9
+    Handling: 7
+    Squeal: 9
+    Frame: 6
+    Crunch: 8
+  -
+    name: Civilian Jeep
+    Acceleration: 6
+    Handling: 6
+    Squeal: 7
+    Frame: 7
+    Crunch: 9
+  -
+    name: Military Jeep
+    Acceleration: 6
+    Handling: 6
+    Squeal: 7
+    Frame: 7
+    Crunch: 10
+  -
+    name: Armored Military Vehicle
+    Acceleration: 6
+    Handling: 6
+    Squeal: 7
+    Frame: 8
+    Crunch: 11
+  -
+    name: Armored Jalopy
+    Acceleration: 6
+    Handling: 6
+    Squeal: 8
+    Frame: 8
+    Crunch: 10
+  -
+    name: Panel Van
+    Acceleration: 6
+    Handling: 6
+    Squeal: 7
+    Frame: 8
+    Crunch: 11
+  -
+    name: Panel Truck
+    Acceleration: 6
+    Handling: 6
+    Squeal: 7
+    Frame: 8
+    Crunch: 11
+  -
+    name: Eighteen Wheeler
+    Acceleration: 5
+    Handling: 5
+    Squeal: 7
+    Frame: 9
+    Crunch: 12
+  -
+    name: Junker Car
+    Acceleration: 5
+    Handling: 6
+    Squeal: 8
+    Frame: 6
+    Crunch: 8
+  -
+    name: Junker Pickup Truck
+    Acceleration: 5
+    Handling: 5
+    Squeal: 7
+    Frame: 7
+    Crunch: 9
+  -
+    name: Vintage Van
+    Acceleration: 6
+    Handling: 5
+    Squeal: 7
+    Frame: 7
+    Crunch: 9
+  -
+    name: Tank
+    Acceleration: 3
+    Handling: 3
+    Squeal: 5
+    Frame: 12
+    Crunch: 14
+  -
+    name: Personal Watercraft
+    Acceleration: 7
+    Handling: 7
+    Squeal: 9
+    Frame: 0
+    Crunch: 0
+  -
+    name: Cigarette Boat
+    Acceleration: 9
+    Handling: 7
+    Squeal: 10
+    Frame: 2
+    Crunch: 4
+  -
+    name: Powerboat
+    Acceleration: 7
+    Handling: 6
+    Squeal: 8
+    Frame: 6
+    Crunch: 8
+  -
+    name: Coast Guard Interceptor
+    Acceleration: 8
+    Handling: 7
+    Squeal: 9
+    Frame: 6
+    Handling: 8
+  -
+    name: Jammerpack
+    Acceleration: 6
+    Handling: 6
+    Squeal: 8
+    Frame: 0
+    Crunch: 0
+  -
+    name: Light Sport Aircraft
+    Acceleration: 6
+    Handling: 6
+    Squeal: 8
+    Frame: 5
+    Crunch: 7
+  -
+    name: Small Plane
+    Acceleration: 6
+    Handling: 6
+    Squeal: 8
+    Frame: 6
+    Crunch: 8
+  -
+    name: Cropduster
+    Acceleration: 7
+    Handling: 6
+    Squeal: 8
+    Frame: 5
+    Crunch: 7
+  -
+    name: Helicopter
+    Acceleration: 6
+    Handling: 7
+    Squeal: 8
+    Frame: 5
+    Crunch: 7
+  -
+    name: Assault Helicopter
+    Acceleration: 10
+    Handling: 7
+    Squeal: 9
+    Frame: 6
+    Crunch: 8
+

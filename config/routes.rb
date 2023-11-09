@@ -51,6 +51,7 @@ Rails.application.routes.draw do
         resources :sites, controller: "attunements"
         resources :weapons, controller: "carries"
       end
+      get "vehicles/archetypes", to: "vehicles#archetypes"
       resources :vehicles
       resources :users, only: [:index, :show, :update, :destroy]
       resources :fights do

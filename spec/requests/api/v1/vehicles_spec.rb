@@ -23,6 +23,16 @@ RSpec.describe "Vehicles", type: :request do
       end
     end
 
+    describe "GET /archetypes" do
+      it "returns all vehicle archetypes" do
+        get "/api/v1/vehicles/archetypes", headers: headers
+        expect(response).to have_http_status(:success)
+        body = JSON.parse(response.body)
+        binding.pry
+        expect(body[0]["name"]).to eq("Motorcycle")
+      end
+    end
+
     describe "POST /create" do
       it "creates a vehicle" do
         expect {

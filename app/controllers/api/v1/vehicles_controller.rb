@@ -9,6 +9,11 @@ class Api::V1::VehiclesController < ApplicationController
     render json: @vehicles
   end
 
+  def archetypes
+    @archetypes = VehicleService.archetypes["vehicles"]
+    render json: @archetypes
+  end
+
   def create
     @vehicle = current_campaign.vehicles.create!(vehicle_params)
     @vehicle.user = current_user
