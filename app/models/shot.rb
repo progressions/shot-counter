@@ -3,14 +3,22 @@ class Shot < ApplicationRecord
   belongs_to :location, optional: true, dependent: :destroy
   belongs_to :character, optional: true
   belongs_to :vehicle, optional: true
-  belongs_to :driver, optional: true, class_name: "Character", foreign_key: "driver_id"
-  belongs_to :driving, optional: true, class_name: "Vehicle", foreign_key: "driving_id"
+  belongs_to :driver_shot, optional: true, class_name: "Shot", foreign_key: "driver_id"
+  belongs_to :driving_shot, optional: true, class_name: "Shot", foreign_key: "driving_id"
   has_many :character_effects, dependent: :destroy
 
   before_destroy :unlink_driver
   before_destroy :unlink_vehicle
 
   validate :ensure_campaign
+
+  def driver
+    driver_shot&.character
+  end
+
+  def driving
+    driving_shot&.vehicle
+  end
 
   def act!(shot_cost: Fight::DEFAULT_SHOT_COUNT)
     self.shot ||= 0
@@ -30,7 +38,7 @@ class Shot < ApplicationRecord
   def unlink_driver
     return unless vehicle_id
 
-    fight.shots.where(driving_id: vehicle_id).update_all(driving_id: nil)
+    # fight.shots.where(driving_id: vehicle_id).update_all(driving_id: nil)
   end
 
   # When deleting a shot which contains a character, we need to find the
@@ -39,7 +47,7 @@ class Shot < ApplicationRecord
   def unlink_vehicle
     return unless character_id
 
-    fight.shots.where(driver_id: character_id).update_all(driver_id: nil)
+    # fight.shots.where(driver_id: character_id).update_all(driver_id: nil)
   end
 
   def ensure_campaign
