@@ -13,13 +13,20 @@ class Shot < ApplicationRecord
   validate :ensure_campaign
 
   def as_json(args={})
-    if character.present?
+    if driving_shot.present?
+      # If the character is driving a vehicle, show them both
+      [character.as_json(args.merge(shot: self)), driving.as_json(args.merge(shot: driving_shot))]
+    elsif character.present?
+      # A character is not driving a vehicle, so just show the character
       character.as_json(args.merge(shot: self))
-    elsif vehicle.present?
+    elsif driver_shot.blank? && vehicle.present?
+      # A vehicle is not being driven, so just show the vehicle
       vehicle.as_json(args.merge(shot: self))
-    else
-      {}
     end
+  end
+
+  def sort_order
+    character&.sort_order(id) || vehicle&.sort_order(id)
   end
 
   def driver
