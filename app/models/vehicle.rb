@@ -32,7 +32,6 @@ class Vehicle < ApplicationRecord
 
   def as_json(args={})
     shot = args[:shot]
-    driver = shot&.driver
     {
       id: id,
       name: name,
@@ -43,7 +42,7 @@ class Vehicle < ApplicationRecord
       updated_at: updated_at,
       user: user,
       action_values: action_values.merge({
-        "Type" => vehicle_type(driver),
+        "Type" => vehicle_type(shot&.driver),
       }),
       color: shot&.color || color,
       impairments: impairments,
@@ -51,7 +50,7 @@ class Vehicle < ApplicationRecord
       count: shot&.count,
       shot_id: shot&.id,
       location: shot&.location&.name,
-      driver: driver_json(shot),
+      driver: driver_json(shot&.driver_shot),
       image_url: image_url,
       task: task
     }

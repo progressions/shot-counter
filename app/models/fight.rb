@@ -58,9 +58,9 @@ class Fight < ApplicationRecord
         [shot, shot_chars
           .sort_by { |sh| sh.character&.sort_order(sh.id) || sh.vehicle&.sort_order(sh.id) }
           .map { |sh|
-            if sh.driving
+            if sh.driving_shot
               # Shot contains a character who is driving a vehicle
-              [sh.character.as_json(shot: sh), sh.driving.as_json(shot: sh)]
+              [sh.character.as_json(shot: sh), sh.driving.as_json(shot: sh.driving_shot)]
             elsif sh.character.present?
               # Shot contains a character who is not driving a vehicle
               sh.character.as_json(shot: sh)
