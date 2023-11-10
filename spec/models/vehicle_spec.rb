@@ -85,9 +85,12 @@ RSpec.describe Vehicle, type: :model do
       fight = @action_movie.fights.create!(name: "Big Brawl")
       truck_shot = fight.shots.create!(vehicle: truck, shot: 10)
 
-      driver = truck_shot.driver = Character.create!(name: "Driver", campaign_id: @action_movie.id)
+      driver = Character.create!(name: "Driver", campaign_id: @action_movie.id)
       driver.skills["Driving"] = 13
       driver.save!
+
+      driver_shot = fight.shots.create(character: driver, shot: 15, driving_id: truck_shot.id)
+      truck_shot.driver_id = driver_shot.id
 
       json = truck.as_json(shot: truck_shot)
       expect(json[:driver][:name]).to eq(driver.name)

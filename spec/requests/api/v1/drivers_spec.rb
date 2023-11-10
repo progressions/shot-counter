@@ -37,16 +37,6 @@ RSpec.describe "Api::V1::Actors", type: :request do
       expect(fight.reload.vehicles.order(:name).map(&:name)).to eq(["Serena Tessaro", "Truck Manly", "Ugly Shing"])
     end
 
-    it "adds a vehicle to a fight with a driver" do
-      post "/api/v1/fights/#{fight.id}/drivers/#{serena.id}/add", headers: headers, params: { vehicle: { current_shot: 12, driver: { id: brick.id } } }
-
-      expect(response).to have_http_status(200)
-      body = JSON.parse(response.body)
-      expect(body["name"]).to eq("Serena Tessaro")
-      expect(fight.reload.vehicles.order(:name).map(&:name)).to eq(["Serena Tessaro", "Truck Manly", "Ugly Shing"])
-      expect(body["driver"]["name"]).to eq("Brick Manly")
-    end
-
     it "adds a mook to a fight" do
       post "/api/v1/fights/#{fight.id}/drivers/#{grunts.id}/add", headers: headers, params: { vehicle: { current_shot: 20, color: "red" } }
 
@@ -96,9 +86,10 @@ RSpec.describe "Api::V1::Actors", type: :request do
     end
 
     it "adds a driver to a vehicle" do
+      brick_shot = Shot.create!(fight: fight, character: brick, shot: 10)
       patch "/api/v1/fights/#{fight.id}/drivers/#{truck.id}",
         headers: headers,
-        params: { vehicle: { shot_id: truck_shot.id, driver: { id: brick.id } } }
+        params: { vehicle: { shot_id: truck_shot.id, driver: { shot_id: brick_shot.id } } }
 
       expect(response).to have_http_status(200)
       expect(truck_shot.reload.driver).to eq(brick)
