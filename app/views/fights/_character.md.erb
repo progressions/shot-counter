@@ -10,9 +10,9 @@
 -%>
  <%=
  [
-   action_value(character, main_attack),
-   action_value(character, secondary_attack),
-   action_value(character, "Defense"),
+   action_value(character, main_attack, impairments: true),
+   action_value(character, secondary_attack, impairments: true),
+   action_value(character, "Defense", impairments: true),
    character.action_values["Type"] == "PC" ? fortune_value(character) : nil,
    action_value(character, "Toughness"),
    action_value(character, "Speed"),

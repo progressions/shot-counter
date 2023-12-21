@@ -57,10 +57,10 @@ TEXT
       ERB.new(filename.read, trim_mode: "-").result(binding)
     end
 
-    def action_value(character, key)
+    def action_value(character, key, impairments: false)
       if character.action_values[key].to_i > 0
-        asterisk = character.impairments.to_i > 0 ? "*" : ""
-        value = character.action_values[key].to_i - character.impairments.to_i
+        asterisk = (impairments && character.impairments.to_i > 0) ? "*" : ""
+        value = character.action_values[key].to_i - (impairments ? character.impairments.to_i : 0)
 
         "#{key} #{value}#{asterisk}"
       end
@@ -68,11 +68,10 @@ TEXT
 
     def fortune_value(character)
       if character.action_values["Max Fortune"].to_i > 0
-        asterisk = character.impairments.to_i > 0 ? "*" : ""
-        current_fortune = character.action_values["Fortune"].to_i - character.impairments.to_i
-        max_fortune = character.action_values["Max Fortune"].to_i - character.impairments.to_i
+        current_fortune = character.action_values["Fortune"].to_i
+        max_fortune = character.action_values["Max Fortune"].to_i
 
-        "#{character.action_values["FortuneType"]} #{current_fortune}/#{max_fortune}#{asterisk}"
+        "#{character.action_values["FortuneType"]} #{current_fortune}/#{max_fortune}"
       end
     end
 

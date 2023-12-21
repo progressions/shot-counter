@@ -61,7 +61,7 @@ RSpec.describe FightPoster do
 ## Shot 14
 - **Serena**
  (1 Impairment)
- Sorcery 13* Defense 12* Magic 4/6* Toughness 6* Speed 5*
+ Sorcery 13* Defense 12* Magic 5/7 Toughness 7 Speed 6
 ## Shot 12
 - **Brick Manly**
  Guns 15 Defense 14 Fortune 7/7 Toughness 7 Speed 7
@@ -127,7 +127,7 @@ RSpec.describe FightPoster do
 ## Shot 14
 - **Serena**
  39 Wounds (2 Impairments)
- Sorcery 12* Defense 11* Magic 3/5* Toughness 5* Speed 4*
+ Sorcery 12* Defense 11* Magic 5/7 Toughness 7 Speed 6
   ```diff
  Feeling weird
  ```
@@ -226,7 +226,7 @@ RSpec.describe FightPoster do
 ## Shot 14
 - **Serena**
  39 Wounds (2 Impairments)
- Sorcery 12* Defense 11* Magic 3/5* Toughness 5* Speed 4*
+ Sorcery 12* Defense 11* Magic 5/7 Toughness 7 Speed 6
   ```diff
  Feeling weird
  ```
@@ -258,7 +258,7 @@ RSpec.describe FightPoster do
 - **PC Mini**
  Evader - near
  19 Chase 26 Condition Points (1 Impairment)
- Acceleration 6* Handling 9* Squeal 11* Frame 7*
+ Acceleration 7 Handling 10 Squeal 12 Frame 8
       TEXT
     end
 

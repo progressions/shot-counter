@@ -14,9 +14,9 @@
 -%>
 - <%=
 [
- FightPoster.action_value(character, main_attack),
- FightPoster.action_value(character, secondary_attack),
- FightPoster.action_value(character, "Defense"),
+ FightPoster.action_value(character, main_attack, impairments: true),
+ FightPoster.action_value(character, secondary_attack, impairments: true),
+ FightPoster.action_value(character, "Defense", impairments: true),
  character.action_values["Type"] == "PC" ? FightPoster.fortune_value(character) : nil,
  FightPoster.action_value(character, "Toughness"),
  FightPoster.action_value(character, "Speed"),
