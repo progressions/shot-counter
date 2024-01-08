@@ -32,7 +32,7 @@ RSpec.describe FightPoster do
 # Museum Battle
 ## Sequence 1
 ## Shot 12
-- **Brick Manly**
+- **Brick Manly** 
  Guns 15 Defense 14 Fortune 7/7 Toughness 7 Speed 7
       TEXT
     end
@@ -59,11 +59,11 @@ RSpec.describe FightPoster do
 # Museum Battle
 ## Sequence 1
 ## Shot 14
-- **Serena**
+- **Serena** 
  (1 Impairment)
  Sorcery 13* Defense 12* Magic 5/7 Toughness 7 Speed 6
 ## Shot 12
-- **Brick Manly**
+- **Brick Manly** 
  Guns 15 Defense 14 Fortune 7/7 Toughness 7 Speed 7
       TEXT
     end
@@ -125,30 +125,30 @@ RSpec.describe FightPoster do
 + Shadow of the Sniper: +1 Attack (until sequence 2, shot 14)
 ```
 ## Shot 14
-- **Serena**
+- **Serena** 
  39 Wounds (2 Impairments)
  Sorcery 12* Defense 11* Magic 5/7 Toughness 7 Speed 6
   ```diff
  Feeling weird
  ```
 ## Shot 12
-- **Thunder King**
-- **Brick Manly**
+- **Thunder King** 
+- **Brick Manly** 
  Guns 15 Defense 14 Fortune 7/7 Toughness 7 Speed 7
   ```diff
  Bonus: (Got lucky) Guns +1
  - Blinded: Defense -1
  ```
 ## Shot 10
-- **Ugly Shing**
-- **Jawbuster**
+- **Ugly Shing** 
+- **Jawbuster** 
  12 Wounds
  Guns 15 Defense 14 Toughness 7 Speed 7
-- **Ninja**
+- **Ninja** 
 ## Shot 9
-- **Hitman**
+- **Hitman** 
 ## Shot 5
-- **Ninja**
+- **Ninja** 
       TEXT
     end
 
@@ -224,38 +224,38 @@ RSpec.describe FightPoster do
 + Shadow of the Sniper: +1 Attack (until sequence 2, shot 14)
 ```
 ## Shot 14
-- **Serena**
+- **Serena** 
  39 Wounds (2 Impairments)
  Sorcery 12* Defense 11* Magic 5/7 Toughness 7 Speed 6
   ```diff
  Feeling weird
  ```
 ## Shot 12
-- **Thunder King**
-- **Brick Manly** (Control Room)
+- **Thunder King** 
+- **Brick Manly** (Control Room) 
  Guns 15 Defense 14 Fortune 7/7 Toughness 7 Speed 7
   ```diff
  Bonus: (Got lucky) Guns +1
  - Blinded: Defense -1
  ```
 ## Shot 10
-- **Ugly Shing**
-- **Jawbuster**
+- **Ugly Shing** 
+- **Jawbuster** 
  12 Wounds
  Guns 15 Defense 14 Toughness 7 Speed 7
-- **Boss Vehicle**
+- **Boss Vehicle** 
  Pursuer - far
 ## Shot 9
-- **Hitman**
+- **Hitman** 
 ## Shot 8
-- **PC Vehicle** (Highway)
+- **PC Vehicle** (Highway) 
  Evader - far
  12 Chase 14 Condition Points
  Acceleration 7 Handling 10 Squeal 12 Frame 8
   ```diff
  - Blinded: Handling -1
  ```
-- **PC Mini**
+- **PC Mini** 
  Evader - near
  19 Chase 26 Condition Points (1 Impairment)
  Acceleration 7 Handling 10 Squeal 12 Frame 8
