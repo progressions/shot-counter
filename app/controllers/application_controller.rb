@@ -14,14 +14,13 @@ class ApplicationController < ActionController::API
 
     json = redis.get("user_#{current_user.id}")
 
-    Rails.logger.info("json: #{json.inspect}")
-
     if json.present?
-      user_info = JSON.parse(json)
-      @current_campaign = Campaign.find_by(id: user_info["campaign_id"])
-      Rails.logger.info("@campaign: #{@current_campaign.inspect}")
+      @current_campaign = load_current_campaign(json)
+    else
+      save_current_campaign(current_user.campaigns.first)
     end
   rescue
+    save_current_campaign(current_user.campaigns.first)
   end
 
   def current_campaign
@@ -29,6 +28,19 @@ class ApplicationController < ActionController::API
   end
 
   private
+
+  def load_current_campaign(json)
+    user_info = JSON.parse(json)
+    current_user.campaigns.find_by(id: user_info["campaign_id"])
+  end
+
+  def save_current_campaign(campaign)
+    @current_campaign = campaign
+    user_info = {
+      "campaign_id" => campaign.id
+    }
+    redis.set("user_#{current_user.id}", user_info.to_json)
+  end
 
   def require_current_campaign
     if !current_campaign
