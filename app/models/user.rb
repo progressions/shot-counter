@@ -25,13 +25,15 @@ class User < ApplicationRecord
 
   def jwt_payload
     super.merge(
-      email: email,
-      admin: admin,
-      first_name: first_name,
-      last_name: last_name,
-      gamemaster: true,
-      created_at: created_at,
-      updated_at: updated_at
+      user: {
+        email: email,
+        admin: admin,
+        first_name: first_name,
+        last_name: last_name,
+        gamemaster: true,
+        created_at: created_at,
+        updated_at: updated_at
+      }
     )
   end
 end
