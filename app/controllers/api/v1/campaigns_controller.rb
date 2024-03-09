@@ -54,10 +54,10 @@ class Api::V1::CampaignsController < ApplicationController
   end
 
   def set
-    save_current_campaign(@campaign)
-    if params[:id] && @campaign.nil?
+    if @campaign.nil?
       render status: 401
     else
+      save_current_campaign(@campaign)
       render json: @campaign
     end
   end

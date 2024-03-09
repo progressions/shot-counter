@@ -200,13 +200,9 @@ RSpec.describe "Api::V1::Campaigns", type: :request do
       expect(user_info["campaign_id"]).to eq(@campaign.id)
     end
 
-    it "clears current campaign" do
+    it "can't clear current campaign" do
       post "/api/v1/campaigns/current", params: { id: nil }, headers: @headers
-      expect(response).to have_http_status(:success)
-
-      redis = Redis.new
-      user_info = JSON.parse(redis.get("user_#{@gamemaster.id}"))
-      expect(user_info["campaign_id"]).to eq(nil)
+      expect(response).to have_http_status(401)
     end
 
     it "can't set other users' campaigns" do
