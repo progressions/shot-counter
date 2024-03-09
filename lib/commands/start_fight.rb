@@ -6,6 +6,7 @@ module SlashStartFight
   end
 
   Bot.application_command(:start) do |event|
+    redis = Redis.new
     campaign = CurrentCampaign.get(event.server_id)
 
     fight_name = event.options["name"]
@@ -19,6 +20,7 @@ module SlashStartFight
       return
     end
 
+    redis.set("fight_message_id:#{event.server_id}", nil)
     CurrentFight.set(server_id: event.server_id, fight: fight, channel_id: event.channel_id)
     event.respond(content: "Starting fight: #{fight.name}")
     Bot.send_message(event.channel_id, FightPoster.shots(fight))
