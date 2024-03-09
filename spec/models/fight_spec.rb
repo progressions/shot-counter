@@ -54,7 +54,7 @@ RSpec.describe Fight, type: :model do
     fight.shots.create!(character: brick, shot: nil)
     fight.shots.create!(character: thunder_king, shot: 0)
 
-    expect(fight.shot_order.map { |shot, chars| [shot, chars.map { |c| c[:name] }] }).to eq([[12, ["Jawbuster", "Ninja"]], [10, ["Hitman"]], [0, ["Thunder King"]], [nil, ["Brick Manly", "Ugly Shing"]]])
+    expect(fight.shot_order.map { |shot, chars| [shot, chars.map { |c| c[:name] }] }).to eq([[12, ["Jawbuster", "Ninja"]], [10, ["Hitman"]], [0, ["Thunder King"]], [nil, ["Ugly Shing", "Brick Manly"]]])
   end
 
   it "orders characters by Type" do
@@ -79,8 +79,8 @@ RSpec.describe Fight, type: :model do
     fight.shots.create!(character: brick, shot: 12)
     fight.shots.create!(character: thunder_king, shot: 12)
 
-    # expect(fight.shot_order).to eq([[12, [thunder_king, brick, shing, hitman, jawbuster, mook]]].as_json)
-    expected = [[12, ["Thunder King", "Brick Manly", "Ugly Shing", "Hitman", "Jawbuster", "Ninja"]]]
+    # expect(fight.shot_order).to eq([[12, [thunder_king, shing, brick, hitman, jawbuster, mook]]].as_json)
+    expected = [[12, ["Thunder King", "Ugly Shing", "Brick Manly", "Hitman", "Jawbuster", "Ninja"]]]
     expect(fight.shot_order.map { |shot, chars| [shot, chars.map { |c| c[:name] }] }).to eq(expected)
   end
 
