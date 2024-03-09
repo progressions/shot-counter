@@ -6,6 +6,8 @@ RSpec.describe "Api::V1::Campaigns", type: :request do
     @current_campaign = @gamemaster.campaigns.create!(name: "Current Campaign")
     @other_gamemaster = User.create!(email: "other@example.com", gamemaster: true)
     @headers = Devise::JWT::TestHelpers.auth_headers({}, @gamemaster)
+
+    post "/api/v1/campaigns/current", params: { id: @current_campaign.id }, headers: @headers
   end
 
   describe "GET /campaigns" do
@@ -159,10 +161,9 @@ RSpec.describe "Api::V1::Campaigns", type: :request do
   describe "DELETE /campaigns/:id" do
     it "destroys campaign" do
       @campaign = @gamemaster.campaigns.create!(name: "Action Movie")
-      @other_campaign = @gamemaster.campaigns.create!(name: "Action Moviez")
-      delete "/api/v1/campaigns/#{@other_campaign.id}", headers: @headers
+      delete "/api/v1/campaigns/#{@campaign.id}", headers: @headers
       expect(response).to have_http_status(:success)
-      expect(Campaign.find_by(id: @other_campaign.id)).to be_nil
+      expect(Campaign.find_by(id: @campaign.id)).to be_nil
     end
 
     it "can't destroy a campaign you're just a player in" do
