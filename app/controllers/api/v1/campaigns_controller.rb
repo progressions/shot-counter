@@ -45,6 +45,10 @@ class Api::V1::CampaignsController < ApplicationController
     # Only a gamemaster can destroy a campaign
     @campaign = current_user.campaigns.find_by(id: params[:id])
     if @campaign
+      if @campaign == current_campaign
+        render status: 401 and return
+      end
+
       @campaign.destroy!
 
       render :ok and return

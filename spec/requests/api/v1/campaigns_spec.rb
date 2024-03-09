@@ -3,6 +3,7 @@ require 'rails_helper'
 RSpec.describe "Api::V1::Campaigns", type: :request do
   before(:each) do
     @gamemaster = User.create!(email: "email@example.com", gamemaster: true, confirmed_at: Time.now)
+    @current_campaign = @gamemaster.campaigns.create!(name: "Current Campaign")
     @other_gamemaster = User.create!(email: "other@example.com", gamemaster: true)
     @headers = Devise::JWT::TestHelpers.auth_headers({}, @gamemaster)
   end
@@ -15,7 +16,7 @@ RSpec.describe "Api::V1::Campaigns", type: :request do
       get "/api/v1/campaigns", headers: @headers
       expect(response).to have_http_status(:success)
       campaigns = JSON.parse(response.body)
-      expect(campaigns["gamemaster"].map { |c| c["name"] }).to eq(["Action Movie", "Adventure"])
+      expect(campaigns["gamemaster"].map { |c| c["name"] }).to eq(["Current Campaign", "Action Movie", "Adventure"])
       expect(campaigns["player"]).to be_empty
     end
 
@@ -35,7 +36,7 @@ RSpec.describe "Api::V1::Campaigns", type: :request do
       get "/api/v1/campaigns", headers: @headers
       expect(response).to have_http_status(:success)
       campaigns = JSON.parse(response.body)
-      expect(campaigns["gamemaster"].map { |c| c["name"] }).to eq(["Action Movie", "Adventure"])
+      expect(campaigns["gamemaster"].map { |c| c["name"] }).to eq(["Current Campaign", "Action Movie", "Adventure"])
       expect(campaigns["player"].map { |c| c["name"] }).to eq(["Scifi", "Fantasy"])
     end
   end
@@ -62,7 +63,7 @@ RSpec.describe "Api::V1::Campaigns", type: :request do
         }
       }
       expect(response).to have_http_status(:forbidden)
-      expect(Campaign.count).to eq(0)
+      expect(Campaign.count).to eq(1)
     end
 
     it "returns errors" do
@@ -158,9 +159,10 @@ RSpec.describe "Api::V1::Campaigns", type: :request do
   describe "DELETE /campaigns/:id" do
     it "destroys campaign" do
       @campaign = @gamemaster.campaigns.create!(name: "Action Movie")
-      delete "/api/v1/campaigns/#{@campaign.id}", headers: @headers
+      @other_campaign = @gamemaster.campaigns.create!(name: "Action Moviez")
+      delete "/api/v1/campaigns/#{@other_campaign.id}", headers: @headers
       expect(response).to have_http_status(:success)
-      expect(Campaign.find_by(id: @campaign.id)).to be_nil
+      expect(Campaign.find_by(id: @other_campaign.id)).to be_nil
     end
 
     it "can't destroy a campaign you're just a player in" do
@@ -177,14 +179,25 @@ RSpec.describe "Api::V1::Campaigns", type: :request do
 
     it "even for a gamemaster, can't destroy a campaign you're a player in" do
       @campaign = @gamemaster.campaigns.create!(name: "Action Movie")
+      @other_campaign = @gamemaster.campaigns.create!(name: "Action Moviez")
       @gm_alice = User.create!(email: "alice@example.com", gamemaster: true, confirmed_at: Time.now)
-      @campaign.players << @gm_alice
+      @other_campaign.players << @gm_alice
 
       @headers = Devise::JWT::TestHelpers.auth_headers({}, @gm_alice)
 
-      delete "/api/v1/campaigns/#{@campaign.id}", headers: @headers
+      delete "/api/v1/campaigns/#{@other_campaign.id}", headers: @headers
       expect(response).to have_http_status(:not_found)
-      expect(@campaign.reload).to be_present
+      expect(@other_campaign.reload).to be_present
+    end
+
+    it "can't destroy the current campaign" do
+      @campaign = @gamemaster.campaigns.create!(name: "Action Movie")
+      # set it to the current campaign
+      post "/api/v1/campaigns/current", params: { id: @campaign.id }, headers: @headers
+
+      delete "/api/v1/campaigns/#{@campaign.id}", headers: @headers
+      expect(response).to have_http_status(401)
+      expect(Campaign.find_by(id: @campaign.id)).to be_present
     end
   end
 
