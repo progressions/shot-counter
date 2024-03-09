@@ -35,6 +35,8 @@ class ApplicationController < ActionController::API
   end
 
   def save_current_campaign(campaign)
+    return unless campaign
+
     @current_campaign = campaign
     user_info = {
       "campaign_id" => campaign.id
