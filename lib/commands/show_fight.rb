@@ -22,11 +22,7 @@ module SlashShowFight
         response = event.send_message(content: FightPoster.shots(fight))
 
         redis.set("fight_message_id:#{event.server_id}", response.id)
-
-        Rails.logger.info("DISCORD: response: #{response.inspect.to_s}")
       end
-
-      Rails.logger.info("DISCORD: channel_id: #{event.channel_id}")
     else
       event.respond(content: "There is no current fight.")
     end

@@ -23,6 +23,7 @@ module SlashStartFight
     redis.set("fight_message_id:#{event.server_id}", nil)
     CurrentFight.set(server_id: event.server_id, fight: fight, channel_id: event.channel_id)
     event.respond(content: "Starting fight: #{fight.name}")
-    Bot.send_message(event.channel_id, FightPoster.shots(fight))
+    # response = Bot.send_message(event.channel_id, FightPoster.shots(fight))
+    # redis.set("fight_message_id:#{event.server_id}", response.id)
   end
 end
