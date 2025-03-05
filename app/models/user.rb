@@ -1,3 +1,5 @@
+require "bcrypt"
+
 class User < ApplicationRecord
   include Devise::JWT::RevocationStrategies::JTIMatcher
 
@@ -6,6 +8,8 @@ class User < ApplicationRecord
   devise :database_authenticatable, :registerable,
          :confirmable, :recoverable, :lockable,
          :jwt_authenticatable, jwt_revocation_strategy: self
+
+  include BCrypt
 
   has_many :campaigns
   has_many :characters
@@ -22,6 +26,14 @@ class User < ApplicationRecord
       message: "is invalid"
     }
 
+  def password
+    @password ||= Password.new(encrypted_password)
+  end
+
+  def password=(new_password)
+    @password = Password.create(new_password)
+    self.encrypted_password = @password
+  end
 
   def jwt_payload
     super.merge(

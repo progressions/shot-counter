@@ -5,6 +5,27 @@ class Users::SessionsController < Devise::SessionsController
 
   # before_action :configure_sign_in_params, only: [:create]
 
+  # POST /resource/sign_in
+  def create
+    Rails.logger.info(sign_in_params)
+    @user = User.find_by(email: sign_in_params[:email])
+    if @user.password == sign_in_params[:password]
+      sign_in(:user, @user)
+
+      render json: {
+        code: 200,
+        message: 'User signed in successfully',
+        data: @user,
+        payload: @user.jwt_payload
+      }
+    else
+      render json: {
+        status: 401,
+        message: 'Invalid email or password'
+      }, status: :unauthorized
+    end
+  end
+
   private
 
   def respond_with(resource, options={})
@@ -41,11 +62,6 @@ class Users::SessionsController < Devise::SessionsController
   #   super
   # end
 
-  # POST /resource/sign_in
-  # def create
-  #   super
-  # end
-
   # DELETE /resource/sign_out
   # def destroy
   #   super
@@ -57,4 +73,8 @@ class Users::SessionsController < Devise::SessionsController
   # def configure_sign_in_params
   #   devise_parameter_sanitizer.permit(:sign_in, keys: [:attribute])
   # end
+
+  def sign_in_params
+    params.require(:user).permit(:email, :password)
+  end
 end
