@@ -25,7 +25,7 @@ module SlashListFights
       event.respond(content: "No campaign found with that name.")
       return
     end
-    CurrentCampaign.set(event.server_id, campaign)
+    CurrentCampaign.set(server_id: event.server_id, campaign: campaign)
     event.respond(content: "Campaign set to #{campaign.name}")
   end
 
@@ -34,7 +34,7 @@ module SlashListFights
 
   Bot.application_command(:list) do |event|
     puts "event.server_id: #{event.server_id}"
-    campaign = CurrentCampaign.get(event.server_id)
+    campaign = CurrentCampaign.get(server_id: event.server_id)
     if campaign.nil?
       event.respond(content: "No current campaign.")
       return

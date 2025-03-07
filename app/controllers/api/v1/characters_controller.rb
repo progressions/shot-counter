@@ -75,7 +75,7 @@ class Api::V1::CharactersController < ApplicationController
       .require(:character)
       .permit(:name, :defense, :impairments, :color, :notion_page_id,
               :user_id, :active, :faction_id, :image, :task,
-              action_values: Character::DEFAULT_ACTION_VALUES.keys,
+              :action_values,
               description: Character::DEFAULT_DESCRIPTION.keys,
               schticks: [], skills: params.fetch(:character, {}).fetch(:skills, {}).keys || {})
   end

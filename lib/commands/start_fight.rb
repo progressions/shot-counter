@@ -7,7 +7,7 @@ module SlashStartFight
 
   Bot.application_command(:start) do |event|
     redis = Redis.new
-    campaign = CurrentCampaign.get(event.server_id)
+    campaign = CurrentCampaign.get(server_id: event.server_id)
 
     fight_name = event.options["name"]
     fight = campaign

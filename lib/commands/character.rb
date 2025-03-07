@@ -5,7 +5,7 @@ module CharacterCommands
   end
 
   Bot.application_command(:characters) do |event|
-    campaign = CurrentCampaign.get(event.server_id)
+    campaign = CurrentCampaign.get(server_id: event.server_id)
     if (!campaign)
       event.respond(content: "No campaign set")
     else
@@ -27,7 +27,7 @@ module CharacterCommands
   end
 
   Bot.application_command(:character) do |event|
-    campaign = CurrentCampaign.get(event.server_id)
+    campaign = CurrentCampaign.get(server_id: event.server_id)
     if (!campaign)
       event.respond(content: "No campaign set")
       return
@@ -52,7 +52,7 @@ module CharacterCommands
   end
 
   Bot.application_command(:stats) do |event|
-    campaign = CurrentCampaign.get(event.server_id)
+    campaign = CurrentCampaign.get(server_id: event.server_id)
     if (!campaign)
       event.respond(content: "No campaign set")
     else

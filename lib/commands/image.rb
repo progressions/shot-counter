@@ -6,7 +6,7 @@ module ImageCommands
   end
 
   Bot.application_command(:image) do |event|
-    campaign = CurrentCampaign.get(event.server_id)
+    campaign = CurrentCampaign.get(server_id: event.server_id)
     if (!campaign)
       event.respond(content: "No campaign set")
       return

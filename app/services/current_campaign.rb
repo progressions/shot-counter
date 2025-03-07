@@ -1,6 +1,6 @@
 module CurrentCampaign
   class << self
-    def get(server_id)
+    def get(server_id: nil)
       json = redis.get("current_campaign:#{server_id}")
       if json.present?
         campaign_info = JSON.parse(json)
@@ -8,7 +8,7 @@ module CurrentCampaign
       end
     end
 
-    def set(server_id, campaign=nil)
+    def set(server_id: nil, campaign: nil)
       redis.set("current_campaign:#{server_id}", {campaign_id: campaign.id}.to_json)
     end
 
