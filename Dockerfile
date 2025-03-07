@@ -49,7 +49,7 @@ RUN gem update --system --no-document && \
 
 FROM base as build_deps
 
-ARG BUILD_PACKAGES="git build-essential libpq-dev wget vim curl gzip xz-utils libsqlite3-dev libvips libglib2.0 glib2.0"
+ARG BUILD_PACKAGES="git build-essential libpq-dev wget vim curl gzip xz-utils libsqlite3-dev libvips libglib2.0 glib2.0 libyaml-dev"
 ENV BUILD_PACKAGES ${BUILD_PACKAGES}
 
 RUN --mount=type=cache,id=dev-apt-cache,sharing=locked,target=/var/cache/apt \

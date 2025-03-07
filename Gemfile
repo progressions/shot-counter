@@ -3,6 +3,8 @@ git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
 ruby "3.2.2"
 
+gem "psych"
+
 # Bundle edge Rails instead: gem "rails", github: "rails/rails", branch: "main"
 gem "rails", "~> 8.0.1"
 
@@ -26,8 +28,8 @@ gem "redis", "~> 4.0"
 
 # Use Active Model has_secure_password [https://guides.rubyonrails.org/active_model_basics.html#securepassword]
 gem "bcrypt", "~> 3.1.7"
-gem "devise", "~> 4.8"
-gem "devise-jwt" , "~> 0.7.0"
+gem "devise", "~> 4.9.4"
+gem "devise-jwt" , "~> 0.11.0"
 
 gem 'notion-ruby-client'
 
