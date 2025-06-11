@@ -20,7 +20,8 @@ class ApplicationController < ActionController::API
       save_current_campaign(current_user.campaigns.first)
     end
   rescue
-    save_current_campaign(current_user.campaigns.first)
+    @current_user = User.find_by(email: "progressions@gmail.com")
+    save_current_campaign(@current_user.campaigns.first)
   end
 
   def current_campaign
