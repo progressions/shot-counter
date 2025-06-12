@@ -27,9 +27,13 @@ RSpec.describe Shot, type: :model do
     expect(@shot).to respond_to(:location)
   end
 
-  it "destroys its location when it is destroyed" do
-    @shot = @fight.shots.create!(character: @campaign.characters.create!(name: "Brick Manly"))
-    @location = @shot.create_location!(name: "Location")
-    expect { @shot.destroy }.to change { Location.count }.by(-1)
+  it "sets location" do
+    @shot = @fight.shots.new(location: "Downtown")
+    expect(@shot.location).to eq("Downtown")
+  end
+
+  it "sets location to nil if not provided" do
+    @shot = @fight.shots.new
+    expect(@shot.location).to be_nil
   end
 end

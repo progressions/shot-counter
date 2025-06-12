@@ -122,7 +122,7 @@ class Character < ApplicationRecord
       impairments: is_pc? ? impairments : shot&.impairments,
       count: shot&.count,
       color: shot&.color || color,
-      location: shot&.location&.name,
+      location: shot&.location,
       shot_id: shot&.id,
 
       driving: driving_json(shot),

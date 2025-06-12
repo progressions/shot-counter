@@ -10,10 +10,10 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_11_09_200752) do
+ActiveRecord::Schema[8.0].define(version: 2025_06_12_021722) do
   # These are extensions that must be enabled in order to support this database
+  enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
-  enable_extension "plpgsql"
 
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
@@ -131,6 +131,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_11_09_200752) do
     t.uuid "notion_page_id"
     t.datetime "last_synced_to_notion_at"
     t.string "summary"
+    t.boolean "is_template"
     t.index ["campaign_id"], name: "index_characters_on_campaign_id"
     t.index ["created_at"], name: "index_characters_on_created_at"
     t.index ["faction_id"], name: "index_characters_on_faction_id"
@@ -253,6 +254,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_11_09_200752) do
     t.uuid "driver_id"
     t.integer "impairments", default: 0
     t.uuid "driving_id"
+    t.string "location"
     t.index ["character_id"], name: "index_shots_on_character_id"
     t.index ["driver_id"], name: "index_shots_on_driver_id"
     t.index ["driving_id"], name: "index_shots_on_driving_id"

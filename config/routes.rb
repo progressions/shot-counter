@@ -9,7 +9,7 @@ Rails.application.routes.draw do
     namespace :v1 do
       get "notion/characters", to: "notion#characters"
       resources :mooks
-      resources :locations
+      resources :locations, except: [:index, :destroy]
       resources :characters_and_vehicles, only: [:index] do
         member do
           get :characters

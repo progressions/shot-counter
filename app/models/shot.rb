@@ -1,6 +1,5 @@
 class Shot < ApplicationRecord
   belongs_to :fight
-  belongs_to :location, optional: true, dependent: :destroy
   belongs_to :character, optional: true
   belongs_to :vehicle, optional: true
   belongs_to :driver_shot, optional: true, class_name: "Shot", foreign_key: "driver_id"

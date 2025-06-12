@@ -49,7 +49,7 @@ class Vehicle < ApplicationRecord
       category: "vehicle",
       count: shot&.count,
       shot_id: shot&.id,
-      location: shot&.location&.name,
+      location: shot&.location,
       driver: driver_json(shot&.driver_shot),
       image_url: image_url,
       task: task

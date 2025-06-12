@@ -22,103 +22,62 @@ RSpec.describe "Locations", type: :request do
     set_current_campaign(user, action_movie)
   end
 
-  describe "GET /index" do
-    it "returns location for a character's shot" do
-      Location.create!(name: "Ranch", shot: brick_shot)
-      Location.create!(name: "Highway", shot: truck_shot)
-
-      get "/api/v1/locations", params: { shot_id: brick_shot.id }, headers: headers
-
-      expect(response).to have_http_status(:success)
-      body = JSON.parse(response.body)
-      expect(body["name"]).to eq("Ranch")
-    end
-
-    it "returns location for a vehicle's shot" do
-      Location.create!(name: "Ranch", shot: brick_shot)
-      Location.create!(name: "Highway", shot: truck_shot)
-
-      get "/api/v1/locations", params: { shot_id: truck_shot.id }, headers: headers
-
-      expect(response).to have_http_status(:success)
-      body = JSON.parse(response.body)
-      expect(body["name"]).to eq("Highway")
-    end
-
-    it "returns nil if there is no shot" do
-      get "/api/v1/locations", params: { shot_id: "not-a-real-id" }, headers: headers
-
-      expect(response).to have_http_status(:success)
-      body = JSON.parse(response.body)
-      expect(body).to be_nil
-    end
-  end
-
   describe "POST /create" do
     it "creates a new Location for a character" do
-      expect {
-        post "/api/v1/locations", params: {
-          shot_id: brick_shot.id,
-          location: { name: "Ranch" }
-        }, headers: headers
-      }.to change(Location, :count).by(1)
+      post "/api/v1/locations", params: {
+        shot_id: brick_shot.id,
+        location: { name: "Ranch" }
+      }, headers: headers
 
       expect(response).to have_http_status(:created)
-      body = JSON.parse(response.body)
-      expect(body["name"]).to eq("Ranch")
-      expect(body["shot"]["id"]).to eq(brick_shot.id)
+      expect(brick_shot.reload.location).to eq("Ranch")
+    end
+
+    it "creates a blank location for a character" do
+      post "/api/v1/locations", params: {
+        shot_id: serena_shot.id,
+        location: { name: "" }
+      }, headers: headers
+      expect(response).to have_http_status(:created)
+      expect(serena_shot.reload.location).to eq("")
     end
 
     it "creates a new location for a vehicle" do
-      expect {
-        post "/api/v1/locations", params: {
-          shot_id: truck_shot.id,
-          location: { name: "Highway" }
-        }, headers: headers
-      }.to change(Location, :count).by(1)
+      post "/api/v1/locations", params: {
+        shot_id: truck_shot.id,
+        location: { name: "Highway" }
+      }, headers: headers
 
       expect(response).to have_http_status(:created)
-      body = JSON.parse(response.body)
-      expect(body["name"]).to eq("Highway")
-      expect(body["shot"]["id"]).to eq(truck_shot.id)
+      expect(truck_shot.reload.location).to eq("Highway")
+    end
+
+    it "creates a blank location for a vehicle" do
+      post "/api/v1/locations", params: {
+        shot_id: speedboat_shot.id,
+        location: { name: "" }
+      }, headers: headers
+
+      expect(response).to have_http_status(:created)
+      expect(speedboat_shot.reload.location).to eq("")
     end
 
     it "creates a separate location for two instances of the same mook" do
-      expect {
-        post "/api/v1/locations", params: {
-          shot_id: red_grunts_shot.id,
-          location: { name: "Highway" }
-        }, headers: headers
-      }.to change(Location, :count).by(1)
+      post "/api/v1/locations", params: {
+        shot_id: red_grunts_shot.id,
+        location: { name: "Highway" }
+      }, headers: headers
 
       expect(response).to have_http_status(:created)
-      body = JSON.parse(response.body)
-      expect(body["name"]).to eq("Highway")
-      expect(body["shot"]["id"]).to eq(red_grunts_shot.id)
+      expect(red_grunts_shot.reload.location).to eq("Highway")
 
-      expect {
-        post "/api/v1/locations", params: {
-          shot_id: blue_grunts_shot.id,
-          location: { name: "Museum" }
-        }, headers: headers
-      }.to change(Location, :count).by(1)
+      post "/api/v1/locations", params: {
+        shot_id: blue_grunts_shot.id,
+        location: { name: "Museum" }
+      }, headers: headers
 
       expect(response).to have_http_status(:created)
-      body = JSON.parse(response.body)
-      expect(body["name"]).to eq("Museum")
-      expect(body["shot"]["id"]).to eq(blue_grunts_shot.id)
-    end
-  end
-
-  describe "DELETE /destroy" do
-    it "deletes a location" do
-      location = Location.create!(name: "Ranch", shot: brick_shot)
-
-      expect {
-        delete "/api/v1/locations/#{location.id}", headers: headers
-      }.to change(Location, :count).by(-1)
-
-      expect(response).to have_http_status(:no_content)
+      expect(blue_grunts_shot.reload.location).to eq("Museum")
     end
   end
 end

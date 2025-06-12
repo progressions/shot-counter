@@ -188,17 +188,13 @@ RSpec.describe FightPoster do
       fight.shots.create!(character: jawbuster, shot: 10)
       fight.shots.create!(character: hitman, shot: 9)
       fight.shots.create!(character: shing, shot: 10)
-      brick_in_fight = fight.shots.create!(character: brick, shot: 12)
+      brick_in_fight = fight.shots.create!(character: brick, shot: 12, location: "Control Room")
       serena_in_fight = fight.shots.create!(character: serena, shot: 14)
       fight.shots.create!(character: thunder_king, shot: 12)
 
-      brick_in_fight.create_location!(name: "Control Room")
-
       boss_vehicle_in_fight = fight.shots.create!(vehicle: boss_vehicle, shot: 10)
-      pc_vehicle_in_fight = fight.shots.create!(vehicle: pc_vehicle, shot: 8)
+      pc_vehicle_in_fight = fight.shots.create!(vehicle: pc_vehicle, shot: 8, location: "Highway")
       fight.shots.create!(vehicle: mini, shot: 8)
-
-      pc_vehicle_in_fight.create_location!(name: "Highway")
 
       brick_in_other_fight = other_fight.shots.create!(character: brick, shot: 12)
 
