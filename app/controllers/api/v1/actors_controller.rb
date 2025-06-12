@@ -85,7 +85,6 @@ class Api::V1::ActorsController < ApplicationController
 
   def destroy
     @shot = Shot.find(params[:id])
-    Location.where(shot_id: @shot.id).destroy_all
     @shot.destroy!
     render :ok
   end
