@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_06_12_021722) do
+ActiveRecord::Schema[8.0].define(version: 2025_06_12_024728) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -191,14 +191,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_12_021722) do
     t.index ["user_id"], name: "index_invitations_on_user_id"
   end
 
-  create_table "locations", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
-    t.string "name", null: false
-    t.uuid "shot_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["shot_id"], name: "index_locations_on_shot_id"
-  end
-
   create_table "memberships", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.uuid "party_id", null: false
     t.uuid "character_id"
@@ -248,7 +240,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_12_021722) do
     t.string "position"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.uuid "location_id"
     t.integer "count", default: 0
     t.string "color"
     t.uuid "driver_id"
@@ -259,7 +250,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_12_021722) do
     t.index ["driver_id"], name: "index_shots_on_driver_id"
     t.index ["driving_id"], name: "index_shots_on_driving_id"
     t.index ["fight_id"], name: "index_shots_on_fight_id"
-    t.index ["location_id"], name: "index_shots_on_location_id"
     t.index ["vehicle_id"], name: "index_shots_on_vehicle_id"
   end
 
@@ -368,7 +358,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_12_021722) do
   add_foreign_key "invitations", "campaigns"
   add_foreign_key "invitations", "users"
   add_foreign_key "invitations", "users", column: "pending_user_id"
-  add_foreign_key "locations", "shots"
   add_foreign_key "memberships", "characters"
   add_foreign_key "memberships", "parties"
   add_foreign_key "memberships", "vehicles"
@@ -378,7 +367,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_12_021722) do
   add_foreign_key "schticks", "schticks", column: "prerequisite_id"
   add_foreign_key "shots", "characters"
   add_foreign_key "shots", "fights"
-  add_foreign_key "shots", "locations"
   add_foreign_key "shots", "shots", column: "driver_id"
   add_foreign_key "shots", "shots", column: "driving_id"
   add_foreign_key "shots", "vehicles"
