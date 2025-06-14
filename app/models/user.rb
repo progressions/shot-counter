@@ -11,6 +11,7 @@ class User < ApplicationRecord
 
   include BCrypt
 
+  belongs_to :current_campaign, class_name: "Campaign", optional: true
   has_many :campaigns
   has_many :characters
   has_many :vehicles
