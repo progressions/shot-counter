@@ -58,12 +58,8 @@ class Api::V1::CampaignsController < ApplicationController
   end
 
   def set
-    if @campaign.nil?
-      render status: 401
-    else
-      save_current_campaign(@campaign)
-      render json: @campaign
-    end
+    save_current_campaign(@campaign)
+    render json: @campaign
   end
 
   private
