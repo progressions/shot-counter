@@ -24,7 +24,7 @@ RSpec.describe CurrentCampaign do
     end
 
     it "returns the current campaign from Redis for a server" do
-      CurrentCampaign.set(user: user, server_id: "server_123", campaign: action_movie)
+      CurrentCampaign.set(server_id: "server_123", campaign: action_movie)
       expect(CurrentCampaign.get(server_id: "server_123")).to eq(action_movie)
     end
 
@@ -48,7 +48,7 @@ RSpec.describe CurrentCampaign do
     end
 
     it "sets the current campaign in Redis for a server" do
-      CurrentCampaign.set(user: user, server_id: "server_456", campaign: action_movie)
+      CurrentCampaign.set(server_id: "server_456", campaign: action_movie)
 
       json = CurrentCampaign.send(:redis).get("current_campaign:server_456")
       expect(json).to be_present
