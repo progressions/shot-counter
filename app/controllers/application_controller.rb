@@ -24,7 +24,7 @@ class ApplicationController < ActionController::API
 
   private
 
-  def load_current_campaign(json)
+  def load_current_campaign
     CurrentCampaign.get(user: current_user)
   end
 
