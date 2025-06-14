@@ -31,6 +31,18 @@ RSpec.describe CurrentCampaign do
     it "returns nil if no campaign is found in Redis for a server" do
       expect(CurrentCampaign.get(server_id: "non_existent_server")).to be_nil
     end
+
+    it "raises an error if both user and server_id are provided" do
+      expect {
+        CurrentCampaign.get(user: user, server_id: "server_123")
+      }.to raise_error(ArgumentError, "Cannot provide both user and server_id")
+    end
+
+    it "raises an error if neither user nor server_id is provided" do
+      expect {
+        CurrentCampaign.get
+      }.to raise_error(ArgumentError, "Either user or server_id must be provided")
+    end
   end
 
   describe "set" do
@@ -55,6 +67,24 @@ RSpec.describe CurrentCampaign do
 
       campaign_info = JSON.parse(json)
       expect(campaign_info["campaign_id"]).to eq(action_movie.id)
+    end
+
+    it "sets the current campaign for both user and server" do
+      CurrentCampaign.set(user: user, server_id: "server_789", campaign: action_movie)
+
+      expect(user.reload.current_campaign).to eq(action_movie)
+
+      json = CurrentCampaign.send(:redis).get("current_campaign:server_789")
+      expect(json).to be_present
+
+      campaign_info = JSON.parse(json)
+      expect(campaign_info["campaign_id"]).to eq(action_movie.id)
+    end
+
+    it "raises an error if neither user nor server_id is provided" do
+      expect {
+        CurrentCampaign.set(campaign: action_movie)
+      }.to raise_error(ArgumentError, "Either user or server_id must be provided")
     end
   end
 end

@@ -19,7 +19,6 @@ module CurrentCampaign
 
     def set(user: nil, server_id: nil, campaign: nil)
       raise ArgumentError, "Either user or server_id must be provided" unless user || server_id
-      raise ArgumentError, "Cannot provide both user and server_id" if user && server_id
 
       if user
         user.current_campaign = campaign
@@ -29,7 +28,9 @@ module CurrentCampaign
           "campaign_id" => campaign&.id
         }
         redis.set("user_#{user.id}", user_info.to_json)
-      else
+      end
+
+      if server_id
         redis.set("current_campaign:#{server_id}", {campaign_id: campaign&.id}.to_json)
       end
     end
