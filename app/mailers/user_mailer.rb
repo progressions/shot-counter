@@ -6,14 +6,14 @@ class UserMailer < Devise::Mailer
   # Note that Devise passes a Devise::Mailer object to your proc, hence the parameter throwaway (*).
   # default from: ->(*) { Class.instance.email_address }
 
-  default from: ->(*) { "isaac@chiwar.net" }
+  default from: ->(*) { "admin@chiwar.net" }
 
-  def welcome
+  def welcome(params)
     @user = params[:user]
     mail(to: @user.email, subject: "Welcome to the Chi War!")
   end
 
-  def invitation
+  def invitation(params)
     @invitation = params[:invitation]
     @campaign = @invitation.campaign
     if Rails.application.config.action_mailer.default_url_options
