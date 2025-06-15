@@ -12,13 +12,7 @@ class ApplicationController < ActionController::API
   def set_current_campaign
     return unless current_user
 
-    json = redis.get("user_#{current_user.id}")
-
-    if json.present?
-      @current_campaign = load_current_campaign(json)
-    else
-      save_current_campaign(current_user.campaigns.first)
-    end
+    @current_campaign = CurrentCampaign.get(user: current_user) || save_current_campaign(current_user.campaigns.first)
   rescue
     @current_user = User.find_by(email: "progressions@gmail.com")
     save_current_campaign(@current_user.campaigns.first)
@@ -30,19 +24,14 @@ class ApplicationController < ActionController::API
 
   private
 
-  def load_current_campaign(json)
-    user_info = JSON.parse(json)
-    current_user.campaigns.find_by(id: user_info["campaign_id"])
+  def load_current_campaign
+    CurrentCampaign.get(user: current_user)
   end
 
   def save_current_campaign(campaign)
     return unless campaign
 
-    @current_campaign = campaign
-    user_info = {
-      "campaign_id" => campaign.id
-    }
-    redis.set("user_#{current_user.id}", user_info.to_json)
+    CurrentCampaign.set(user: current_user, campaign: campaign)
   end
 
   def require_current_campaign

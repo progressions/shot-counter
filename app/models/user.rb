@@ -3,7 +3,6 @@ require "bcrypt"
 class User < ApplicationRecord
   include Devise::JWT::RevocationStrategies::JTIMatcher
 
-  # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
   devise :database_authenticatable, :registerable,
          :confirmable, :recoverable, :lockable,
@@ -11,6 +10,7 @@ class User < ApplicationRecord
 
   include BCrypt
 
+  belongs_to :current_campaign, class_name: "Campaign", optional: true
   has_many :campaigns
   has_many :characters
   has_many :vehicles
@@ -43,8 +43,9 @@ class User < ApplicationRecord
         first_name: first_name,
         last_name: last_name,
         gamemaster: true,
+        current_campaign: current_campaign&.id,
         created_at: created_at,
-        updated_at: updated_at
+        updated_at: updated_at,
       }
     )
   end

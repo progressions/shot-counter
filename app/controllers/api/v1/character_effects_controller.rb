@@ -46,12 +46,6 @@ class Api::V1::CharacterEffectsController < ApplicationController
 
   private
 
-  def require_current_campaign
-    if !current_campaign
-      render status: 404
-    end
-  end
-
   def set_fight
     @fight = current_campaign.fights.find_by(id: params[:fight_id])
     if @fight.nil?

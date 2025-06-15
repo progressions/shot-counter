@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_06_12_024728) do
+ActiveRecord::Schema[8.0].define(version: 2025_06_14_224604) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -287,6 +287,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_12_024728) do
     t.integer "failed_attempts", default: 0, null: false
     t.string "unlock_token"
     t.datetime "locked_at"
+    t.uuid "current_campaign_id"
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["jti"], name: "index_users_on_jti", unique: true
@@ -372,6 +373,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_12_024728) do
   add_foreign_key "shots", "vehicles"
   add_foreign_key "sites", "campaigns"
   add_foreign_key "sites", "factions"
+  add_foreign_key "users", "campaigns", column: "current_campaign_id"
   add_foreign_key "vehicles", "campaigns"
   add_foreign_key "vehicles", "factions"
   add_foreign_key "vehicles", "users"
