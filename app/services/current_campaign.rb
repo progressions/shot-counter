@@ -31,7 +31,10 @@ module CurrentCampaign
       end
 
       if server_id
-        redis.set("current_campaign:#{server_id}", {campaign_id: campaign&.id}.to_json)
+        server_info = {
+          "campaign_id" => campaign&.id
+        }
+        redis.set("current_campaign:#{server_id}", server_info.to_json)
       end
     end
 
