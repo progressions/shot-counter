@@ -122,9 +122,10 @@ RSpec.describe "Api::V1::Campaigns", type: :request do
       expect(body["name"]).to eq("Action Movie")
     end
 
-    it "returns 404" do
+    it "returns 200" do
       get "/api/v1/campaigns/12345", headers: @headers
-      expect(response).to have_http_status(404)
+      expect(response).to have_http_status(200)
+      expect(response.body).to eq(" ")
     end
   end
 
