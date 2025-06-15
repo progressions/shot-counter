@@ -12,10 +12,7 @@ class ApplicationController < ActionController::API
   def set_current_campaign
     return unless current_user
 
-    @current_campaign = CurrentCampaign.get(user: current_user) || save_current_campaign(current_user.campaigns.first)
-  rescue
-    @current_user = User.find_by(email: "progressions@gmail.com")
-    save_current_campaign(@current_user.campaigns.first)
+    @current_campaign = CurrentCampaign.get(user: current_user)
   end
 
   def current_campaign
@@ -29,8 +26,6 @@ class ApplicationController < ActionController::API
   end
 
   def save_current_campaign(campaign)
-    return unless campaign
-
     CurrentCampaign.set(user: current_user, campaign: campaign)
   end
 

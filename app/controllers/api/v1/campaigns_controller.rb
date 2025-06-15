@@ -23,7 +23,7 @@ class Api::V1::CampaignsController < ApplicationController
     if @campaign
       render json: @campaign
     else
-      render status: 404
+      render status: nil
     end
   end
 
