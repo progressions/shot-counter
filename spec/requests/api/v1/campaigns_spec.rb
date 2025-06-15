@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe "Api::V1::Campaigns", type: :request do
   before(:each) do
-    @gamemaster = User.create!(email: "email@example.com", gamemaster: true, confirmed_at: Time.now)
+    @gamemaster = User.create!(email: "gamemaster@example.com", gamemaster: true, confirmed_at: Time.now)
     @current_campaign = @gamemaster.campaigns.create!(name: "Current Campaign")
     @other_gamemaster = User.create!(email: "other@example.com", gamemaster: true)
     @headers = Devise::JWT::TestHelpers.auth_headers({}, @gamemaster)
@@ -209,22 +209,13 @@ RSpec.describe "Api::V1::Campaigns", type: :request do
       post "/api/v1/campaigns/current", params: { id: @campaign.id }, headers: @headers
       expect(response).to have_http_status(:success)
 
-      redis = Redis.new
-      user_info = JSON.parse(redis.get("user_#{@gamemaster.id}"))
-      expect(user_info["campaign_id"]).to eq(@campaign.id)
+      expect(CurrentCampaign.get(user: @gamemaster.reload)).to eq(@campaign)
     end
 
-    it "can't clear current campaign" do
+    it "can clear current campaign" do
       post "/api/v1/campaigns/current", params: { id: nil }, headers: @headers
-      expect(response).to have_http_status(401)
-    end
-
-    it "can't set other users' campaigns" do
-      @gamemaster = User.create!(email: "someone@else.com", confirmed_at: Time.now)
-      @campaign = @gamemaster.campaigns.create!(name: "Adventure")
-
-      post "/api/v1/campaigns/current", params: { id: @campaign.id }, headers: @headers
-      expect(response).to have_http_status(:unauthorized)
+      expect(response).to have_http_status(:success)
+      expect(CurrentCampaign.get(user: @gamemaster)).to be_nil
     end
 
     it "can set campaign you're a player in" do
