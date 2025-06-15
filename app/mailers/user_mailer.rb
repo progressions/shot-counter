@@ -8,12 +8,12 @@ class UserMailer < Devise::Mailer
 
   default from: ->(*) { "admin@chiwar.net" }
 
-  def welcome(params)
+  def welcome
     @user = params[:user]
     mail(to: @user.email, subject: "Welcome to the Chi War!")
   end
 
-  def invitation(params)
+  def invitation
     @invitation = params[:invitation]
     @campaign = @invitation.campaign
     if Rails.application.config.action_mailer.default_url_options
@@ -24,6 +24,20 @@ class UserMailer < Devise::Mailer
       @root_url = "#{protocol}://#{host}#{port}"
     end
     mail(to: @invitation.email, subject: "You have been invited to join #{@invitation.campaign.name} in the Chi War!")
+  end
+
+  def joined_campaign
+    @user = params[:user]
+    @campaign = params[:campaign]
+
+    mail(to: @user.email, subject: "You have joined the campaign: #{Wcampaign.name}")
+  end
+
+  def removed_from_campaign
+    @user = params[:user]
+    @campaign = params[:campaign]
+
+    mail(to: @user.email, subject: "You have been removed from the campaign: #{Wcampaign.name}")
   end
 
 end

@@ -10,7 +10,7 @@ RSpec.describe UserMailer, type: :mailer do
     it "renders the headers" do
       expect(mail.subject).to eq("You have been invited to join Action Movie in the Chi War!")
       expect(mail.to).to eq(["someone@example.com"])
-      expect(mail.from).to eq(["isaac@chiwar.net"])
+      expect(mail.from).to eq(["admin@chiwar.net"])
     end
   end
 end

@@ -63,11 +63,7 @@ class Api::V1::CharactersController < ApplicationController
   end
 
   def set_scoped_characters
-    if current_user.gamemaster?
-      @scoped_characters = current_campaign.characters
-    else
-      @scoped_characters = current_user.characters
-    end
+    @scoped_characters = current_campaign.characters
   end
 
   def character_params

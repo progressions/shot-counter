@@ -6,7 +6,8 @@ class Api::V1::CampaignMembershipsController < ApplicationController
     @campaign_membership = @campaign.campaign_memberships.new(membership_params)
 
     if @campaign_membership.save
-      # UserMailer.with(user: User.find(params[:user_id]).joined_campaign.deliver_later!
+      @user = User.find(membership_params[:user_id])
+      UserMailer.with(user: @user, campaign: @campaign).joined_campaign.deliver_later!
 
       render json: @campaign_membership.campaign
     else
@@ -30,7 +31,8 @@ class Api::V1::CampaignMembershipsController < ApplicationController
     if @campaign_membership
       @campaign_membership.destroy!
 
-      # UserMailer.with(user: User.find(params[:user_id]).removed_from_campaign.deliver_later!
+      user = User.find(params[:user_id])
+      UserMailer.with(user: user).removed_from_campaign.deliver_later!
       render :ok
     else
       render status: 404
