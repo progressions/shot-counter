@@ -76,9 +76,7 @@ Rails.application.configure do
   }
 
   # email setup
-  config.action_mailer.raise_delivery_errors = true
   config.action_mailer.delivery_method = :smtp
-  config.x.mail_from = %(Isaac Priestley <admin@chiwar.net>)
   config.action_mailer.smtp_settings = {
     address: 'smtp.office365.com',
     port: 587,
@@ -86,9 +84,12 @@ Rails.application.configure do
     user_name: Rails.application.credentials.smtp.user_name,
     password: Rails.application.credentials.smtp.password,
     authentication: 'login',
-    enable_starttls_auto: true
+    enable_starttls_auto: true,
+    openssl_verify_mode: 'none' # Temporary for testing (see below)
   }
-  config.action_mailer.default_url_options = { host: 'chiwar.net' }
+  config.action_mailer.default_url_options = { host: 'chiwar.net', protocol: 'https' }
+  config.action_mailer.perform_deliveries = true
+  config.action_mailer.raise_delivery_errors = true
 
   # Don't log any deprecations.
   config.active_support.report_deprecations = false
