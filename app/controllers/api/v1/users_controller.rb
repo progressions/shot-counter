@@ -2,7 +2,7 @@ class Api::V1::UsersController < ApplicationController
   before_action :authenticate_user!
 
   def index
-    @users = User.order(email: :asc)
+    @users = [current_campaign.user] + current_campaign.players.order(email: :asc)
     render json: @users
   end
 
