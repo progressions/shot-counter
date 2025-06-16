@@ -16,7 +16,18 @@ class Api::V1::FightsController < ApplicationController
     @fights = paginate(@fights, per_page: (params[:per_page] || 24), page: (params[:page] || 1))
 
     @fights_json = @fights.map do |fight|
-      fight.as_json.slice(:id, :name, :sequence, :active, :archived, :description)
+
+      character_names = fight.characters.map do |character|
+        character.name
+      end
+
+      vehicle_names = fight.vehicles.map do |vehicle|
+        vehicle.name
+      end
+
+      fight.as_json.slice(:id, :name, :sequence, :active, :archived, :description, :created_at, :updated_at).merge({
+        actors: character_names + vehicle_names,
+      })
     end
 
     render json: {
