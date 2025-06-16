@@ -5,6 +5,7 @@ class Fight < ApplicationRecord
   has_many :vehicles, through: :shots
   has_many :effects, dependent: :destroy
   has_many :character_effects, through: :shots
+  has_many :fight_events, dependent: :destroy
   has_one_attached :image
 
   scope :active, -> { where(active: true) }

@@ -55,6 +55,7 @@ Rails.application.routes.draw do
       resources :vehicles
       resources :users, only: [:index, :show, :update, :destroy]
       resources :fights do
+        resources :fight_events, only: [:index, :create]
         resources :character_effects, only: [:create, :update, :destroy]
         resources :effects
         resources :drivers do
