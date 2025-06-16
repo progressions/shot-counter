@@ -1,5 +1,5 @@
 class FightEvent < ApplicationRecord
-  belongs_to :fight
+  belongs_to :fight, touch: true
   validates :event_type, :description, presence: true
 
   def as_json(options = {})
