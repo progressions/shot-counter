@@ -16,15 +16,8 @@ class Api::V1::FightsController < ApplicationController
     @fights = paginate(@fights, per_page: (params[:per_page] || 24), page: (params[:page] || 1))
 
     @fights_json = @fights.map do |fight|
-
-      character_names = fight.characters.map do |character|
-        character.name
-      end
-
-      vehicle_names = fight.vehicles.map do |vehicle|
-        vehicle.name
-      end
-
+      character_names = fight.characters.map { |character| character.name }
+      vehicle_names = fight.vehicles.map { |vehicle| vehicle.name }
       fight.as_json.slice(:id, :name, :sequence, :active, :archived, :description, :created_at, :updated_at).merge({
         actors: character_names + vehicle_names,
       })
@@ -50,10 +43,11 @@ class Api::V1::FightsController < ApplicationController
   end
 
   def update
+    Rails.logger.info("DISCORD: Incoming fight_params: #{params[:fight].inspect}")
     if @fight.update(fight_params)
       render json: @fight
     else
-      render @fight.errors, status: 400
+      render json: @fight.errors, status: 400
     end
   end
 
@@ -65,9 +59,7 @@ class Api::V1::FightsController < ApplicationController
   private
 
   def require_current_campaign
-    if !current_campaign
-      render status: 404
-    end
+    render status: 404 unless current_campaign
   end
 
   def set_fight

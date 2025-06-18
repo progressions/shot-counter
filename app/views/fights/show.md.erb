@@ -1,4 +1,5 @@
 # <%= @fight.name %>
+<%= "## #{@fight.description}" if @fight.description.present? %>
 ## Sequence <%= @fight.sequence %>
 <% if @fight.active_effects.any? -%>
 ```diff
@@ -17,3 +18,5 @@
 <% end -%>
 <% end -%>
 <% end -%>
+
+<%= @fight.fight_events.order("created_at DESC").first&.description %>

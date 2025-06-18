@@ -6,24 +6,41 @@ module SlashStartFight
   end
 
   Bot.application_command(:start) do |event|
-    redis = Redis.new
-    campaign = CurrentCampaign.get(server_id: event.server_id)
+    unless event.channel_id.present?
+      event.respond(content: "Error: Discord channel ID is missing.", ephemeral: true)
+      next
+    end
 
+    campaign = CurrentCampaign.get(server_id: event.server_id)
     fight_name = event.options["name"]
     fight = campaign
       .fights
       .active
-      .where("name ILIKE ?", fight_name.downcase).first
+      .where("name ILIKE ?", fight_name.downcase)
+      .first
 
     if !fight
       event.respond(content: "Couldn't find that fight!")
-      return
+      next
     end
 
-    redis.set("fight_message_id:#{event.server_id}", nil)
-    CurrentFight.set(server_id: event.server_id, fight: fight, channel_id: event.channel_id)
+    # Update Fight with server_id, channel_id, and clear fight_message_id
+    fight.update(
+      server_id: event.server_id,
+      channel_id: event.channel_id,
+      fight_message_id: nil
+    )
+
+    # Set the current fight
+    CurrentFight.set(server_id: event.server_id, fight: fight)
+
+    # Enqueue job to send initial fight message
+    DiscordStartFightJob.perform_later(fight.id, event.channel_id)
+
     event.respond(content: "Starting fight: #{fight.name}")
-    # response = Bot.send_message(event.channel_id, FightPoster.shots(fight))
-    # redis.set("fight_message_id:#{event.server_id}", response.id)
+  rescue => e
+    Rails.logger.error("DISCORD: Failed to start fight: #{e.message}")
+    fight.update_column(:fight_message_id, nil) if fight&.fight_message_id.present?
+    event.respond(content: "Error starting fight: #{e.message}", ephemeral: true)
   end
 end

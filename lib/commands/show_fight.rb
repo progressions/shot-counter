@@ -6,28 +6,28 @@ module SlashShowFight
   end
 
   Bot.application_command(:show) do |event|
-    redis = Redis.new
+    unless event.channel_id.present?
+      event.respond(content: "Error: Discord channel ID is missing.", ephemeral: true)
+      next
+    end
 
     data = CurrentFight.get(server_id: event.server_id)
     fight = data[:fight]
 
-
     if fight
-      fight_message_id = redis.get("fight_message_id:#{event.server_id}")
+      fight.update(server_id: event.server_id, channel_id: event.channel_id) unless fight.server_id == event.server_id.to_s && fight.channel_id == event.channel_id
       event.respond(content: "OK", ephemeral: true)
 
-      if fight_message_id.present?
-        event.edit_message(fight_message_id, content: FightPoster.shots(fight))
+      if fight.fight_message_id.present?
+        DiscordShowFightJob.perform_later(fight.id, fight.channel_id, fight.fight_message_id)
       else
-        response = event.send_message(content: FightPoster.shots(fight))
-
-        redis.set("fight_message_id:#{event.server_id}", response.id)
+        DiscordStartFightJob.perform_later(fight.id, fight.channel_id)
       end
     else
       event.respond(content: "There is no current fight.")
     end
   rescue => e
     Rails.logger.error("DISCORD: #{e.message}")
-    redis.set("fight_message_id:#{event.server_id}", nil)
+    fight.update_column(:fight_message_id, nil) if fight&.fight_message_id.present?
   end
 end

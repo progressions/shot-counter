@@ -34,6 +34,7 @@ module SlashListFights
 
   Bot.application_command(:list) do |event|
     puts "event.server_id: #{event.server_id}"
+    Rails.logger.info("DISCORD: Listing fights for channel_id: #{event.channel_id}")
     campaign = CurrentCampaign.get(server_id: event.server_id)
     if campaign.nil?
       event.respond(content: "No current campaign.")

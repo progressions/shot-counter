@@ -10,6 +10,7 @@ class Api::V1::FightEventsController < ApplicationController
   def create
     event = @fight.fight_events.build(event_params)
     if event.save
+      @fight.send(:enqueue_discord_notification)
       render json: event, status: :created
     else
       render json: event.errors, status: :unprocessable_entity

@@ -3,14 +3,21 @@ require 'rails_helper'
 RSpec.describe FightPoster do
   let(:user) { User.create!(email: "email@example.com") }
   let(:action_movie) { user.campaigns.create!(name: "Action Movie") }
-  let(:fight) { Fight.create!(name: "Museum Battle", campaign_id: action_movie.id, sequence: 1) }
+  let(:fight) { Fight.create!(name: "Museum Battle", description: "Fight to recover the artifact", campaign_id: action_movie.id, sequence: 1) }
   let(:other_fight) { Fight.create!(name: "Other Fight", campaign_id: action_movie.id, sequence: 1) }
+
+  before(:each) do
+    fight.fight_events.create!(event_type: "fight_started", description: "Fight started", details: {fight_id: fight.id})
+  end
 
   context "with no shots or characters" do
     let(:expected) do
       <<-TEXT
 # Museum Battle
+## Fight to recover the artifact
 ## Sequence 1
+
+Fight started
       TEXT
     end
 
@@ -24,16 +31,20 @@ RSpec.describe FightPoster do
   context "with one character" do
     before(:each) do
       brick = Character.create!(name: "Brick Manly", action_values: {"Type" => "PC", "Guns" => 15, "Defense" => 14, "Toughness" => 7, "Speed" => 7, "Fortune" => 7, "Max Fortune" => 7}, campaign_id: action_movie.id)
+      fight.fight_events.create!(event_type: "character_added", description: "Character #{brick.name} added", details: {fight_id: fight.id, character: { id: brick.id, name: brick.name }})
       fight.shots.create!(character: brick, shot: 12)
     end
 
     let(:expected) do
       <<-TEXT
 # Museum Battle
+## Fight to recover the artifact
 ## Sequence 1
 ## Shot 12
 - **Brick Manly** 
  Guns 15 Defense 14 Fortune 7/7 Toughness 7 Speed 7
+
+Character Brick Manly added
       TEXT
     end
 
@@ -51,12 +62,14 @@ RSpec.describe FightPoster do
       brick = Character.create!(name: "Brick Manly", action_values: {"Type" => "PC", "Guns" => 15, "Defense" => 14, "Toughness" => 7, "Speed" => 7, "Fortune" => 7, "Max Fortune" => 7}, campaign_id: action_movie.id)
       fight.shots.create!(character: brick, shot: 12)
       serena = Character.create!(name: "Serena", action_values: {"Type" => "PC", "MainAttack" => "Sorcery", "FortuneType" => "Magic", "Sorcery" => 14, "Defense" => 13, "Toughness" => 7, "Speed" => 6, "Fortune" => 5, "Max Fortune" => 7}, campaign_id: action_movie.id, impairments: 1)
+      fight.fight_events.create!(event_type: "attack", description: "#{brick.name} attacked #{serena.name} doing 12 Wounds and spent 3 Shots", details: {fight_id: fight.id, character: { id: brick.id, name: brick.name }, target: { id: serena.id, name: serena.name }, wounds: 12, shots_spent: 3 })
       fight.shots.create!(character: serena, shot: 14)
     end
 
     let(:expected) do
       <<-TEXT
 # Museum Battle
+## Fight to recover the artifact
 ## Sequence 1
 ## Shot 14
 - **Serena** 
@@ -65,6 +78,8 @@ RSpec.describe FightPoster do
 ## Shot 12
 - **Brick Manly** 
  Guns 15 Defense 14 Fortune 7/7 Toughness 7 Speed 7
+
+Brick Manly attacked Serena doing 12 Wounds and spent 3 Shots
       TEXT
     end
 
@@ -114,11 +129,14 @@ RSpec.describe FightPoster do
       fight.effects.create!(name: "Shadow of the Sniper", description: "+1 Attack", severity: "success", start_sequence: 1, end_sequence: 2, start_shot: 14, end_shot: 14)
       fight.effects.create!(name: "Some effect", description: "", severity: "error", start_sequence: 1, end_sequence: 2, start_shot: 16, end_shot: 16)
       fight.effects.create!(name: "Some other effect", description: "", severity: "success", start_sequence: 1, end_sequence: 2, start_shot: 9, end_shot: 9)
+
+      fight.fight_events.create!(event_type: "attack", description: "#{brick.name} attacked #{serena.name} doing 12 Wounds and spent 3 Shots", details: {fight_id: fight.id, character: { id: brick.id, name: brick.name }, target: { id: serena.id, name: serena.name }, wounds: 12, shots_spent: 3 })
     end
 
     let(:expected) do
       <<-TEXT
 # Museum Battle
+## Fight to recover the artifact
 ## Sequence 1
 ```diff
 - Some effect (until sequence 2, shot 16)
@@ -149,6 +167,8 @@ RSpec.describe FightPoster do
 - **Hitman** 
 ## Shot 5
 - **Ninja** 
+
+Brick Manly attacked Serena doing 12 Wounds and spent 3 Shots
       TEXT
     end
 
@@ -209,11 +229,14 @@ RSpec.describe FightPoster do
       fight.effects.create!(name: "Shadow of the Sniper", description: "+1 Attack", severity: "success", start_sequence: 1, end_sequence: 2, start_shot: 14, end_shot: 14)
       fight.effects.create!(name: "Some effect", description: "", severity: "error", start_sequence: 1, end_sequence: 2, start_shot: 16, end_shot: 16)
       fight.effects.create!(name: "Some other effect", description: "", severity: "success", start_sequence: 1, end_sequence: 2, start_shot: 9, end_shot: 9)
+
+      fight.fight_events.create!(event_type: "attack", description: "#{brick.name} attacked #{serena.name} doing 12 Wounds and spent 3 Shots", details: {fight_id: fight.id, character: { id: brick.id, name: brick.name }, target: { id: serena.id, name: serena.name }, wounds: 12, shots_spent: 3 })
     end
 
     let(:expected) do
       <<-TEXT
 # Museum Battle
+## Fight to recover the artifact
 ## Sequence 1
 ```diff
 - Some effect (until sequence 2, shot 16)
@@ -255,6 +278,8 @@ RSpec.describe FightPoster do
  Evader - near
  19 Chase 26 Condition Points (1 Impairment)
  Acceleration 7 Handling 10 Squeal 12 Frame 8
+
+Brick Manly attacked Serena doing 12 Wounds and spent 3 Shots
       TEXT
     end
 

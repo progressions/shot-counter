@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_06_16_024437) do
+ActiveRecord::Schema[8.0].define(version: 2025_06_16_234644) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -182,6 +182,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_16_024437) do
     t.boolean "active", default: true, null: false
     t.boolean "archived", default: false, null: false
     t.text "description"
+    t.bigint "server_id"
+    t.string "fight_message_id"
+    t.bigint "channel_id"
     t.index ["campaign_id"], name: "index_fights_on_campaign_id"
   end
 
