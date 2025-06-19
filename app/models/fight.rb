@@ -9,6 +9,7 @@ class Fight < ApplicationRecord
   has_one_attached :image
 
   after_update :enqueue_discord_notification
+  after_update :broadcast_update
 
   scope :active, -> { where(active: true) }
 
@@ -70,10 +71,20 @@ class Fight < ApplicationRecord
   private
 
   def enqueue_discord_notification
+    return unless ENV["DISCORD_BOT"] == "true"
+
     discord_server_id = server_id || CurrentFight.get_server_id_for_fight(id)
     Rails.logger.info("DISCORD: Checking for Discord notification. fight_id: #{id}, server_id: #{discord_server_id}, fight_message_id: #{fight_message_id}, channel_id: #{channel_id}")
     return unless discord_server_id.present? && channel_id.present?
     Rails.logger.info("DISCORD: Enqueuing DiscordNotificationJob for fight_id: #{id}")
     DiscordNotificationJob.perform_later(id)
+  end
+
+  def broadcast_update
+    channel = "fight_#{id}"
+    payload = { fight: :updated }
+    Rails.logger.info "Broadcasting to #{channel} with payload: #{payload.inspect}"
+    result = ActionCable.server.broadcast(channel, payload)
+    Rails.logger.info "Broadcast result: #{result.inspect} (number of subscribers)"
   end
 end

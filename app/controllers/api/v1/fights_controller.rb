@@ -1,7 +1,7 @@
 class Api::V1::FightsController < ApplicationController
   before_action :authenticate_user!
   before_action :require_current_campaign
-  before_action :set_fight, only: [:show, :update, :destroy]
+  before_action :set_fight, only: [:show, :update, :destroy, :touch]
 
   def index
     @fights = current_campaign
@@ -42,8 +42,13 @@ class Api::V1::FightsController < ApplicationController
     end
   end
 
+  def touch
+    @fight.send(:broadcast_update)
+
+    render json: @fight
+  end
+
   def update
-    Rails.logger.info("DISCORD: Incoming fight_params: #{params[:fight].inspect}")
     if @fight.update(fight_params)
       render json: @fight
     else
