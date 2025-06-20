@@ -28,8 +28,8 @@ class FightChannel < ApplicationCable::Channel
   def broadcast_user_list(fight_id)
     redis_key = "fight:#{fight_id}:users"
     user_ids = redis.smembers(redis_key)
-    users = User.where(id: user_ids).pluck(:id, :first_name, :last_name, :avatar_url).map do |id, first_name, last_name, avatar_url|
-      { id: id, name: "#{first_name} #{last_name}".strip, avatar_url: avatar_url }
+    users = User.where(id: user_ids).map do |user|
+      { id: user.id, name: "#{user.first_name} #{user.last_name}".strip, avatar_url: user.image_url }
     end
     Rails.logger.info("SOCKETS - Broadcasting user list for fight_#{fight_id}: #{users.inspect}")
     ActionCable.server.broadcast("fight_#{fight_id}", { users: users })
