@@ -44,6 +44,8 @@ class Api::V1::InvitationsController < ApplicationController
     end
 
     if @user.save && @invitation.campaign.players << @user
+      UserMailer.with(invitation: @invitation).invitation.deliver_later!
+
       if @invitation.email
         @invitation.destroy!
       end
@@ -57,7 +59,7 @@ class Api::V1::InvitationsController < ApplicationController
     @invitation = Invitation.find(params[:id])
     if @invitation.email
       UserMailer.with(invitation: @invitation).invitation.deliver_later!
-       render status: 200
+      render status: 200
     else
       render status: 400
     end
