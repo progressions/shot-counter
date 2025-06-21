@@ -35,6 +35,14 @@ class User < ApplicationRecord
     self.encrypted_password = @password
   end
 
+  def image_url
+    image.attached? ? image.url : nil
+  end
+
+  def avatar_url
+    image_url
+  end
+
   def jwt_payload
     super.merge(
       user: {
