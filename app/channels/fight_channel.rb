@@ -34,7 +34,7 @@ class FightChannel < ApplicationCable::Channel
         first_name: user.first_name,
         last_name: user.last_name,
         name: "#{user.first_name} #{user.last_name}".strip,
-        avatar_url: user.image_url
+        image_url: user.image_url
       }
     end
     Rails.logger.info("SOCKETS - Broadcasting user list for fight_#{fight_id}: #{users.inspect}")

@@ -26,6 +26,13 @@ class User < ApplicationRecord
       message: "is invalid"
     }
 
+  def as_json(options = {})
+    super(options.merge(
+      only: [:id, :email, :first_name, :last_name, :admin, :gamemaster],
+      methods: [:image_url],
+    ))
+  end
+
   def password
     @password ||= Password.new(encrypted_password)
   end
@@ -39,10 +46,6 @@ class User < ApplicationRecord
     image.attached? ? image.url : nil
   end
 
-  def avatar_url
-    image_url
-  end
-
   def jwt_payload
     super.merge(
       user: {
@@ -54,6 +57,7 @@ class User < ApplicationRecord
         current_campaign: current_campaign&.id,
         created_at: created_at,
         updated_at: updated_at,
+        image_url: image_url
       }
     )
   end
