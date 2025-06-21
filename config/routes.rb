@@ -54,6 +54,7 @@ Rails.application.routes.draw do
       get "vehicles/archetypes", to: "vehicles#archetypes"
       resources :vehicles
       resources :users, only: [:index, :show, :update, :destroy]
+      delete "users/:id/image", to: "users#remove_image"
       resources :fights do
         member do
           patch :touch

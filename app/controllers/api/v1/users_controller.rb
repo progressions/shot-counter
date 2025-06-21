@@ -2,7 +2,7 @@ class Api::V1::UsersController < ApplicationController
   before_action :authenticate_user!
 
   def index
-    @users = [current_campaign.user] + current_campaign.players.order(email: :asc)
+    @users = current_campaign.players.order(email: :asc)
     render json: @users
   end
 
@@ -28,6 +28,17 @@ class Api::V1::UsersController < ApplicationController
     @user = User.find(params[:id])
     @user.destroy
     render :ok
+  end
+
+  def remove_image
+    @user = current_user
+    @user.image.purge
+
+    if @user.save
+      render json: @user
+    else
+      render @user.errors, status: 400
+    end
   end
 
   private
