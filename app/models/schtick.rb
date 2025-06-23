@@ -60,4 +60,59 @@ class Schtick < ApplicationRecord
     errors.add(:prerequisite, "must be in the same category and path")
   end
 
+  # Scope to filter schticks to the highest Roman numeral for each base name
+  scope :highest_numbered, -> {
+    # Fetch all schticks with prerequisites in one query
+    all_schticks = includes(:prerequisite).to_a
+
+    # Group schticks by base name and select the highest Roman numeral
+    grouped_schticks = all_schticks.group_by { |s| base_name(s.name) }
+    highest_schticks = grouped_schticks.map do |base, schticks|
+      schticks.max_by { |s| roman_to_int(roman_numeral(s.name)) }
+    end
+
+    # Return an ActiveRecord::Relation that includes only the selected schticks
+    where(id: highest_schticks.map(&:id))
+  }
+
+  # Extract the base name by removing the Roman numeral suffix
+  def self.base_name(name)
+    name.sub(/\s+[IVXLCDM]+$/i, '').strip
+  end
+
+  # Extract the Roman numeral from the name
+  def self.roman_numeral(name)
+    match = name.match(/\s+([IVXLCDM]+)$/i)
+    match ? match[1].upcase : ''
+  end
+
+  # Convert Roman numeral to integer
+  def self.roman_to_int(roman)
+    return 0 if roman.empty?
+
+    values = {
+      'I' => 1,
+      'V' => 5,
+      'X' => 10,
+      'L' => 50,
+      'C' => 100,
+      'D' => 500,
+      'M' => 1000
+    }
+
+    result = 0
+    prev_value = 0
+
+    roman.upcase.reverse.each_char do |char|
+      current_value = values[char] || 0
+      if current_value >= prev_value
+        result += current_value
+      else
+        result -= current_value
+      end
+      prev_value = current_value
+    end
+
+    result
+  end
 end

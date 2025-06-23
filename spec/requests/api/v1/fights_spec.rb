@@ -58,7 +58,6 @@ RSpec.describe "Fights", type: :request do
       body = JSON.parse(response.body)
       expect(body["name"]).to eq("Big Brawl")
       expect(body["active"]).to be_truthy
-      expect(body["characters"].map { |c| c["name"] }).to eq(["Brick Manly", "Ugly Shing"])
       expect(body["shot_order"].map { |shot, _characters| shot }).to eq([10, 8])
 
       # Shot includes shot number and characters

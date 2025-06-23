@@ -109,7 +109,7 @@ class Character < ApplicationRecord
         name: faction&.name,
       },
       description: description,
-      schticks: schticks.includes(:prerequisite).order(:category, :path, :name),
+      schticks: highest_schticks,
       skills: skills.sort_by { |key, value| [(DEFAULT_SKILLS.keys.include?(key) ? 0 : 1), key] }.to_h,
       advancements: advancements.order(:created_at),
       sites: sites.order(:created_at),
@@ -127,6 +127,10 @@ class Character < ApplicationRecord
 
       driving: driving_json(shot),
     }
+  end
+
+  def highest_schticks
+    schticks.highest_numbered.order(:category, :path, :name)
   end
 
   def driving_json(vehicle_shot)
