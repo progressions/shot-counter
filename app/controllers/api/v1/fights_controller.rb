@@ -7,6 +7,7 @@ class Api::V1::FightsController < ApplicationController
     @fights = current_campaign
       .fights
       .where(archived: false)
+      .select(:id, :campaign_id, :name, :sequence, :active, :archived, :description, :created_at, :updated_at)
       .order(updated_at: :desc)
 
     if params[:show_all] != "true"
