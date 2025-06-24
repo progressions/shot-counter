@@ -20,7 +20,7 @@ class Api::V1::PartiesController < ApplicationController
       @parties = @parties.where(faction_id: params[:faction_id])
     end
 
-    @parties = paginate(@parties, per_page: (params[:per_page] || 50), page: (params[:page] || 1))
+    @parties = paginate(@parties, per_page: (params[:per_page] || 6), page: (params[:page] || 1))
 
     render json: {
       parties: @parties,
