@@ -4,7 +4,7 @@ class Api::V1::PartiesController < ApplicationController
   before_action :set_party, only: [:show, :update, :destroy, :remove_image]
 
   def index
-    @parties = current_campaign.parties.order(:name)
+    @parties = current_campaign.parties.order("LOWER(parties.name) ASC")
 
     @factions = current_campaign.factions.joins(:parties).where(parties: @parties).order("factions.name").distinct
 

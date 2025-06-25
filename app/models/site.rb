@@ -20,6 +20,7 @@ class Site < ApplicationRecord
         {
           id: character.id,
           name: character.name,
+          image_url: character.image_url,
         }
       },
       image_url: image.attached? ? image.url : nil,

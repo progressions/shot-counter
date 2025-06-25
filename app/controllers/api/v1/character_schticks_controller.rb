@@ -5,8 +5,14 @@ class Api::V1::CharacterSchticksController < ApplicationController
 
   def index
     @schticks = @character.schticks
+    @schticks = paginate(@schticks, per_page: (params[:per_page] || 10), page: (params[:page] || 1))
 
-    render json: @schticks
+    render json: {
+      schticks: @schticks,
+      meta: pagination_meta(@schticks),
+      paths: @schticks.pluck(:path).uniq.compact,
+      categories: @schticks.pluck(:category).uniq.compact
+    }
   end
 
   def create
