@@ -23,7 +23,7 @@ class Api::V1::SitesController < ApplicationController
       @sites = @sites.where.not(id: @site_ids)
     end
 
-    @sites = paginate(@sites, per_page: (params[:per_page] || 24), page: (params[:page] || 1))
+    @sites = paginate(@sites, per_page: (params[:per_page] || 10), page: (params[:page] || 1))
 
     render json: {
       sites: @sites,
