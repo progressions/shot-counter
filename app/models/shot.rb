@@ -16,16 +16,23 @@ class Shot < ApplicationRecord
       # If the character is driving a vehicle, show them both. Send the vehicle's
       # shot to its JSON method, so it includes the correct shot_id.
       [
-        character.as_json(args.merge(shot: self)),
+        character.as_json(args.merge(shot: self, action_items: action_items)),
         driving.as_json(args.merge(shot: driving_shot))
       ]
     elsif character.present?
       # A character is not driving a vehicle, so just show the character
-      character.as_json(args.merge(shot: self))
+      character.as_json(args.merge(shot: self, action_items: action_items))
     elsif driver_shot.blank? && vehicle.present?
       # A vehicle is not being driven, so just show the vehicle
       vehicle.as_json(args.merge(shot: self))
     end
+  end
+
+  def action_items
+    {
+      reload_check: true,
+      up_check: true
+    }
   end
 
   def sort_order

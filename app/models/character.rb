@@ -124,6 +124,7 @@ class Character < ApplicationRecord
       color: shot&.color || color,
       location: shot&.location,
       shot_id: shot&.id,
+      action_items: shot&.action_items || {},
 
       driving: driving_json(shot),
     }

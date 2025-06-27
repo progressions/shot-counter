@@ -5,8 +5,16 @@ class Api::V1::CarriesController < ApplicationController
 
   def index
     @weapons = @character.weapons
+    @weapons = paginate(@weapons, per_page: (params[:per_page] || 10), page: (params[:page] || 1))
+    @junctures = @weapons.pluck(:juncture).uniq.compact
+    @categories = @weapons.where.not(category: "").pluck(:category).uniq.compact
 
-    render json: @weapons
+    render json: {
+      weapons: @weapons,
+      meta: pagination_meta(@weapons),
+      junctures: @junctures,
+      categories: @categories
+    }
   end
 
   def create

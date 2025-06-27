@@ -26,7 +26,7 @@ class Api::V1::WeaponsController < ApplicationController
       @weapons = @weapons.where("name ILIKE ?", "%#{params[:name]}%")
     end
 
-    @weapons = paginate(@weapons, per_page: (params[:per_page] || 24), page: (params[:page] || 1))
+    @weapons = paginate(@weapons, per_page: (params[:per_page] || 10), page: (params[:page] || 1))
 
     render json: {
       weapons: @weapons,
