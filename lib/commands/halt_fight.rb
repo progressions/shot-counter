@@ -18,13 +18,13 @@ module SlashHaltFight
       next
     end
 
-    if fight.fight_message_id.present? && fight.channel_id.present?
-      DiscordHaltFightJob.perform_later(fight.id, fight.channel_id, fight.fight_message_id)
-    end
-
     fight.update(server_id: nil, channel_id: nil, fight_message_id: nil)
     CurrentFight.set(server_id: event.server_id, fight: nil)
     event.respond(content: "Stopping fight: #{fight.name}")
+
+    if fight.fight_message_id.present? && fight.channel_id.present?
+      DiscordHaltFightJob.perform_later(fight.id, fight.channel_id, fight.fight_message_id)
+    end
   rescue => e
     Rails.logger.error("DISCORD: Failed to halt fight: #{e.message}")
     event.respond(content: "Error stopping fight: #{e.message}", ephemeral: true)

@@ -27,7 +27,7 @@ module SlashShowFight
       event.respond(content: "There is no current fight.")
     end
   rescue => e
-    Rails.logger.error("DISCORD: #{e.message}")
+    Rails.logger.error("ShowFight DISCORD: #{e.message}")
     fight.update_column(:fight_message_id, nil) if fight&.fight_message_id.present?
   end
 end
