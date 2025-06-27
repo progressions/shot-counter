@@ -19,7 +19,7 @@ module SlashShowFight
       event.respond(content: "OK", ephemeral: true)
 
       if fight.fight_message_id.present?
-        DiscordShowFightJob.perform_later(fight.id, fight.channel_id, fight.fight_message_id)
+        DiscordNotificationJob.perform_later(fight.id)
       else
         DiscordStartFightJob.perform_later(fight.id, fight.channel_id)
       end

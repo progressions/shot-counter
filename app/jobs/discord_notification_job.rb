@@ -13,7 +13,6 @@ class DiscordNotificationJob < ApplicationJob
       channel = $discord_bot.channel(fight.channel_id)
       message = channel.message(fight.fight_message_id)
       message.edit(content) if message.present?
-      # fight.update_column(:fight_message_id, response.id)
     rescue Discordrb::Errors::UnknownMessage
       response = $discord_bot.send_message(fight.channel_id, content)
       fight.update_column(:fight_message_id, response.id)

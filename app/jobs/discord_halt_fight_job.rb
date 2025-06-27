@@ -4,9 +4,25 @@ class DiscordHaltFightJob < ApplicationJob
 
   def perform(fight_id, channel_id, message_id)
     fight = Fight.find(fight_id)
-    return unless channel_id.present?
+    discord_server_id = fight.server_id || CurrentFight.get_server_id_for_fight(fight_id)
+    return unless discord_server_id.present? && fight.channel_id.present?
 
-    $discord_bot.edit_message(channel_id, message_id, "Fight stopped: #{fight.name}")
+    content = FightPoster.shots(fight)
+    content += "\n\nFight stopped: #{fight.name}"
+
+    begin
+      channel = $discord_bot.channel(fight.channel_id)
+      message = channel.message(fight.fight_message_id)
+      message.edit(content) if message.present?
+    rescue Discordrb::Errors::UnknownMessage
+      response = $discord_bot.send_message(fight.channel_id, content)
+      fight.update_column(:fight_message_id, response.id)
+    rescue => e
+      fight.update_column(:fight_message_id, nil) if fight.fight_message_id.present? && e.is_a?(Discordrb::Errors::UnknownMessage)
+
+      response = $discord_bot.send_message(fight.channel_id, content)
+      fight.update_column(:fight_message_id, response.id)
+    end
   rescue => e
     Rails.logger.error("DISCORD: Failed to edit stopped fight message: #{e.message}, backtrace: #{e.backtrace.join("\n")}")
     fight.update_column(:fight_message_id, nil) if fight.fight_message_id.present?
