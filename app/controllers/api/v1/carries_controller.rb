@@ -4,7 +4,7 @@ class Api::V1::CarriesController < ApplicationController
   before_action :set_character
 
   def index
-    @weapons = @character.weapons
+    @weapons = @character.weapons.order(:juncture, :name)
     @weapons = paginate(@weapons, per_page: (params[:per_page] || 10), page: (params[:page] || 1))
     @junctures = @weapons.pluck(:juncture).uniq.compact
     @categories = @weapons.where.not(category: "").pluck(:category).uniq.compact

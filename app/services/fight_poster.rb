@@ -38,8 +38,14 @@ TEXT
 
     def show(fight)
       @fight = fight
+      @description_markdown = markdown_description(fight)
       filename = Rails.root.join("app", "views", "fights", "show.md.erb")
       ERB.new(filename.read, trim_mode: "-").result(binding)
+    end
+
+    def markdown_description(fight)
+      description = fight.description || ""
+      ReverseMarkdown.convert(description)
     end
 
     def show_character(attributes, fight)

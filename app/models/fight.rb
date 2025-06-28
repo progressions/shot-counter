@@ -70,8 +70,6 @@ class Fight < ApplicationRecord
   private
 
   def enqueue_discord_notification
-    return unless ENV["DISCORD_BOT"] == "true"
-
     discord_server_id = server_id || CurrentFight.get_server_id_for_fight(id)
     Rails.logger.info("DISCORD: Checking for Discord notification. fight_id: #{id}, server_id: #{discord_server_id}, fight_message_id: #{fight_message_id}, channel_id: #{channel_id}")
     return unless discord_server_id.present? && channel_id.present?

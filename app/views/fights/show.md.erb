@@ -1,5 +1,5 @@
 # <%= @fight.name %>
-<%= "## #{@fight.description}" if @fight.description.present? %>
+<%= "#{@description_markdown}" if @description_markdown.present? -%>
 ## Sequence <%= @fight.sequence %>
 <% if @fight.active_effects.any? -%>
 ```diff

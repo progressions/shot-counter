@@ -14,7 +14,8 @@ RSpec.describe FightPoster do
     let(:expected) do
       <<-TEXT
 # Museum Battle
-## Fight to recover the artifact
+Fight to recover the artifact
+
 ## Sequence 1
 
 Fight started
@@ -22,6 +23,29 @@ Fight started
     end
 
     it "shows fight" do
+      response = FightPoster.show(fight)
+      puts response
+      expect(response).to eq(expected)
+    end
+  end
+
+  context "with HTML in the description" do
+    let(:expected) do
+      <<-TEXT
+# Museum Battle
+Fight to recover the **artifact**
+
+## Sequence 1
+
+Fight started
+      TEXT
+    end
+
+    before(:each) do
+      fight.update(description: "<p>Fight to recover the <strong>artifact</strong></p>")
+    end
+
+    it "shows fight with markdown description" do
       response = FightPoster.show(fight)
       puts response
       expect(response).to eq(expected)
@@ -38,7 +62,8 @@ Fight started
     let(:expected) do
       <<-TEXT
 # Museum Battle
-## Fight to recover the artifact
+Fight to recover the artifact
+
 ## Sequence 1
 ## Shot 12
 - **Brick Manly** 
@@ -69,7 +94,8 @@ Character Brick Manly added
     let(:expected) do
       <<-TEXT
 # Museum Battle
-## Fight to recover the artifact
+Fight to recover the artifact
+
 ## Sequence 1
 ## Shot 14
 - **Serena** 
@@ -136,7 +162,8 @@ Brick Manly attacked Serena doing 12 Wounds and spent 3 Shots
     let(:expected) do
       <<-TEXT
 # Museum Battle
-## Fight to recover the artifact
+Fight to recover the artifact
+
 ## Sequence 1
 ```diff
 - Some effect (until sequence 2, shot 16)
@@ -236,7 +263,8 @@ Brick Manly attacked Serena doing 12 Wounds and spent 3 Shots
     let(:expected) do
       <<-TEXT
 # Museum Battle
-## Fight to recover the artifact
+Fight to recover the artifact
+
 ## Sequence 1
 ```diff
 - Some effect (until sequence 2, shot 16)
