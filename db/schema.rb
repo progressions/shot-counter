@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_06_16_234644) do
+ActiveRecord::Schema[8.0].define(version: 2025_06_28_125758) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -204,6 +204,16 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_16_234644) do
     t.index ["user_id"], name: "index_invitations_on_user_id"
   end
 
+  create_table "junctures", force: :cascade do |t|
+    t.string "name"
+    t.string "description"
+    t.boolean "active"
+    t.uuid "faction_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["faction_id"], name: "index_junctures_on_faction_id"
+  end
+
   create_table "memberships", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.uuid "party_id", null: false
     t.uuid "character_id"
@@ -373,6 +383,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_16_234644) do
   add_foreign_key "invitations", "campaigns"
   add_foreign_key "invitations", "users"
   add_foreign_key "invitations", "users", column: "pending_user_id"
+  add_foreign_key "junctures", "factions"
   add_foreign_key "memberships", "characters"
   add_foreign_key "memberships", "parties"
   add_foreign_key "memberships", "vehicles"
