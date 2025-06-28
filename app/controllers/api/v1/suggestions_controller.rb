@@ -3,19 +3,17 @@ class Api::V1::SuggestionsController < ApplicationController
   before_action :require_current_campaign
 
   def index
-    @weapons = current_campaign.weapons.order(:name).where("name ILIKE ?", "%#{params[:query]}%")
+    @characters = current_campaign.characters.order(:name).where("name ILIKE ?", "%#{params[:query]}%")
 
-    Rails.logger.info("WEAPONS SUGGESTIONS: #{params[:query]} - #{@weapons.count} results")
-
-    @weapons_json = @weapons.map do |weapon|
+    @characters_json = @characters.map do |character|
       {
-        class: "Weapon",
-        id: weapon.id,
-        label: weapon.name,
+        class: "Character",
+        id: character.id,
+        label: character.name,
       }
     end
 
-    render json: @weapons_json
+    render json: @characters_json
   end
 
 end
