@@ -18,7 +18,7 @@ RSpec.describe "Api::V1::Carries", type: :request do
       get "/api/v1/characters/#{@brick.id}/weapons", headers: @headers
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
-      expect(body).to eq(JSON.parse([@beretta].to_json))
+      expect(body["weapons"]).to eq(JSON.parse([@beretta].to_json))
     end
   end
 
