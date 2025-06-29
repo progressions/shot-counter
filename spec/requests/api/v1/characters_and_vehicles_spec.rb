@@ -108,8 +108,8 @@ RSpec.describe "Api::V1::CharactersAndVehicles", type: :request do
       get "/api/v1/characters_and_vehicles", headers: @headers
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
-      expect(body["characters"].length).to eq(50)
-      expect(body["meta"]).to eq({"current_page"=>1, "next_page"=>2, "prev_page"=>nil, "total_count"=>63, "total_pages"=>2})
+      expect(body["characters"].length).to eq(20)
+      expect(body["meta"]).to eq({"current_page"=>1, "next_page"=>2, "prev_page"=>nil, "total_count"=>63, "total_pages"=>4})
     end
   end
 
