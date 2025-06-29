@@ -3,7 +3,7 @@ class Api::V1::SuggestionsController < ApplicationController
   before_action :require_current_campaign
 
   def index
-    @characters = current_campaign.characters.order(:name).where("name ILIKE ?", "%#{params[:query]}%")
+    @characters = current_campaign.characters.order(:name).where("name ILIKE ?", "%#{params[:query]}%").limit(10)
 
     @characters_json = @characters.map do |character|
       {
