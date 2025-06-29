@@ -225,11 +225,11 @@ Brick Manly attacked Serena doing 12 Wounds and spent 3 Shots
       # PC
       serena = Character.create!(name: "Serena", action_values: {"Type" => "PC", "MainAttack" => "Sorcery", "FortuneType" => "Magic", "Sorcery" => 14, "Defense" => 13, "Toughness" => 7, "Speed" => 6, "Fortune" => 5, "Max Fortune" => 7, "Wounds" => 39}, campaign_id: action_movie.id, impairments: 2)
       # Boss Vehicle
-      boss_vehicle = Vehicle.create!(name: "Boss Vehicle", action_values: {"Type" => "Boss", "Acceleration" => 7, "Handling" => 10, "Squeal" => 12, "Frame" => 8, "Crunch" => 10, "Condition Points" => 10, "Chase Points" => 24, "Pursuer" => true, "Position" => "far"}, campaign_id: action_movie.id)
+      boss_vehicle = Vehicle.create!(name: "Boss Vehicle", action_values: {"Type" => "Boss", "Acceleration" => 7, "Handling" => 10, "Squeal" => 12, "Frame" => 8, "Crunch" => 10, "Condition Points" => 10, "Chase Points" => 24, "Pursuer" => "true", "Position" => "far"}, campaign_id: action_movie.id)
       # PC Vehicle
-      pc_vehicle = Vehicle.create!(name: "PC Vehicle", action_values: {"Type" => "PC", "Acceleration" => 7, "Handling" => 10, "Squeal" => 12, "Frame" => 8, "Crunch" => 10, "Condition Points" => 14, "Chase Points" => 12, "Pursuer" => false, "Position" => "far"}, campaign_id: action_movie.id)
+      pc_vehicle = Vehicle.create!(name: "PC Vehicle", action_values: {"Type" => "PC", "Acceleration" => 7, "Handling" => 10, "Squeal" => 12, "Frame" => 8, "Crunch" => 10, "Condition Points" => 14, "Chase Points" => 12, "Pursuer" => "false", "Position" => "far"}, campaign_id: action_movie.id)
       # PC Vehicle
-      mini = Vehicle.create!(name: "PC Mini", impairments: 1, action_values: {"Type" => "PC", "Acceleration" => 7, "Handling" => 10, "Squeal" => 12, "Frame" => 8, "Crunch" => 10, "Condition Points" => 26, "Chase Points" => 19, "Pursuer" => false, "Position" => "near"}, campaign_id: action_movie.id)
+      mini = Vehicle.create!(name: "PC Mini", impairments: 1, action_values: {"Type" => "PC", "Acceleration" => 7, "Handling" => 10, "Squeal" => 12, "Frame" => 8, "Crunch" => 10, "Condition Points" => 26, "Chase Points" => 19, "Pursuer" => "false", "Position" => "near"}, campaign_id: action_movie.id)
 
       fight.shots.create!(character: mook, shot: nil)
       fight.shots.create!(character: jawbuster, shot: 10)
