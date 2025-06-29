@@ -7,7 +7,7 @@ class Api::V1::SuggestionsController < ApplicationController
 
     @characters_json = @characters.map do |character|
       {
-        class: "Character",
+        className: "Character",
         id: character.id,
         label: character.name,
       }
