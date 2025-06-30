@@ -1,4 +1,4 @@
-require 'rails_helper'
+require "rails_helper"
 
 RSpec.describe "Api::V1::Suggestions", type: :request do
   before(:each) do
@@ -29,24 +29,30 @@ RSpec.describe "Api::V1::Suggestions", type: :request do
 
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
-      expected = [
-        {
-          "className" => "Character",
-          "id" => @character.id,
-          "label" => "Brick Manly"
-        },
-        {
-          "className" => "Vehicle",
-          "id" => @vehicle.id,
-          "label" => "Brutus Truck"
-        },
-        {
-          "className" => "Site",
-          "id" => @site.id,
-          "label" => "Brutus Base"
-        }
-      ]
-      expect(body).to match_array(expected)
+      expected = {
+        "Character" => [
+          {
+            "className" => "Character",
+            "id" => @character.id,
+            "label" => "Brick Manly"
+          }
+        ],
+        "Vehicle" => [
+          {
+            "className" => "Vehicle",
+            "id" => @vehicle.id,
+            "label" => "Brutus Truck"
+          }
+        ],
+        "Site" => [
+          {
+            "className" => "Site",
+            "id" => @site.id,
+            "label" => "Brutus Base"
+          }
+        ]
+      }
+      expect(body).to eq(expected)
     end
 
     it "excludes inactive characters and vehicles, and secret sites" do
@@ -72,27 +78,33 @@ RSpec.describe "Api::V1::Suggestions", type: :request do
 
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
-      expected = [
-        {
-          "className" => "Character",
-          "id" => @character.id,
-          "label" => "Brick Manly"
-        },
-        {
-          "className" => "Vehicle",
-          "id" => @vehicle.id,
-          "label" => "Brutus Truck"
-        },
-        {
-          "className" => "Site",
-          "id" => @site.id,
-          "label" => "Brutus Base"
-        }
-      ]
-      expect(body).to match_array(expected)
+      expected = {
+        "Character" => [
+          {
+            "className" => "Character",
+            "id" => @character.id,
+            "label" => "Brick Manly"
+          }
+        ],
+        "Vehicle" => [
+          {
+            "className" => "Vehicle",
+            "id" => @vehicle.id,
+            "label" => "Brutus Truck"
+          }
+        ],
+        "Site" => [
+          {
+            "className" => "Site",
+            "id" => @site.id,
+            "label" => "Brutus Base"
+          }
+        ]
+      }
+      expect(body).to eq(expected)
     end
 
-    it "returns an empty array for an empty query" do
+    it "returns an empty hash for an empty query" do
       @character = @campaign.characters.create!(name: "Brick Manly", action_values: { "Type" => "PC" }, active: true)
       @vehicle = @campaign.vehicles.create!(name: "Brutus Truck", action_values: { "Type" => "PC" }, active: true)
       @site = @campaign.sites.create!(name: "Brutus Base", secret: false)
@@ -101,10 +113,10 @@ RSpec.describe "Api::V1::Suggestions", type: :request do
 
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
-      expect(body).to eq([])
+      expect(body).to eq({})
     end
 
-    it "returns an empty array for a whitespace-only query" do
+    it "returns an empty hash for a whitespace-only query" do
       @character = @campaign.characters.create!(name: "Brick Manly", action_values: { "Type" => "PC" }, active: true)
       @vehicle = @campaign.vehicles.create!(name: "Brutus Truck", action_values: { "Type" => "PC" }, active: true)
       @site = @campaign.sites.create!(name: "Brutus Base", secret: false)
@@ -113,10 +125,10 @@ RSpec.describe "Api::V1::Suggestions", type: :request do
 
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
-      expect(body).to eq([])
+      expect(body).to eq({})
     end
 
-    it "returns no matches for a non-matching query" do
+    it "returns an empty hash for a non-matching query" do
       @character = @campaign.characters.create!(name: "Brick Manly", action_values: { "Type" => "PC" }, active: true)
       @vehicle = @campaign.vehicles.create!(name: "Brutus Truck", action_values: { "Type" => "PC" }, active: true)
       @site = @campaign.sites.create!(name: "Brutus Base", secret: false)
@@ -125,7 +137,7 @@ RSpec.describe "Api::V1::Suggestions", type: :request do
 
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
-      expect(body).to eq([])
+      expect(body).to eq({})
     end
 
     it "returns unauthorized without valid authentication" do
@@ -161,24 +173,30 @@ RSpec.describe "Api::V1::Suggestions", type: :request do
 
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
-      expected = [
-        {
-          "className" => "Character",
-          "id" => @character.id,
-          "label" => "Brick Manly"
-        },
-        {
-          "className" => "Vehicle",
-          "id" => @vehicle.id,
-          "label" => "Brutus Truck"
-        },
-        {
-          "className" => "Site",
-          "id" => @site.id,
-          "label" => "Brutus Base"
-        }
-      ]
-      expect(body).to match_array(expected)
+      expected = {
+        "Character" => [
+          {
+            "className" => "Character",
+            "id" => @character.id,
+            "label" => "Brick Manly"
+          }
+        ],
+        "Vehicle" => [
+          {
+            "className" => "Vehicle",
+            "id" => @vehicle.id,
+            "label" => "Brutus Truck"
+          }
+        ],
+        "Site" => [
+          {
+            "className" => "Site",
+            "id" => @site.id,
+            "label" => "Brutus Base"
+          }
+        ]
+      }
+      expect(body).to eq(expected)
     end
   end
 end
