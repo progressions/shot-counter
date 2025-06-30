@@ -9,6 +9,7 @@ class Api::V1::SuggestionsController < ApplicationController
     { klass: Site, table: "sites", attributes: [:name], visibility_filter: { column: "secret", value: false } },
     { klass: Party, table: "parties", attributes: [:name], visibility_filter: { column: "secret", value: false } },
     { klass: Faction, table: "factions", attributes: [:name], visiblity_filter: nil },
+    { klass: Schtick, table: "schticks", attributes: [:name], visiblity_filter: nil },
   ].freeze
 
   def index
