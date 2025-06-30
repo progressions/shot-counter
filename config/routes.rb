@@ -19,20 +19,35 @@ Rails.application.routes.draw do
         end
       end
       resources :schticks
-      resources :weapons
+      resources :weapons do
+        member do
+          delete :image, to: "weapons#remove_image"
+        end
+      end
       resources :parties do
         resources :memberships, except: [:destroy]
         delete "memberships/:id/character", to: "memberships#remove_character"
         delete "memberships/:id/vehicle", to: "memberships#remove_vehicle"
         post "fight/:fight_id", to: "parties#fight"
+        member do
+          delete :image, to: "parties#remove_image"
+        end
       end
-      delete "parties/:id/image", to: "parties#remove_image"
-      delete "weapons/:id/image", to: "weapons#remove_image"
-      resources :sites
-      delete "sites/:id/image", to: "sites#remove_image"
+      # delete "parties/:id/image", to: "parties#remove_image"
+      # delete "weapons/:id/image", to: "weapons#remove_image"
+      # delete "sites/:id/image", to: "sites#remove_image"
+      resources :sites do
+        member do
+          delete :image, to: "sites#remove_image"
+        end
+      end
       post "schticks/import", to: "schticks#import"
       post "weapons/import", to: "weapons#import"
-      resources :factions
+      resources :factions do
+        member do
+          delete :image, to: "factions#remove_image"
+        end
+      end
       resources :invitations do
         member do
           patch :redeem
@@ -44,19 +59,31 @@ Rails.application.routes.draw do
       post "campaigns/current", to: "campaigns#set"
       resources :campaigns
       get "campaigns/current", to: "campaigns#current"
-      delete "characters/:id/image", to: "characters#remove_image"
-      delete "vehicles/:id/image", to: "vehicles#remove_image"
-      post "characters/:id/sync", to: "characters#sync"
+      # delete "characters/:id/image", to: "characters#remove_image"
+      # delete "vehicles/:id/image", to: "vehicles#remove_image"
+      # post "characters/:id/sync", to: "characters#sync"
+      # delete "users/:id/image", to: "users#remove_image"
       resources :characters do
         resources :schticks, controller: "character_schticks"
         resources :advancements
         resources :sites, controller: "attunements"
         resources :weapons, controller: "carries"
+        member do
+          delete :image, to: "characters#remove_image"
+          post :sync
+        end
       end
       get "vehicles/archetypes", to: "vehicles#archetypes"
-      resources :vehicles
-      resources :users, only: [:index, :show, :update, :destroy]
-      delete "users/:id/image", to: "users#remove_image"
+      resources :vehicles do
+        member do
+          delete :image, to: "vehicles#remove_image"
+        end
+      end
+      resources :users, only: [:index, :show, :update, :destroy] do
+        member do
+          delete :image, to: "users#remove_image"
+        end
+      end
       resources :fights do
         member do
           patch :touch
