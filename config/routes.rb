@@ -7,6 +7,7 @@ Rails.application.routes.draw do
   }
   namespace :api do
     namespace :v1 do
+      resources :suggestions, only: [:index]
       get "notion/characters", to: "notion#characters"
       resources :junctures
       resources :mooks
