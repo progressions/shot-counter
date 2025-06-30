@@ -4,8 +4,9 @@ class Api::V1::SuggestionsController < ApplicationController
 
   # Define searchable models and their attributes
   SEARCHABLE_MODELS = [
-    { klass: Character, table: "characters", attributes: [:name] },
-    { klass: Vehicle, table: "vehicles", attributes: [:name] }
+    { klass: Character, table: "characters", attributes: [:name], visibility_filter: { column: "active", value: true } },
+    { klass: Vehicle, table: "vehicles", attributes: [:name], visibility_filter: { column: "active", value: true } },
+    { klass: Site, table: "sites", attributes: [:name], visibility_filter: { column: "secret", value: false } }
   ].freeze
 
   def index
@@ -36,20 +37,34 @@ class Api::V1::SuggestionsController < ApplicationController
     # Build UNION query for all searchable models
     union_queries = SEARCHABLE_MODELS.map do |model|
       table = model[:table]
+      # Skip if table doesn't exist
+      next unless ActiveRecord::Base.connection.table_exists?(table)
+
+      filter = model[:visibility_filter]
+      visibility_clause = filter ? "AND #{filter[:column]} = #{filter[:value]}" : ""
       Arel.sql(
         "SELECT id, name, '#{model[:klass].name}' as class_name
          FROM #{table}
          WHERE campaign_id = '#{sanitized_campaign_id}'
-         AND lower(name) LIKE '%#{sanitized_query}%'"
+         AND lower(name) LIKE '%#{sanitized_query}%'
+         #{visibility_clause}"
       )
-    end
+    end.compact
+
+    # Return empty array if no valid queries
+    return [] if union_queries.empty?
 
     # Combine queries with LIMIT applied to the entire result
     union_sql = "(#{union_queries.join(' UNION ')}) LIMIT 10"
-    results = ActiveRecord::Base.connection.execute(union_sql)
+    Rails.logger.debug "Executing SQL: #{union_sql}"
+
+    # Execute query and log raw results
+    results = ActiveRecord::Base.connection.execute(union_sql).to_a
+    Rails.logger.debug "Raw results: #{results.inspect}"
 
     # Map raw results to model instances
     results.group_by { |r| r["class_name"] }.flat_map do |class_name, records|
+      Rails.logger.debug "Processing class: #{class_name}, records: #{records.inspect}"
       klass = class_name.constantize
       ids = records.map { |r| r["id"] }
       # Fetch records in one query per model
