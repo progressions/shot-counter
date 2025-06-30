@@ -15,18 +15,20 @@ class Api::V1::SuggestionsController < ApplicationController
 
   def index
     query = params[:query]&.downcase&.strip
-    # Return empty array for blank or empty queries
-    return render json: [] if query.blank?
+    # Return empty hash for blank or empty queries
+    return render json: {} if query.blank?
 
     results = fetch_suggestions(query)
 
-    # Format results consistently across models
-    suggestions_json = results.map do |record|
-      {
-        className: record.class.name,
-        id: record.id,
-        label: record.name
-      }
+    # Group results by class name and format consistently
+    suggestions_json = results.group_by { |record| record.class.name }.transform_values do |records|
+      records.map do |record|
+        {
+          className: record.class.name,
+          id: record.id,
+          label: record.name
+        }
+      end
     end
 
     render json: suggestions_json
