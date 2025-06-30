@@ -8,6 +8,9 @@ class Api::V1::PartiesController < ApplicationController
 
     @factions = current_campaign.factions.joins(:parties).where(parties: @parties).order("factions.name").distinct
 
+    if params[:id].present?
+      @parties = @parties.where(id: params[:id])
+    end
     if params[:secret] == "true" && current_user.gamemaster?
       @parties = @parties.where(secret: [true, false])
     else

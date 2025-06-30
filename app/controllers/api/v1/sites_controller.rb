@@ -7,6 +7,9 @@ class Api::V1::SitesController < ApplicationController
 
     @factions = current_campaign.factions.joins(:sites).where(sites: @sites).order("factions.name").distinct
 
+    if params[:id].present?
+      @sites = @sites.where(id: params[:id])
+    end
     if params[:secret] == "true" && current_user.gamemaster?
       @sites = @sites.where(secret: [true, false])
     else
