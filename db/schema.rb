@@ -160,7 +160,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_30_024627) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.uuid "campaign_id", null: false
-    t.boolean "active"
+    t.boolean "active", default: true
     t.index ["campaign_id"], name: "index_factions_on_campaign_id"
   end
 

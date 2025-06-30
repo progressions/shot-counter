@@ -5,8 +5,6 @@ class Api::V1::FactionsController < ApplicationController
   def index
     @factions = current_campaign.factions.order("LOWER(factions.name) ASC")
 
-    @factions = current_campaign.factions.joins(:factions).where(factions: @factions).order("factions.name").distinct
-
     if params[:show_all] == "true" && current_user.gamemaster?
       @factions = @factions.where(active: [true, false])
     else
@@ -16,7 +14,7 @@ class Api::V1::FactionsController < ApplicationController
       @factions = @factions.where("name ILIKE ?", "%#{params[:search]}%")
     end
     if params[:character_id].present?
-      @faction_ids = Attunement.where(faction_id: @factions).where(character_id: params[:character_id]).pluck(:faction_id)
+      @faction_ids = current_campaign.characters.find(params[:character_id]).factions.pluck(:id)
       @factions = @factions.where.not(id: @faction_ids)
     end
 
