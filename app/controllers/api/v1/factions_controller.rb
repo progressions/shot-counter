@@ -5,6 +5,9 @@ class Api::V1::FactionsController < ApplicationController
   def index
     @factions = current_campaign.factions.order("LOWER(factions.name) ASC")
 
+    if params[:id].present?
+      @factions = @factions.where(id: params[:id])
+    end
     if params[:show_all] == "true" && current_user.gamemaster?
       @factions = @factions.where(active: [true, false])
     else
