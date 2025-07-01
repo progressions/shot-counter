@@ -12,6 +12,10 @@ class Api::V1::WeaponsController < ApplicationController
 
     @junctures = @weapons.pluck(:juncture).uniq.compact
 
+    if params[:id].present?
+      @weapons = @weapons.where(id: params[:id])
+    end
+
     if params[:juncture].present?
       @weapons = @weapons.where(juncture: params[:juncture])
     end

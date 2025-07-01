@@ -29,8 +29,12 @@ class User < ApplicationRecord
   def as_json(options = {})
     super(options.merge(
       only: [:id, :email, :first_name, :last_name, :admin, :gamemaster],
-      methods: [:image_url],
+      methods: [:image_url, :name],
     ))
+  end
+
+  def name
+    "#{first_name} #{last_name}".strip
   end
 
   def password

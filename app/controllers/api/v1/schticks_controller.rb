@@ -10,6 +10,10 @@ class Api::V1::SchticksController < ApplicationController
 
     @paths = []
 
+    if params[:id].present?
+      @schticks = @schticks.where(id: params[:id])
+    end
+
     if params[:character_id].present?
       @character = current_campaign.characters.find(params[:character_id])
       if @character.action_values["Type"] == "PC"
