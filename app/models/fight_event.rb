@@ -8,6 +8,7 @@ class FightEvent < ApplicationRecord
       fight_id: fight_id,
       event_type: event_type,
       description: description,
+      details: details,
       created_at: created_at.strftime("%Y-%m-%d %H:%M:%S"),
       updated_at: updated_at.strftime("%Y-%m-%d %H:%M:%S")
     }
