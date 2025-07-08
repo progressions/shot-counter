@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe FightPoster do
   let(:user) { User.create!(email: "email@example.com") }
   let(:action_movie) { user.campaigns.create!(name: "Action Movie") }
-  let(:fight) { Fight.create!(name: "Museum Battle", description: "Fight to recover the artifact", campaign_id: action_movie.id, sequence: 1) }
+  let(:fight) { Fight.create!(name: "Museum Battle", description: "The Christening of the [@Immortal Woman](/sites/72f84df7-6dfc-42f3-8d55-dba8e40d3190), featuring [@Huan Ken](/characters/2bb9d3d6-3255-4d81-b7c4-64b17b95bbc5), King of the [@Thunder Pagoda](/factions/d9bc6c2f-ebe1-4300-a836-dcb36e6454ab)", campaign_id: action_movie.id, sequence: 1) }
   let(:other_fight) { Fight.create!(name: "Other Fight", campaign_id: action_movie.id, sequence: 1) }
 
   before(:each) do
@@ -14,7 +14,7 @@ RSpec.describe FightPoster do
     let(:expected) do
       <<-TEXT
 # Museum Battle
-Fight to recover the artifact
+The Christening of the Immortal Woman, featuring Huan Ken, King of the Thunder Pagoda
 
 ## Sequence 1
 
@@ -62,7 +62,7 @@ Fight started
     let(:expected) do
       <<-TEXT
 # Museum Battle
-Fight to recover the artifact
+The Christening of the Immortal Woman, featuring Huan Ken, King of the Thunder Pagoda
 
 ## Sequence 1
 ## Shot 12
@@ -94,7 +94,7 @@ Character Brick Manly added
     let(:expected) do
       <<-TEXT
 # Museum Battle
-Fight to recover the artifact
+The Christening of the Immortal Woman, featuring Huan Ken, King of the Thunder Pagoda
 
 ## Sequence 1
 ## Shot 14
@@ -162,7 +162,7 @@ Brick Manly attacked Serena doing 12 Wounds and spent 3 Shots
     let(:expected) do
       <<-TEXT
 # Museum Battle
-Fight to recover the artifact
+The Christening of the Immortal Woman, featuring Huan Ken, King of the Thunder Pagoda
 
 ## Sequence 1
 ```diff
@@ -263,7 +263,7 @@ Brick Manly attacked Serena doing 12 Wounds and spent 3 Shots
     let(:expected) do
       <<-TEXT
 # Museum Battle
-Fight to recover the artifact
+The Christening of the Immortal Woman, featuring Huan Ken, King of the Thunder Pagoda
 
 ## Sequence 1
 ```diff

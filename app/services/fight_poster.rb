@@ -38,7 +38,7 @@ TEXT
 
     def show(fight)
       @fight = fight
-      @description_markdown = markdown_description(fight)
+      @description_markdown = clean_markup_string(markdown_description(fight))
       filename = Rails.root.join("app", "views", "fights", "show.md.erb")
       ERB.new(filename.read, trim_mode: "-").result(binding)
     end
@@ -132,6 +132,26 @@ TEXT
       if @location
         " (#{@location})"
       end
+    end
+
+    def strip_html_p_to_br(html)
+      # Parse HTML with Nokogiri
+      doc = Nokogiri::HTML.fragment(html)
+
+      # Replace <p> tags with content and newline
+      doc.css('p').each do |p|
+        p.replace(p.text + "\n")
+      end
+
+      # Strip all other HTML tags and get text
+      text = doc.text.strip
+
+      # Normalize newlines
+      text.lines.map(&:strip).reject(&:empty?).join("\n")
+    end
+
+    def clean_markup_string(str)
+      str.gsub(/\[@([^]\]]+)\]\(\/[^)]+\)/, '\1')
     end
   end
 end
