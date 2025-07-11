@@ -1,5 +1,7 @@
 require "discordrb"
 
+return if ENV["DISCORD_BOT"] != "true"
+
 $discord_bot = Discordrb::Commands::CommandBot.new(
   token: Rails.application.credentials.dig(:discord, :token),
   client_id: Rails.application.credentials.dig(:discord, :client_id),
