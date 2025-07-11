@@ -35,7 +35,7 @@ module SlashStartFight
     CurrentFight.set(server_id: event.server_id, fight: fight)
 
     # Enqueue job to send initial fight message
-    DiscordStartFightJob.perform_later(fight.id, event.channel_id)
+    DiscordNotificationJob.perform_later(fight.id)
 
     event.respond(content: "Starting fight: #{fight.name}")
   rescue => e
