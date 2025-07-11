@@ -47,7 +47,7 @@ gem 'imagekitio'
 # Use Rack CORS for handling Cross-Origin Resource Sharing (CORS), making cross-origin AJAX possible
 gem "rack-cors"
 
-gem "discordrb", git: "https://github.com/shardlab/discordrb", branch: "main"
+gem "discordrb", github: "shardlab/discordrb"
 
 gem "kaminari"
 gem "api-pagination"
