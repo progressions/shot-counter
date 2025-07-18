@@ -1,4 +1,4 @@
-# fly.toml app configuration file generated for shot-counter on 2023-05-21T14:06:18-04:00
+# fly.toml app configuration file for shot-counter
 #
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
@@ -21,6 +21,11 @@ kill_timeout = "5s"
 
 [env]
   PORT = "8080"
+  # REDIS_URL is not needed here if set in Fly.io secrets
+
+[processes]
+  app = "bin/rails fly:server"
+  worker = "bundle exec sidekiq"
 
 [[services]]
   protocol = "tcp"
@@ -35,6 +40,7 @@ kill_timeout = "5s"
   [[services.ports]]
     port = 443
     handlers = ["tls", "http"]
+
   [services.concurrency]
     type = "connections"
     hard_limit = 25
