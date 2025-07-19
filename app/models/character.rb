@@ -192,10 +192,10 @@ class Character < ApplicationRecord
         "rich_text" => [{"text" => { "content" => self.description.fetch("Style of Dress", "").to_s} }]
       },
       "Melodramatic Hook" => {
-        "rich_text" => [{"text" => { "content" => self.description.fetch("Melodramatic Hook", "").to_s} }]
+        "rich_text" => [{"text" => { "content" => FightPoster.strip_html_p_to_br(self.description.fetch("Melodramatic Hook", "").to_s) } }]
       },
       "Description" => {
-        "rich_text" => [{"text" => { "content" => self.description.fetch("Appearance", "").to_s} }]
+        "rich_text" => [{"text" => { "content" => FightPoster.strip_html_p_to_br(self.description.fetch("Appearance", "").to_s)} }]
       },
     }
 
