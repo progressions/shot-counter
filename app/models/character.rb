@@ -191,6 +191,12 @@ class Character < ApplicationRecord
       "Style of Dress" => {
         "rich_text" => [{"text" => { "content" => self.description.fetch("Style of Dress", "").to_s} }]
       },
+      "Melodramatic Hook" => {
+        "rich_text" => [{"text" => { "content" => self.description.fetch("Melodramatic Hook", "").to_s} }]
+      },
+      "Description" => {
+        "rich_text" => [{"text" => { "content" => self.description.fetch("Appearance", "").to_s} }]
+      },
     }
 
     if Rails.env.production?
@@ -199,11 +205,7 @@ class Character < ApplicationRecord
       url = "#{protocol}://#{host}/characters/#{self.id}"
       values["Chi War Link"] = { "url" => url }
     end
-    if self.summary.present?
-      values["Description"] = {
-        "rich_text" => [{"text" => { "content" => self.summary} }]
-      }
-    end
+
     if self.action_values["MainAttack"].present?
       values["MainAttack"] = {
         "select"=>{"name"=>self.action_values.fetch("MainAttack", "")}
@@ -277,7 +279,6 @@ class Character < ApplicationRecord
       notion_page_id: page["id"],
       name: page.dig("properties", "Name", "title")&.first&.dig("plain_text"),
       action_values: self.action_values.merge(av),
-      summary: page.dig("properties", "Description", "rich_text").map { |rt| rt.dig("plain_text") }.join(""),
       description: self.description.merge(description),
     })
   end
