@@ -18,7 +18,6 @@ class Api::V1::SchticksController < ApplicationController
       @character = current_campaign.characters.find(params[:character_id])
       if @character.action_values["Type"] == "PC"
         @schticks = @schticks
-          .for_archetype(@character.action_values["Archetype"])
           .where(prerequisite_id: [@character.schtick_ids, nil].flatten)
           .where.not(id: @character.schtick_ids)
       else
