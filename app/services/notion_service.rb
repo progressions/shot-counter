@@ -108,6 +108,7 @@ module NotionService
       return unless character.notion_page_id.present?
 
       page = get_page(character.notion_page_id)
+
       attributes = character.attributes_from_notion(page)
 
       add_image(page, character)
@@ -180,16 +181,17 @@ module NotionService
     def get_description(page)
       {
         "Age" => page.dig("properties", "Age", "rich_text", 0, "text", "content"),
-        "Nicknames" => page.dig("properties", "Nicknames", "rich_text", 0, "text", "content"),
-        "Height" => page.dig("properties", "Height", "rich_text", 0, "text", "content"),
-        "Weight" => page.dig("properties", "Weight", "rich_text", 0, "text", "content"),
-        "Hair Color" => page.dig("properties", "Hair Color", "rich_text", 0, "text", "content"),
-        "Eye Color" => page.dig("properties", "Eye Color", "rich_text", 0, "text", "content"),
-        "Style of Dress" => page.dig("properties", "Style of Dress", "rich_text", 0, "text", "content"),
+        "Height" => page.dig("properties", "Height", "rich_text").map { |rt| rt.dig("plain_text") }.join(""),
+        "Weight" => page.dig("properties", "Weight", "rich_text").map { |rt| rt.dig("plain_text") }.join(""),
+        "Eye Color" => page.dig("properties", "Eye Color", "rich_text").map { |rt| rt.dig("plain_text") }.join(""),
+        "Hair Color" => page.dig("properties", "Hair Color", "rich_text").map { |rt| rt.dig("plain_text") }.join(""),
+        "Appearance" => page.dig("properties", "Description", "rich_text").map { |rt| rt.dig("plain_text") }.join(""),
+        "Style of Dress" => page.dig("properties", "Style of Dress", "rich_text").map { |rt| rt.dig("plain_text") }.join(""),
+        "Melodramatic Hook" => page.dig("properties", "Melodramatic Hook", "rich_text").map { |rt| rt.dig("plain_text") }.join(""),
       }
     end
 
-    # private
+    private
 
     def client
       @client ||= Notion::Client.new

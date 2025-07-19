@@ -263,11 +263,22 @@ class Character < ApplicationRecord
       "Scroungetech" => av_or_new("Scroungetech", page.dig("properties", "Scroungetech", "number")),
       "Mutant" => av_or_new("Mutant", page.dig("properties", "Mutant", "number")),
     }
+    description = {
+      "Age" => page.dig("properties", "Age", "rich_text", 0, "text", "content"),
+      "Height" => page.dig("properties", "Height", "rich_text").map { |rt| rt.dig("plain_text") }.join(""),
+      "Weight" => page.dig("properties", "Weight", "rich_text").map { |rt| rt.dig("plain_text") }.join(""),
+      "Eye Color" => page.dig("properties", "Eye Color", "rich_text").map { |rt| rt.dig("plain_text") }.join(""),
+      "Hair Color" => page.dig("properties", "Hair Color", "rich_text").map { |rt| rt.dig("plain_text") }.join(""),
+      "Appearance" => page.dig("properties", "Description", "rich_text").map { |rt| rt.dig("plain_text") }.join(""),
+      "Style of Dress" => page.dig("properties", "Style of Dress", "rich_text").map { |rt| rt.dig("plain_text") }.join(""),
+      "Melodramatic Hook" => page.dig("properties", "Melodramatic Hook", "rich_text").map { |rt| rt.dig("plain_text") }.join(""),
+    }
     self.attributes.symbolize_keys.merge({
       notion_page_id: page["id"],
       name: page.dig("properties", "Name", "title")&.first&.dig("plain_text"),
       action_values: self.action_values.merge(av),
-      summary: page.dig("properties", "Description", "rich_text", 0, "text", "content"),
+      summary: page.dig("properties", "Description", "rich_text").map { |rt| rt.dig("plain_text") }.join(""),
+      description: self.description.merge(description),
     })
   end
 

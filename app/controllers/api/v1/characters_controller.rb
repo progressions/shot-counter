@@ -15,7 +15,7 @@ class Api::V1::CharactersController < ApplicationController
     @character.campaign = current_campaign
 
     if @character.save
-      # SyncCharacterToNotionJob.perform_later(@character.id)
+      SyncCharacterToNotionJob.perform_later(@character.id)
       render json: @character
     else
       render status: 400
@@ -28,7 +28,7 @@ class Api::V1::CharactersController < ApplicationController
 
   def update
     if @character.update(character_params)
-      # SyncCharacterToNotionJob.perform_later(@character.id)
+      SyncCharacterToNotionJob.perform_later(@character.id)
       render json: @character
     else
       render @character.errors, status: 400
