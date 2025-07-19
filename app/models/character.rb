@@ -183,10 +183,10 @@ class Character < ApplicationRecord
         "rich_text" => [{"text" => { "content" => self.description.fetch("Weight", "").to_s} }]
       },
       "Hair Color" => {
-        "rich_text" => [{"text" => { "content" => self.description.fetch("Hair color", "").to_s} }]
+        "rich_text" => [{"text" => { "content" => self.description.fetch("Hair Color", "").to_s} }]
       },
       "Eye Color" => {
-        "rich_text" => [{"text" => { "content" => self.description.fetch("Eye color", "").to_s} }]
+        "rich_text" => [{"text" => { "content" => self.description.fetch("Eye Color", "").to_s} }]
       },
       "Style of Dress" => {
         "rich_text" => [{"text" => { "content" => self.description.fetch("Style of Dress", "").to_s} }]
