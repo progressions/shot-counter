@@ -68,9 +68,16 @@ module PdfService
 
     def character_attributes_for_pdf(character)
       main_attack = character.action_values["MainAttack"]
+      secondary_attack = character.action_values["SecondaryAttack"]
+
       schticks = character.schticks.limit(10)
-      weapons = character.weapons.limit(5)
+      weapons = character.weapons.limit(4)
       skills = character.skills.filter { |name, value| value > 0 }.map { |name, value| "#{name}: #{value}" }.join("\n")
+      if secondary_attack.present?
+        backup_attack = "Backup Attack: #{secondary_attack} (#{character.action_values[secondary_attack]})"
+        skills = "#{backup_attack}\n#{skills}"
+      end
+
       {
         "Name" => character.name,
         "Attack Type" => main_attack,
@@ -100,26 +107,26 @@ module PdfService
         "Schtick 9 Text" => "\n" + FightPoster.strip_html_p_to_br(schticks[8]&.description),
         "Schtick 10 Title" => FightPoster.strip_html_p_to_br(schticks[9]&.name),
         "Schtick 10 Text" => "\n" + FightPoster.strip_html_p_to_br(schticks[9]&.description),
-        "Weapon 1 Name" => FightPoster.strip_html_p_to_br(weapons[0]&.name),
-        "Weapon 1 Damage" => weapons[0]&.damage,
-        "Weapon 1 Concealment" => weapons[0]&.concealment,
-        "Weapon 1 Reload" => weapons[0]&.reload_value,
-        "Weapon 2 Name" => FightPoster.strip_html_p_to_br(weapons[1]&.name),
-        "Weapon 2 Damage" => weapons[1]&.damage,
-        "Weapon 2 Concealment" => weapons[1]&.concealment,
-        "Weapon 2 Reload" => weapons[1]&.reload_value,
-        "Weapon 3 Name" => FightPoster.strip_html_p_to_br(weapons[2]&.name),
-        "Weapon 3 Damage" => weapons[2]&.damage,
-        "Weapon 3 Concealment" => weapons[2]&.concealment,
-        "Weapon 3 Reload" => weapons[2]&.reload_value,
-        "Weapon 4 Name" => FightPoster.strip_html_p_to_br(weapons[3]&.name),
-        "Weapon 4 Damage" => weapons[3]&.damage,
-        "Weapon 4 Concealment" => weapons[3]&.concealment,
-        "Weapon 4 Reload" => weapons[3]&.reload_value,
-        "Weapon 5 Name" => FightPoster.strip_html_p_to_br(weapons[4]&.name),
-        "Weapon 5 Damage" => weapons[4]&.damage,
-        "Weapon 5 Concealment" => weapons[4]&.concealment,
-        "Weapon 5 Reload" => weapons[4]&.reload_value,
+        "Weapon 1 Name" => "Unarmed",
+        "Weapon 1 Damage" => 7,
+        "Weapon 1 Concealment" => "",
+        "Weapon 1 Reload" => "",
+        "Weapon 2 Name" => FightPoster.strip_html_p_to_br(weapons[0]&.name),
+        "Weapon 2 Damage" => weapons[0]&.damage,
+        "Weapon 2 Concealment" => weapons[0]&.concealment,
+        "Weapon 2 Reload" => weapons[0]&.reload_value,
+        "Weapon 3 Name" => FightPoster.strip_html_p_to_br(weapons[1]&.name),
+        "Weapon 3 Damage" => weapons[1]&.damage,
+        "Weapon 3 Concealment" => weapons[1]&.concealment,
+        "Weapon 3 Reload" => weapons[1]&.reload_value,
+        "Weapon 4 Name" => FightPoster.strip_html_p_to_br(weapons[2]&.name),
+        "Weapon 4 Damage" => weapons[2]&.damage,
+        "Weapon 4 Concealment" => weapons[2]&.concealment,
+        "Weapon 4 Reload" => weapons[2]&.reload_value,
+        "Weapon 5 Name" => FightPoster.strip_html_p_to_br(weapons[3]&.name),
+        "Weapon 5 Damage" => weapons[3]&.damage,
+        "Weapon 5 Concealment" => weapons[3]&.concealment,
+        "Weapon 5 Reload" => weapons[3]&.reload_value,
         "Gear" => "",
         "Skills" => "\n#{skills}",
         "Archetype" => character.action_values["Archetype"],
