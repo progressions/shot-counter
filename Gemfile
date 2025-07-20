@@ -20,6 +20,8 @@ gem "puma", "~> 6.4.2"
 # Build JSON APIs with ease [https://github.com/rails/jbuilder]
 # gem "jbuilder"
 
+gem "pdf-forms"
+
 # Use Redis adapter to run Action Cable in production
 gem "redis", "~> 4.0"
 

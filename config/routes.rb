@@ -67,6 +67,7 @@ Rails.application.routes.draw do
         member do
           delete :image, to: "characters#remove_image"
           post :sync
+          get :pdf
         end
       end
       get "vehicles/archetypes", to: "vehicles#archetypes"

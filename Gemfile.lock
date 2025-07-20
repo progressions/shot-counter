@@ -115,6 +115,7 @@ GEM
     builder (3.3.0)
     childprocess (5.1.0)
       logger (~> 1.5)
+    cliver (0.3.2)
     coderay (1.1.3)
     concurrent-ruby (1.3.5)
     connection_pool (2.5.0)
@@ -247,6 +248,10 @@ GEM
     opus-ruby (1.0.1)
       ffi
     orm_adapter (0.5.0)
+    pdf-forms (1.5.2)
+      cliver (~> 0.3.2)
+      rexml (~> 3.2, >= 3.2.6)
+      safe_shell (>= 1.0.3, < 2.0)
     pg (1.5.9)
     pp (0.6.2)
       prettyprint
@@ -320,6 +325,7 @@ GEM
       netrc (~> 0.8)
     reverse_markdown (3.0.0)
       nokogiri
+    rexml (3.4.1)
     rspec-core (3.13.3)
       rspec-support (~> 3.13.0)
     rspec-expectations (3.13.3)
@@ -340,6 +346,7 @@ GEM
     ruby-vips (2.2.3)
       ffi (~> 1.12)
       logger
+    safe_shell (1.1.0)
     securerandom (0.4.1)
     sidekiq (7.3.9)
       base64
@@ -390,6 +397,7 @@ DEPENDENCIES
   kaminari
   letter_opener
   notion-ruby-client
+  pdf-forms
   pg (~> 1.1)
   pry-rails
   psych

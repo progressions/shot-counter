@@ -2,7 +2,7 @@ class Api::V1::CharactersController < ApplicationController
   before_action :authenticate_user!
   before_action :require_current_campaign
   before_action :set_scoped_characters
-  before_action :set_character, only: [:update, :destroy, :show, :remove_image, :sync]
+  before_action :set_character, only: [:update, :destroy, :show, :remove_image, :sync, :pdf]
 
   def index
     @characters = @scoped_characters.includes(:user).order(:name).all
@@ -54,6 +54,13 @@ class Api::V1::CharactersController < ApplicationController
     else
       render @character.errors, status: 400
     end
+  end
+
+  def pdf
+    temp_path = PdfService.character_to_pdf(@character)
+    filename = "#{@character.name.downcase.gsub(' ', '_')}_character_sheet.pdf"
+
+    send_file temp_path, type: "application/pdf", disposition: "attachment", filename: filename
   end
 
   private
