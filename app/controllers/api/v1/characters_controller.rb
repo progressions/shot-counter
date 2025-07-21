@@ -40,6 +40,28 @@ class Api::V1::CharactersController < ApplicationController
     render :ok
   end
 
+  def import
+    if params[:pdf_file].present?
+      # Initialize PDFtk with the path to the pdftk binary
+      pdftk = PdfForms.new('/usr/local/bin/pdftk') # Adjust path as needed
+
+      # Save uploaded PDF temporarily
+      uploaded_file = params[:pdf_file]
+
+      @character = PdfService.pdf_to_character(uploaded_file, current_campaign, { user: current_user })
+
+      if @character.save
+        render json: @character, status: :created
+      else
+        Rails.logger.error("Character import failed: #{@character.errors.full_messages.join(', ')}")
+        render json: @character.errors, status: :unprocessable_entity
+      end
+    else
+      @character = Character.new
+      render json: { error: 'No PDF file provided' }, status: :bad_request
+    end
+  end
+
   def sync
     NotionService.update_character_from_notion(@character)
 

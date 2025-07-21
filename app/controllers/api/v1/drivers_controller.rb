@@ -85,7 +85,7 @@ class Api::V1::DriversController < ApplicationController
       render @vehicle.errors, status: 400
     end
   rescue
-    binding.pry
+
   end
 
   def reveal

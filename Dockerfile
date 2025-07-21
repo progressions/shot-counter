@@ -80,6 +80,7 @@ RUN --mount=type=cache,id=prod-apt-cache,sharing=locked,target=/var/cache/apt \
     apt-get update -qq && \
     apt-get install --no-install-recommends -y \
     ${DEPLOY_PACKAGES} \
+    && ln -s /usr/bin/pdftk /usr/local/bin/pdftk \
     && rm -rf /var/lib/apt/lists /var/cache/apt/archives
 
 # copy installed gems

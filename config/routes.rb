@@ -63,6 +63,7 @@ Rails.application.routes.draw do
       post "campaigns/current", to: "campaigns#set"
       resources :campaigns
       get "campaigns/current", to: "campaigns#current"
+      post "characters/pdf", to: "characters#import"
       resources :characters do
         resources :schticks, controller: "character_schticks"
         resources :advancements

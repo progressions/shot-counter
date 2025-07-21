@@ -14,7 +14,7 @@ class Character < ApplicationRecord
     "Max Fortune" => 0,
     "FortuneType" => "Fortune",
     "MainAttack" => "Guns",
-    "SecondaryAttack" => "Martial Arts",
+    "SecondaryAttack" => nil,
     "Wounds" => 0,
     "Type" => "PC",
     "Marks of Death" => 0,

@@ -69,7 +69,6 @@ module ImportSchticks
 
       schtick.save!
     rescue => e
-      binding.pry
     end
 
   end

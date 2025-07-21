@@ -3,6 +3,16 @@ require "pdf_forms"
 module PdfService
    FIELDS = [
      "Name",
+     "Attack Type",
+     "Attack",
+     "Defense",
+     "Toughness",
+     "Fortune Type",
+     "Fortune",
+     "Speed",
+     "Schtick 1 Title",
+     "Schtick 1 Text",
+     "Schtick 2 Title",
      "Schtick 2 Text",
      "Schtick 3 Title",
      "Schtick 3 Text",
@@ -53,6 +63,18 @@ module PdfService
    ]
 
   class << self
+    def pdf_to_character(uploaded_file, campaign, params={})
+      temp_file_path = Tempfile.new('uploaded_pdf').path
+      File.open(temp_file_path, 'wb') do |file|
+        file.write(uploaded_file.read)
+      end
+
+      fields = pdftk.get_fields(temp_file_path.to_s)
+      character_params = params.merge(pdf_attributes_for_character(fields, campaign))
+
+      @character = campaign.characters.new(character_params)
+    end
+
     def character_to_pdf(character)
       fields = self.character_attributes_for_pdf(character)
       fill_fields(fields)
@@ -64,6 +86,125 @@ module PdfService
       pdftk.fill_form(path, temp_path, params, flatten: false)
 
       temp_path
+    end
+
+    def pdf_attributes_for_character(fields, campaign)
+      {
+        name: fields.find { |f| f.name == "Name" }&.value,
+        action_values: action_values_from_pdf(fields),
+        wealth: get_field(fields, "Wealth"),
+        skills: get_skills_from_pdf(fields),
+        description: get_description_from_pdf(fields),
+        juncture: get_juncture(fields, campaign),
+        weapons: get_weapons_from_pdf(fields, campaign),
+        schticks: get_schticks_from_pdf(fields, campaign),
+      }
+    end
+
+    def get_description_from_pdf(fields)
+      {
+        "Melodramatic Hook" => get_field(fields, "Melodramatic Hook"),
+        "Background" => get_field(fields, "Story"),
+      }
+    end
+
+    def get_weapons_from_pdf(fields, campaign)
+      (1..5).reduce([]) do |weapons, index|
+        weapon = get_weapon(fields, index, campaign)
+        weapons << weapon if weapon
+        weapons
+      end
+    end
+
+    def get_weapon(fields, index, campaign)
+      name = get_field(fields, "Weapon #{index} Name")
+      return nil if name.blank?
+      damage = get_field(fields, "Weapon #{index} Damage")
+      concealment = get_field(fields, "Weapon #{index} Concealment")
+      reload_value = get_field(fields, "Weapon #{index} Reload")
+
+      weapon = campaign.weapons.find_or_create_by(name: name) do |w|
+        w.damage = damage.to_i
+        w.concealment = concealment
+        w.reload_value = reload_value
+        w.description = ""
+      end
+    end
+
+    def get_schtick(fields, index, campaign)
+      name = get_field(fields, "Schtick #{index} Title")
+      return nil if name.blank?
+      description = get_field(fields, "Schtick #{index} Text")
+      campaign.schticks.find_by(name: name)
+    end
+
+    def get_schticks_from_pdf(fields, campaign)
+      (1..10).reduce([]) do |schticks, index|
+        schtick = get_schtick(fields, index, campaign)
+        if schtick
+          schticks << schtick
+        end
+        schticks
+      end
+    end
+
+    def get_juncture(fields, campaign)
+      name = get_field(fields, "Juncture")
+      return nil if name.blank?
+      juncture = campaign.junctures.find_by(name: name)
+      if juncture.nil?
+        Rails.logger.error("Juncture not found: #{name}")
+        return nil
+      end
+      juncture
+    end
+
+    def get_secondary_attack_from_pdf(fields)
+      get_field(fields, "Skills")
+        .to_s
+        .split("\r")
+        .map { |skill| skill.split(":") }
+        .filter { |skill| skill.length == 2 && skill[0].strip == "Backup Attack" }
+        .map { |skill| match = skill[1].match(/\s*(.*?)\s*\((\d+)\)/) }
+        .map { |match| match ? { "SecondaryAttack" => match[1], match[1] => match[2].to_i } : nil }
+        .first
+    end
+
+    def get_skills_from_pdf(fields)
+      skills_text = get_field(fields, "Skills")
+      skills = skills_text.to_s.split("\r").map do |skill|
+        skill.split(":")
+      end
+      skills.reduce({}) do |att, skill|
+        name = skill[0].strip
+        value = skill[1].strip
+
+        if name != "Backup Attack"
+          att[name] = value.to_i if Character::DEFAULT_SKILLS.keys.include?(name) && value.to_i > 0
+        end
+
+        att
+      end
+    end
+
+    def action_values_from_pdf(fields)
+      {
+        "MainAttack" => get_field(fields, "Attack Type"),
+        get_field(fields, "Attack Type") => get_field(fields, "Attack"),
+        "Defense" => get_field(fields, "Defense"),
+        "Toughness" => get_field(fields, "Toughness"),
+        "FortuneType" => get_field(fields, "Fortune Type"),
+        "Max Fortune" => get_field(fields, "Fortune"),
+        "Fortune" => get_field(fields, "Fortune"),
+        "Speed" => get_field(fields, "Speed"),
+        "SecondaryAttack" => nil,
+        "Type" => "PC",
+        "Archetype" => get_field(fields, "Archetype"),
+      }.merge(get_secondary_attack_from_pdf(fields) || {})
+    end
+
+    def get_field(fields, name)
+      fields.find { |f| f.name == name }&.value
     end
 
     def character_attributes_for_pdf(character)
@@ -140,7 +281,11 @@ module PdfService
     end
 
     def pdftk
-      @pdftk ||= PdfForms.new
+      if Rails.env.production?
+        @pdftk ||= PdfForms.new("/usr/bin/pdftk")
+      else
+        @pdftk ||= PdfForms.new
+      end
     end
   end
 end
