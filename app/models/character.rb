@@ -66,7 +66,7 @@ class Character < ApplicationRecord
   belongs_to :faction, optional: true
   belongs_to :user, optional: true
   belongs_to :campaign
-  belongs_to :juncture
+  belongs_to :juncture, optional: true
   has_many :character_effects
   has_many :character_schticks, dependent: :destroy
   has_many :schticks, through: :character_schticks

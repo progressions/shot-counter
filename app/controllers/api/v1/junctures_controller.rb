@@ -5,13 +5,15 @@ class Api::V1::JuncturesController < ApplicationController
   def index
     @junctures = current_campaign.junctures.order("LOWER(junctures.name) ASC")
 
+    Rails.logger.info("params[:active]: #{params[:active]}")
+
     if params[:id].present?
       @junctures = @junctures.where(id: params[:id])
     end
-    if params[:secret] == "true" && current_user.gamemaster?
-      @junctures = @junctures.where(secret: [true, false])
+    if params[:hidden] == "true" && current_user.gamemaster?
+      @junctures = @junctures.where(active: [true, false])
     else
-      @junctures = @junctures.where(secret: false)
+      @junctures = @junctures.where(active: true)
     end
     if params[:search].present?
       @junctures = @junctures.where("name ILIKE ?", "%#{params[:search]}%")
@@ -20,8 +22,8 @@ class Api::V1::JuncturesController < ApplicationController
       @junctures = @junctures.where(faction_id: params[:faction_id])
     end
     if params[:character_id].present?
-      @juncture_ids = Attunement.where(juncture_id: @junctures).where(character_id: params[:character_id]).pluck(:juncture_id)
-      @junctures = @junctures.where.not(id: @juncture_ids)
+      @character = current_campaign.characters.find(params[:character_id])
+      @junctures = @junctures.where.not(id: @character.juncture_id)
     end
 
     @junctures = paginate(@junctures, per_page: (params[:per_page] || 10), page: (params[:page] || 1))
@@ -70,6 +72,6 @@ class Api::V1::JuncturesController < ApplicationController
   private
 
   def juncture_params
-    params.require(:juncture).permit(:name, :description, :faction_id, :secret, :image)
+    params.require(:juncture).permit(:name, :description, :active, :image, :faction_id)
   end
 end

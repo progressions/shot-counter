@@ -9,7 +9,11 @@ Rails.application.routes.draw do
     namespace :v1 do
       resources :suggestions, only: [:index]
       get "notion/characters", to: "notion#characters"
-      resources :junctures
+      resources :junctures do
+        member do
+          delete :image, to: "sites#remove_image"
+        end
+      end
       resources :mooks
       resources :locations, except: [:index, :destroy]
       resources :characters_and_vehicles, only: [:index] do
