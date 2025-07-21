@@ -128,6 +128,11 @@ class Character < ApplicationRecord
       action_items: shot&.action_items || {},
 
       driving: driving_json(shot),
+      wealth: wealth,
+      juncture_id: juncture_id,
+      juncture: {
+        name: juncture&.name,
+      }
     }
   end
 
