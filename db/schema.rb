@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_07_21_005335) do
+ActiveRecord::Schema[8.0].define(version: 2025_07_21_005655) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -216,6 +216,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_21_005335) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.uuid "notion_page_id"
+    t.uuid "campaign_id"
+    t.index ["campaign_id"], name: "index_junctures_on_campaign_id"
     t.index ["faction_id"], name: "index_junctures_on_faction_id"
   end
 
@@ -339,8 +341,10 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_21_005335) do
     t.uuid "notion_page_id"
     t.datetime "last_synced_to_notion_at"
     t.string "summary"
+    t.uuid "juncture_id"
     t.index ["campaign_id"], name: "index_vehicles_on_campaign_id"
     t.index ["faction_id"], name: "index_vehicles_on_faction_id"
+    t.index ["juncture_id"], name: "index_vehicles_on_juncture_id"
     t.index ["user_id"], name: "index_vehicles_on_user_id"
   end
 
@@ -389,6 +393,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_21_005335) do
   add_foreign_key "invitations", "campaigns"
   add_foreign_key "invitations", "users"
   add_foreign_key "invitations", "users", column: "pending_user_id"
+  add_foreign_key "junctures", "campaigns"
   add_foreign_key "junctures", "factions"
   add_foreign_key "memberships", "characters"
   add_foreign_key "memberships", "parties"
@@ -407,6 +412,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_21_005335) do
   add_foreign_key "users", "campaigns", column: "current_campaign_id"
   add_foreign_key "vehicles", "campaigns"
   add_foreign_key "vehicles", "factions"
+  add_foreign_key "vehicles", "junctures"
   add_foreign_key "vehicles", "users"
   add_foreign_key "weapons", "campaigns"
 end
