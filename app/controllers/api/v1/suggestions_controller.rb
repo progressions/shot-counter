@@ -11,6 +11,7 @@ class Api::V1::SuggestionsController < ApplicationController
     { klass: Faction, table: "factions", attributes: [:name], visiblity_filter: nil },
     { klass: Schtick, table: "schticks", attributes: [:name], visiblity_filter: nil },
     { klass: Weapon, table: "weapons", attributes: [:name], visiblity_filter: nil },
+    { klass: Juncture, table: "junctures", attributes: [:name], visiblity_filter: nil },
   ].freeze
 
   def index
