@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_06_30_024627) do
+ActiveRecord::Schema[8.0].define(version: 2025_07_21_005335) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -132,9 +132,12 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_30_024627) do
     t.datetime "last_synced_to_notion_at"
     t.string "summary"
     t.boolean "is_template"
+    t.uuid "juncture_id"
+    t.string "wealth"
     t.index ["campaign_id"], name: "index_characters_on_campaign_id"
     t.index ["created_at"], name: "index_characters_on_created_at"
     t.index ["faction_id"], name: "index_characters_on_faction_id"
+    t.index ["juncture_id"], name: "index_characters_on_juncture_id"
     t.index ["user_id"], name: "index_characters_on_user_id"
   end
 
@@ -205,7 +208,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_30_024627) do
     t.index ["user_id"], name: "index_invitations_on_user_id"
   end
 
-  create_table "junctures", force: :cascade do |t|
+  create_table "junctures", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.string "name"
     t.string "description"
     t.boolean "active"
@@ -376,6 +379,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_06_30_024627) do
   add_foreign_key "character_schticks", "schticks"
   add_foreign_key "characters", "campaigns"
   add_foreign_key "characters", "factions"
+  add_foreign_key "characters", "junctures"
   add_foreign_key "characters", "users"
   add_foreign_key "effects", "fights"
   add_foreign_key "effects", "users"
