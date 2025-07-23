@@ -36,6 +36,7 @@ class Api::V1::CharactersController < ApplicationController
   end
 
   def destroy
+    @character.carries.destroy_all
     @character.destroy!
     render :ok
   end

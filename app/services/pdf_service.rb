@@ -90,7 +90,7 @@ module PdfService
 
     def pdf_attributes_for_character(fields, campaign)
       {
-        name: fields.find { |f| f.name == "Name" }&.value || fields.find { |f| f.name == "Archetype" }&.value || "Unnamed Character",
+        name: fields.find { |f| f.name == "Name" }&.value.presence || fields.find { |f| f.name == "Archetype" }&.value.presence || "Unnamed Character",
         action_values: action_values_from_pdf(fields),
         wealth: get_field(fields, "Wealth"),
         skills: get_skills_from_pdf(fields),
