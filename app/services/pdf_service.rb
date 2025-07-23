@@ -90,7 +90,7 @@ module PdfService
 
     def pdf_attributes_for_character(fields, campaign)
       {
-        name: fields.find { |f| f.name == "Name" }&.value,
+        name: fields.find { |f| f.name == "Name" }&.value || fields.find { |f| f.name == "Archetype" }&.value || "Unnamed Character",
         action_values: action_values_from_pdf(fields),
         wealth: get_field(fields, "Wealth"),
         skills: get_skills_from_pdf(fields),
@@ -128,6 +128,8 @@ module PdfService
         w.concealment = concealment
         w.reload_value = reload_value
         w.description = ""
+        w.kachunk = ""
+        w.juncture = ""
       end
     end
 
@@ -173,14 +175,15 @@ module PdfService
     def get_skills_from_pdf(fields)
       skills_text = get_field(fields, "Skills")
       skills = skills_text.to_s.split("\r").map do |skill|
-        skill.split(":")
-      end
+        match = skill.match(/^(.+?)\s+(\d+)$/)
+        match ? [match[1].strip, match[2].strip] : nil
+      end.compact
       skills.reduce({}) do |att, skill|
-        name = skill[0].strip
-        value = skill[1].strip
+        name = skill[0]
+        value = skill[1]
 
         if name != "Backup Attack"
-          att[name] = value.to_i if Character::DEFAULT_SKILLS.keys.include?(name) && value.to_i > 0
+          att[name] = value.to_i
         end
 
         att
