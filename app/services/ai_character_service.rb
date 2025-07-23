@@ -1,6 +1,6 @@
 class AiCharacterService
   class << self
-    def generate_character(description)
+    def generate_character(description, campaign)
       prompt = <<~PROMPT
         You are a creative AI character generator for a game of Feng Shui 2, the action movie roleplaying game.
         Based on the following description, create a detailed character profile:
@@ -10,7 +10,9 @@ class AiCharacterService
         type in the description itself, but use it to determine the attributes. A Featured Foe is a significant
         antagonist with unique abilities and a backstory, while a Boss is a major villain with powerful abilities.
 
-        If the character is a Mook, they should be a generic henchman with basic attributes.
+        If the character is a Mook, they should be a generic henchman with basic attributes. Never give
+        Mooks unique names or detailed descriptions. If the character is a Featured Foe or Boss, provide a
+        unique name and a detailed description of their personality, motivations, and background.
 
         Description: #{description}
 
@@ -18,13 +20,25 @@ class AiCharacterService
         - Name
         - Description
         - Type: Mook, Featured Foe, or Boss
-        - Main Attack: Either Guns, Sorcery, Martial Arts, Scroungetech (cyborg enhancements), or Creature (for supernatural creatures like werewolves or monsters)
+        - Main Attack: Either Guns, Sorcery, Martial Arts, Scroungetech (cyborg enhancements), Genome (for gene freaks, mutants, or supervillains) or Creature (for supernatural creatures like werewolves or monsters)
         - Attack Value: A number between 13 and 16. A Mook has the attack value of 9.
         - Defense: A number between 13 and 16. A Mook has the defense value of 13.
-        - Toughness: A number between 5 and 8.
+        - Toughness: A number between 5 and 8. A Mook has a null value.
         - Speed: A number between 5 and 8. A Mook has the speed of 6.
+        - Damage: A number between 7 and 12. A Mook has a damage value of 7.
+        - Faction: The name of the faction the character belongs to, if not specified in the description. Use one of the following factions from the campaign: #{faction_names(campaign)}.
+        - Juncture: The name of the temporal juncture where the character originated, if not specified in the description. Use one of the following juntures: #{juncture_names(campaign)}.
+        - Nicknames: A comma-separated string
+        - Age
+        - Height (in feet and inches)
+        - Weight (in pounds)
+        - Hair Color
+        - Eye Color
+        - Style of Dress: A brief description of their clothing style
+        - Wealth: Poor, Working Stiff, or Rich
+        - Appearance: A short paragraph describing their physical appearance
 
-        Respond with a JSON object describing the character, including all attributes.
+        Respond with a JSON object describing the character, including all attributes. Use lowercase camelCase for keys.
       PROMPT
 
       response = grok.send_request(prompt)
@@ -36,8 +50,7 @@ class AiCharacterService
           JSON.parse(json)
         rescue JSON::ParserError => e
           Rails.logger.error("JSON parsing error: #{e.message} for response: #{json}")
-
-          json
+          raise e
         end
       else
         raise "Unexpected response format: #{response}"
@@ -46,6 +59,14 @@ class AiCharacterService
       puts response.inspect if defined?(response)
       Rails.logger.error("Error generating character: #{e.message}")
       raise e
+    end
+
+    def juncture_names(campaign)
+      campaign.junctures.pluck(:name).join(', ')
+    end
+
+    def faction_names(campaign)
+      campaign.factions.pluck(:name).join(', ')
     end
 
     def grok

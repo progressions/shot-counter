@@ -3,13 +3,18 @@ class Api::V1::AiController < ApplicationController
   before_action :require_current_campaign
 
   def create
-    @json = AiCharacterService.generate_character(ai_params[:description])
+    @json = AiCharacterService.generate_character(ai_params[:description], current_campaign)
+
+    Rails.logger.info("Generated AI character JSON: #{@json}")
 
     if @json.is_a?(Hash) && @json['error']
       render json: { error: @json['error'] }, status: :unprocessable_entity
     else
       render json: @json, status: :created
     end
+  rescue JSON::ParserError => e
+    Rails.logger.error("JSON parsing error: #{e.message} for response: #{@json}")
+    render json: { error: "Failed to parse character data: #{e.message}" }, status: :unprocessable_entity
   rescue StandardError => e
     Rails.logger.error("Error generating AI character: #{e.message}")
     render json: { error: "Failed to generate character: #{e.message}" }, status: :internal_server_error

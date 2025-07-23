@@ -26,8 +26,6 @@ class GrokService
   def handle_response(response)
     if response.success?
       JSON.parse(response.body)
-    else
-      raise "API request failed with status #{response.code}: #{response.message}"
     end
   end
 end
