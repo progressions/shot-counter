@@ -1,7 +1,51 @@
 class AiCharacterService
   class << self
     def generate_character(description, campaign)
-      prompt = <<~PROMPT
+      prompt = build_prompt(description, campaign)
+      max_retries = 3
+      retry_count = 0
+      max_tokens = 1000  # Initial value; increase this in GrokService if possible
+
+      begin
+        response = grok.send_request(prompt)  # Update GrokService to accept and use max_tokens if needed
+
+        if response['choices'] && response['choices'].any?
+          choice = response['choices'].first
+          content = choice['message']['content']
+          finish_reason = choice['finish_reason']
+
+          if content.blank? || finish_reason == 'length'
+            raise "Incomplete response: content empty or truncated due to length"
+          end
+
+          json = JSON.parse(content)
+
+          return json if valid_json?(json)
+
+          raise "Invalid JSON structure"
+        else
+          raise "Unexpected response format: #{response}"
+        end
+      rescue JSON::ParserError, StandardError => e
+        Rails.logger.error("Error generating character: #{e.message}. Response: #{response.inspect if defined?(response)}")
+        retry_count += 1
+        if retry_count <= max_retries
+          max_tokens += 1024  # Increment for next attempt; pass to send_request if supported
+          Rails.logger.info("Retrying (#{retry_count}/#{max_retries}) with increased max_tokens: #{max_tokens}")
+          retry
+        else
+          raise "Failed after #{max_retries} retries: #{e.message}"
+        end
+      end
+    end
+
+    def valid_json?(json)
+      required_keys = %w[name description type mainAttack attackValue defense toughness speed damage faction juncture nicknames age height weight hairColor eyeColor styleOfDress wealth appearance]
+      required_keys.all? { |key| json.key?(key) }
+    end
+
+    def build_prompt(description, campaign)
+      <<~PROMPT
         You are a creative AI character generator for a game of Feng Shui 2, the action movie roleplaying game.
         Based on the following description, create a detailed character profile:
 
@@ -40,25 +84,6 @@ class AiCharacterService
 
         Respond with a JSON object describing the character, including all attributes. Use lowercase camelCase for keys.
       PROMPT
-
-      response = grok.send_request(prompt)
-
-      if response['choices'] && response['choices'].any?
-        json = response['choices'].first['message']['content']
-
-        begin
-          JSON.parse(json)
-        rescue JSON::ParserError => e
-          Rails.logger.error("JSON parsing error: #{e.message} for response: #{json}")
-          raise e
-        end
-      else
-        raise "Unexpected response format: #{response}"
-      end
-    rescue StandardError => e
-      puts response.inspect if defined?(response)
-      Rails.logger.error("Error generating character: #{e.message}")
-      raise e
     end
 
     def juncture_names(campaign)

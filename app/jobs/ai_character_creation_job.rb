@@ -5,6 +5,8 @@ class AiCharacterCreationJob < ApplicationJob
     campaign = Campaign.find(campaign_id)
     json = AiCharacterService.generate_character(description, campaign)
 
+    Rails.logger.info("Generated AI character JSON: #{json}")
+
     if json.is_a?(Hash) && json['error']
       ActionCable.server.broadcast("campaign_#{campaign.id}", { status: 'error', error: json['error'] })
       return

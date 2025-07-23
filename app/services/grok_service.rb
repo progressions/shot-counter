@@ -10,11 +10,11 @@ class GrokService
     }
   end
 
-  def send_request(prompt)
+  def send_request(prompt, max_tokens=2048)
     payload = {
       model: 'grok-4', # Specify the model (e.g., grok-4)
       messages: [{ role: 'user', content: prompt }],
-      max_tokens: 1000
+      max_tokens: max_tokens
     }
 
     response = self.class.post('/v1/chat/completions', headers: @headers, body: payload.to_json)
