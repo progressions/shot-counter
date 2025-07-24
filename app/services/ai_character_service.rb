@@ -10,8 +10,8 @@ class AiCharacterService
         response = grok.send_request(prompt)  # Update GrokService to accept and use max_tokens if needed
 
         if response['choices'] && response['choices'].any?
-          choice = response['choices'].first
-          content = choice['message']['content']
+          choice = response.dig("choices", 0)
+          content = choice.dig("message", "content")
           finish_reason = choice['finish_reason']
 
           if content.blank? || finish_reason == 'length'
