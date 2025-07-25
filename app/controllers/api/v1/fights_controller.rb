@@ -4,11 +4,14 @@ class Api::V1::FightsController < ApplicationController
   before_action :set_fight, only: [:show, :update, :destroy, :touch]
 
   def index
+    sort = params[:sort] || "created_at"
+    order = params[:order] || "DESC"
+
     @fights = current_campaign
       .fights
       .where(archived: false)
       .select(:id, :campaign_id, :name, :sequence, :active, :archived, :description, :created_at, :updated_at)
-      .order(updated_at: :desc)
+      .order(sort => order)
 
     if params[:show_all] != "true"
       @fights = @fights.where(active: true)

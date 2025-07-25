@@ -1,4 +1,3 @@
-# app/controllers/api/v1/users_controller.rb
 class Api::V1::UsersController < ApplicationController
   before_action :authenticate_user!
 
@@ -14,6 +13,10 @@ class Api::V1::UsersController < ApplicationController
       @user = User.find(params[:id])
     end
     render json: @user
+  end
+
+  def current
+    render json: current_user
   end
 
   def update
