@@ -30,6 +30,8 @@ class Vehicle < ApplicationRecord
 
   validates :name, presence: true, uniqueness: { scope: :campaign_id }
 
+  after_update :broadcast_campaign_update
+
   def as_json(args={})
     shot = args[:shot]
     {
@@ -146,5 +148,13 @@ class Vehicle < ApplicationRecord
         self.action_values[key] = DEFAULT_ACTION_VALUES[key]
       end
     end
+  end
+
+  def broadcast_campaign_update
+    channel = "campaign_#{campaign_id}"
+    payload = {
+      vehicle: self.as_json
+    }
+    result = ActionCable.server.broadcast(channel, payload)
   end
 end

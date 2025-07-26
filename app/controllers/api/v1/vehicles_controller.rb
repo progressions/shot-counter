@@ -5,8 +5,21 @@ class Api::V1::VehiclesController < ApplicationController
   before_action :set_vehicle, only: [:update, :destroy, :show]
 
   def index
-    @vehicles = @scoped_vehicles.includes(:user).order(:name).all
-    render json: @vehicles
+    sort = params[:sort] || "created_at"
+    order = params[:order] || "DESC"
+
+    @vehicles = @scoped_vehicles
+      .includes(:user)
+      .order(sort => order)
+    if params[:user_id]
+      @vehicles = @vehicles.where(user_id: params[:user_id])
+    end
+    @vehicles = paginate(@vehicles, per_page: (params[:per_page] || 10), page: (params[:page] || 1))
+
+    render json: {
+      vehicles: @vehicles,
+      meta: pagination_meta(@vehicles),
+    }
   end
 
   def archetypes

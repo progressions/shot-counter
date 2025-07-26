@@ -10,7 +10,7 @@ class Fight < ApplicationRecord
 
   after_update :enqueue_discord_notification
   after_update :broadcast_update
-  after_update :broadcast_campaign_update, if: -> { saved_change_to_name? || saved_change_to_description? }
+  after_commit :broadcast_campaign_update, on: [:create, :update]
   after_destroy :broadcast_reload
   after_create :broadcast_reload
 
@@ -32,8 +32,20 @@ class Fight < ApplicationRecord
       sequence: sequence,
       effects: effects,
       character_effects: character_effects.where("character_effects.character_id IS NOT NULL").group_by { |ce| ce.shot_id },
-      vehicle_effects: character_effects.where("character_effects.vehicle_id IS NOT NULL").group_by { |ce| ce.shot_id }
+      vehicle_effects: character_effects.where("character_effects.vehicle_id IS NOT NULL").group_by { |ce| ce.shot_id },
+      image_url: image_url
     }
+  end
+
+  def image_url
+    if image.attached?
+      image.url
+    else
+      nil
+    end
+  rescue StandardError => e
+    Rails.logger.error "Error generating image URL for fight #{id}: #{e.message}"
+    nil
   end
 
   def current_shot
@@ -90,7 +102,7 @@ class Fight < ApplicationRecord
 
   def broadcast_campaign_update
     channel = "campaign_#{campaign.id}"
-    payload = { fight: { id: id, name: name, description: description, updated_at: updated_at } }
+    payload = { fight: { id: id, name: name, description: description, updated_at: updated_at, image_url: image_url } }
     Rails.logger.info "Broadcasting to #{channel} with payload: #{payload.inspect}"
     result = ActionCable.server.broadcast(channel, payload)
     Rails.logger.info "Broadcast result: #{result.inspect} (number of subscribers)"

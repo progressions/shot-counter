@@ -133,6 +133,7 @@ class Character < ApplicationRecord
       wealth: wealth,
       juncture_id: juncture_id,
       juncture: {
+        id: juncture&.id,
         name: juncture&.name,
       }
     }
