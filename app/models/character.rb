@@ -87,7 +87,7 @@ class Character < ApplicationRecord
   before_save :ensure_integer_skills
   before_save :ensure_non_integer_action_values
 
-  # after_update :broadcast_update
+  after_update :broadcast_campaign_update
 
   validates :name, presence: true, uniqueness: { scope: :campaign_id }
 
@@ -396,7 +396,7 @@ class Character < ApplicationRecord
     end
   end
 
-  def broadcast_update
+  def broadcast_campaign_update
     channel = "campaign_#{campaign_id}"
     payload = {
       character: self.as_json

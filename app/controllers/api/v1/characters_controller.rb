@@ -5,8 +5,21 @@ class Api::V1::CharactersController < ApplicationController
   before_action :set_character, only: [:update, :destroy, :show, :remove_image, :sync, :pdf]
 
   def index
-    @characters = @scoped_characters.includes(:user).order(:name).all
-    render json: @characters
+    sort = params[:sort] || "created_at"
+    order = params[:order] || "DESC"
+
+    @characters = @scoped_characters
+      .includes(:user)
+      .order(sort => order)
+    if params[:user_id]
+      @characters = @characters.where(user_id: params[:user_id])
+    end
+    @characters = paginate(@characters, per_page: (params[:per_page] || 10), page: (params[:page] || 1))
+
+    render json: {
+      characters: @characters,
+      meta: pagination_meta(@characters),
+    }
   end
 
   def create

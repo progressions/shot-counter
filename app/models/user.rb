@@ -25,6 +25,7 @@ class User < ApplicationRecord
       with: /\A[^@\s]+@[^@.\s]+(?:\.[^@.\s]+)+\z/,
       message: "is invalid"
     }
+  after_update :broadcast_campaign_update
 
   def as_json(options = {})
     super(options.merge(
@@ -64,5 +65,19 @@ class User < ApplicationRecord
         image_url: image_url
       }
     )
+  end
+
+  def broadcast_campaign_update
+    payload = {
+      user: self.as_json
+    }
+    campaigns.each do |campaign|
+      channel = "campaign_#{campaign.id}"
+      ActionCable.server.broadcast(channel, payload)
+    end
+    player_campaigns.each do |campaign|
+      channel = "campaign_#{campaign.id}"
+      ActionCable.server.broadcast(channel, payload)
+    end
   end
 end
