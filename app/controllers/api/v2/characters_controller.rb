@@ -20,13 +20,13 @@ class Api::V2::CharactersController < ApplicationController
 
     cache_key = "characters/#{current_campaign.id}/#{sort}/#{order}/#{params['page']}/#{params['per_page']}/#{params['user_id']}"
     cached_result = Rails.cache.fetch(cache_key, expires_in: 5.minutes) do
-      includes = [:user, :faction, image_attachment: :blob]
+      includes = [:user, :faction]
       includes << { attunements: :site } if params["include"]&.include?("attunements")
       includes << { carries: :weapon } if params["include"]&.include?("carries")
       includes << { character_schticks: :schtick } if params["include"]&.include?("schticks")
       includes << :advancements if params["include"]&.include?("advancements")
 
-      @characters = @scoped_characters.includes(includes).order(sort)
+      @characters = @scoped_characters.select(:id, :name, :defense, :impairments, :color, :image_url, :user_id, :faction_id, Arel.sql("action_values->>'Type' AS type")).includes(includes).order(sort)
       @characters = @characters.where(user_id: params["user_id"]) if params["user_id"]
       @factions = @characters.map(&:faction).uniq.compact.sort_by(&:name)
       @characters = paginate(@characters, per_page: (params["per_page"] || 15), page: (params["page"] || 1))
@@ -35,6 +35,7 @@ class Api::V2::CharactersController < ApplicationController
       {
         characters: ActiveModelSerializers::SerializableResource.new(@characters, each_serializer: CharacterIndexSerializer).serializable_hash,
         factions: ActiveModelSerializers::SerializableResource.new(@factions, each_serializer: FactionSerializer).serializable_hash,
+        archetypes: @archetypes,
         meta: pagination_meta(@characters)
       }.to_json
     end
@@ -110,16 +111,12 @@ class Api::V2::CharactersController < ApplicationController
   end
 
   def remove_image
-    if @character.image.attached?
-      @character.image.purge
-      if @character.save
-        Rails.cache.delete_matched("characters/#{current_campaign.id}/*")
-        render json: @character
-      else
-        render json: @character.errors, status: :unprocessable_entity
-      end
-    else
+    @character.update(image_url: nil) # Updated for ImageKit
+    if @character.save
+      Rails.cache.delete_matched("characters/#{current_campaign.id}/*")
       render json: @character
+    else
+      render json: @character.errors, status: :unprocessable_entity
     end
   end
 
