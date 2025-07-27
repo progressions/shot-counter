@@ -23,6 +23,16 @@ Rails.application.routes.draw do
           delete :image, to: "vehicles#remove_image"
         end
       end
+      resources :junctures do
+        member do
+          delete :image, to: "sites#remove_image"
+        end
+      end
+      resources :sites do
+        member do
+          delete :image, to: "sites#remove_image"
+        end
+      end
     end
     namespace :v1 do
       resources :ai, only: [:create]

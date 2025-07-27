@@ -1,4 +1,4 @@
-class Api::V1::JuncturesController < ApplicationController
+class Api::V2::JuncturesController < ApplicationController
   before_action :authenticate_user!
   before_action :require_current_campaign
 
