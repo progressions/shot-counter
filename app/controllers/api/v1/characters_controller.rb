@@ -10,6 +10,8 @@ class Api::V1::CharactersController < ApplicationController
 
     if sort == "type"
       sort = Arel.sql("COALESCE(action_values->>'Type', '') #{order}")
+    elsif sort == "name"
+      sort = Arel.sql("LOWER(name) #{order}")
     else
       sort = Arel.sql("#{sort} #{order}")
     end
@@ -23,9 +25,11 @@ class Api::V1::CharactersController < ApplicationController
       .includes(:schticks)
       .includes(:advancements)
       .order(sort)
+
     if params[:user_id]
       @characters = @characters.where(user_id: params[:user_id])
     end
+
     @characters = paginate(@characters, per_page: (params[:per_page] || 10), page: (params[:page] || 1))
 
     render json: {
