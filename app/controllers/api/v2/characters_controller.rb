@@ -14,6 +14,8 @@ class Api::V2::CharactersController < ApplicationController
       sort = Arel.sql("COALESCE(action_values->>'Type', '') #{order}")
     elsif sort == "name"
       sort = Arel.sql("LOWER(characters.name) #{order}")
+    elsif sort == "created_at"
+      sort = Arel.sql("characters.created_at #{order}")
     else
       sort = Arel.sql("#{sort} #{order}")
     end
@@ -26,13 +28,18 @@ class Api::V2::CharactersController < ApplicationController
         :juncture,
         :schticks,
         :advancements,
-        attunements: :site,
-        carries: :weapon,
+        :carries,
+        :attunements,
+        :sites,
+        :weapons,
         image_attachment: :blob,
         user: { image_attachment: :blob },
         faction: { image_attachment: :blob },
-        attunements: { site: { image_attachment: :blob } },
-        carries: { weapon: { image_attachment: :blob } }
+        juncture: { image_attachment: :blob },
+        sites: { image_attachment: :blob },
+        weapons: { image_attachment: :blob },
+        carries: { weapon: { image_attachment: :blob } },
+        attunements: { site: { image_attachment: :blob } }
       )
       .order(sort)
 
@@ -43,7 +50,7 @@ class Api::V2::CharactersController < ApplicationController
 
     # Paginate with optimized count query
     @characters = paginate(@characters, per_page: (params[:per_page] || 15), page: (params[:page] || 1)) do |scope|
-      scope.select(:id).distinct.count
+      scope.where(campaign_id: current_campaign.id).select(:id).distinct.count
     end
 
     # Cache factions and archetypes using paginated character IDs
@@ -79,14 +86,14 @@ class Api::V2::CharactersController < ApplicationController
       Rails.cache.delete("campaign/#{current_campaign.id}/factions")
       Rails.cache.delete("campaign/#{current_campaign.id}/archetypes")
       SyncCharacterToNotionJob.perform_later(@character.id)
-      render json: @character
+      render json: CharacterSerializer.new(@character)
     else
       render json: @character.errors, status: 400
     end
   end
 
   def show
-    render json: @character
+    render json: CharacterSerializer.new(@character)
   end
 
   def update
@@ -95,7 +102,7 @@ class Api::V2::CharactersController < ApplicationController
       Rails.cache.delete("campaign/#{current_campaign.id}/factions")
       Rails.cache.delete("campaign/#{current_campaign.id}/archetypes")
       SyncCharacterToNotionJob.perform_later(@character.id)
-      render json: @character
+      render json: CharacterSerializer.new(@character)
     else
       render json: @character.errors, status: 400
     end
@@ -113,7 +120,7 @@ class Api::V2::CharactersController < ApplicationController
   def import
     if params[:pdf_file].present?
       # Initialize PDFtk with the path to the pdftk binary
-      pdftk = PdfForms.new('/usr/local/bin/pdftk') # Adjust path as needed
+      pdftk = PdfForms.new("/usr/local/bin/pdftk") # Adjust path as needed
 
       # Save uploaded PDF temporarily
       uploaded_file = params[:pdf_file]
@@ -124,7 +131,7 @@ class Api::V2::CharactersController < ApplicationController
         # Invalidate caches to reflect new character data
         Rails.cache.delete("campaign/#{current_campaign.id}/factions")
         Rails.cache.delete("campaign/#{current_campaign.id}/archetypes")
-        render json: @character, status: :created
+        render json: CharacterSerializer.new(@character), status: :created
       else
         Rails.logger.error("Character import failed: #{@character.errors.full_messages.join(', ')}")
         render json: @character.errors, status: :unprocessable_entity
@@ -141,7 +148,7 @@ class Api::V2::CharactersController < ApplicationController
     # Invalidate caches to reflect synced character data
     Rails.cache.delete("campaign/#{current_campaign.id}/factions")
     Rails.cache.delete("campaign/#{current_campaign.id}/archetypes")
-    render json: @character.reload
+    render json: CharacterSerializer.new(@character)
   end
 
   def remove_image
@@ -151,7 +158,7 @@ class Api::V2::CharactersController < ApplicationController
       # Invalidate caches to reflect updated character data
       Rails.cache.delete("campaign/#{current_campaign.id}/factions")
       Rails.cache.delete("campaign/#{current_campaign.id}/archetypes")
-      render json: @character
+      render json: CharacterSerializer.new(@character)
     else
       render json: @character.errors, status: 400
     end
