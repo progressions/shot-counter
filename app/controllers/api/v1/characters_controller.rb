@@ -12,6 +12,8 @@ class Api::V1::CharactersController < ApplicationController
       sort = Arel.sql("COALESCE(action_values->>'Type', '') #{order}")
     elsif sort == "name"
       sort = Arel.sql("LOWER(characters.name) #{order}")
+    elsif sort == "created_at"
+      sort = Arel.sql("characters.created_at #{order}")
     else
       sort = Arel.sql("#{sort} #{order}")
     end
