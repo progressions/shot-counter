@@ -25,7 +25,7 @@ class User < ApplicationRecord
       with: /\A[^@\s]+@[^@.\s]+(?:\.[^@.\s]+)+\z/,
       message: "is invalid"
     }
-  after_update :broadcast_campaign_update
+  after_update :broadcast_campaign_update, if: -> { saved_change_to_email? || saved_change_to_first_name? || saved_change_to_last_name? }
 
   def as_json(options = {})
     super(options.merge(

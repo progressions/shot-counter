@@ -8,9 +8,21 @@ class Api::V1::CharactersController < ApplicationController
     sort = params[:sort] || "created_at"
     order = params[:order] || "DESC"
 
+    if sort == "type"
+      sort = Arel.sql("COALESCE(action_values->>'Type', '') #{order}")
+    else
+      sort = Arel.sql("#{sort} #{order}")
+    end
+
     @characters = @scoped_characters
       .includes(:user)
-      .order(sort => order)
+      .includes(:faction)
+      .includes(:attunements)
+      .includes(:sites)
+      .includes(:juncture)
+      .includes(:schticks)
+      .includes(:advancements)
+      .order(sort)
     if params[:user_id]
       @characters = @characters.where(user_id: params[:user_id])
     end
@@ -18,7 +30,7 @@ class Api::V1::CharactersController < ApplicationController
 
     render json: {
       characters: @characters,
-      meta: pagination_meta(@characters),
+      meta: pagination_meta(@characters)
     }
   end
 
