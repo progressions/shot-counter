@@ -22,6 +22,8 @@ gem "puma", "~> 6.4.2"
 
 gem "pdf-forms"
 
+gem "httparty"
+
 # Use Redis adapter to run Action Cable in production
 gem "redis", "~> 4.0"
 

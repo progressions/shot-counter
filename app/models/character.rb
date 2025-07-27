@@ -87,6 +87,8 @@ class Character < ApplicationRecord
   before_save :ensure_integer_skills
   before_save :ensure_non_integer_action_values
 
+  # after_update :broadcast_update
+
   validates :name, presence: true, uniqueness: { scope: :campaign_id }
 
   scope :active, -> { where(active: true) }
@@ -392,5 +394,13 @@ class Character < ApplicationRecord
         self.action_values[key] = DEFAULT_ACTION_VALUES[key]
       end
     end
+  end
+
+  def broadcast_update
+    channel = "campaign_#{campaign_id}"
+    payload = {
+      character: self.as_json
+    }
+    result = ActionCable.server.broadcast(channel, payload)
   end
 end
