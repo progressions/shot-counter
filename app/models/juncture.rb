@@ -8,12 +8,12 @@ class Juncture < ApplicationRecord
 
   after_update :broadcast_campaign_update
 
-  def as_json(args = {})
+  def as_v1_json(args = {})
     {
       id: id,
       name: name,
       description: description,
-      faction: faction&.as_json(only: [:id, :name]),
+      faction: faction&.as_v1_json(only: [:id, :name]),
       active: active,
       created_at: created_at,
       updated_at: updated_at,
@@ -24,12 +24,23 @@ class Juncture < ApplicationRecord
           image_url: character.image.attached? ? character.image.url : nil
         }
       end,
-      image_url: image.attached? ? image.url : nil
+      image_url: image_url
     }
   rescue StandardError => e
-    Rails.logger.error "Error in Juncture#as_json for juncture #{id}: #{e.message}"
+    Rails.logger.error "Error in Juncture#as_v1_json for juncture #{id}: #{e.message}"
     raise # Re-raise to help diagnose in controller
   end
+
+  def image_url
+    return unless image_attachment && image_attachment.blob
+    if Rails.env.production?
+      image.attached? ? image.url : nil
+    else
+      Rails.application.routes.url_helpers.rails_blob_url(image_attachment.blob, only_path: true)
+    end
+  end
+
+  private
 
   def broadcast_campaign_update
     channel = "campaign_#{campaign_id}"

@@ -104,7 +104,7 @@ class Api::V1::CharactersAndVehiclesController < ApplicationController
       .map { |shot|
         shot
           .character
-          .as_json(shot: shot)
+          .as_v1_json(shot: shot)
           .slice(:id, :name, :impairments, :action_values, :location, :shot_id, :count)
       }
 
@@ -128,7 +128,7 @@ class Api::V1::CharactersAndVehiclesController < ApplicationController
       .map { |shot|
         shot
           .vehicle
-          .as_json(shot: shot)
+          .as_v1_json(shot: shot)
           .slice(:id, :name, :impairments, :action_values, :driver, :location, :shot_id, :count)
       }
 

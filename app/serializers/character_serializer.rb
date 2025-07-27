@@ -12,8 +12,4 @@ class CharacterSerializer < ActiveModel::Serializer
   has_many :weapons, through: :carries, serializer: WeaponSerializer
   has_many :attunements, serializer: AttunementSerializer
   has_many :sites, through: :attunements, serializer: SiteSerializer
-
-  def image_url
-    object.image_url
-  end
 end

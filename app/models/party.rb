@@ -8,7 +8,7 @@ class Party < ApplicationRecord
 
   validates :name, presence: true, uniqueness: { scope: :campaign_id }
 
-  def as_json(options = {})
+  def as_v1_json(options = {})
     {
       id: id,
       name: name,
@@ -35,7 +35,16 @@ class Party < ApplicationRecord
           faction: vehicle.faction,
         }
       },
-      image_url: image.attached? ? image.url : nil,
+      image_url: image_url
     }
+  end
+
+  def image_url
+    return unless image_attachment && image_attachment.blob
+    if Rails.env.production?
+      image.attached? ? image.url : nil
+    else
+      Rails.application.routes.url_helpers.rails_blob_url(image_attachment.blob, only_path: true)
+    end
   end
 end

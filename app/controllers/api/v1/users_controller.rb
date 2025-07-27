@@ -53,7 +53,7 @@ class Api::V1::UsersController < ApplicationController
   def encode_jwt(user)
     payload = {
       jti: SecureRandom.uuid,
-      user: user.as_json(only: [:email, :admin, :first_name, :last_name, :gamemaster, :current_campaign, :created_at, :updated_at, :image_url]),
+      user: user.as_v1_json(only: [:email, :admin, :first_name, :last_name, :gamemaster, :current_campaign, :created_at, :updated_at, :image_url]),
       sub: user.id,
       scp: "user",
       aud: nil,

@@ -18,15 +18,16 @@ class Api::V2::CharactersController < ApplicationController
       sort = Arel.sql("#{sort} #{order}")
     end
 
+    # Fetch characters with eager-loaded associations
     @characters = @scoped_characters
       .eager_load(
-        :faction,
         :user,
+        :faction,
         :juncture,
+        :schticks,
         :advancements,
-        carries: :weapon,
         attunements: :site,
-        character_schticks: :schtick,
+        carries: :weapon,
         image_attachment: :blob,
         user: { image_attachment: :blob },
         faction: { image_attachment: :blob },
@@ -40,18 +41,26 @@ class Api::V2::CharactersController < ApplicationController
       @characters = @characters.where(user_id: params[:user_id])
     end
 
-    # Paginate characters before plucking to limit dataset
-    @characters = paginate(@characters, per_page: (params[:per_page] || 15), page: (params[:page] || 1))
+    # Paginate with optimized count query
+    @characters = paginate(@characters, per_page: (params[:per_page] || 15), page: (params[:page] || 1)) do |scope|
+      scope.select(:id).distinct.count
+    end
 
-    # Cache factions and archetypes to reduce database queries
+    # Cache factions and archetypes using paginated character IDs
+    character_ids = @characters.map(&:id)
     @factions = Rails.cache.fetch("campaign/#{current_campaign.id}/factions", expires_in: 1.hour) do
-      Faction.eager_load(image_attachment: :blob).where(id: @characters.pluck(:faction_id).uniq).order(:name)
+      Faction.eager_load(image_attachment: :blob)
+             .where(id: @scoped_characters.where(id: character_ids).pluck(:faction_id).uniq.compact)
+             .order(:name)
     end
 
     @archetypes = Rails.cache.fetch("campaign/#{current_campaign.id}/archetypes", expires_in: 1.hour) do
-      @characters.where("action_values->>'Archetype' != ''").pluck(Arel.sql("action_values->>'Archetype'")).uniq
+      @scoped_characters.where(id: character_ids)
+                        .where("action_values->>'Archetype' != ''")
+                        .pluck(Arel.sql("action_values->>'Archetype'")).uniq
     end
 
+    # Render JSON response
     render json: {
       characters: ActiveModelSerializers::SerializableResource.new(@characters, each_serializer: CharacterSerializer),
       factions: ActiveModelSerializers::SerializableResource.new(@factions, each_serializer: FactionSerializer),
@@ -72,7 +81,7 @@ class Api::V2::CharactersController < ApplicationController
       SyncCharacterToNotionJob.perform_later(@character.id)
       render json: @character
     else
-      render status: 400
+      render json: @character.errors, status: 400
     end
   end
 
@@ -88,7 +97,7 @@ class Api::V2::CharactersController < ApplicationController
       SyncCharacterToNotionJob.perform_later(@character.id)
       render json: @character
     else
-      render @character.errors, status: 400
+      render json: @character.errors, status: 400
     end
   end
 
@@ -98,7 +107,7 @@ class Api::V2::CharactersController < ApplicationController
     # Invalidate caches to reflect deleted character
     Rails.cache.delete("campaign/#{current_campaign.id}/factions")
     Rails.cache.delete("campaign/#{current_campaign.id}/archetypes")
-    render :ok
+    render json: { status: :ok }
   end
 
   def import
@@ -144,7 +153,7 @@ class Api::V2::CharactersController < ApplicationController
       Rails.cache.delete("campaign/#{current_campaign.id}/archetypes")
       render json: @character
     else
-      render @character.errors, status: 400
+      render json: @character.errors, status: 400
     end
   end
 

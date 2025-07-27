@@ -27,7 +27,7 @@ class User < ApplicationRecord
     }
   after_update :broadcast_campaign_update, if: -> { saved_change_to_email? || saved_change_to_first_name? || saved_change_to_last_name? }
 
-  def as_json(options = {})
+  def as_v1_json(options = {})
     super(options.merge(
       only: [:id, :email, :first_name, :last_name, :admin, :gamemaster],
       methods: [:image_url, :name],

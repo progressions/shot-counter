@@ -19,7 +19,7 @@ class Fight < ApplicationRecord
   SORT_ORDER = ["Uber-Boss", "Boss", "PC", "Featured Foe", "Ally", "Mook"]
   DEFAULT_SHOT_COUNT = 3
 
-  def as_json(args={})
+  def as_v1_json(args={})
     {
       id: id,
       name: name,
@@ -38,14 +38,12 @@ class Fight < ApplicationRecord
   end
 
   def image_url
-    if image.attached?
-      image.url
+    return unless image_attachment && image_attachment.blob
+    if Rails.env.production?
+      image.attached? ? image.url : nil
     else
-      nil
+      Rails.application.routes.url_helpers.rails_blob_url(image_attachment.blob, only_path: true)
     end
-  rescue StandardError => e
-    Rails.logger.error "Error generating image URL for fight #{id}: #{e.message}"
-    nil
   end
 
   def current_shot

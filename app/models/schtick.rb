@@ -33,11 +33,13 @@ class Schtick < ApplicationRecord
   validates :category, inclusion: { in: CATEGORIES }, allow_nil: true, unless: -> { path == "Core" }
   validate :prerequisite_must_be_in_same_category_and_path
 
+  has_one_attached :image
+
   def self.for_archetype(archetype)
     where("schticks.archetypes @> ?", [archetype].flatten.to_json)
   end
 
-  def as_json(args={})
+  def as_v1_json(args={})
     {
       id: id,
       name: name,
@@ -114,5 +116,14 @@ class Schtick < ApplicationRecord
     end
 
     result
+  end
+
+  def image_url
+    return unless image_attachment && image_attachment.blob
+    if Rails.env.production?
+      image.attached? ? image.url : nil
+    else
+      Rails.application.routes.url_helpers.rails_blob_url(image_attachment.blob, only_path: true)
+    end
   end
 end

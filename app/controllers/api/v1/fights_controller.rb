@@ -22,7 +22,7 @@ class Api::V1::FightsController < ApplicationController
     @fights_json = @fights.map do |fight|
       character_names = fight.characters
       vehicle_names = fight.vehicles
-      fight.as_json.slice(:id, :name, :sequence, :active, :archived, :description, :created_at, :updated_at, :image_url).merge({
+      fight.as_v1_json.slice(:id, :name, :sequence, :active, :archived, :description, :created_at, :updated_at, :image_url).merge({
         actors: character_names + vehicle_names,
       })
     end

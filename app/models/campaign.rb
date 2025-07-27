@@ -18,7 +18,7 @@ class Campaign < ApplicationRecord
 
   after_update :broadcast_campaign_update, if: -> { saved_change_to_name? || saved_change_to_description? }
 
-  def as_json(args={})
+  def as_v1_json(args={})
     {
       id: id,
       name: name,
