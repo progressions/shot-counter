@@ -23,7 +23,11 @@ class Faction < ApplicationRecord
           image_url: character.image_url,
         }
       },
-      image_url: image.attached? ? image.url : nil,
+      image_url: image_url
     }
+  end
+
+  def image_url
+    image.attached? ? image.url : nil
   end
 end

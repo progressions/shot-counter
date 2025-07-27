@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_07_23_203605) do
+ActiveRecord::Schema[8.0].define(version: 2025_07_27_132246) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -134,6 +134,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_23_203605) do
     t.boolean "is_template"
     t.uuid "juncture_id"
     t.string "wealth"
+    t.index ["action_values"], name: "index_characters_on_action_values", using: :gin
     t.index ["campaign_id"], name: "index_characters_on_campaign_id"
     t.index ["created_at"], name: "index_characters_on_created_at"
     t.index ["faction_id"], name: "index_characters_on_faction_id"

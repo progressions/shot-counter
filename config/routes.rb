@@ -6,6 +6,19 @@ Rails.application.routes.draw do
     passwords: "users/passwords",
   }
   namespace :api do
+    namespace :v2 do
+      resources :characters do
+        resources :schticks, controller: "character_schticks"
+        resources :advancements
+        resources :sites, controller: "attunements"
+        resources :weapons, controller: "carries"
+        member do
+          delete :image, to: "characters#remove_image"
+          post :sync
+          get :pdf
+        end
+      end
+    end
     namespace :v1 do
       resources :ai, only: [:create]
       resources :suggestions, only: [:index]
