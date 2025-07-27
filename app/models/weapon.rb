@@ -6,6 +6,7 @@ class Weapon < ApplicationRecord
 
   validates :name, presence: true, uniqueness: { scope: :campaign_id }
   validates :damage, presence: true
+  after_update :broadcast_campaign_update
 
   def as_v1_json(args = {})
     {
@@ -32,4 +33,13 @@ class Weapon < ApplicationRecord
     end
   end
 
+  private
+
+  def broadcast_campaign_update
+    channel = "campaign_#{campaign_id}"
+    payload = { weapon: as_json }
+    ActionCable.server.broadcast(channel, payload)
+  rescue StandardError => e
+    Rails.logger.error "Failed to broadcast campaign update for juncture #{id}: #{e.message}"
+  end
 end

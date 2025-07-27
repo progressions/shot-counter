@@ -3,7 +3,17 @@ class Api::V2::SitesController < ApplicationController
   before_action :require_current_campaign
 
   def index
-    @sites = current_campaign.sites.order("LOWER(sites.name) ASC")
+    sort = params["sort"] || "created_at"
+    order = params["order"] || "DESC"
+
+    if sort == "name"
+      sort = Arel.sql("LOWER(sites.name) #{order}")
+    elsif sort == "created_at"
+      sort = Arel.sql("sites.created_at #{order}")
+    else
+      sort = Arel.sql("sites.created_at DESC")
+    end
+    @sites = current_campaign.sites.includes(:faction, :image_attachment).order(sort)
 
     @factions = current_campaign.factions.joins(:sites).where(sites: @sites).order("factions.name").distinct
 

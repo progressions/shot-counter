@@ -6,6 +6,7 @@ class Site < ApplicationRecord
   has_one_attached :image
 
   validates :name, presence: true, uniqueness: { scope: :campaign_id }
+  after_update :broadcast_campaign_update
 
   def as_v1_json(args = {})
     {
@@ -36,4 +37,13 @@ class Site < ApplicationRecord
     end
   end
 
+  private
+
+  def broadcast_campaign_update
+    channel = "campaign_#{campaign_id}"
+    payload = { site: as_json }
+    ActionCable.server.broadcast(channel, payload)
+  rescue StandardError => e
+    Rails.logger.error "Failed to broadcast campaign update for juncture #{id}: #{e.message}"
+  end
 end

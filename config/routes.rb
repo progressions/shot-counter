@@ -8,14 +8,15 @@ Rails.application.routes.draw do
   namespace :api do
     namespace :v2 do
       resources :characters do
-        resources :schticks, controller: "character_schticks"
-        resources :advancements
-        resources :sites, controller: "attunements"
-        resources :weapons, controller: "carries"
         member do
           delete :image, to: "characters#remove_image"
           post :sync
           get :pdf
+        end
+      end
+      resources :weapons do
+        member do
+          delete :image, to: "weapons#remove_image"
         end
       end
       resources :vehicles do
@@ -33,6 +34,12 @@ Rails.application.routes.draw do
           delete :image, to: "sites#remove_image"
         end
       end
+      resources :parties do
+        member do
+          delete :image, to: "parties#remove_image"
+        end
+      end
+      resources :schticks
     end
     namespace :v1 do
       resources :ai, only: [:create]
