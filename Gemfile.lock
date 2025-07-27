@@ -415,6 +415,7 @@ DEPENDENCIES
   redis (~> 4.0)
   reverse_markdown
   rspec-rails
+  ruby-vips
   sidekiq (~> 7.0)
   tzinfo-data
 
