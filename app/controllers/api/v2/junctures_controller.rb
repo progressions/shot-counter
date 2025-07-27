@@ -66,7 +66,6 @@ class Api::V2::JuncturesController < ApplicationController
     if @juncture.save
       render json: @juncture, status: :created
     else
-      binding.pry
       render json: { errors: @juncture.errors.full_messages }, status: :unprocessable_entity
     end
   end

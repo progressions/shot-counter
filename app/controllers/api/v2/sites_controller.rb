@@ -41,39 +41,64 @@ class Api::V2::SitesController < ApplicationController
 
   def create
     # Check if request is multipart/form-data with a JSON string
-    if params[:juncture].present? && params[:juncture].is_a?(String)
+    if params[:site].present? && params[:site].is_a?(String)
       begin
-        juncture_data = JSON.parse(params[:juncture]).symbolize_keys
+        site_data = JSON.parse(params[:site]).symbolize_keys
       rescue JSON::ParserError
-        render json: { error: "Invalid juncture data format" }, status: :bad_request
+        render json: { error: "Invalid site data format" }, status: :bad_request
         return
       end
     else
-      juncture_data = juncture_params.to_h.symbolize_keys
+      site_data = site_params.to_h.symbolize_keys
     end
 
-    juncture_data.slice(:name, :description, :active, :faction_id)
+    site_data.slice(:name, :description, :active, :faction_id)
 
-    @juncture = current_campaign.junctures.new(juncture_data)
+    @site = current_campaign.sites.new(site_data)
 
     # Handle image attachment if present
     if params[:image].present?
-      @juncture.image.attach(params[:image])
+      @site.image.attach(params[:image])
     end
 
-    if @juncture.save
-      render json: @juncture, status: :created
+    if @site.save
+      render json: @site, status: :created
     else
-      binding.pry
-      render json: { errors: @juncture.errors.full_messages }, status: :unprocessable_entity
+      render json: { errors: @site.errors.full_messages }, status: :unprocessable_entity
     end
   end
 
   def update
-    site = current_campaign.sites.find(params[:id])
-    site.update(site_params)
+    @site = current_campaign.sites.find(params[:id])
 
-    render json: site
+    # Handle multipart/form-data for updates if present
+    if params[:site].present? && params[:site].is_a?(String)
+      begin
+        site_data = JSON.parse(params[:site]).symbolize_keys
+      rescue JSON::ParserError
+        render json: { error: "Invalid site data format" }, status: :bad_request
+        return
+      end
+    else
+      site_data = site_params.to_h.symbolize_keys
+    end
+    site_data = site_data.slice(:name, :description, :active, :faction_id)
+
+    # Handle image attachment if present
+    if params[:image].present?
+      begin
+        @site.image.purge if @site.image.attached? # Remove existing image
+        @site.image.attach(params[:image])
+      rescue StandardError => e
+        Rails.logger.error("Error uploading to ImageKit")
+      end
+    end
+
+    if @site.update(site_data)
+      render json: @site
+    else
+      render json: { errors: @site.errors.full_messages }, status: :unprocessable_entity
+    end
   end
 
   def destroy
