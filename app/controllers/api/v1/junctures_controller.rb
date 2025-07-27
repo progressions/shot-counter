@@ -54,7 +54,7 @@ class Api::V1::JuncturesController < ApplicationController
       juncture_data = juncture_params.to_h.symbolize_keys
     end
 
-    juncture_data.delete(:image_url)
+    juncture_data.slice(:name, :description, :active, :faction_id)
 
     @juncture = current_campaign.junctures.new(juncture_data)
 
@@ -66,6 +66,7 @@ class Api::V1::JuncturesController < ApplicationController
     if @juncture.save
       render json: @juncture, status: :created
     else
+      binding.pry
       render json: { errors: @juncture.errors.full_messages }, status: :unprocessable_entity
     end
   end

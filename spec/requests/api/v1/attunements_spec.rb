@@ -17,7 +17,7 @@ RSpec.describe "Api::V1::CharacterSites", type: :request do
       get "/api/v1/characters/#{@brick.id}/sites", headers: @headers
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
-      expect(body).to eq(JSON.parse([@site].to_json))
+      expect(body[0]).to eq(JSON.parse(SiteSerializer.new(@site).to_json))
     end
   end
 

@@ -11,6 +11,7 @@ class Api::V1::VehiclesController < ApplicationController
     @vehicles = @scoped_vehicles
       .includes(:user)
       .order(sort => order)
+
     if params[:user_id]
       @vehicles = @vehicles.where(user_id: params[:user_id])
     end

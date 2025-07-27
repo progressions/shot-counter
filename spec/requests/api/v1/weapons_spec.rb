@@ -17,7 +17,7 @@ RSpec.describe "Api::V1::Weapons", type: :request do
       get "/api/v1/weapons", headers: @headers
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
-      expect(body["weapons"]).to eq(JSON.parse([@beretta].to_json))
+      expect(body["weapons"]).to eq([JSON.parse(@beretta.as_v1_json.to_json)])
     end
   end
 
@@ -27,7 +27,7 @@ RSpec.describe "Api::V1::Weapons", type: :request do
       get "/api/v1/weapons/#{@beretta.id}", headers: @headers
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
-      expect(body).to eq(JSON.parse(@beretta.to_json))
+      expect(body).to eq(JSON.parse(@beretta.as_v1_json.to_json))
     end
   end
 

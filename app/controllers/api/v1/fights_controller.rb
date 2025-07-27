@@ -34,7 +34,7 @@ class Api::V1::FightsController < ApplicationController
   end
 
   def show
-    render json: @fight
+    render json: @fight.as_v1_json
   end
 
   def create

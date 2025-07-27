@@ -73,7 +73,7 @@ class Fight < ApplicationRecord
       .map { |shot, shot_chars|
         [shot, shot_chars
           .sort_by(&:sort_order)
-          .map(&:as_json)
+          .map(&:as_v1_json)
           .flatten
           .compact
         ]
