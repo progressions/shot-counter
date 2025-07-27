@@ -2,14 +2,12 @@ class Api::V2::CharactersController < ApplicationController
   before_action :authenticate_user!
   before_action :require_current_campaign
   before_action :set_scoped_characters
-  before_action :set_character, only: [:update, :destroy, :show, :remove_image, :sync, :pdf]
+  before_action :set_character, only: ["update", "destroy", "show", "remove_image", "sync", "pdf"]
 
   def index
-    # Define sorting parameters
-    sort = params[:sort] || "created_at"
-    order = params[:order] || "DESC"
+    sort = params["sort"] || "created_at"
+    order = params["order"] || "DESC"
 
-    # Build safe SQL for sorting
     if sort == "type"
       sort = Arel.sql("COALESCE(action_values->>'Type', '') #{order}")
     elsif sort == "name"
@@ -17,63 +15,31 @@ class Api::V2::CharactersController < ApplicationController
     elsif sort == "created_at"
       sort = Arel.sql("characters.created_at #{order}")
     else
-      sort = Arel.sql("characters.#{sort} #{order}")
+      sort = Arel.sql("characters.created_at DESC")
     end
 
-    # Fetch characters with eager-loaded associations
-    @characters = @scoped_characters
-      .eager_load(
-        :user,
-        :faction,
-        :juncture,
-        :schticks,
-        :advancements,
-        :carries,
-        :attunements,
-        :sites,
-        :weapons,
-        image_attachment: :blob,
-        user: { image_attachment: :blob },
-        faction: { image_attachment: :blob },
-        juncture: { image_attachment: :blob },
-        sites: { image_attachment: :blob },
-        weapons: { image_attachment: :blob },
-        carries: { weapon: { image_attachment: :blob } },
-        attunements: { site: { image_attachment: :blob } }
-      )
-      .order(sort)
+    cache_key = "characters/#{current_campaign.id}/#{sort}/#{order}/#{params['page']}/#{params['per_page']}/#{params['user_id']}"
+    cached_result = Rails.cache.fetch(cache_key, expires_in: 5.minutes) do
+      includes = [:user, :faction, image_attachment: :blob]
+      includes << { attunements: :site } if params["include"]&.include?("attunements")
+      includes << { carries: :weapon } if params["include"]&.include?("carries")
+      includes << { character_schticks: :schtick } if params["include"]&.include?("schticks")
+      includes << :advancements if params["include"]&.include?("advancements")
 
-    # Apply user_id filter if provided
-    if params[:user_id]
-      @characters = @characters.where(user_id: params[:user_id])
+      @characters = @scoped_characters.includes(includes).order(sort)
+      @characters = @characters.where(user_id: params["user_id"]) if params["user_id"]
+      @factions = @characters.map(&:faction).uniq.compact.sort_by(&:name)
+      @characters = paginate(@characters, per_page: (params["per_page"] || 15), page: (params["page"] || 1))
+      @archetypes = @characters.select(:user_id, :faction_id, Arel.sql("action_values->>'Type' AS type")).map(&:type).uniq.compact.sort
+
+      {
+        characters: ActiveModelSerializers::SerializableResource.new(@characters, each_serializer: CharacterIndexSerializer).serializable_hash,
+        factions: ActiveModelSerializers::SerializableResource.new(@factions, each_serializer: FactionSerializer).serializable_hash,
+        meta: pagination_meta(@characters)
+      }.to_json
     end
 
-    # Paginate with optimized count query
-    @characters = paginate(@characters, per_page: (params[:per_page] || 15), page: (params[:page] || 1)) do |scope|
-      scope.where(campaign_id: current_campaign.id).select(:id).distinct.count
-    end
-
-    # Cache factions and archetypes using paginated character IDs
-    character_ids = @characters.map(&:id)
-    @factions = Rails.cache.fetch("campaign/#{current_campaign.id}/factions", expires_in: 1.hour) do
-      Faction.eager_load(image_attachment: :blob)
-             .where(id: @scoped_characters.where(id: character_ids).pluck(:faction_id).uniq.compact)
-             .order(:name)
-    end
-
-    @archetypes = Rails.cache.fetch("campaign/#{current_campaign.id}/archetypes", expires_in: 1.hour) do
-      @scoped_characters.where(id: character_ids)
-                        .where("action_values->>'Archetype' != ''")
-                        .pluck(Arel.sql("action_values->>'Archetype'")).uniq
-    end
-
-    # Render JSON response
-    render json: {
-      characters: ActiveModelSerializers::SerializableResource.new(@characters, each_serializer: CharacterSerializer),
-      factions: ActiveModelSerializers::SerializableResource.new(@factions, each_serializer: FactionSerializer),
-      archetypes: @archetypes,
-      meta: pagination_meta(@characters)
-    }
+    render json: JSON.parse(cached_result)
   end
 
   def create
@@ -82,56 +48,48 @@ class Api::V2::CharactersController < ApplicationController
     @character.campaign = current_campaign
 
     if @character.save
-      # Invalidate caches to reflect new character data
-      Rails.cache.delete("campaign/#{current_campaign.id}/factions")
-      Rails.cache.delete("campaign/#{current_campaign.id}/archetypes")
+      Rails.cache.delete_matched("characters/#{current_campaign.id}/*")
       SyncCharacterToNotionJob.perform_later(@character.id)
-      render json: CharacterSerializer.new(@character)
+      render json: @character
     else
-      render json: @character.errors, status: 400
+      render status: 400
     end
   end
 
   def show
-    render json: CharacterSerializer.new(@character)
+    render json: @character
   end
 
   def update
     if @character.update(character_params)
-      # Invalidate caches to reflect updated character data
-      Rails.cache.delete("campaign/#{current_campaign.id}/factions")
-      Rails.cache.delete("campaign/#{current_campaign.id}/archetypes")
+      Rails.cache.delete_matched("characters/#{current_campaign.id}/*")
       SyncCharacterToNotionJob.perform_later(@character.id)
-      render json: CharacterSerializer.new(@character)
+      render json: @character
     else
-      render json: @character.errors, status: 400
+      render @character.errors, status: 400
     end
   end
 
   def destroy
     @character.carries.destroy_all
     @character.destroy!
-    # Invalidate caches to reflect deleted character
-    Rails.cache.delete("campaign/#{current_campaign.id}/factions")
-    Rails.cache.delete("campaign/#{current_campaign.id}/archetypes")
-    render json: { status: :ok }
+    Rails.cache.delete_matched("characters/#{current_campaign.id}/*")
+    render json: { message: "Character deleted successfully" }, status: :ok
   end
 
   def import
-    if params[:pdf_file].present?
+    if params["pdf_file"].present?
       # Initialize PDFtk with the path to the pdftk binary
       pdftk = PdfForms.new("/usr/local/bin/pdftk") # Adjust path as needed
 
       # Save uploaded PDF temporarily
-      uploaded_file = params[:pdf_file]
+      uploaded_file = params["pdf_file"]
 
       @character = PdfService.pdf_to_character(uploaded_file, current_campaign, { user: current_user })
 
       if @character.save
-        # Invalidate caches to reflect new character data
-        Rails.cache.delete("campaign/#{current_campaign.id}/factions")
-        Rails.cache.delete("campaign/#{current_campaign.id}/archetypes")
-        render json: CharacterSerializer.new(@character), status: :created
+        Rails.cache.delete_matched("characters/#{current_campaign.id}/*")
+        render json: @character, status: :created
       else
         Rails.logger.error("Character import failed: #{@character.errors.full_messages.join(', ')}")
         render json: @character.errors, status: :unprocessable_entity
@@ -143,24 +101,25 @@ class Api::V2::CharactersController < ApplicationController
   end
 
   def sync
-    NotionService.update_character_from_notion(@character)
-
-    # Invalidate caches to reflect synced character data
-    Rails.cache.delete("campaign/#{current_campaign.id}/factions")
-    Rails.cache.delete("campaign/#{current_campaign.id}/archetypes")
-    render json: CharacterSerializer.new(@character)
+    if NotionService.update_character_from_notion(@character)
+      Rails.cache.delete_matched("characters/#{current_campaign.id}/*")
+      render json: @character.reload
+    else
+      render json: { error: "Notion sync failed" }, status: :unprocessable_entity
+    end
   end
 
   def remove_image
-    @character.image.purge
-
-    if @character.save
-      # Invalidate caches to reflect updated character data
-      Rails.cache.delete("campaign/#{current_campaign.id}/factions")
-      Rails.cache.delete("campaign/#{current_campaign.id}/archetypes")
-      render json: CharacterSerializer.new(@character)
+    if @character.image.attached?
+      @character.image.purge
+      if @character.save
+        Rails.cache.delete_matched("characters/#{current_campaign.id}/*")
+        render json: @character
+      else
+        render json: @character.errors, status: :unprocessable_entity
+      end
     else
-      render json: @character.errors, status: 400
+      render json: @character
     end
   end
 
@@ -174,7 +133,7 @@ class Api::V2::CharactersController < ApplicationController
   private
 
   def set_character
-    @character = @scoped_characters.find(params[:id])
+    @character = @scoped_characters.find(params["id"])
   end
 
   def set_scoped_characters
