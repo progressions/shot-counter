@@ -18,6 +18,11 @@ Rails.application.routes.draw do
           get :pdf
         end
       end
+      resources :vehicles do
+        member do
+          delete :image, to: "vehicles#remove_image"
+        end
+      end
     end
     namespace :v1 do
       resources :ai, only: [:create]

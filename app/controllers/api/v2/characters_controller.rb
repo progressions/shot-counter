@@ -20,17 +20,17 @@ class Api::V2::CharactersController < ApplicationController
 
     cache_key = "characters/#{current_campaign.id}/#{sort}/#{order}/#{params['page']}/#{params['per_page']}/#{params['user_id']}"
     cached_result = Rails.cache.fetch(cache_key, expires_in: 5.minutes) do
-      includes = [:user, :faction]
+      includes = [{ user: { image_attachment: :blob } }, { faction: { image_attachment: :blob } }, image_attachment: :blob]
       includes << { attunements: :site } if params["include"]&.include?("attunements")
       includes << { carries: :weapon } if params["include"]&.include?("carries")
       includes << { character_schticks: :schtick } if params["include"]&.include?("schticks")
       includes << :advancements if params["include"]&.include?("advancements")
 
-      @characters = @scoped_characters.select(:id, :name, :defense, :impairments, :color, :image_url, :user_id, :faction_id, Arel.sql("action_values->>'Type' AS type")).includes(includes).order(sort)
+      @characters = @scoped_characters.select(:id, :created_at, :name, :defense, :impairments, :color, :user_id, :faction_id, :action_values).includes(includes).order(sort)
       @characters = @characters.where(user_id: params["user_id"]) if params["user_id"]
       @factions = @characters.map(&:faction).uniq.compact.sort_by(&:name)
       @characters = paginate(@characters, per_page: (params["per_page"] || 15), page: (params["page"] || 1))
-      @archetypes = @characters.select(:user_id, :faction_id, Arel.sql("action_values->>'Type' AS type")).map(&:type).uniq.compact.sort
+      @archetypes = @characters.select("action_values->>'Archetype'").map { |c| c.action_values["Archetype"] }.compact.sort
 
       {
         characters: ActiveModelSerializers::SerializableResource.new(@characters, each_serializer: CharacterIndexSerializer).serializable_hash,
@@ -111,12 +111,16 @@ class Api::V2::CharactersController < ApplicationController
   end
 
   def remove_image
-    @character.update(image_url: nil) # Updated for ImageKit
-    if @character.save
-      Rails.cache.delete_matched("characters/#{current_campaign.id}/*")
-      render json: @character
+    if @character.image.attached?
+      @character.image.purge
+      if @character.save
+        Rails.cache.delete_matched("characters/#{current_campaign.id}/*")
+        render json: @character
+      else
+        render json: @character.errors, status: :unprocessable_entity
+      end
     else
-      render json: @character.errors, status: :unprocessable_entity
+      render json: @character
     end
   end
 
