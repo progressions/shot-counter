@@ -39,7 +39,16 @@ Rails.application.routes.draw do
           delete :image, to: "parties#remove_image"
         end
       end
-      resources :schticks
+      resources :schticks do
+        member do
+          delete :image, to: "factions#remove_image"
+        end
+      end
+      resources :factions do
+        member do
+          delete :image, to: "factions#remove_image"
+        end
+      end
     end
     namespace :v1 do
       resources :ai, only: [:create]
