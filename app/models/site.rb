@@ -30,6 +30,7 @@ class Site < ApplicationRecord
 
   def image_url
     image.attached? ? image.url : nil
+  rescue
   end
 
   private

@@ -3,6 +3,7 @@ class Faction < ApplicationRecord
   has_many :factions
   has_many :characters
   has_many :sites
+  has_many :junctures
   has_many :parties
   has_one_attached :image
 
