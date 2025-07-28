@@ -4,7 +4,18 @@ class Api::V2::PartiesController < ApplicationController
   before_action :set_party, only: [:show, :update, :destroy, :remove_image]
 
   def index
-    @parties = current_campaign.parties.order("LOWER(parties.name) ASC")
+    sort = params["sort"] || "created_at"
+    order = params["order"] || "DESC"
+
+    if sort == "name"
+      sort = Arel.sql("LOWER(parties.name) #{order}")
+    elsif sort == "created_at"
+      sort = Arel.sql("parties.created_at #{order}")
+    else
+      sort = Arel.sql("parties.created_at DESC")
+    end
+
+    @parties = current_campaign.parties.includes(:faction, :image_attachment).order(sort)
 
     @factions = current_campaign.factions.joins(:parties).where(parties: @parties).order("factions.name").distinct
 
@@ -21,6 +32,13 @@ class Api::V2::PartiesController < ApplicationController
     end
     if params[:faction_id].present?
       @parties = @parties.where(faction_id: params[:faction_id])
+    end
+    if params[:character_id].present?
+      @party_ids = Attunement.where(party_id: @parties).where(character_id: params[:character_id]).pluck(:party_id)
+      @parties = @parties.where.not(id: @party_ids)
+    end
+    if params[:user_id].present?
+      @parties = @parties.joins(:characters).where(characters: { user_id: params[:user_id] })
     end
 
     @parties = paginate(@parties, per_page: (params[:per_page] || 6), page: (params[:page] || 1))

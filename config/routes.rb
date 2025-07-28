@@ -26,7 +26,7 @@ Rails.application.routes.draw do
       end
       resources :junctures do
         member do
-          delete :image, to: "sites#remove_image"
+          delete :image, to: "junctures#remove_image"
         end
       end
       resources :sites do
@@ -41,12 +41,18 @@ Rails.application.routes.draw do
       end
       resources :schticks do
         member do
-          delete :image, to: "factions#remove_image"
+          delete :image, to: "schticks#remove_image"
         end
       end
       resources :factions do
         member do
           delete :image, to: "factions#remove_image"
+        end
+      end
+      resources :fights do
+        member do
+          delete :image, to: "fights#remove_image"
+          patch :touch
         end
       end
     end

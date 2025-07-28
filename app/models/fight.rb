@@ -39,6 +39,7 @@ class Fight < ApplicationRecord
 
   def image_url
     image.attached? ? image.url : nil
+  rescue
   end
 
   def current_shot
