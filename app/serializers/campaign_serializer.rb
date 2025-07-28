@@ -2,7 +2,7 @@ class CampaignSerializer < ActiveModel::Serializer
   attributes :id, :name, :description, :gamemaster_id, :gamemaster, :created_at, :updated_at, :players
 
   def gamemaster
-    object.user
+    UserSerializer.new(object.user, scope: scope, root: false)
   end
 
   def gamemaster_id

@@ -3,7 +3,7 @@ class Api::V1::UsersController < ApplicationController
 
   def index
     @users = current_campaign.players.order(email: :asc)
-    render json: @users
+    render json: ActiveModel::Serializer::CollectionSerializer.new(@users, each_serializer: UserSerializer), status: :ok
   end
 
   def show
@@ -12,11 +12,11 @@ class Api::V1::UsersController < ApplicationController
     else
       @user = User.find(params[:id])
     end
-    render json: @user
+    render json: @user, serializer: UserSerializer, status: :ok
   end
 
   def current
-    render json: current_user
+    render json: current_user, serializer: UserSerializer, status: :ok
   end
 
   def update
