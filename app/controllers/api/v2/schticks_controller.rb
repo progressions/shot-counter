@@ -55,7 +55,7 @@ class Api::V2::SchticksController < ApplicationController
     @schticks = paginate(@schticks, per_page: (params[:per_page] || 10), page: (params[:page] || 1))
 
     render json: {
-      schticks: @schticks,
+      schticks: ActiveModelSerializers::SerializableResource.new(@schticks, each_serializer: SchtickSerializer).serializable_hash,
       meta: pagination_meta(@schticks),
       paths: @paths,
       categories: @categories
