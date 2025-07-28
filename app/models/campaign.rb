@@ -37,7 +37,7 @@ class Campaign < ApplicationRecord
     campaign_ids.uniq.each do |campaign_id|
       channel = "campaign_#{campaign_id}"
       payload = {
-        campaign: self.as_json
+        campaign: CampaignSerializer.new(self).as_json,
       }
       ActionCable.server.broadcast(channel, payload)
     end

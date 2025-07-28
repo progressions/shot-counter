@@ -39,8 +39,8 @@ class Api::V2::SitesController < ApplicationController
     @sites = paginate(@sites, per_page: (params[:per_page] || 10), page: (params[:page] || 1))
 
     render json: {
-      sites: @sites,
-      factions: @factions,
+      sites: ActiveModelSerializers::SerializableResource.new(@sites, each_serializer: SiteSerializer).serializable_hash,
+      factions: ActiveModelSerializers::SerializableResource.new(@factions, each_serializer: FactionSerializer).serializable_hash,
       meta: pagination_meta(@sites),
     }
   end

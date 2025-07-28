@@ -69,7 +69,7 @@ class User < ApplicationRecord
 
   def broadcast_campaign_update
     payload = {
-      user: self.as_json
+      user: UserSerializer.new(self).as_json,
     }
     campaigns.each do |campaign|
       channel = "campaign_#{campaign.id}"

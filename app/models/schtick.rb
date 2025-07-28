@@ -128,7 +128,7 @@ class Schtick < ApplicationRecord
 
   def broadcast_campaign_update
     channel = "campaign_#{campaign_id}"
-    payload = { schtick: as_json }
+    payload = { schtick: SchtickSerializer.new(self).as_json }
     ActionCable.server.broadcast(channel, payload)
   rescue StandardError => e
     Rails.logger.error "Failed to broadcast campaign update for juncture #{id}: #{e.message}"

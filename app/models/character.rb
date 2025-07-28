@@ -407,7 +407,7 @@ class Character < ApplicationRecord
   def broadcast_campaign_update
     channel = "campaign_#{campaign_id}"
     payload = {
-      character: self.as_json
+      character: CharacterSerializer.new(self).as_json,
     }
     result = ActionCable.server.broadcast(channel, payload)
   end

@@ -18,7 +18,7 @@ class Api::V2::CharactersController < ApplicationController
       sort = Arel.sql("characters.created_at DESC")
     end
 
-    cache_key = "characters/#{current_campaign.id}/#{sort}/#{order}/#{params[:page]}/#{params[:per_page]}/#{params[:user_id]}"
+    cache_key = "characters/#{current_campaign.id}/#{sort}/#{order}/#{params[:page]}/#{params[:per_page]}/#{params[:search]}/#{params[:user_id]}"
     cached_result = Rails.cache.fetch(cache_key, expires_in: 5.minutes) do
       includes = [{ user: { image_attachment: :blob } }, { faction: { image_attachment: :blob } }, image_attachment: :blob]
       includes << { attunements: :site } if params[:include]&.include?("attunements")
@@ -28,6 +28,7 @@ class Api::V2::CharactersController < ApplicationController
 
       @characters = @scoped_characters.select(:id, :created_at, :name, :defense, :impairments, :color, :user_id, :faction_id, :action_values).includes(includes).order(sort)
       @characters = @characters.where(user_id: params[:user_id]) if params[:user_id].present?
+      @characters = @characters.where("characters.name ILIKE ?", "%#{params[:search]}%") if params[:search].present?
       @factions = @characters.map(&:faction).uniq.compact.sort_by(&:name)
       @characters = paginate(@characters, per_page: (params[:per_page] || 15), page: (params[:page] || 1))
       @archetypes = @characters.select("action_values->>'Archetype'").map { |c| c.action_values["Archetype"] }.compact.sort

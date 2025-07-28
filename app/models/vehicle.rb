@@ -158,7 +158,7 @@ class Vehicle < ApplicationRecord
   def broadcast_campaign_update
     channel = "campaign_#{campaign_id}"
     payload = {
-      vehicle: self.as_json
+      vehicle: VehicleSerializer.new(self).as_json,
     }
     result = ActionCable.server.broadcast(channel, payload)
   end

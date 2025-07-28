@@ -44,8 +44,8 @@ class Api::V2::PartiesController < ApplicationController
     @parties = paginate(@parties, per_page: (params[:per_page] || 6), page: (params[:page] || 1))
 
     render json: {
-      parties: @parties,
-      factions: @factions,
+      parties: ActiveModelSerializers::SerializableResource.new(@parties, each_serializer: PartySerializer).serializable_hash,
+      factions: ActiveModelSerializers::SerializableResource.new(@factions, each_serializer: FactionSerializer).serializable_hash,
       meta: pagination_meta(@parties),
     }
   end
