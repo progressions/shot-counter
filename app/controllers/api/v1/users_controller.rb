@@ -1,10 +1,9 @@
-# app/controllers/api/v1/users_controller.rb
 class Api::V1::UsersController < ApplicationController
   before_action :authenticate_user!
 
   def index
     @users = current_campaign.players.order(email: :asc)
-    render json: @users
+    render json: ActiveModel::Serializer::CollectionSerializer.new(@users, each_serializer: UserSerializer), status: :ok
   end
 
   def show
@@ -13,7 +12,11 @@ class Api::V1::UsersController < ApplicationController
     else
       @user = User.find(params[:id])
     end
-    render json: @user
+    render json: @user, serializer: UserSerializer, status: :ok
+  end
+
+  def current
+    render json: current_user, serializer: UserSerializer, status: :ok
   end
 
   def update
@@ -50,7 +53,7 @@ class Api::V1::UsersController < ApplicationController
   def encode_jwt(user)
     payload = {
       jti: SecureRandom.uuid,
-      user: user.as_json(only: [:email, :admin, :first_name, :last_name, :gamemaster, :current_campaign, :created_at, :updated_at, :image_url]),
+      user: user.as_v1_json(only: [:email, :admin, :first_name, :last_name, :gamemaster, :current_campaign, :created_at, :updated_at, :image_url]),
       sub: user.id,
       scp: "user",
       aud: nil,

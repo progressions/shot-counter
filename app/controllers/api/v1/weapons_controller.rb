@@ -33,7 +33,7 @@ class Api::V1::WeaponsController < ApplicationController
     @weapons = paginate(@weapons, per_page: (params[:per_page] || 10), page: (params[:page] || 1))
 
     render json: {
-      weapons: @weapons,
+      weapons: @weapons.map(&:as_v1_json),
       meta: pagination_meta(@weapons),
       junctures: @junctures,
       categories: @categories
@@ -41,13 +41,13 @@ class Api::V1::WeaponsController < ApplicationController
   end
 
   def show
-    render json: @weapon
+    render json: @weapon.as_v1_json
   end
 
   def create
     @weapon = current_campaign.weapons.new(weapon_params)
     if @weapon.save
-      render json: @weapon
+      render json: @weapon.as_v1_json, status: 201
     else
       render json: @weapon.errors, status: 400
     end
@@ -64,9 +64,9 @@ class Api::V1::WeaponsController < ApplicationController
 
   def update
     if @weapon.update(weapon_params)
-      render json: @weapon
+      render json: @weapon.as_v1_json, status: 200
     else
-      render json: @weapon, status: 400
+      render json: @weapon.as_v1_json, status: 400
     end
   end
 
@@ -74,7 +74,7 @@ class Api::V1::WeaponsController < ApplicationController
     if @weapon.destroy!
       render :ok
     else
-      render json: @weapon, status: 400
+      render json: @weapon.as_v1_json, status: 400
     end
   end
 
@@ -82,7 +82,7 @@ class Api::V1::WeaponsController < ApplicationController
     @weapon.image.purge
 
     if @weapon.save
-      render json: @weapon
+      render json: @weapon.as_v1_json, status: 200
     else
       render @weapon.errors, status: 400
     end

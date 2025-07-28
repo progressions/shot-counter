@@ -10,13 +10,16 @@ class Fight < ApplicationRecord
 
   after_update :enqueue_discord_notification
   after_update :broadcast_update
+  after_commit :broadcast_campaign_update, on: [:create, :update]
+  after_destroy :broadcast_reload
+  after_create :broadcast_reload
 
   scope :active, -> { where(active: true) }
 
   SORT_ORDER = ["Uber-Boss", "Boss", "PC", "Featured Foe", "Ally", "Mook"]
   DEFAULT_SHOT_COUNT = 3
 
-  def as_json(args={})
+  def as_v1_json(args={})
     {
       id: id,
       name: name,
@@ -29,8 +32,14 @@ class Fight < ApplicationRecord
       sequence: sequence,
       effects: effects,
       character_effects: character_effects.where("character_effects.character_id IS NOT NULL").group_by { |ce| ce.shot_id },
-      vehicle_effects: character_effects.where("character_effects.vehicle_id IS NOT NULL").group_by { |ce| ce.shot_id }
+      vehicle_effects: character_effects.where("character_effects.vehicle_id IS NOT NULL").group_by { |ce| ce.shot_id },
+      image_url: image_url
     }
+  end
+
+  def image_url
+    image.attached? ? image.url : nil
+  rescue
   end
 
   def current_shot
@@ -60,7 +69,7 @@ class Fight < ApplicationRecord
       .map { |shot, shot_chars|
         [shot, shot_chars
           .sort_by(&:sort_order)
-          .map(&:as_json)
+          .map(&:as_v1_json)
           .flatten
           .compact
         ]
@@ -80,6 +89,22 @@ class Fight < ApplicationRecord
   def broadcast_update
     channel = "fight_#{id}"
     payload = { fight: :updated }
+    Rails.logger.info "Broadcasting to #{channel} with payload: #{payload.inspect}"
+    result = ActionCable.server.broadcast(channel, payload)
+    Rails.logger.info "Broadcast result: #{result.inspect} (number of subscribers)"
+  end
+
+  def broadcast_campaign_update
+    channel = "campaign_#{campaign.id}"
+    payload = { fight: { id: id, name: name, description: description, updated_at: updated_at, image_url: image_url } }
+    Rails.logger.info "Broadcasting to #{channel} with payload: #{payload.inspect}"
+    result = ActionCable.server.broadcast(channel, payload)
+    Rails.logger.info "Broadcast result: #{result.inspect} (number of subscribers)"
+  end
+
+  def broadcast_reload
+    channel = "campaign_#{campaign.id}"
+    payload = { fights: "reload" }
     Rails.logger.info "Broadcasting to #{channel} with payload: #{payload.inspect}"
     result = ActionCable.server.broadcast(channel, payload)
     Rails.logger.info "Broadcast result: #{result.inspect} (number of subscribers)"

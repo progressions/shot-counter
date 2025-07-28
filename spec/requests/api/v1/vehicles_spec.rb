@@ -19,7 +19,7 @@ RSpec.describe "Vehicles", type: :request do
         get "/api/v1/vehicles", headers: headers
         expect(response).to have_http_status(:success)
         body = JSON.parse(response.body)
-        expect(body[0]["name"]).to eq("Batmobile")
+        expect(body["vehicles"][0]["name"]).to eq("Batmobile")
       end
     end
 
@@ -114,8 +114,8 @@ RSpec.describe "Vehicles", type: :request do
         get "/api/v1/vehicles", headers: headers
         expect(response).to have_http_status(:success)
         body = JSON.parse(response.body)
-        expect(body.length).to eq(1)
-        expect(body[0]["name"]).to eq("Delorean")
+        expect(body["vehicles"].length).to eq(1)
+        expect(body["vehicles"][0]["name"]).to eq("Delorean")
       end
     end
 

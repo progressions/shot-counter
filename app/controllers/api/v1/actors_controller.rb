@@ -11,7 +11,7 @@ class Api::V1::ActorsController < ApplicationController
 
   def act
     if @shot.act!(shot_cost: params[:shots] || 3)
-      render json: @character.as_json(shot: @shot)
+      render json: @character.as_v1_json(shot: @shot)
     else
       render json: @character.errors, status: 400
     end
@@ -25,7 +25,7 @@ class Api::V1::ActorsController < ApplicationController
     end
 
     if @shot.save
-      render json: @character.as_json(shot: @shot)
+      render json: @character.as_v1_json(shot: @shot)
     else
       render status: 400
     end
@@ -44,7 +44,7 @@ class Api::V1::ActorsController < ApplicationController
     end
 
     if @shot.save
-      render json: @character.as_json(shot: @shot)
+      render json: @character.as_v1_json(shot: @shot)
     else
       render status: 400
     end
@@ -65,7 +65,7 @@ class Api::V1::ActorsController < ApplicationController
 
     if @character.update(parms)
       # SyncCharacterToNotionJob.perform_later(@character.id)
-      render json: @character.as_json(shot: @shot)
+      render json: @character.as_v1_json(shot: @shot)
     else
       render @character.errors, status: 400
     end
@@ -74,13 +74,13 @@ class Api::V1::ActorsController < ApplicationController
   def reveal
     @shot.update(shot: 0)
 
-    render json: @character.as_json(shot: @shot)
+    render json: @character.as_v1_json(shot: @shot)
   end
 
   def hide
     @shot.update(shot: nil)
 
-    render json: @character.as_json(shot: @shot)
+    render json: @character.as_v1_json(shot: @shot)
   end
 
   def destroy

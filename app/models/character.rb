@@ -87,7 +87,7 @@ class Character < ApplicationRecord
   before_save :ensure_integer_skills
   before_save :ensure_non_integer_action_values
 
-  # after_update :broadcast_update
+  after_update :broadcast_campaign_update
 
   validates :name, presence: true, uniqueness: { scope: :campaign_id }
 
@@ -97,7 +97,7 @@ class Character < ApplicationRecord
     where("action_values->>'Type' IN (?)", player_type)
   end
 
-  def as_json(args={})
+  def as_v1_json(args={})
     shot = args[:shot]
     {
       id: id,
@@ -109,13 +109,20 @@ class Character < ApplicationRecord
       action_values: is_pc? ? action_values : action_values.merge("Wounds" => shot&.count),
       faction_id: faction_id,
       faction: {
+        id: faction&.id,
         name: faction&.name,
       },
       description: description,
-      schticks: highest_schticks,
+      schticks: schticks.order(:category, :path, :name),
       skills: skills.sort_by { |key, value| [(DEFAULT_SKILLS.keys.include?(key) ? 0 : 1), key] }.to_h,
       advancements: advancements.order(:created_at),
-      sites: sites.order(:created_at),
+      sites: sites.order(:created_at).map { |site|
+        {
+          id: site.id,
+          name: site.name,
+          image_url: site.image_url
+        }
+      },
       weapons: weapons,
       category: "character",
       image_url: image_url,
@@ -133,13 +140,14 @@ class Character < ApplicationRecord
       wealth: wealth,
       juncture_id: juncture_id,
       juncture: {
+        id: juncture&.id,
         name: juncture&.name,
       }
     }
   end
 
   def highest_schticks
-    schticks.highest_numbered.order(:category, :path, :name)
+    schticks.order(:category, :path, :name)
   end
 
   def driving_json(vehicle_shot)
@@ -396,7 +404,7 @@ class Character < ApplicationRecord
     end
   end
 
-  def broadcast_update
+  def broadcast_campaign_update
     channel = "campaign_#{campaign_id}"
     payload = {
       character: self.as_json

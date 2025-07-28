@@ -1,0 +1,160 @@
+class Api::V2::SchticksController < ApplicationController
+  before_action :authenticate_user!
+  before_action :require_current_campaign
+
+  def index
+    sort = params["sort"] || "created_at"
+    order = params["order"] || "DESC"
+
+    if sort == "name"
+      sort = Arel.sql("LOWER(schticks.name) #{order}")
+    elsif sort == "created_at"
+      sort = Arel.sql("schticks.created_at #{order}")
+    else
+      sort = Arel.sql("schticks.created_at DESC")
+    end
+
+    @schticks = current_campaign
+      .schticks
+      .includes(:prerequisite)
+      .order(sort)
+
+    @paths = []
+
+    if params[:id].present?
+      @schticks = @schticks.where(id: params[:id])
+    end
+
+    if params[:character_id].present?
+      @character = current_campaign.characters.find(params[:character_id])
+      if @character.action_values["Type"] == "PC"
+        @schticks = @schticks
+          .where(prerequisite_id: [@character.schtick_ids, nil].flatten)
+          .where.not(id: @character.schtick_ids)
+      else
+        @schticks = @schticks
+          .where.not(id: @character.schtick_ids)
+      end
+    end
+
+    @categories = @schticks.pluck(:category).uniq.compact
+
+    if params[:category].present?
+      @schticks = @schticks.where(category: params[:category])
+      @paths = @schticks.pluck(:path).uniq.compact
+    end
+
+    if params[:path].present?
+      @schticks = @schticks.where(path: params[:path])
+    end
+
+    if params[:name].present?
+      @schticks = @schticks.where("name ILIKE ?", "%#{params[:name]}%")
+    end
+
+    @schticks = paginate(@schticks, per_page: (params[:per_page] || 10), page: (params[:page] || 1))
+
+    render json: {
+      schticks: ActiveModelSerializers::SerializableResource.new(@schticks, each_serializer: SchtickSerializer).serializable_hash,
+      meta: pagination_meta(@schticks),
+      paths: @paths,
+      categories: @categories
+    }
+  end
+
+  def show
+    @schtick = current_campaign.schticks.find(params[:id])
+
+    render json: @schtick
+  end
+
+  def create
+    # Check if request is multipart/form-data with a JSON string
+    if params[:schtick].present? && params[:schtick].is_a?(String)
+      begin
+        schtick_data = JSON.parse(params[:schtick]).symbolize_keys
+      rescue JSON::ParserError
+        render json: { error: "Invalid schtick data format" }, status: :bad_request
+        return
+      end
+    else
+      schtick_data = schtick_params.to_h.symbolize_keys
+    end
+
+    schtick_data.slice(:name, :description, :active, :faction_id)
+
+    @schtick = current_campaign.schticks.new(schtick_data)
+
+    # Handle image attachment if present
+    if params[:image].present?
+      @schtick.image.attach(params[:image])
+    end
+
+    if @schtick.save
+      render json: @schtick, status: :created
+    else
+      render json: { errors: @schtick.errors.full_messages }, status: :unprocessable_entity
+    end
+  end
+
+  def update
+    @schtick = current_campaign.schticks.find(params[:id])
+
+    # Handle multipart/form-data for updates if present
+    if params[:schtick].present? && params[:schtick].is_a?(String)
+      begin
+        schtick_data = JSON.parse(params[:schtick]).symbolize_keys
+      rescue JSON::ParserError
+        render json: { error: "Invalid schtick data format" }, status: :bad_request
+        return
+      end
+    else
+      schtick_data = schtick_params.to_h.symbolize_keys
+    end
+    schtick_data = schtick_data.slice(:name, :description, :active, :faction_id)
+
+    # Handle image attachment if present
+    if params[:image].present?
+      begin
+        @schtick.image.purge if @schtick.image.attached? # Remove existing image
+        @schtick.image.attach(params[:image])
+      rescue StandardError => e
+        Rails.logger.error("Error uploading to ImageKit")
+      end
+    end
+
+    if @schtick.update(schtick_data)
+      render json: @schtick
+    else
+      render json: { errors: @schtick.errors.full_messages }, status: :unprocessable_entity
+    end
+  end
+
+  def import
+    yaml = import_params[:yaml]
+    data = YAML.load(yaml)
+
+    ImportSchticks.call(data, current_campaign)
+
+    render :ok
+  end
+
+  def destroy
+    @schtick = current_campaign.schticks.find(params[:id])
+    if @schtick.destroy!
+      render :ok
+    else
+      render json: @schtick, status: 400
+    end
+  end
+
+  private
+
+  def import_params
+    params.require(:schtick).permit(:yaml)
+  end
+
+  def schtick_params
+    params.require(:schtick).permit(:name, :description, :category, :path, :color, :image_url)
+  end
+end

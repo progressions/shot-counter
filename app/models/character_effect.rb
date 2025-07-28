@@ -10,7 +10,7 @@ class CharacterEffect < ApplicationRecord
 
   delegate :fight, to: :shot, allow_nil: true
 
-  def as_json(args={})
+  def as_v1_json(args={})
     {
       id: id,
       name: name,

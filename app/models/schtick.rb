@@ -33,11 +33,15 @@ class Schtick < ApplicationRecord
   validates :category, inclusion: { in: CATEGORIES }, allow_nil: true, unless: -> { path == "Core" }
   validate :prerequisite_must_be_in_same_category_and_path
 
+  has_one_attached :image
+
+  after_update :broadcast_campaign_update
+
   def self.for_archetype(archetype)
     where("schticks.archetypes @> ?", [archetype].flatten.to_json)
   end
 
-  def as_json(args={})
+  def as_v1_json(args={})
     {
       id: id,
       name: name,
@@ -114,5 +118,19 @@ class Schtick < ApplicationRecord
     end
 
     result
+  end
+
+  def image_url
+    image.attached? ? image.url : nil
+  end
+
+  private
+
+  def broadcast_campaign_update
+    channel = "campaign_#{campaign_id}"
+    payload = { schtick: as_json }
+    ActionCable.server.broadcast(channel, payload)
+  rescue StandardError => e
+    Rails.logger.error "Failed to broadcast campaign update for juncture #{id}: #{e.message}"
   end
 end

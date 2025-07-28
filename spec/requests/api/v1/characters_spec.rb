@@ -18,7 +18,7 @@ RSpec.describe "Api::V1::Characters", type: :request do
       get "/api/v1/characters", headers: @headers
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
-      expect(body.map { |c| c["name"] }).to eq(["Brick Manly", "Ugly Shing"])
+      expect(body["characters"].map { |c| c["name"] }).to eq(["Ugly Shing", "Brick Manly"])
     end
   end
 
@@ -75,7 +75,7 @@ RSpec.describe "Api::V1::Characters", type: :request do
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
       expect(body["faction_id"]).to eq(nil)
-      expect(body["faction"]["name"]).to eq(nil)
+      expect(body["faction"]).to eq(nil)
       character = Character.find(body["id"])
       expect(character.faction).to eq(nil)
     end

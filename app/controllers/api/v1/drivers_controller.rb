@@ -35,7 +35,7 @@ class Api::V1::DriversController < ApplicationController
     end
 
     if @shot.save
-      render json: @vehicle.as_json(shot: @shot)
+      render json: @vehicle.as_v1_json(shot: @shot)
     else
       render status: 400
     end
@@ -54,7 +54,7 @@ class Api::V1::DriversController < ApplicationController
     end
 
     if @shot.save
-      render json: @vehicle.as_json(shot: @shot)
+      render json: @vehicle.as_v1_json(shot: @shot)
     else
       render status: 400
     end
@@ -80,7 +80,7 @@ class Api::V1::DriversController < ApplicationController
     end
 
     if @vehicle.update(parms)
-      render json: @vehicle.as_json(shot: @shot)
+      render json: @vehicle.as_v1_json(shot: @shot)
     else
       render @vehicle.errors, status: 400
     end

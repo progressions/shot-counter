@@ -30,7 +30,9 @@ class Vehicle < ApplicationRecord
 
   validates :name, presence: true, uniqueness: { scope: :campaign_id }
 
-  def as_json(args={})
+  after_update :broadcast_campaign_update
+
+  def as_v1_json(args={})
     shot = args[:shot]
     {
       id: id,
@@ -89,7 +91,12 @@ class Vehicle < ApplicationRecord
   end
 
   def image_url
-    image.attached? ? image.url : nil
+    return unless image_attachment && image_attachment.blob
+    if Rails.env.production?
+      image.attached? ? image.url : nil
+    else
+      Rails.application.routes.url_helpers.rails_blob_url(image_attachment.blob, only_path: true)
+    end
   end
 
   def sort_order(shot_id=nil)
@@ -146,5 +153,13 @@ class Vehicle < ApplicationRecord
         self.action_values[key] = DEFAULT_ACTION_VALUES[key]
       end
     end
+  end
+
+  def broadcast_campaign_update
+    channel = "campaign_#{campaign_id}"
+    payload = {
+      vehicle: self.as_json
+    }
+    result = ActionCable.server.broadcast(channel, payload)
   end
 end

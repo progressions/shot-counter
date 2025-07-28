@@ -9,7 +9,8 @@ gem "psych"
 gem "rails", "~> 8.0.1"
 
 gem "aws-sdk-s3", require: false
-# gem "ruby-vips"
+gem "ruby-vips"
+gem "active_model_serializers"
 
 # Use postgresql as the database for Active Record
 gem "pg", "~> 1.1"

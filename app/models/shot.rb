@@ -11,20 +11,20 @@ class Shot < ApplicationRecord
 
   validate :ensure_campaign
 
-  def as_json(args={})
+  def as_v1_json(args={})
     if driving_shot.present?
       # If the character is driving a vehicle, show them both. Send the vehicle's
       # shot to its JSON method, so it includes the correct shot_id.
       [
-        character.as_json(args.merge(shot: self, action_items: action_items)),
-        driving.as_json(args.merge(shot: driving_shot))
+        character.as_v1_json(args.merge(shot: self, action_items: action_items)),
+        driving.as_v1_json(args.merge(shot: driving_shot))
       ]
     elsif character.present?
       # A character is not driving a vehicle, so just show the character
-      character.as_json(args.merge(shot: self, action_items: action_items))
+      character.as_v1_json(args.merge(shot: self, action_items: action_items))
     elsif driver_shot.blank? && vehicle.present?
       # A vehicle is not being driven, so just show the vehicle
-      vehicle.as_json(args.merge(shot: self))
+      vehicle.as_v1_json(args.merge(shot: self))
     end
   end
 

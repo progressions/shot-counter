@@ -6,23 +6,42 @@ class Juncture < ApplicationRecord
 
   validates :name, presence: true, uniqueness: { scope: :campaign_id }
 
-  def as_json(args = {})
+  after_update :broadcast_campaign_update
+
+  def as_v1_json(args = {})
     {
       id: id,
       name: name,
       description: description,
-      faction: faction,
-      active: self.active,
+      faction: faction&.as_v1_json(only: [:id, :name]),
+      active: active,
       created_at: created_at,
       updated_at: updated_at,
-      characters: characters.map { |character|
+      characters: characters.map do |character|
         {
           id: character.id,
           name: character.name,
-          image_url: character.image_url,
+          image_url: character.image.attached? ? character.image.url : nil
         }
-      },
-      image_url: image.attached? ? image.url : nil,
+      end,
+      image_url: image_url
     }
+  rescue StandardError => e
+    Rails.logger.error "Error in Juncture#as_v1_json for juncture #{id}: #{e.message}"
+    raise # Re-raise to help diagnose in controller
+  end
+
+  def image_url
+    image.attached? ? image.url : nil
+  end
+
+  private
+
+  def broadcast_campaign_update
+    channel = "campaign_#{campaign_id}"
+    payload = { juncture: as_json }
+    ActionCable.server.broadcast(channel, payload)
+  rescue StandardError => e
+    Rails.logger.error "Failed to broadcast campaign update for juncture #{id}: #{e.message}"
   end
 end

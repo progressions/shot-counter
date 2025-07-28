@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_07_23_203605) do
+ActiveRecord::Schema[8.0].define(version: 2025_07_27_203600) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -74,6 +74,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_23_203605) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "name"
+    t.index "lower((name)::text)", name: "index_campaigns_on_lower_name"
     t.index ["user_id"], name: "index_campaigns_on_user_id"
   end
 
@@ -134,6 +135,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_23_203605) do
     t.boolean "is_template"
     t.uuid "juncture_id"
     t.string "wealth"
+    t.index "lower((name)::text)", name: "index_characters_on_lower_name"
+    t.index ["action_values"], name: "index_characters_on_action_values", using: :gin
     t.index ["campaign_id"], name: "index_characters_on_campaign_id"
     t.index ["created_at"], name: "index_characters_on_created_at"
     t.index ["faction_id"], name: "index_characters_on_faction_id"
@@ -164,6 +167,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_23_203605) do
     t.datetime "updated_at", null: false
     t.uuid "campaign_id", null: false
     t.boolean "active", default: true
+    t.index "lower((name)::text)", name: "index_factions_on_lower_name"
     t.index ["campaign_id"], name: "index_factions_on_campaign_id"
   end
 
@@ -189,6 +193,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_23_203605) do
     t.bigint "server_id"
     t.string "fight_message_id"
     t.bigint "channel_id"
+    t.index "lower((name)::text)", name: "index_fights_on_lower_name"
     t.index ["campaign_id"], name: "index_fights_on_campaign_id"
   end
 
@@ -217,6 +222,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_23_203605) do
     t.datetime "updated_at", null: false
     t.uuid "notion_page_id"
     t.uuid "campaign_id"
+    t.index "lower((name)::text)", name: "index_junctures_on_lower_name"
     t.index ["campaign_id"], name: "index_junctures_on_campaign_id"
     t.index ["faction_id"], name: "index_junctures_on_faction_id"
   end
@@ -240,6 +246,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_23_203605) do
     t.datetime "updated_at", null: false
     t.uuid "faction_id"
     t.boolean "secret", default: false
+    t.index "lower((name)::text)", name: "index_parties_on_lower_name"
     t.index ["campaign_id"], name: "index_parties_on_campaign_id"
     t.index ["faction_id"], name: "index_parties_on_faction_id"
   end
@@ -257,6 +264,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_23_203605) do
     t.boolean "bonus"
     t.jsonb "archetypes"
     t.string "name"
+    t.index "lower((name)::text)", name: "index_schticks_on_lower_name"
     t.index ["campaign_id"], name: "index_schticks_on_campaign_id"
     t.index ["category", "name"], name: "index_schticks_on_category_and_name", unique: true
     t.index ["prerequisite_id"], name: "index_schticks_on_prerequisite_id"
@@ -291,6 +299,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_23_203605) do
     t.string "name"
     t.uuid "faction_id"
     t.boolean "secret", default: false
+    t.index "lower((name)::text)", name: "index_sites_on_lower_name"
     t.index ["campaign_id", "name"], name: "index_sites_on_campaign_id_and_name", unique: true
     t.index ["campaign_id"], name: "index_sites_on_campaign_id"
     t.index ["faction_id"], name: "index_sites_on_faction_id"
@@ -342,6 +351,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_23_203605) do
     t.datetime "last_synced_to_notion_at"
     t.string "summary"
     t.uuid "juncture_id"
+    t.index "lower((name)::text)", name: "index_vehicles_on_lower_name"
     t.index ["campaign_id"], name: "index_vehicles_on_campaign_id"
     t.index ["faction_id"], name: "index_vehicles_on_faction_id"
     t.index ["juncture_id"], name: "index_vehicles_on_juncture_id"
@@ -362,6 +372,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_23_203605) do
     t.string "category"
     t.boolean "kachunk"
     t.string "image_url"
+    t.index "lower((name)::text)", name: "index_weapons_on_lower_name"
     t.index ["campaign_id", "name"], name: "index_weapons_on_campaign_id_and_name", unique: true
     t.index ["campaign_id"], name: "index_weapons_on_campaign_id"
   end

@@ -6,6 +6,56 @@ Rails.application.routes.draw do
     passwords: "users/passwords",
   }
   namespace :api do
+    namespace :v2 do
+      resources :characters do
+        member do
+          delete :image, to: "characters#remove_image"
+          post :sync
+          get :pdf
+        end
+      end
+      resources :weapons do
+        member do
+          delete :image, to: "weapons#remove_image"
+        end
+      end
+      resources :vehicles do
+        member do
+          delete :image, to: "vehicles#remove_image"
+        end
+      end
+      resources :junctures do
+        member do
+          delete :image, to: "junctures#remove_image"
+        end
+      end
+      resources :sites do
+        member do
+          delete :image, to: "sites#remove_image"
+        end
+      end
+      resources :parties do
+        member do
+          delete :image, to: "parties#remove_image"
+        end
+      end
+      resources :schticks do
+        member do
+          delete :image, to: "schticks#remove_image"
+        end
+      end
+      resources :factions do
+        member do
+          delete :image, to: "factions#remove_image"
+        end
+      end
+      resources :fights do
+        member do
+          delete :image, to: "fights#remove_image"
+          patch :touch
+        end
+      end
+    end
     namespace :v1 do
       resources :ai, only: [:create]
       resources :suggestions, only: [:index]
@@ -83,6 +133,7 @@ Rails.application.routes.draw do
         end
       end
       resources :users, only: [:index, :show, :update, :destroy] do
+        get :current, on: :collection
         member do
           delete :image, to: "users#remove_image"
         end

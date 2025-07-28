@@ -5,8 +5,45 @@ class Api::V1::CharactersController < ApplicationController
   before_action :set_character, only: [:update, :destroy, :show, :remove_image, :sync, :pdf]
 
   def index
-    @characters = @scoped_characters.includes(:user).order(:name).all
-    render json: @characters
+    sort = params[:sort] || "created_at"
+    order = params[:order] || "DESC"
+
+    if sort == "type"
+      sort = Arel.sql("COALESCE(action_values->>'Type', '') #{order}")
+    elsif sort == "name"
+      sort = Arel.sql("LOWER(characters.name) #{order}")
+    elsif sort == "created_at"
+      sort = Arel.sql("characters.created_at #{order}")
+    else
+      sort = Arel.sql("#{sort} #{order}")
+    end
+
+    @characters = @scoped_characters
+      .includes(:user)
+      .includes(:faction)
+      .includes(:attunements)
+      .includes(:sites)
+      .includes(:carries)
+      .includes(:weapons)
+      .includes(:juncture)
+      .includes(:schticks)
+      .includes(:advancements)
+      .order(sort)
+
+    if params[:user_id]
+      @characters = @characters.where(user_id: params[:user_id])
+    end
+
+    @factions = Faction.where(id: @characters.pluck(:faction_id).uniq).order(:name)
+
+    @characters = paginate(@characters, per_page: (params[:per_page] || 15), page: (params[:page] || 1))
+
+    render json: {
+      characters: @characters,
+      factions: @factions,
+      archetypes: @archetypes,
+      meta: pagination_meta(@characters)
+    }
   end
 
   def create
@@ -105,5 +142,4 @@ class Api::V1::CharactersController < ApplicationController
               description: Character::DEFAULT_DESCRIPTION.keys,
               schticks: [], skills: params.fetch(:character, {}).fetch(:skills, {}).keys || {})
   end
-
 end

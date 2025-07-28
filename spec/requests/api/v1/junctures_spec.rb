@@ -88,17 +88,17 @@ RSpec.describe "Api::V1::Junctures", type: :request do
 
   describe "POST /create" do
     it "creates a juncture" do
-      post "/api/v1/junctures", params: { juncture: { name: "The Juncture" } }, headers: headers
+      post "/api/v1/junctures", params: { juncture: { name: "The New Juncture" } }, headers: headers
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
-      expect(body["name"]).to eq("The Juncture")
+      expect(body["name"]).to eq("The New Juncture")
     end
 
     it "creates a juncture with a faction" do
-      post "/api/v1/junctures", params: { juncture: { name: "The Juncture", faction_id: dragons.id } }, headers: headers
+      post "/api/v1/junctures", params: { juncture: { name: "The New Juncture", faction_id: dragons.id } }, headers: headers
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
-      expect(body["name"]).to eq("The Juncture")
+      expect(body["name"]).to eq("The New Juncture")
       expect(body["faction"]["name"]).to eq(dragons.name)
     end
   end

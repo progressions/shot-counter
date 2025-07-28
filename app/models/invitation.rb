@@ -17,7 +17,7 @@ class Invitation < ApplicationRecord
 
   before_validation :update_remaining_count
 
-  def as_json(args={})
+  def as_v1_json(args={})
     {
       id: id,
       email: email,

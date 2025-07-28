@@ -33,7 +33,7 @@ RSpec.describe "Invitations", type: :request do
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
       expect(body["email"]).to eq("ginny@email.com")
-      expect(body["pending_user"]).to eq({"email" => @ginny.email, "id" => @ginny.id})
+      expect(body["pending_user"]).to eq(@ginny.as_json)
     end
   end
 

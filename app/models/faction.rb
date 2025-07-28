@@ -7,8 +7,9 @@ class Faction < ApplicationRecord
   has_one_attached :image
 
   validates :name, presence: true, uniqueness: { scope: :campaign_id }
+  after_update :broadcast_campaign_update
 
-  def as_json(args = {})
+  def as_v1_json(args = {})
     {
       id: id,
       name: name,
@@ -23,7 +24,21 @@ class Faction < ApplicationRecord
           image_url: character.image_url,
         }
       },
-      image_url: image.attached? ? image.url : nil,
+      image_url: image_url
     }
+  end
+
+  def image_url
+    image.attached? ? image.url : nil
+  end
+
+  private
+
+  def broadcast_campaign_update
+    channel = "campaign_#{campaign_id}"
+    payload = { faction: as_json }
+    ActionCable.server.broadcast(channel, payload)
+  rescue StandardError => e
+    Rails.logger.error "Failed to broadcast campaign update for juncture #{id}: #{e.message}"
   end
 end
