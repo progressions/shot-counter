@@ -60,6 +60,12 @@ Rails.application.routes.draw do
           delete :image, to: "campaigns#remove_image"
         end
       end
+      resources :users, only: [:index, :show, :update, :destroy] do
+        get :current, on: :collection
+        member do
+          delete :image, to: "users#remove_image"
+        end
+      end
     end
     namespace :v1 do
       resources :ai, only: [:create]
