@@ -88,9 +88,6 @@ Rails.application.routes.draw do
           delete :image, to: "parties#remove_image"
         end
       end
-      # delete "parties/:id/image", to: "parties#remove_image"
-      # delete "weapons/:id/image", to: "weapons#remove_image"
-      # delete "sites/:id/image", to: "sites#remove_image"
       resources :sites do
         member do
           delete :image, to: "sites#remove_image"

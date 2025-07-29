@@ -161,5 +161,6 @@ class Vehicle < ApplicationRecord
       vehicle: VehicleSerializer.new(self).as_json,
     }
     result = ActionCable.server.broadcast(channel, payload)
+    result = ActionCable.server.broadcast(channel, { vehicles: "reload" })
   end
 end

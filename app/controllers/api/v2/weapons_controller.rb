@@ -10,7 +10,7 @@ class Api::V2::WeaponsController < ApplicationController
 
     @categories = []
 
-    @junctures = @weapons.pluck(:juncture).uniq.compact
+    @juncture_strings = @weapons.pluck(:juncture).uniq.compact
 
     if params[:id].present?
       @weapons = @weapons.where(id: params[:id])
@@ -33,15 +33,15 @@ class Api::V2::WeaponsController < ApplicationController
     @weapons = paginate(@weapons, per_page: (params[:per_page] || 10), page: (params[:page] || 1))
 
     render json: {
-      weapons: @weapons,
+      weapons: ActiveModelSerializers::SerializableResource.new(@weapons, each_serializer: WeaponSerializer).serializable_hash,
+      junctures: @juncture_strings,
       meta: pagination_meta(@weapons),
-      junctures: @junctures,
       categories: @categories
     }
   end
 
   def show
-    render json: @weapon.as_v1_json
+    render json: WeaponSerializer.new(@weapon).serializable_hash
   end
 
   def create

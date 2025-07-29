@@ -39,6 +39,7 @@ class Site < ApplicationRecord
     channel = "campaign_#{campaign_id}"
     payload = { site: SiteSerializer.new(self).as_json }
     ActionCable.server.broadcast(channel, payload)
+    ActionCable.server.broadcast(channel, { sites: "reload" })
   rescue StandardError => e
     Rails.logger.error "Failed to broadcast campaign update for site #{id}: #{e.message}"
   end

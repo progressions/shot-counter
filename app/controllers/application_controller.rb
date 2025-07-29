@@ -3,6 +3,11 @@ class ApplicationController < ActionController::API
 
   rescue_from ActiveRecord::RecordNotFound, with: :record_not_found
 
+  serialization_scope :current_user # Optional, if you need to pass current_user to serializers
+  def default_serializer_options
+    { serializer: ActiveModel::Serializer.serializer_for }
+  end
+
   private
 
   def record_not_found

@@ -409,6 +409,7 @@ class Character < ApplicationRecord
     payload = {
       character: CharacterSerializer.new(self).as_json,
     }
-    result = ActionCable.server.broadcast(channel, payload)
+    ActionCable.server.broadcast(channel, payload)
+    ActionCable.server.broadcast(channel, { characters: "reload" })
   end
 end

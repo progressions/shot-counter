@@ -39,6 +39,7 @@ class Faction < ApplicationRecord
     channel = "campaign_#{campaign_id}"
     payload = { faction: as_json }
     ActionCable.server.broadcast(channel, payload)
+    ActionCable.server.broadcast(channel, { factions: "reload" })
   rescue StandardError => e
     Rails.logger.error "Failed to broadcast campaign update for juncture #{id}: #{e.message}"
   end

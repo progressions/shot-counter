@@ -46,7 +46,7 @@ class Api::V2::SitesController < ApplicationController
   end
 
   def show
-    render json: current_campaign.sites.find(params[:id])
+    render json: SiteSerializer.new(current_campaign.sites.find(params[:id])).serializable_hash
   end
 
   def create

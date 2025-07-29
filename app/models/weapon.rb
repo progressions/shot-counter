@@ -25,12 +25,7 @@ class Weapon < ApplicationRecord
   end
 
   def image_url
-    return unless image_attachment && image_attachment.blob
-    if Rails.env.production?
-      image.attached? ? image.url : nil
-    else
-      Rails.application.routes.url_helpers.rails_blob_url(image_attachment.blob, only_path: true)
-    end
+    image.attached? ? image.url : nil
   end
 
   private
@@ -39,6 +34,7 @@ class Weapon < ApplicationRecord
     channel = "campaign_#{campaign_id}"
     payload = { weapon: WeaponSerializer.new(self).as_json }
     ActionCable.server.broadcast(channel, payload)
+    # ActionCable.server.broadcast(channel, { weapons: "reload" })
   rescue StandardError => e
     Rails.logger.error "Failed to broadcast campaign update for juncture #{id}: #{e.message}"
   end

@@ -9,6 +9,7 @@ class Party < ApplicationRecord
   validates :name, presence: true, uniqueness: { scope: :campaign_id }
 
   after_update :broadcast_campaign_update
+  after_destroy :broadcast_campaign_reload
 
   def as_v1_json(options = {})
     {
@@ -52,7 +53,15 @@ class Party < ApplicationRecord
     channel = "campaign_#{campaign_id}"
     payload = { party: PartySerializer.new(self).as_json }
     ActionCable.server.broadcast(channel, payload)
+    ActionCable.server.broadcast(channel, { parties: "reload" })
   rescue StandardError => e
     Rails.logger.error "Failed to broadcast campaign update for party #{id}: #{e.message}"
+  end
+
+  def broadcast_campaign_reload
+    channel = "campaign_#{campaign_id}"
+    ActionCable.server.broadcast(channel, { parties: "reload" })
+  rescue StandardError => e
+    Rails.logger.error "Failed to broadcast campaign reload for party #{id}: #{e.message}"
   end
 end

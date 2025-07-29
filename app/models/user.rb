@@ -74,10 +74,12 @@ class User < ApplicationRecord
     campaigns.each do |campaign|
       channel = "campaign_#{campaign.id}"
       ActionCable.server.broadcast(channel, payload)
+      ActionCable.server.broadcast(channel, { users: "reload" })
     end
     player_campaigns.each do |campaign|
       channel = "campaign_#{campaign.id}"
       ActionCable.server.broadcast(channel, payload)
+      ActionCable.server.broadcast(channel, { users: "reload" })
     end
   end
 end

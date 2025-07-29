@@ -97,9 +97,8 @@ class Fight < ApplicationRecord
   def broadcast_campaign_update
     channel = "campaign_#{campaign.id}"
     payload = { fight: { id: id, name: name, description: description, updated_at: updated_at, image_url: image_url } }
-    Rails.logger.info "Broadcasting to #{channel} with payload: #{payload.inspect}"
-    result = ActionCable.server.broadcast(channel, payload)
-    Rails.logger.info "Broadcast result: #{result.inspect} (number of subscribers)"
+    ActionCable.server.broadcast(channel, payload)
+    ActionCable.server.broadcast(channel, { fights: "reload" })
   end
 
   def broadcast_reload

@@ -97,7 +97,8 @@ class Api::V2::PartiesController < ApplicationController
     else
       party_data = party_params.to_h.symbolize_keys
     end
-    party_data = party_data.slice(:name, :description, :active, :faction_id)
+    party_data = party_data.slice(:name, :description, :active, :faction_id, :character_ids)
+
 
     # Handle image attachment if present
     if params[:image].present?
@@ -154,6 +155,6 @@ class Api::V2::PartiesController < ApplicationController
   end
 
   def party_params
-    params.require(:party).permit(:name, :description, :faction_id, :secret, :image)
+    params.require(:party).permit(:name, :description, :faction_id, :secret, :image, character_ids: [])
   end
 end
