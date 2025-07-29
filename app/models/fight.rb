@@ -96,7 +96,7 @@ class Fight < ApplicationRecord
 
   def broadcast_campaign_update
     channel = "campaign_#{campaign.id}"
-    payload = { fight: { id: id, name: name, description: description, updated_at: updated_at, image_url: image_url } }
+    payload = { fight: FightSerializer.new(self).as_json }
     ActionCable.server.broadcast(channel, payload)
     ActionCable.server.broadcast(channel, { fights: "reload" })
   end

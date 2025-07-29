@@ -40,6 +40,8 @@ Rails.application.routes.draw do
         end
       end
       resources :schticks do
+        get :categories, on: :collection
+        get :paths, on: :collection
         member do
           delete :image, to: "schticks#remove_image"
         end

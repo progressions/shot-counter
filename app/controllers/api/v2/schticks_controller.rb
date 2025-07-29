@@ -48,7 +48,7 @@ class Api::V2::SchticksController < ApplicationController
       @schticks = @schticks.where(path: params[:path])
     end
 
-    if params[:name].present?
+    if params[:search].present?
       @schticks = @schticks.where("name ILIKE ?", "%#{params[:name]}%")
     end
 
@@ -59,6 +59,35 @@ class Api::V2::SchticksController < ApplicationController
       meta: pagination_meta(@schticks),
       paths: @paths,
       categories: @categories
+    }
+  end
+
+  def categories
+    @categories = current_campaign.schticks.pluck(:category).uniq.compact
+
+    if params[:search].present?
+      @categories = @categories.select { |category| category.downcase.include?(params[:search].downcase) }
+    end
+
+    render json: {
+      categories: @categories,
+    }
+  end
+
+  def paths
+    @paths = current_campaign.schticks
+
+    if params[:category].present?
+      @paths = @paths.where(category: params[:category])
+    end
+    if params[:search].present?
+      @paths = @paths.where("path ILIKE ?", "%#{params[:search]}%")
+    end
+
+    @paths = @paths.pluck(:path).uniq.compact.reject(&:empty?).sort_by!(&:downcase)
+
+    render json: {
+      paths: @paths,
     }
   end
 
@@ -111,7 +140,7 @@ class Api::V2::SchticksController < ApplicationController
     else
       schtick_data = schtick_params.to_h.symbolize_keys
     end
-    schtick_data = schtick_data.slice(:name, :description, :active, :faction_id)
+    schtick_data = schtick_data.slice(:name, :description, :category, :path, :color)
 
     # Handle image attachment if present
     if params[:image].present?
