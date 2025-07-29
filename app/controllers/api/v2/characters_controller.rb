@@ -27,6 +27,7 @@ class Api::V2::CharactersController < ApplicationController
       includes << :advancements if params[:include]&.include?("advancements")
 
       @characters = @scoped_characters.select(:id, :active, :created_at, :name, :defense, :impairments, :color, :user_id, :faction_id, :action_values).includes(includes).order(sort)
+      @characters = @characters.where(faction_id: params[:faction_id]) if params[:faction_id].present?
       @characters = @characters.where(user_id: params[:user_id]) if params[:user_id].present?
       @characters = @characters.where("characters.name ILIKE ?", "%#{params[:search]}%") if params[:search].present?
       @factions = @characters.map(&:faction).uniq.compact.sort_by(&:name)

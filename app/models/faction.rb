@@ -1,6 +1,5 @@
 class Faction < ApplicationRecord
   belongs_to :campaign
-  has_many :factions
   has_many :characters
   has_many :sites
   has_many :junctures
@@ -37,7 +36,7 @@ class Faction < ApplicationRecord
 
   def broadcast_campaign_update
     channel = "campaign_#{campaign_id}"
-    payload = { faction: as_json }
+    payload = { faction: FactionSerializer.new(self).as_json }
     ActionCable.server.broadcast(channel, payload)
     ActionCable.server.broadcast(channel, { factions: "reload" })
   rescue StandardError => e

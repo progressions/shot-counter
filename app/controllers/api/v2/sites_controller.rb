@@ -92,7 +92,7 @@ class Api::V2::SitesController < ApplicationController
     else
       site_data = site_params.to_h.symbolize_keys
     end
-    site_data = site_data.slice(:name, :description, :active, :faction_id)
+    site_data = site_data.slice(:name, :description, :active, :faction_id, :character_ids)
 
     # Handle image attachment if present
     if params[:image].present?
@@ -132,6 +132,6 @@ class Api::V2::SitesController < ApplicationController
   private
 
   def site_params
-    params.require(:site).permit(:name, :description, :faction_id, :secret, :image)
+    params.require(:site).permit(:name, :description, :faction_id, :secret, :image, character_ids: [])
   end
 end

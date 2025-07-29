@@ -4,13 +4,26 @@ class Api::V2::WeaponsController < ApplicationController
   before_action :set_weapon, only: [:show, :update, :destroy, :remove_image]
 
   def index
+    sort = params["sort"] || "created_at"
+    order = params["order"] || "DESC"
+
+    if sort == "name"
+      sort = Arel.sql("LOWER(weapons.name) #{order}")
+    elsif sort == "created_at"
+      sort = Arel.sql("weapons.created_at #{order}")
+    elsif sort == "updated_at"
+      sort = Arel.sql("weapons.updated_at #{order}")
+    elsif sort == "category"
+      sort = Arel.sql("LOWER(weapons.category) #{order}")
+    elsif sort == "juncture"
+      sort = Arel.sql("LOWER(weapons.juncture) #{order}")
+    else
+      sort = Arel.sql("weapons.created_at DESC")
+    end
+
     @weapons = current_campaign
       .weapons
-      .order(:juncture, :name)
-
-    @categories = []
-
-    @juncture_strings = @weapons.pluck(:juncture).uniq.compact
+      .order(sort)
 
     if params[:id].present?
       @weapons = @weapons.where(id: params[:id])
@@ -19,8 +32,6 @@ class Api::V2::WeaponsController < ApplicationController
     if params[:juncture].present?
       @weapons = @weapons.where(juncture: params[:juncture])
     end
-
-    @categories = @weapons.where("category != ?", "").pluck(:category).uniq.compact
 
     if params[:category].present?
       @weapons = @weapons.where(category: params[:category])
@@ -34,9 +45,31 @@ class Api::V2::WeaponsController < ApplicationController
 
     render json: {
       weapons: ActiveModelSerializers::SerializableResource.new(@weapons, each_serializer: WeaponSerializer).serializable_hash,
-      junctures: @juncture_strings,
       meta: pagination_meta(@weapons),
-      categories: @categories
+    }
+  end
+
+  def categories
+    @categories = current_campaign.weapons.pluck(:category).uniq.compact
+
+    if params[:search].present?
+      @categories = @categories.select { |category| category.downcase.include?(params[:search].downcase) }
+    end
+
+    render json: {
+      categories: @categories,
+    }
+  end
+
+  def junctures
+    @junctures = current_campaign.weapons.pluck(:juncture).uniq.compact
+
+    if params[:search].present?
+      @junctures = @junctures.select { |category| category.downcase.include?(params[:search].downcase) }
+    end
+
+    render json: {
+      junctures: @junctures,
     }
   end
 

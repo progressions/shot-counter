@@ -15,6 +15,8 @@ Rails.application.routes.draw do
         end
       end
       resources :weapons do
+        get :junctures, on: :collection
+        get :categories, on: :collection
         member do
           delete :image, to: "weapons#remove_image"
         end
