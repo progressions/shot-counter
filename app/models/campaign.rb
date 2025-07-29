@@ -16,7 +16,7 @@ class Campaign < ApplicationRecord
 
   validates :name, presence: true, allow_blank: false
 
-  after_update :broadcast_campaign_update, if: -> { saved_change_to_name? || saved_change_to_description? }
+  after_update :broadcast_campaign_update
 
   def as_v1_json(args={})
     {
@@ -28,6 +28,12 @@ class Campaign < ApplicationRecord
       invitations: invitations,
     }
   end
+
+  def image_url
+    image.attached? ? image.url : nil
+  end
+
+  private
 
   def broadcast_campaign_update
     user_camp_ids = user.campaigns.map { |campaign| campaign.id }

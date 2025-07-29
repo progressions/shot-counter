@@ -55,6 +55,11 @@ Rails.application.routes.draw do
           patch :touch
         end
       end
+      resources :campaigns do
+        member do
+          delete :image, to: "campaigns#remove_image"
+        end
+      end
     end
     namespace :v1 do
       resources :ai, only: [:create]
