@@ -14,7 +14,7 @@ class Api::V2::CharactersController < ApplicationController
       sort = Arel.sql("LOWER(characters.name) #{order}")
     elsif sort == "created_at"
       sort = Arel.sql("characters.created_at #{order}")
-    else
+   else
       sort = Arel.sql("characters.created_at DESC")
     end
 
@@ -26,7 +26,7 @@ class Api::V2::CharactersController < ApplicationController
       includes << { character_schticks: :schtick } if params[:include]&.include?("schticks")
       includes << :advancements if params[:include]&.include?("advancements")
 
-      @characters = @scoped_characters.select(:id, :created_at, :name, :defense, :impairments, :color, :user_id, :faction_id, :action_values).includes(includes).order(sort)
+      @characters = @scoped_characters.select(:id, :active, :created_at, :name, :defense, :impairments, :color, :user_id, :faction_id, :action_values).includes(includes).order(sort)
       @characters = @characters.where(user_id: params[:user_id]) if params[:user_id].present?
       @characters = @characters.where("characters.name ILIKE ?", "%#{params[:search]}%") if params[:search].present?
       @factions = @characters.map(&:faction).uniq.compact.sort_by(&:name)

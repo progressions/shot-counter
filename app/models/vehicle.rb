@@ -91,12 +91,7 @@ class Vehicle < ApplicationRecord
   end
 
   def image_url
-    return unless image_attachment && image_attachment.blob
-    if Rails.env.production?
-      image.attached? ? image.url : nil
-    else
-      Rails.application.routes.url_helpers.rails_blob_url(image_attachment.blob, only_path: true)
-    end
+    image.attached? ? image.url : nil
   end
 
   def sort_order(shot_id=nil)

@@ -18,7 +18,7 @@ class Api::V2::VehiclesController < ApplicationController
     @vehicles = paginate(@vehicles, per_page: (params[:per_page] || 10), page: (params[:page] || 1))
 
     render json: {
-      vehicles: @vehicles,
+      vehicles: ActiveModelSerializers::SerializableResource.new(@vehicles, each_serializer: VehicleSerializer).serializable_hash,
       meta: pagination_meta(@vehicles),
     }
   end
