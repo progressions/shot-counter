@@ -2,7 +2,7 @@ class Api::V2::CharactersController < ApplicationController
   before_action :authenticate_user!
   before_action :require_current_campaign
   before_action :set_scoped_characters
-  before_action :set_character, only: [:update, :destroy, :show, :remove_image, :sync, :pdf, :duplicate]
+  before_action :set_character, only: [:update, :destroy, :remove_image, :sync, :pdf, :duplicate]
 
   def index
     sort = params["sort"] || "created_at"
@@ -173,7 +173,7 @@ class Api::V2::CharactersController < ApplicationController
     else
       character_data = character_params.to_h.symbolize_keys
     end
-    character_data = character_data.slice(:name, :description, :active, :character_ids, :party_ids, :site_ids, :juncture_ids)
+    character_data = character_data.slice(:name, :description, :active, :character_ids, :party_ids, :site_ids, :juncture_ids, :schtick_ids)
 
     # Handle image attachment if present
     if params[:image].present?
@@ -196,6 +196,16 @@ class Api::V2::CharactersController < ApplicationController
   end
 
   def show
+    @character = current_campaign.characters.includes(
+      user: { image_attachment: :blob },
+      faction: { image_attachment: :blob },
+      image_attachment: :blob,
+      attunements: { site: { image_attachment: :blob } },
+      carries: { weapon: { image_attachment: :blob } },
+      character_schticks: :schtick,
+      advancements: []
+    ).find(params[:id])
+
     render json: @character
   end
 
