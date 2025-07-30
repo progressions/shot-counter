@@ -8,6 +8,8 @@ Rails.application.routes.draw do
   namespace :api do
     namespace :v2 do
       resources :characters do
+        get :names, on: :collection
+        post :pdf, on: :collection, to: "characters#import"
         member do
           delete :image, to: "characters#remove_image"
           post :sync

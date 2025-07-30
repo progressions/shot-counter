@@ -39,7 +39,7 @@ class Juncture < ApplicationRecord
 
   def broadcast_campaign_update
     channel = "campaign_#{campaign_id}"
-    payload = { juncture: as_json }
+    payload = { juncture: JunctureSerializer.new(self).as_json }
     ActionCable.server.broadcast(channel, payload)
     ActionCable.server.broadcast(channel, { junctures: "reload" })
   rescue StandardError => e

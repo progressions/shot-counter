@@ -6,8 +6,8 @@ class Api::V2::UsersController < ApplicationController
     order = params["order"] || "DESC"
 
     if sort == "name"
-      sort = Arel.sql("LOWER(users.name) #{order}")
-    if sort == "email"
+      sort = Arel.sql("LOWER(users.last_name) #{order}, LOWER(users.first_name) #{order}")
+    elsif sort == "email"
       sort = Arel.sql("LOWER(users.email) #{order}")
     elsif sort == "created_at"
       sort = Arel.sql("users.created_at #{order}")
@@ -15,11 +15,11 @@ class Api::V2::UsersController < ApplicationController
       sort = Arel.sql("users.created_at DESC")
     end
 
-    @users = current_campaign.players.order(sort)
+    @users = User.order(sort)
     @users = paginate(@users, per_page: (params[:per_page] || 12), page: (params[:page] || 1))
 
     render json: {
-      users: ActiveModel::Serializer::CollectionSerializer.new(@users, each_serializer: UserSerializer), status: :ok
+      users: ActiveModel::Serializer::CollectionSerializer.new(@users, each_serializer: UserSerializer),
       meta: pagination_meta(@users),
     }
   end

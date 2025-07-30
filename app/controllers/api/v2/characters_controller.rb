@@ -7,42 +7,127 @@ class Api::V2::CharactersController < ApplicationController
   def index
     sort = params["sort"] || "created_at"
     order = params["order"] || "DESC"
+    per_page = (params["per_page"] || 15).to_i
+    page = (params["page"] || 1).to_i
 
+    # Define sort SQL
     if sort == "type"
-      sort = Arel.sql("COALESCE(action_values->>'Type', '') #{order}")
+      sort_sql = Arel.sql("COALESCE(action_values->>'Type', '') #{order}")
     elsif sort == "name"
-      sort = Arel.sql("LOWER(characters.name) #{order}")
+      sort_sql = Arel.sql("LOWER(characters.name) #{order}")
     elsif sort == "created_at"
-      sort = Arel.sql("characters.created_at #{order}")
-   else
-      sort = Arel.sql("characters.created_at DESC")
+      sort_sql = Arel.sql("characters.created_at #{order}")
+    else
+      sort_sql = Arel.sql("characters.created_at DESC")
     end
 
-    cache_key = "characters/#{current_campaign.id}/#{sort}/#{order}/#{params[:page]}/#{params[:per_page]}/#{params[:search]}/#{params[:user_id]}"
+    # Build includes for eager loading
+    includes = [
+      { user: { image_attachment: :blob } },
+      { faction: { image_attachment: :blob } },
+      { image_attachment: :blob }
+    ]
+    includes << { attunements: { site: { image_attachment: :blob } } } if params[:include]&.include?("attunements")
+    includes << { carries: { weapon: { image_attachment: :blob } } } if params[:include]&.include?("carries")
+    includes << { character_schticks: :schtick } if params[:include]&.include?("schticks")
+    includes << :advancements if params[:include]&.include?("advancements")
+
+    # Base query with eager loading
+    characters_query = @scoped_characters.select(
+      :id, :active, :created_at, :name, :defense, :impairments,
+      :color, :user_id, :faction_id, :action_values
+    ).includes(includes)
+
+    # Apply filters
+    characters_query = characters_query.where(faction_id: params[:faction_id]) if params[:faction_id].present?
+    characters_query = characters_query.where(user_id: params[:user_id]) if params[:user_id].present?
+    characters_query = characters_query.where("characters.name ILIKE ?", "%#{params[:search]}%") if params[:search].present?
+
+    # Cache key includes all relevant params
+    cache_key = [
+      "characters",
+      current_campaign.id,
+      sort,
+      order,
+      page,
+      per_page,
+      params[:search],
+      params[:user_id],
+      params[:faction_id],
+      params[:include]
+    ].join("/")
+
     cached_result = Rails.cache.fetch(cache_key, expires_in: 5.minutes) do
-      includes = [{ user: { image_attachment: :blob } }, { faction: { image_attachment: :blob } }, image_attachment: :blob]
-      includes << { attunements: :site } if params[:include]&.include?("attunements")
-      includes << { carries: :weapon } if params[:include]&.include?("carries")
-      includes << { character_schticks: :schtick } if params[:include]&.include?("schticks")
-      includes << :advancements if params[:include]&.include?("advancements")
+      # Paginate characters
+      characters = characters_query.order(sort_sql).page(page).per(per_page)
 
-      @characters = @scoped_characters.select(:id, :active, :created_at, :name, :defense, :impairments, :color, :user_id, :faction_id, :action_values).includes(includes).order(sort)
-      @characters = @characters.where(faction_id: params[:faction_id]) if params[:faction_id].present?
-      @characters = @characters.where(user_id: params[:user_id]) if params[:user_id].present?
-      @characters = @characters.where("characters.name ILIKE ?", "%#{params[:search]}%") if params[:search].present?
-      @factions = @characters.map(&:faction).uniq.compact.sort_by(&:name)
-      @characters = paginate(@characters, per_page: (params[:per_page] || 15), page: (params[:page] || 1))
-      @archetypes = @characters.select("action_values->>'Archetype'").map { |c| c.action_values["Archetype"] }.compact.sort
+      # Fetch factions (without counts)
+      faction_ids = characters.map(&:faction_id).uniq.compact
+      factions = Faction.where(id: faction_ids)
+                        .includes(image_attachment: :blob)
+                        .order(:name)
 
+      # Batch fetch party data
+      party_ids = Membership.where(character_id: characters.map(&:id)).distinct.pluck(:party_id)
+      parties = Party.where(id: party_ids)
+                     .includes(
+                       memberships: [
+                         :character,
+                         { vehicle: { image_attachment: :blob } }
+                       ],
+                       image_attachment: :blob
+                     )
+
+      # Batch archetypes
+      archetypes = characters.map { |c| c.action_values["Archetype"] }.compact.sort
+
+      # Serialize
       {
-        characters: ActiveModelSerializers::SerializableResource.new(@characters, each_serializer: CharacterIndexSerializer).serializable_hash,
-        factions: ActiveModelSerializers::SerializableResource.new(@factions, each_serializer: FactionSerializer).serializable_hash,
-        archetypes: @archetypes,
-        meta: pagination_meta(@characters)
+        "characters" => ActiveModelSerializers::SerializableResource.new(
+          characters,
+          each_serializer: CharacterIndexSerializer,
+          scope: { parties: parties, params: params }
+        ).serializable_hash,
+        "factions" => ActiveModelSerializers::SerializableResource.new(
+          factions,
+          each_serializer: FactionSerializer
+        ).serializable_hash,
+        "archetypes" => archetypes,
+        "meta" => pagination_meta(characters)
       }.to_json
     end
 
     render json: JSON.parse(cached_result)
+  end
+
+  def names
+    # Build cache key with relevant params
+    cache_key = [
+      "characters_autocomplete",
+      current_campaign.id,
+      params[:search],
+      params[:faction_id],
+      params[:user_id]
+    ].join("/")
+
+    # Cache the response for 5 minutes
+    results = Rails.cache.fetch(cache_key, expires_in: 5.minutes) do
+      # Base query: select only id and name
+      query = @scoped_characters.select(:id, :name)
+
+      # Apply filters
+      query = query.where("characters.name ILIKE ?", "%#{params[:search]}%") if params[:search].present?
+      query = query.where(faction_id: params[:faction_id]) if params[:faction_id].present?
+      query = query.where(user_id: params[:user_id]) if params[:user_id].present?
+
+      # Limit results (e.g., 20 for autocomplete)
+      query.order("LOWER(characters.name) ASC")
+           .limit(20)
+           .map { |c| { "id" => c.id, "name" => c.name } }
+           .to_json
+    end
+
+    render json: JSON.parse(results)
   end
 
   def create
@@ -75,6 +160,7 @@ class Api::V2::CharactersController < ApplicationController
 
   def destroy
     @character.carries.destroy_all
+    @character.memberships.destroy_all
     @character.destroy!
     Rails.cache.delete_matched("characters/#{current_campaign.id}/*")
     render json: { message: "Character deleted successfully" }, status: :ok

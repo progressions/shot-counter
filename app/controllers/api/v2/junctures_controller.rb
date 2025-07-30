@@ -41,7 +41,8 @@ class Api::V2::JuncturesController < ApplicationController
   end
 
   def show
-    render json: current_campaign.junctures.find(params[:id])
+    @juncture = current_campaign.junctures.find(params[:id])
+    render json: @juncture
   end
 
   def create
@@ -87,7 +88,7 @@ class Api::V2::JuncturesController < ApplicationController
     else
       juncture_data = juncture_params.to_h.symbolize_keys
     end
-    juncture_data = juncture_data.slice(:name, :description, :active, :faction_id)
+    juncture_data = juncture_data.slice(:name, :description, :active, :faction_id, :character_ids)
 
     # Handle image attachment if present
     if params[:image].present?
@@ -123,6 +124,6 @@ class Api::V2::JuncturesController < ApplicationController
   private
 
   def juncture_params
-    params.require(:juncture).permit(:name, :description, :active, :image, :faction_id)
+    params.require(:juncture).permit(:name, :description, :active, :image, :faction_id, :character_ids)
   end
 end

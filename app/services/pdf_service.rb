@@ -281,6 +281,7 @@ module PdfService
         "Melodramatic Hook" => FightPoster.strip_html_p_to_br(character.description["Melodramatic Hook"]),
         "Important GMCs" => "",
       }
+    rescue StandardError => e
     end
 
     def pdftk
