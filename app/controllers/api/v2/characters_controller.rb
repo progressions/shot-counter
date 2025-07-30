@@ -2,7 +2,7 @@ class Api::V2::CharactersController < ApplicationController
   before_action :authenticate_user!
   before_action :require_current_campaign
   before_action :set_scoped_characters
-  before_action :set_character, only: ["update", "destroy", "show", "remove_image", "sync", "pdf"]
+  before_action :set_character, only: [:update, :destroy, :show, :remove_image, :sync, :pdf, :duplicate]
 
   def index
     sort = params["sort"] || "created_at"
@@ -131,31 +131,72 @@ class Api::V2::CharactersController < ApplicationController
   end
 
   def create
-    @character = current_campaign.characters.create!(character_params)
-    @character.user = current_user
-    @character.campaign = current_campaign
+    # Check if request is multipart/form-data with a JSON string
+    if params[:character].present? && params[:character].is_a?(String)
+      begin
+        character_data = JSON.parse(params[:character]).symbolize_keys
+      rescue JSON::ParserError
+        render json: { error: "Invalid character data format" }, status: :bad_request
+        return
+      end
+    else
+      character_data = character_params.to_h.symbolize_keys
+    end
+
+    character_data = character_data.slice(:name, :description, :active, :character_ids, :party_ids, :site_ids, :juncture_ids, :schtick_ids)
+
+    @character = current_campaign.characters.new(character_data)
+
+    # Handle image attachment if present
+    if params[:image].present?
+      @character.image.attach(params[:image])
+    end
 
     if @character.save
+      render json: @character, status: :created
+    else
+      render json: { errors: @character.errors.full_messages }, status: :unprocessable_entity
+    end
+  end
+
+  def update
+    @character = current_campaign.characters.find(params[:id])
+
+    # Handle multipart/form-data for updates if present
+    if params[:character].present? && params[:character].is_a?(String)
+      begin
+        character_data = JSON.parse(params[:character]).symbolize_keys
+      rescue JSON::ParserError
+        render json: { error: "Invalid character data format" }, status: :bad_request
+        return
+      end
+    else
+      character_data = character_params.to_h.symbolize_keys
+    end
+    character_data = character_data.slice(:name, :description, :active, :character_ids, :party_ids, :site_ids, :juncture_ids)
+
+    # Handle image attachment if present
+    if params[:image].present?
+      begin
+        @character.image.purge if @character.image.attached? # Remove existing image
+        @character.image.attach(params[:image])
+      rescue StandardError => e
+        Rails.logger.error("Error uploading to ImageKit")
+      end
+    end
+
+    if @character.update(character_data)
       Rails.cache.delete_matched("characters/#{current_campaign.id}/*")
       SyncCharacterToNotionJob.perform_later(@character.id)
+
       render json: @character
     else
-      render status: 400
+      render json: { errors: @character.errors.full_messages }, status: :unprocessable_entity
     end
   end
 
   def show
     render json: @character
-  end
-
-  def update
-    if @character.update(character_params)
-      Rails.cache.delete_matched("characters/#{current_campaign.id}/*")
-      SyncCharacterToNotionJob.perform_later(@character.id)
-      render json: @character
-    else
-      render @character.errors, status: 400
-    end
   end
 
   def destroy
@@ -164,6 +205,19 @@ class Api::V2::CharactersController < ApplicationController
     @character.destroy!
     Rails.cache.delete_matched("characters/#{current_campaign.id}/*")
     render json: { message: "Character deleted successfully" }, status: :ok
+  end
+
+  def duplicate
+    @new_character = CharacterDuplicatorService.duplicate_character(@character, current_user)
+
+    if @new_character.save
+      Rails.cache.delete_matched("characters/#{current_campaign.id}/*")
+      SyncCharacterToNotionJob.perform_later(@new_character.id)
+      render json: @new_character, status: :created
+    else
+      Rails.logger.error("Character duplication failed: #{@new_character.errors.full_messages.join(', ')}")
+      render json: @new_character.errors, status: :unprocessable_entity
+    end
   end
 
   def import
@@ -234,6 +288,7 @@ class Api::V2::CharactersController < ApplicationController
       .require(:character)
       .permit(:name, :defense, :impairments, :color, :notion_page_id,
               :user_id, :active, :faction_id, :image, :task, :juncture_id, :wealth,
+              schtick_ids: [],
               action_values: {},
               description: Character::DEFAULT_DESCRIPTION.keys,
               schticks: [], skills: params.fetch(:character, {}).fetch(:skills, {}).keys || {})

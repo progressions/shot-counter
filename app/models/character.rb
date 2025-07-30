@@ -88,6 +88,7 @@ class Character < ApplicationRecord
   before_save :ensure_non_integer_action_values
 
   after_update :broadcast_campaign_update
+  after_create :broadcast_campaign_update
 
   validates :name, presence: true, uniqueness: { scope: :campaign_id }
 
@@ -410,6 +411,10 @@ class Character < ApplicationRecord
       character: CharacterSerializer.new(self).as_json,
     }
     ActionCable.server.broadcast(channel, payload)
+  end
+
+  def broadcast_campaign_reload
+    channel = "campaign_#{campaign_id}"
     ActionCable.server.broadcast(channel, { characters: "reload" })
   end
 end

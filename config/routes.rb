@@ -14,6 +14,7 @@ Rails.application.routes.draw do
           delete :image, to: "characters#remove_image"
           post :sync
           get :pdf
+          post :duplicate
         end
       end
       resources :weapons do
