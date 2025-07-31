@@ -3,4 +3,8 @@ class PartySerializer < ActiveModel::Serializer
   has_many :characters, serializer: CharacterSerializer
   has_many :vehicles, serializer: VehicleSerializer
   belongs_to :faction, optional: true, serializer: FactionSerializer
+
+  def characters
+    object.characters.order("characters.name ASC")
+  end
 end

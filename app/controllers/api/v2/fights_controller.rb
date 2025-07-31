@@ -59,7 +59,7 @@ class Api::V2::FightsController < ApplicationController
   end
 
   def show
-    render json: @fight
+    render json: @fight, serializer: FightSerializer, status: :ok
   end
 
   def create

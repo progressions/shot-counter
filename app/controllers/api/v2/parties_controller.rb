@@ -51,7 +51,7 @@ class Api::V2::PartiesController < ApplicationController
   end
 
   def show
-    render json: @party
+    render json: @party, serializer: PartySerializer, status: :ok
   end
 
   def create

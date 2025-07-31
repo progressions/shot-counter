@@ -102,34 +102,40 @@ class Api::V2::CharactersController < ApplicationController
     render json: JSON.parse(cached_result)
   end
 
-  def names
-    # Build cache key with relevant params
-    cache_key = [
-      "characters_autocomplete",
-      current_campaign.id,
-      params[:search],
-      params[:faction_id],
-      params[:user_id]
-    ].join("/")
+  def autocomplete
+    characters = current_campaign.characters.active
+      .select("characters.id", "characters.name", "characters.faction_id")
 
-    # Cache the response for 5 minutes
-    results = Rails.cache.fetch(cache_key, expires_in: 5.minutes) do
-      # Base query: select only id and name
-      query = @scoped_characters.select(:id, :name)
-
-      # Apply filters
-      query = query.where("characters.name ILIKE ?", "%#{params[:search]}%") if params[:search].present?
-      query = query.where(faction_id: params[:faction_id]) if params[:faction_id].present?
-      query = query.where(user_id: params[:user_id]) if params[:user_id].present?
-
-      # Limit results (e.g., 20 for autocomplete)
-      query.order("LOWER(characters.name) ASC")
-           .limit(20)
-           .map { |c| { "id" => c.id, "name" => c.name } }
-           .to_json
+    if params["faction_id"].present?
+      characters = characters.where(faction_id: params["faction_id"])
     end
 
-    render json: JSON.parse(results)
+    if params["type"].present?
+      characters = characters.where("action_values ->> 'Type' = ?", params["type"])
+    end
+
+    characters = characters.order("LOWER(characters.name) #{params['order'] || 'asc'}")
+      .limit(params["per_page"] || 75)
+      .offset((params["page"]&.to_i || 0) * (params["per_page"]&.to_i || 75))
+
+    # Get unique factions based on matching characters
+    faction_ids = characters.pluck(:faction_id).uniq.compact
+    factions = Faction.where(id: faction_ids)
+                      .select("factions.id", "factions.name")
+                      .order("LOWER(factions.name) ASC")
+
+    render json: {
+      characters: ActiveModelSerializers::SerializableResource.new(
+        characters,
+        each_serializer: CharacterAutocompleteSerializer,
+        adapter: :attributes
+      ),
+      factions: ActiveModelSerializers::SerializableResource.new(
+        factions,
+        each_serializer: FactionAutocompleteSerializer,
+        adapter: :attributes
+      )
+    }
   end
 
   def create
