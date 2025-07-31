@@ -42,6 +42,7 @@ class Api::V2::CharactersController < ApplicationController
     characters_query = characters_query.where(faction_id: params[:faction_id]) if params[:faction_id].present?
     characters_query = characters_query.where(user_id: params[:user_id]) if params[:user_id].present?
     characters_query = characters_query.where("characters.name ILIKE ?", "%#{params[:search]}%") if params[:search].present?
+    characters_query = characters_query.where("action_values->>'Type' = ?", params[:type]) if params[:type].present?
 
     # Cache key includes all relevant params
     cache_key = [
@@ -54,6 +55,7 @@ class Api::V2::CharactersController < ApplicationController
       params[:search],
       params[:user_id],
       params[:faction_id],
+      params[:type],
       params[:include]
     ].join("/")
 

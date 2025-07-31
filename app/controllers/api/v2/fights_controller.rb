@@ -114,7 +114,7 @@ class Api::V2::FightsController < ApplicationController
     end
 
     if @fight.update(fight_data)
-      render json: @fight
+      render json: @fight.reload, serializer: FightSerializer, status: :ok
     else
       render json: { errors: @fight.errors.full_messages }, status: :unprocessable_entity
     end
