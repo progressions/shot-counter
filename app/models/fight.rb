@@ -12,8 +12,6 @@ class Fight < ApplicationRecord
 
   after_update :enqueue_discord_notification
   after_update :broadcast_update
-  after_destroy :broadcast_reload
-  after_create :broadcast_reload
 
   scope :active, -> { where(active: true) }
 
@@ -90,14 +88,6 @@ class Fight < ApplicationRecord
   def broadcast_update
     channel = "fight_#{id}"
     payload = { fight: :updated }
-    Rails.logger.info "Broadcasting to #{channel} with payload: #{payload.inspect}"
-    result = ActionCable.server.broadcast(channel, payload)
-    Rails.logger.info "Broadcast result: #{result.inspect} (number of subscribers)"
-  end
-
-  def broadcast_reload
-    channel = "campaign_#{campaign.id}"
-    payload = { fights: "reload" }
     Rails.logger.info "Broadcasting to #{channel} with payload: #{payload.inspect}"
     result = ActionCable.server.broadcast(channel, payload)
     Rails.logger.info "Broadcast result: #{result.inspect} (number of subscribers)"

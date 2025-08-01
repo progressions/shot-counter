@@ -415,9 +415,4 @@ class Character < ApplicationRecord
       end
     end
   end
-
-  def broadcast_campaign_reload
-    channel = "campaign_#{campaign_id}"
-    ActionCable.server.broadcast(channel, { characters: "reload" })
-  end
 end
