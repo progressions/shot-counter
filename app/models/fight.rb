@@ -13,6 +13,8 @@ class Fight < ApplicationRecord
   after_update :enqueue_discord_notification
   after_update :broadcast_update
 
+  has_many :image_positions, as: :positionable, dependent: :destroy
+
   scope :active, -> { where(active: true) }
 
   SORT_ORDER = ["Uber-Boss", "Boss", "PC", "Featured Foe", "Ally", "Mook"]

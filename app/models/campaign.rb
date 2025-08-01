@@ -15,6 +15,7 @@ class Campaign < ApplicationRecord
   has_many :factions
   has_many :junctures
   has_one_attached :image
+  has_many :image_positions, as: :positionable, dependent: :destroy
 
   validates :name, presence: true, allow_blank: false
 

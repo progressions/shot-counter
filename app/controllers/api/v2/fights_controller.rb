@@ -19,6 +19,7 @@ class Api::V2::FightsController < ApplicationController
       .fights
       .where(archived: false)
       .select(:id, :campaign_id, :name, :sequence, :active, :archived, :description, :created_at, :updated_at)
+      .includes(:characters, :vehicles, :image_positions)
       .order(sort)
 
     if params[:show_all] != "true"

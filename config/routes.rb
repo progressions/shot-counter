@@ -7,6 +7,14 @@ Rails.application.routes.draw do
   }
   namespace :api do
     namespace :v2 do
+      get "image_positions/:positionable_type/:positionable_id", to: "image_positions#show"
+      patch "image_positions/:positionable_type/:positionable_id", to: "image_positions#update"
+      resources :image_positions, only: [:create] do
+        collection do
+          post "", to: "image_positions#create"
+          put ":positionable_type/:positionable_id", to: "image_positions#update"
+        end
+      end
       resources :characters do
         get :names, on: :collection, to: "characters#autocomplete"
         post :pdf, on: :collection, to: "characters#import"

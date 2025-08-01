@@ -30,6 +30,7 @@ class Vehicle < ApplicationRecord
   has_many :character_effects
   has_many :memberships
   has_many :parties, through: :memberships
+  has_many :image_positions, as: :positionable, dependent: :destroy
 
   POSITIONS = %w(near far)
 

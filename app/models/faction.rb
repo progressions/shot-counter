@@ -6,6 +6,7 @@ class Faction < ApplicationRecord
   has_many :sites
   has_many :junctures
   has_many :parties
+  has_many :image_positions, as: :positionable, dependent: :destroy
   has_one_attached :image
 
   validates :name, presence: true, uniqueness: { scope: :campaign_id }

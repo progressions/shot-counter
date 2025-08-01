@@ -30,6 +30,7 @@ class Schtick < ApplicationRecord
   belongs_to :prerequisite, class_name: "Schtick", optional: true
   has_many :character_schticks
   has_many :characters, through: :character_schticks
+  has_many :image_positions, as: :positionable, dependent: :destroy
 
   validates :name, presence: true, uniqueness: { scope: :category }
   validates :category, inclusion: { in: CATEGORIES }, allow_nil: true, unless: -> { path == "Core" }

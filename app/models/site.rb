@@ -5,6 +5,7 @@ class Site < ApplicationRecord
   belongs_to :faction, optional: true
   has_many :attunements, dependent: :destroy
   has_many :characters, through: :attunements
+  has_many :image_positions, as: :positionable, dependent: :destroy
   has_one_attached :image
 
   validates :name, presence: true, uniqueness: { scope: :campaign_id }

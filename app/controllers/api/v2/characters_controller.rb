@@ -31,7 +31,10 @@ def index
     "characters.description",
     "characters.created_at",
     "characters.updated_at"
-  ).includes(image_attachment: :blob)
+  ).includes(
+    :image_positions,
+    image_attachment: :blob
+  )
 
   # Apply filters
   characters_query = characters_query.where(faction_id: params["faction_id"]) if params["faction_id"].present?
@@ -196,13 +199,14 @@ end
 
   def show
     @character = current_campaign.characters.includes(
+      :image_positions,
       user: { image_attachment: :blob },
       faction: { image_attachment: :blob },
       image_attachment: :blob,
       attunements: { site: { image_attachment: :blob } },
       carries: { weapon: { image_attachment: :blob } },
       character_schticks: :schtick,
-      advancements: []
+      advancements: [],
     ).find(params[:id])
 
     render json: @character

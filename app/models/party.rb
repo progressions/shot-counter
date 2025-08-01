@@ -7,6 +7,7 @@ class Party < ApplicationRecord
   belongs_to :faction, optional: true
   belongs_to :campaign
   has_one_attached :image
+  has_many :image_positions, as: :positionable, dependent: :destroy
 
   validates :name, presence: true, uniqueness: { scope: :campaign_id }
 

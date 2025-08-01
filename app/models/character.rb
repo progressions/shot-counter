@@ -79,6 +79,7 @@ class Character < ApplicationRecord
   has_many :parties, through: :memberships
   has_many :attunements
   has_many :sites, through: :attunements
+  has_many :image_positions, as: :positionable, dependent: :destroy
 
   accepts_nested_attributes_for :faction
 

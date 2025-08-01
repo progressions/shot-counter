@@ -1,7 +1,7 @@
 require "bcrypt"
 
 class User < ApplicationRecord
-  include Broadcastable
+  # include Broadcastable
   include Devise::JWT::RevocationStrategies::JTIMatcher
 
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
@@ -19,6 +19,7 @@ class User < ApplicationRecord
   has_many :player_campaigns, through: :campaign_memberships, source: "campaign"
   has_many :invitations
   has_one_attached :image
+  has_many :image_positions, as: :positionable, dependent: :destroy
   validates :email,
     uniqueness: true,
     allow_nil: true,

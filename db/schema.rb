@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_08_01_000901) do
+ActiveRecord::Schema[8.0].define(version: 2025_08_01_115942) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -195,6 +195,19 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_01_000901) do
     t.bigint "channel_id"
     t.index "lower((name)::text)", name: "index_fights_on_lower_name"
     t.index ["campaign_id"], name: "index_fights_on_campaign_id"
+  end
+
+  create_table "image_positions", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.string "positionable_type", null: false
+    t.uuid "positionable_id", null: false
+    t.string "context", null: false
+    t.float "x_position", default: 0.0
+    t.float "y_position", default: 0.0
+    t.jsonb "style_overrides", default: {}
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["positionable_type", "positionable_id", "context"], name: "index_image_positions_on_positionable_and_context", unique: true
+    t.index ["positionable_type", "positionable_id"], name: "index_image_positions_on_positionable"
   end
 
   create_table "invitations", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
