@@ -28,6 +28,7 @@ class Api::V2::VehiclesController < ApplicationController
       "vehicles.image_url",
       "vehicles.faction_id",
       "vehicles.action_values",
+      "vehicles.description",
       "vehicles.created_at",
       "vehicles.updated_at",
       "vehicles.task",
@@ -89,7 +90,7 @@ class Api::V2::VehiclesController < ApplicationController
 
   def autocomplete
     vehicles = current_campaign.vehicles.active
-      .select("vehicles.id", "vehicles.name", "vehicles.faction_id", "vehicles.action_values")
+      .select("vehicles.id", "vehicles.name", "vehicles.faction_id", "vehicles.action_values", "vehicles.description")
 
     if params["faction_id"].present?
       vehicles = vehicles.where(faction_id: params["faction_id"])
