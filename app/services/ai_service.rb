@@ -1,5 +1,4 @@
-# app/services/ai_character_service.rb
-class AiCharacterService
+class AiService
   class << self
     include Rails.application.routes.url_helpers
 
@@ -39,13 +38,13 @@ class AiCharacterService
       end
     end
 
-    def generate_character_image(character)
-      raise 'Character must be provided' unless character
-      raise 'Character must respond to action_values and description' unless character.respond_to?(:action_values) && character.respond_to?(:description)
-      raise 'Character must be saved before attaching image' if character.new_record?
-      raise "Character is invalid: #{character.errors.full_messages.join(', ')}" unless character.valid?
+    def generate_image_for_entity(entity)
+      raise 'Entity must be provided' unless entity
+      raise 'Entity must respond to action_values or description' unless entity.respond_to?(:action_values) || entity.respond_to?(:description)
+      raise 'Entity must be saved before attaching image' if entity.new_record?
+      raise "Entity is invalid: #{entity.errors.full_messages.join(', ')}" unless entity.valid?
 
-      prompt = build_image_prompt(character)
+      prompt = build_image_prompt(entity)
       max_retries = 3
       retry_count = 0
 
@@ -53,50 +52,9 @@ class AiCharacterService
         image_url = grok.generate_image(prompt, num_images=1, response_format='url')
         Rails.logger.info("Generated image URL: #{image_url}")
 
-        # Attach image to Character
-        if character.respond_to?(:image)
-          require 'open-uri'
-          require 'tempfile'
-          require 'mini_magick'
-
-          filename = "character_image_#{character.id}.jpeg"
-          Tempfile.create(['character_image', '.jpeg'], binmode: true) do |tempfile|
-            begin
-              URI.open(image_url) { |f| tempfile.write(f.read) }
-              tempfile.flush
-              tempfile.rewind
-            rescue OpenURI::HTTPError => e
-              raise "Failed to download image from #{image_url}: #{e.message}"
-            end
-
-            # Validate image data
-            begin
-              MiniMagick::Image.open(tempfile.path)
-            rescue MiniMagick::Error => e
-              raise "Invalid image data: #{e.message}"
-            end
-
-            ActiveRecord::Base.transaction do
-              character.image.attach(
-                io: File.open(tempfile.path),
-                filename: filename,
-                content_type: 'image/jpeg'
-              )
-              unless character.image.attached?
-                raise "Failed to attach image to character ID: #{character.id}"
-              end
-              character.image.blob.save!
-            end
-            Rails.logger.info("Attached image to character ID: #{character.id}")
-          end
-        else
-          Rails.logger.warn("Character does not have image attachment capability")
-        end
-
-        # Return Active Storage URL for client download
-        character.image.attached? ? url_for(character.image) : image_url
+        image_url
       rescue StandardError => e
-        Rails.logger.error("Error generating character image: #{e.message}\n#{e.backtrace.join("\n")}")
+        Rails.logger.error("Error generating entity image: #{e.message}\n#{e.backtrace.join("\n")}")
         retry_count += 1
         if retry_count <= max_retries && !e.message.match?(/Failed to download image|Invalid image data|Failed to attach image/)
           Rails.logger.info("Retrying image generation (#{retry_count}/#{max_retries})")
@@ -107,12 +65,87 @@ class AiCharacterService
       end
     end
 
+    def attach_image_from_url(entity, image_url)
+      if entity.respond_to?(:image)
+        require 'open-uri'
+        require 'tempfile'
+        require 'mini_magick'
+
+        filename = "#{entity.class.name.underscore}_image_#{entity.id}.jpeg"
+        Tempfile.create(['entity_image', '.jpeg'], binmode: true) do |tempfile|
+          begin
+            URI.open(image_url) { |f| tempfile.write(f.read) }
+            tempfile.flush
+            tempfile.rewind
+          rescue OpenURI::HTTPError => e
+            raise "Failed to download image from #{image_url}: #{e.message}"
+          end
+
+          # Validate image data
+          begin
+            MiniMagick::Image.open(tempfile.path)
+          rescue MiniMagick::Error => e
+            raise "Invalid image data: #{e.message}"
+          end
+
+          ActiveRecord::Base.transaction do
+            entity.image.attach(
+              io: File.open(tempfile.path),
+              filename: filename,
+              content_type: 'image/jpeg'
+            )
+            unless entity.image.attached?
+              raise "Failed to attach image to #{entity.class.name} ID: #{entity.id}"
+            end
+            entity.image.blob.save!
+          end
+          Rails.logger.info("Attached image to #{entity.class.name} ID: #{entity.id}")
+        end
+      else
+        Rails.logger.warn("#{entity.class.name} does not have image attachment capability")
+      end
+
+      # Return Active Storage URL for client download
+      entity.image.attached? ? url_for(entity.image) : image_url
+    end
+
     def valid_json?(json)
       required_keys = %w[name description type mainAttack attackValue defense toughness speed damage faction juncture nicknames age height weight hairColor eyeColor styleOfDress wealth appearance]
       required_keys.all? { |key| json.key?(key) }
     end
 
-    def build_image_prompt(character)
+    def build_image_prompt(entity)
+      case entity.class.name
+      when Character
+        build_image_prompt_for_character(entity)
+      else
+        build_image_prompt_for_entity(entity)
+      end
+    end
+
+    def build_image_prompt_for_entity(entity)
+      description = entity.description
+
+      if description.length > 700
+        Rails.logger.warn("Character description truncated to 700 characters")
+        description = description[0...700]
+      end
+
+      prompt = <<~PROMPT
+        You are a creative AI image generator for a game of Feng Shui 2, the action movie roleplaying game.
+        Based on this description, create an image of the #{entity.class.name}.
+        #{description}
+      PROMPT
+
+      if prompt.length > MAX_PROMPT_LENGTH
+        Rails.logger.warn("Image prompt truncated from #{prompt.length} to #{MAX_PROMPT_LENGTH} characters")
+        prompt = prompt[0...MAX_PROMPT_LENGTH]
+      end
+
+      prompt
+    end
+
+    def build_image_prompt_for_character(character)
       description = <<~DESCRIPTION
         Archetype: #{character.action_values["Archetype"] || 'Unknown'}
         Description: #{character.description["Appearance"] || 'A stylish character'}
