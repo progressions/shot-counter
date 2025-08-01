@@ -13,7 +13,7 @@ class Vehicle < ApplicationRecord
     "Archetype" => "Car",
   }
   DEFAULT_DESCRIPTION = {
-    "Height" => "",
+    "Size" => "",
     "Weight" => "",
     "Color" => "",
     "Appearance" => "",
