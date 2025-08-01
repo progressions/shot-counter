@@ -87,8 +87,8 @@ class Character < ApplicationRecord
   before_save :ensure_integer_skills
   before_save :ensure_non_integer_action_values
 
-  after_update :broadcast_campaign_update
-  after_create :broadcast_campaign_update
+  # after_update :broadcast_campaign_update
+  # after_create :broadcast_campaign_update
 
   validates :name, presence: true, uniqueness: { scope: :campaign_id }
 
@@ -96,6 +96,14 @@ class Character < ApplicationRecord
 
   scope :by_type, -> (player_type) do
     where("action_values->>'Type' IN (?)", player_type)
+  end
+
+  attr_accessor :attaching_image
+
+  def image_url
+    return unless image.attached?
+    Rails.logger.debug("Generating URL for blob: #{image.blob.inspect}")
+    image.url
   end
 
   def as_v1_json(args={})
@@ -365,6 +373,10 @@ class Character < ApplicationRecord
   end
 
   private
+
+  def attaching_image?
+    attaching_image
+  end
 
   def ensure_default_action_values
     self.action_values ||= {}
