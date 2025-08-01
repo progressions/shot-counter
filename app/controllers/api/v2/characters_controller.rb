@@ -28,6 +28,7 @@ def index
     "characters.image_url",
     "characters.faction_id",
     "characters.action_values",
+    "characters.description",
     "characters.created_at",
     "characters.updated_at"
   ).includes(image_attachment: :blob)
@@ -37,6 +38,7 @@ def index
   characters_query = characters_query.where(user_id: params["user_id"]) if params["user_id"].present?
   characters_query = characters_query.where("characters.name ILIKE ?", "%#{params['search']}%") if params["search"].present?
   characters_query = characters_query.where("action_values->>'Type' = ?", params["type"]) if params["type"].present?
+  characters_query = characters_query.where("action_values->>'Archetype' = ?", params["archetype"]) if params["archetype"].present?
 
   # Cache key
   cache_key = [
@@ -49,7 +51,8 @@ def index
     params["search"],
     params["user_id"],
     params["faction_id"],
-    params["type"]
+    params["type"],
+    params["archetype"],
   ].join("/")
 
   cached_result = Rails.cache.fetch(cache_key, expires_in: 5.minutes) do
@@ -85,7 +88,7 @@ end
 
   def autocomplete
     characters = current_campaign.characters.active
-      .select("characters.id", "characters.name", "characters.faction_id")
+      .select("characters.id", "characters.name", "characters.faction_id", "characters.action_values")
 
     if params["faction_id"].present?
       characters = characters.where(faction_id: params["faction_id"])
@@ -93,6 +96,10 @@ end
 
     if params["type"].present?
       characters = characters.where("action_values ->> 'Type' = ?", params["type"])
+    end
+
+    if params["archetype"].present?
+      characters = characters.where("action_values ->> 'Archetype' = ?", params["archetype"])
     end
 
     characters = characters.order("LOWER(characters.name) #{params['order'] || 'asc'}")
@@ -105,6 +112,8 @@ end
                       .select("factions.id", "factions.name")
                       .order("LOWER(factions.name) ASC")
 
+    archetypes = characters.map { |c| c.action_values["Archetype"] }.compact.uniq.sort
+
     render json: {
       characters: ActiveModelSerializers::SerializableResource.new(
         characters,
@@ -115,7 +124,8 @@ end
         factions,
         each_serializer: FactionAutocompleteSerializer,
         adapter: :attributes
-      )
+      ),
+      archetypes: archetypes
     }
   end
 

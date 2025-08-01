@@ -10,6 +10,7 @@ class Vehicle < ApplicationRecord
     "Pursuer" => "true",
     "Position" => "far",
     "Type" => "PC",
+    "Archetype" => "Car",
   }
 
   has_one_attached :image
