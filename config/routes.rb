@@ -8,13 +8,18 @@ Rails.application.routes.draw do
   namespace :api do
     namespace :v2 do
       resources :characters do
+        get :names, on: :collection, to: "characters#autocomplete"
+        post :pdf, on: :collection, to: "characters#import"
         member do
           delete :image, to: "characters#remove_image"
           post :sync
           get :pdf
+          post :duplicate
         end
       end
       resources :weapons do
+        get :junctures, on: :collection
+        get :categories, on: :collection
         member do
           delete :image, to: "weapons#remove_image"
         end
@@ -40,6 +45,8 @@ Rails.application.routes.draw do
         end
       end
       resources :schticks do
+        get :categories, on: :collection
+        get :paths, on: :collection
         member do
           delete :image, to: "schticks#remove_image"
         end
@@ -53,6 +60,17 @@ Rails.application.routes.draw do
         member do
           delete :image, to: "fights#remove_image"
           patch :touch
+        end
+      end
+      resources :campaigns do
+        member do
+          delete :image, to: "campaigns#remove_image"
+        end
+      end
+      resources :users, only: [:index, :show, :update, :destroy] do
+        get :current, on: :collection
+        member do
+          delete :image, to: "users#remove_image"
         end
       end
     end
@@ -88,9 +106,6 @@ Rails.application.routes.draw do
           delete :image, to: "parties#remove_image"
         end
       end
-      # delete "parties/:id/image", to: "parties#remove_image"
-      # delete "weapons/:id/image", to: "weapons#remove_image"
-      # delete "sites/:id/image", to: "sites#remove_image"
       resources :sites do
         member do
           delete :image, to: "sites#remove_image"

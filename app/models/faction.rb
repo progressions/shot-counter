@@ -1,8 +1,10 @@
 class Faction < ApplicationRecord
+  include Broadcastable
+
   belongs_to :campaign
-  has_many :factions
   has_many :characters
   has_many :sites
+  has_many :junctures
   has_many :parties
   has_one_attached :image
 
@@ -30,15 +32,5 @@ class Faction < ApplicationRecord
 
   def image_url
     image.attached? ? image.url : nil
-  end
-
-  private
-
-  def broadcast_campaign_update
-    channel = "campaign_#{campaign_id}"
-    payload = { faction: as_json }
-    ActionCable.server.broadcast(channel, payload)
-  rescue StandardError => e
-    Rails.logger.error "Failed to broadcast campaign update for juncture #{id}: #{e.message}"
   end
 end

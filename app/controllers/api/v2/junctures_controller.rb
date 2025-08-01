@@ -29,16 +29,20 @@ class Api::V2::JuncturesController < ApplicationController
       @junctures = @junctures.where.not(id: @character.juncture_id)
     end
 
+    @factions = current_campaign.factions.joins(:junctures).where(junctures: @junctures).order("factions.name").distinct
+
     @junctures = paginate(@junctures, per_page: (params[:per_page] || 10), page: (params[:page] || 1))
 
     render json: {
       junctures: ActiveModelSerializers::SerializableResource.new(@junctures, each_serializer: JunctureSerializer).serializable_hash,
+      factions: ActiveModelSerializers::SerializableResource.new(@factions, each_serializer: FactionSerializer).serializable_hash,
       meta: pagination_meta(@junctures),
     }
   end
 
   def show
-    render json: current_campaign.junctures.find(params[:id])
+    @juncture = current_campaign.junctures.find(params[:id])
+    render json: @juncture
   end
 
   def create
@@ -84,7 +88,7 @@ class Api::V2::JuncturesController < ApplicationController
     else
       juncture_data = juncture_params.to_h.symbolize_keys
     end
-    juncture_data = juncture_data.slice(:name, :description, :active, :faction_id)
+    juncture_data = juncture_data.slice(:name, :description, :active, :faction_id, :character_ids)
 
     # Handle image attachment if present
     if params[:image].present?
@@ -120,6 +124,6 @@ class Api::V2::JuncturesController < ApplicationController
   private
 
   def juncture_params
-    params.require(:juncture).permit(:name, :description, :active, :image, :faction_id)
+    params.require(:juncture).permit(:name, :description, :active, :image, :faction_id, :character_ids)
   end
 end

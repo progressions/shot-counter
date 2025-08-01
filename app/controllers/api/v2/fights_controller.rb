@@ -59,7 +59,7 @@ class Api::V2::FightsController < ApplicationController
   end
 
   def show
-    render json: @fight.as_v1_json
+    render json: @fight, serializer: FightSerializer, status: :ok
   end
 
   def create
@@ -75,7 +75,7 @@ class Api::V2::FightsController < ApplicationController
       fight_data = fight_params.to_h.symbolize_keys
     end
 
-    fight_data = fight_data.slice(:name, :sequence, :active, :archived, :description, :image)
+    fight_data = fight_data.slice(:name, :sequence, :active, :archived, :description, :image, :character_ids, :vehicle_ids)
 
     @fight = current_campaign.fights.new(fight_data)
 
@@ -105,7 +105,7 @@ class Api::V2::FightsController < ApplicationController
     else
       fight_data = fight_params.to_h.symbolize_keys
     end
-    fight_data = fight_data.slice(:name, :sequence, :active, :archived, :description)
+    fight_data = fight_data.slice(:name, :sequence, :active, :archived, :description, :character_ids, :vehicle_ids)
 
     # Handle image attachment if present
     if params[:image].present?
@@ -114,7 +114,7 @@ class Api::V2::FightsController < ApplicationController
     end
 
     if @fight.update(fight_data)
-      render json: @fight
+      render json: @fight.reload, serializer: FightSerializer, status: :ok
     else
       render json: { errors: @fight.errors.full_messages }, status: :unprocessable_entity
     end
@@ -147,6 +147,6 @@ class Api::V2::FightsController < ApplicationController
   end
 
   def fight_params
-    params.require(:fight).permit(:name, :sequence, :active, :archived, :description, :image)
+    params.require(:fight).permit(:name, :sequence, :active, :archived, :description, :image, character_ids: [], vehicle_ids: [])
   end
 end

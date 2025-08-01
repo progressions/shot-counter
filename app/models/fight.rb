@@ -1,4 +1,6 @@
 class Fight < ApplicationRecord
+  include Broadcastable
+
   belongs_to :campaign
   has_many :shots, dependent: :destroy
   has_many :characters, through: :shots
@@ -10,9 +12,6 @@ class Fight < ApplicationRecord
 
   after_update :enqueue_discord_notification
   after_update :broadcast_update
-  after_commit :broadcast_campaign_update, on: [:create, :update]
-  after_destroy :broadcast_reload
-  after_create :broadcast_reload
 
   scope :active, -> { where(active: true) }
 
@@ -39,7 +38,7 @@ class Fight < ApplicationRecord
 
   def image_url
     image.attached? ? image.url : nil
-  rescue
+  # rescue
   end
 
   def current_shot
@@ -89,22 +88,6 @@ class Fight < ApplicationRecord
   def broadcast_update
     channel = "fight_#{id}"
     payload = { fight: :updated }
-    Rails.logger.info "Broadcasting to #{channel} with payload: #{payload.inspect}"
-    result = ActionCable.server.broadcast(channel, payload)
-    Rails.logger.info "Broadcast result: #{result.inspect} (number of subscribers)"
-  end
-
-  def broadcast_campaign_update
-    channel = "campaign_#{campaign.id}"
-    payload = { fight: { id: id, name: name, description: description, updated_at: updated_at, image_url: image_url } }
-    Rails.logger.info "Broadcasting to #{channel} with payload: #{payload.inspect}"
-    result = ActionCable.server.broadcast(channel, payload)
-    Rails.logger.info "Broadcast result: #{result.inspect} (number of subscribers)"
-  end
-
-  def broadcast_reload
-    channel = "campaign_#{campaign.id}"
-    payload = { fights: "reload" }
     Rails.logger.info "Broadcasting to #{channel} with payload: #{payload.inspect}"
     result = ActionCable.server.broadcast(channel, payload)
     Rails.logger.info "Broadcast result: #{result.inspect} (number of subscribers)"

@@ -1,6 +1,7 @@
 require "bcrypt"
 
 class User < ApplicationRecord
+  include Broadcastable
   include Devise::JWT::RevocationStrategies::JTIMatcher
 
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
@@ -25,7 +26,6 @@ class User < ApplicationRecord
       with: /\A[^@\s]+@[^@.\s]+(?:\.[^@.\s]+)+\z/,
       message: "is invalid"
     }
-  after_update :broadcast_campaign_update, if: -> { saved_change_to_email? || saved_change_to_first_name? || saved_change_to_last_name? }
 
   def as_v1_json(options = {})
     super(options.merge(
@@ -69,15 +69,17 @@ class User < ApplicationRecord
 
   def broadcast_campaign_update
     payload = {
-      user: self.as_json
+      user: UserSerializer.new(self).as_json,
     }
     campaigns.each do |campaign|
       channel = "campaign_#{campaign.id}"
       ActionCable.server.broadcast(channel, payload)
+      ActionCable.server.broadcast(channel, { users: "reload" })
     end
     player_campaigns.each do |campaign|
       channel = "campaign_#{campaign.id}"
       ActionCable.server.broadcast(channel, payload)
+      ActionCable.server.broadcast(channel, { users: "reload" })
     end
   end
 end

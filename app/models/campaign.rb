@@ -1,4 +1,6 @@
 class Campaign < ApplicationRecord
+  include Broadcastable
+
   belongs_to :user
   has_many :fights
   has_many :characters
@@ -16,8 +18,6 @@ class Campaign < ApplicationRecord
 
   validates :name, presence: true, allow_blank: false
 
-  after_update :broadcast_campaign_update, if: -> { saved_change_to_name? || saved_change_to_description? }
-
   def as_v1_json(args={})
     {
       id: id,
@@ -29,6 +29,12 @@ class Campaign < ApplicationRecord
     }
   end
 
+  def image_url
+    image.attached? ? image.url : nil
+  end
+
+  private
+
   def broadcast_campaign_update
     user_camp_ids = user.campaigns.map { |campaign| campaign.id }
     player_camp_ids = players.map { |player| player.current_campaign_id }
@@ -37,7 +43,7 @@ class Campaign < ApplicationRecord
     campaign_ids.uniq.each do |campaign_id|
       channel = "campaign_#{campaign_id}"
       payload = {
-        campaign: self.as_json
+        campaign: CampaignSerializer.new(self).as_json,
       }
       ActionCable.server.broadcast(channel, payload)
     end

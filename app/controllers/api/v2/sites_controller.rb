@@ -39,14 +39,14 @@ class Api::V2::SitesController < ApplicationController
     @sites = paginate(@sites, per_page: (params[:per_page] || 10), page: (params[:page] || 1))
 
     render json: {
-      sites: @sites,
-      factions: @factions,
+      sites: ActiveModelSerializers::SerializableResource.new(@sites, each_serializer: SiteSerializer).serializable_hash,
+      factions: ActiveModelSerializers::SerializableResource.new(@factions, each_serializer: FactionSerializer).serializable_hash,
       meta: pagination_meta(@sites),
     }
   end
 
   def show
-    render json: current_campaign.sites.find(params[:id])
+    render json: SiteSerializer.new(current_campaign.sites.find(params[:id])).serializable_hash
   end
 
   def create
@@ -92,7 +92,7 @@ class Api::V2::SitesController < ApplicationController
     else
       site_data = site_params.to_h.symbolize_keys
     end
-    site_data = site_data.slice(:name, :description, :active, :faction_id)
+    site_data = site_data.slice(:name, :description, :active, :faction_id, :character_ids)
 
     # Handle image attachment if present
     if params[:image].present?
@@ -132,6 +132,6 @@ class Api::V2::SitesController < ApplicationController
   private
 
   def site_params
-    params.require(:site).permit(:name, :description, :faction_id, :secret, :image)
+    params.require(:site).permit(:name, :description, :faction_id, :secret, :image, character_ids: [])
   end
 end

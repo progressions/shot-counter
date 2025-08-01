@@ -58,7 +58,7 @@ class Api::V2::FactionsController < ApplicationController
       faction_data = faction_params.to_h.symbolize_keys
     end
 
-    faction_data.slice(:name, :description, :active, :faction_id)
+    faction_data = faction_data.slice(:name, :description, :active, :character_ids, :party_ids, :site_ids, :juncture_ids)
 
     @faction = current_campaign.factions.new(faction_data)
 
@@ -88,7 +88,7 @@ class Api::V2::FactionsController < ApplicationController
     else
       faction_data = faction_params.to_h.symbolize_keys
     end
-    faction_data = faction_data.slice(:name, :description, :active, :faction_id)
+    faction_data = faction_data.slice(:name, :description, :active, :character_ids, :party_ids, :site_ids, :juncture_ids)
 
     # Handle image attachment if present
     if params[:image].present?
@@ -122,6 +122,6 @@ class Api::V2::FactionsController < ApplicationController
   private
 
   def faction_params
-    params.require(:faction).permit(:name, :description, :active, :image)
+    params.require(:faction).permit(:name, :description, :active, :image, character_ids: [], party_ids: [], site_ids: [], juncture_ids: [])
   end
 end

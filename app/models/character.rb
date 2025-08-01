@@ -1,4 +1,6 @@
 class Character < ApplicationRecord
+  include Broadcastable
+
   DEFAULT_ACTION_VALUES = {
     "Guns" => 0,
     "Martial Arts" => 0,
@@ -87,14 +89,20 @@ class Character < ApplicationRecord
   before_save :ensure_integer_skills
   before_save :ensure_non_integer_action_values
 
-  after_update :broadcast_campaign_update
-
   validates :name, presence: true, uniqueness: { scope: :campaign_id }
 
   scope :active, -> { where(active: true) }
 
   scope :by_type, -> (player_type) do
     where("action_values->>'Type' IN (?)", player_type)
+  end
+
+  attr_accessor :attaching_image
+
+  def image_url
+    return unless image.attached?
+    Rails.logger.debug("Generating URL for blob: #{image.blob.inspect}")
+    image.url
   end
 
   def as_v1_json(args={})
@@ -365,6 +373,10 @@ class Character < ApplicationRecord
 
   private
 
+  def attaching_image?
+    attaching_image
+  end
+
   def ensure_default_action_values
     self.action_values ||= {}
     self.action_values = DEFAULT_ACTION_VALUES.merge(self.action_values)
@@ -402,13 +414,5 @@ class Character < ApplicationRecord
         self.action_values[key] = DEFAULT_ACTION_VALUES[key]
       end
     end
-  end
-
-  def broadcast_campaign_update
-    channel = "campaign_#{campaign_id}"
-    payload = {
-      character: self.as_json
-    }
-    result = ActionCable.server.broadcast(channel, payload)
   end
 end

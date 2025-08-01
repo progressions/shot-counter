@@ -1,4 +1,6 @@
 class Party < ApplicationRecord
+  include Broadcastable
+
   has_many :memberships, dependent: :destroy
   has_many :characters, through: :memberships
   has_many :vehicles, through: :memberships
@@ -40,11 +42,7 @@ class Party < ApplicationRecord
   end
 
   def image_url
-    return unless image_attachment && image_attachment.blob
-    if Rails.env.production?
-      image.attached? ? image.url : nil
-    else
-      Rails.application.routes.url_helpers.rails_blob_url(image_attachment.blob, only_path: true)
-    end
+    image.attached? ? image.url : nil
+  rescue
   end
 end

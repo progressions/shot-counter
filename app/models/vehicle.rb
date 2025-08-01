@@ -1,4 +1,6 @@
 class Vehicle < ApplicationRecord
+  include Broadcastable
+
   DEFAULT_ACTION_VALUES = {
     "Acceleration" => 0,
     "Handling" => 0,
@@ -10,6 +12,13 @@ class Vehicle < ApplicationRecord
     "Pursuer" => "true",
     "Position" => "far",
     "Type" => "PC",
+    "Archetype" => "Car",
+  }
+  DEFAULT_DESCRIPTION = {
+    "Size" => "",
+    "Weight" => "",
+    "Color" => "",
+    "Appearance" => "",
   }
 
   has_one_attached :image
@@ -24,13 +33,12 @@ class Vehicle < ApplicationRecord
 
   POSITIONS = %w(near far)
 
+  before_validation :ensure_default_description
   before_validation :ensure_default_action_values
   before_validation :ensure_integer_values
   before_validation :ensure_non_integer_values
 
   validates :name, presence: true, uniqueness: { scope: :campaign_id }
-
-  after_update :broadcast_campaign_update
 
   def as_v1_json(args={})
     shot = args[:shot]
@@ -91,12 +99,7 @@ class Vehicle < ApplicationRecord
   end
 
   def image_url
-    return unless image_attachment && image_attachment.blob
-    if Rails.env.production?
-      image.attached? ? image.url : nil
-    else
-      Rails.application.routes.url_helpers.rails_blob_url(image_attachment.blob, only_path: true)
-    end
+    image.attached? ? image.url : nil
   end
 
   def sort_order(shot_id=nil)
@@ -130,6 +133,11 @@ class Vehicle < ApplicationRecord
     self.action_values = DEFAULT_ACTION_VALUES.merge(self.action_values)
   end
 
+  def ensure_default_description
+    self.description ||= {}
+    self.description = DEFAULT_DESCRIPTION.merge(self.description)
+  end
+
   def validate_position
     self.action_values = DEFAULT_ACTION_VALUES.merge(self.action_values)
     unless POSITIONS.include?(self.action_values["Position"])
@@ -153,13 +161,5 @@ class Vehicle < ApplicationRecord
         self.action_values[key] = DEFAULT_ACTION_VALUES[key]
       end
     end
-  end
-
-  def broadcast_campaign_update
-    channel = "campaign_#{campaign_id}"
-    payload = {
-      vehicle: self.as_json
-    }
-    result = ActionCable.server.broadcast(channel, payload)
   end
 end

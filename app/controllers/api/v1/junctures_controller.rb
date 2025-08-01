@@ -29,10 +29,13 @@ class Api::V1::JuncturesController < ApplicationController
       @junctures = @junctures.where.not(id: @character.juncture_id)
     end
 
+    @junctures = current_campaign.junctures.joins(:parties).where(parties: @parties).order("junctures.name").distinct
+
     @junctures = paginate(@junctures, per_page: (params[:per_page] || 10), page: (params[:page] || 1))
 
     render json: {
       junctures: ActiveModelSerializers::SerializableResource.new(@junctures, each_serializer: JunctureSerializer).serializable_hash,
+      factions: ActiveModelSerializers::SerializableResource.new(current_campaign.factions, each_serializer: FactionSerializer).serializable_hash,
       meta: pagination_meta(@junctures),
     }
   end

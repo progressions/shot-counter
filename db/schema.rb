@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_07_27_203600) do
+ActiveRecord::Schema[8.0].define(version: 2025_08_01_000901) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -351,6 +351,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_27_203600) do
     t.datetime "last_synced_to_notion_at"
     t.string "summary"
     t.uuid "juncture_id"
+    t.jsonb "description"
     t.index "lower((name)::text)", name: "index_vehicles_on_lower_name"
     t.index ["campaign_id"], name: "index_vehicles_on_campaign_id"
     t.index ["faction_id"], name: "index_vehicles_on_faction_id"

@@ -6,8 +6,6 @@ class Api::V1::PartiesController < ApplicationController
   def index
     @parties = current_campaign.parties.order("LOWER(parties.name) ASC")
 
-    @factions = current_campaign.factions.joins(:parties).where(parties: @parties).order("factions.name").distinct
-
     if params[:id].present?
       @parties = @parties.where(id: params[:id])
     end
@@ -23,11 +21,13 @@ class Api::V1::PartiesController < ApplicationController
       @parties = @parties.where(faction_id: params[:faction_id])
     end
 
+    @factions = current_campaign.factions.joins(:parties).where(parties: @parties).order("factions.name").distinct
+
     @parties = paginate(@parties, per_page: (params[:per_page] || 6), page: (params[:page] || 1))
 
     render json: {
-      parties: @parties,
-      factions: @factions,
+      parties: ActiveModelSerializers::SerializableResource.new(@parties, each_serializer: PartySerializer).serializable_hash,
+      factions: ActiveModelSerializers::SerializableResource.new(current_campaign.factions, each_serializer: FactionSerializer).serializable_hash,
       meta: pagination_meta(@parties),
     }
   end
