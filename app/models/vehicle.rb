@@ -12,6 +12,12 @@ class Vehicle < ApplicationRecord
     "Type" => "PC",
     "Archetype" => "Car",
   }
+  DEFAULT_DESCRIPTION = {
+    "Height" => "",
+    "Weight" => "",
+    "Color" => "",
+    "Appearance" => "",
+  }
 
   has_one_attached :image
   has_many :shots, dependent: :destroy
@@ -25,6 +31,7 @@ class Vehicle < ApplicationRecord
 
   POSITIONS = %w(near far)
 
+  before_validation :ensure_default_description
   before_validation :ensure_default_action_values
   before_validation :ensure_integer_values
   before_validation :ensure_non_integer_values
@@ -32,6 +39,8 @@ class Vehicle < ApplicationRecord
   validates :name, presence: true, uniqueness: { scope: :campaign_id }
 
   after_update :broadcast_campaign_update
+  after_create :broadcast_campaign_update
+  after_destroy :broadcast_campaign_reload
 
   def as_v1_json(args={})
     shot = args[:shot]
@@ -126,6 +135,11 @@ class Vehicle < ApplicationRecord
     self.action_values = DEFAULT_ACTION_VALUES.merge(self.action_values)
   end
 
+  def ensure_default_description
+    self.description ||= {}
+    self.description = DEFAULT_DESCRIPTION.merge(self.description)
+  end
+
   def validate_position
     self.action_values = DEFAULT_ACTION_VALUES.merge(self.action_values)
     unless POSITIONS.include?(self.action_values["Position"])
@@ -158,5 +172,10 @@ class Vehicle < ApplicationRecord
     }
     result = ActionCable.server.broadcast(channel, payload)
     result = ActionCable.server.broadcast(channel, { vehicles: "reload" })
+  end
+
+  def broadcast_campaign_reload
+    channel = "campaign_#{campaign_id}"
+    ActionCable.server.broadcast(channel, { characters: "reload" })
   end
 end
