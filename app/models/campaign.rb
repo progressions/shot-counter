@@ -1,4 +1,6 @@
 class Campaign < ApplicationRecord
+  include Broadcastable
+
   belongs_to :user
   has_many :fights
   has_many :characters
@@ -15,8 +17,6 @@ class Campaign < ApplicationRecord
   has_one_attached :image
 
   validates :name, presence: true, allow_blank: false
-
-  after_update :broadcast_campaign_update
 
   def as_v1_json(args={})
     {

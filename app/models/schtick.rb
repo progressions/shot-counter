@@ -1,4 +1,6 @@
 class Schtick < ApplicationRecord
+  include Broadcastable
+
   CATEGORIES = [
     "Guns",
     "Martial Arts",
@@ -34,8 +36,6 @@ class Schtick < ApplicationRecord
   validate :prerequisite_must_be_in_same_category_and_path
 
   has_one_attached :image
-
-  after_update :broadcast_campaign_update
 
   def self.for_archetype(archetype)
     where("schticks.archetypes @> ?", [archetype].flatten.to_json)
@@ -122,16 +122,5 @@ class Schtick < ApplicationRecord
 
   def image_url
     image.attached? ? image.url : nil
-  end
-
-  private
-
-  def broadcast_campaign_update
-    channel = "campaign_#{campaign_id}"
-    payload = { schtick: SchtickSerializer.new(self).as_json }
-    ActionCable.server.broadcast(channel, payload)
-    ActionCable.server.broadcast(channel, { schticks: "reload" })
-  rescue StandardError => e
-    Rails.logger.error "Failed to broadcast campaign update for juncture #{id}: #{e.message}"
   end
 end

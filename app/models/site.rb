@@ -1,4 +1,6 @@
 class Site < ApplicationRecord
+  include Broadcastable
+
   belongs_to :campaign
   belongs_to :faction, optional: true
   has_many :attunements, dependent: :destroy
@@ -31,16 +33,5 @@ class Site < ApplicationRecord
   def image_url
     image.attached? ? image.url : nil
   rescue
-  end
-
-  private
-
-  def broadcast_campaign_update
-    channel = "campaign_#{campaign_id}"
-    payload = { site: SiteSerializer.new(self).as_json }
-    ActionCable.server.broadcast(channel, payload)
-    ActionCable.server.broadcast(channel, { sites: "reload" })
-  rescue StandardError => e
-    Rails.logger.error "Failed to broadcast campaign update for site #{id}: #{e.message}"
   end
 end

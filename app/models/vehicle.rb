@@ -1,4 +1,6 @@
 class Vehicle < ApplicationRecord
+  include Broadcastable
+
   DEFAULT_ACTION_VALUES = {
     "Acceleration" => 0,
     "Handling" => 0,
@@ -38,8 +40,6 @@ class Vehicle < ApplicationRecord
 
   validates :name, presence: true, uniqueness: { scope: :campaign_id }
 
-  after_update :broadcast_campaign_update
-  after_create :broadcast_campaign_update
   after_destroy :broadcast_campaign_reload
 
   def as_v1_json(args={})
@@ -163,15 +163,6 @@ class Vehicle < ApplicationRecord
         self.action_values[key] = DEFAULT_ACTION_VALUES[key]
       end
     end
-  end
-
-  def broadcast_campaign_update
-    channel = "campaign_#{campaign_id}"
-    payload = {
-      vehicle: VehicleSerializer.new(self).as_json,
-    }
-    result = ActionCable.server.broadcast(channel, payload)
-    result = ActionCable.server.broadcast(channel, { vehicles: "reload" })
   end
 
   def broadcast_campaign_reload

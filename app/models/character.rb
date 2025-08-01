@@ -1,4 +1,6 @@
 class Character < ApplicationRecord
+  include Broadcastable
+
   DEFAULT_ACTION_VALUES = {
     "Guns" => 0,
     "Martial Arts" => 0,
@@ -86,9 +88,6 @@ class Character < ApplicationRecord
   before_save :ensure_integer_action_values
   before_save :ensure_integer_skills
   before_save :ensure_non_integer_action_values
-
-  # after_update :broadcast_campaign_update
-  # after_create :broadcast_campaign_update
 
   validates :name, presence: true, uniqueness: { scope: :campaign_id }
 
@@ -415,14 +414,6 @@ class Character < ApplicationRecord
         self.action_values[key] = DEFAULT_ACTION_VALUES[key]
       end
     end
-  end
-
-  def broadcast_campaign_update
-    channel = "campaign_#{campaign_id}"
-    payload = {
-      character: CharacterSerializer.new(self).as_json,
-    }
-    ActionCable.server.broadcast(channel, payload)
   end
 
   def broadcast_campaign_reload

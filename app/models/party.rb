@@ -1,4 +1,6 @@
 class Party < ApplicationRecord
+  include Broadcastable
+
   has_many :memberships, dependent: :destroy
   has_many :characters, through: :memberships
   has_many :vehicles, through: :memberships
@@ -8,7 +10,6 @@ class Party < ApplicationRecord
 
   validates :name, presence: true, uniqueness: { scope: :campaign_id }
 
-  after_update :broadcast_campaign_update
   after_destroy :broadcast_campaign_reload
 
   def as_v1_json(options = {})

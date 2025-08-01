@@ -1,12 +1,12 @@
 class Juncture < ApplicationRecord
+  include Broadcastable
+
   belongs_to :campaign
   belongs_to :faction, optional: true
   has_many :characters
   has_one_attached :image
 
   validates :name, presence: true, uniqueness: { scope: :campaign_id }
-
-  after_update :broadcast_campaign_update
 
   def as_v1_json(args = {})
     {
@@ -33,16 +33,5 @@ class Juncture < ApplicationRecord
 
   def image_url
     image.attached? ? image.url : nil
-  end
-
-  private
-
-  def broadcast_campaign_update
-    channel = "campaign_#{campaign_id}"
-    payload = { juncture: JunctureSerializer.new(self).as_json }
-    ActionCable.server.broadcast(channel, payload)
-    ActionCable.server.broadcast(channel, { junctures: "reload" })
-  rescue StandardError => e
-    Rails.logger.error "Failed to broadcast campaign update for juncture #{id}: #{e.message}"
   end
 end
