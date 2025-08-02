@@ -24,7 +24,7 @@ class GrokService
     handle_response(response)
   end
 
-  def generate_image(prompt, num_images=1, response_format='url')
+  def generate_image(prompt, num_images=3, response_format='url')
     truncated_prompt = prompt.to_s[0...MAX_PROMPT_LENGTH]
     if prompt.length > MAX_PROMPT_LENGTH
       Rails.logger.warn("Prompt truncated to #{MAX_PROMPT_LENGTH} characters for image generation: #{truncated_prompt}")

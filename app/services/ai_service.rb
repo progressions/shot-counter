@@ -38,7 +38,7 @@ class AiService
       end
     end
 
-    def generate_image_for_entity(entity)
+    def generate_images_for_entity(entity, num_images=3)
       raise 'Entity must be provided' unless entity
       raise 'Entity must respond to action_values or description' unless entity.respond_to?(:action_values) || entity.respond_to?(:description)
       raise 'Entity must be saved before attaching image' if entity.new_record?
@@ -49,7 +49,7 @@ class AiService
       retry_count = 0
 
       begin
-        image_url = grok.generate_image(prompt, num_images=1, response_format='url')
+        image_url = grok.generate_image(prompt, num_images=3, response_format='url')
         Rails.logger.info("Generated image URL: #{image_url}")
 
         image_url
@@ -106,7 +106,9 @@ class AiService
       end
 
       # Return Active Storage URL for client download
-      entity.image.attached? ? url_for(entity.image) : image_url
+      # entity.image.attached? ? url_for(entity.image) : image_url
+
+      entity
     end
 
     def valid_json?(json)

@@ -30,10 +30,12 @@ def index
     "characters.action_values",
     "characters.description",
     "characters.created_at",
-    "characters.updated_at"
+    "characters.updated_at",
+    "characters.skills",
   ).includes(
     :image_positions,
-    image_attachment: :blob
+    image_attachment: :blob,
+    schticks: { image_attachment: :blob },
   )
 
   # Apply filters
@@ -42,6 +44,7 @@ def index
   characters_query = characters_query.where("characters.name ILIKE ?", "%#{params['search']}%") if params["search"].present?
   characters_query = characters_query.where("action_values->>'Type' = ?", params["type"]) if params["type"].present?
   characters_query = characters_query.where("action_values->>'Archetype' = ?", params["archetype"]) if params["archetype"].present?
+  characters_query = characters_query.where("is_template = ?", true) if params["is_template"].present? && params["is_template"] == "true"
 
   # Cache key
   cache_key = [
@@ -175,7 +178,7 @@ end
     else
       character_data = character_params.to_h.symbolize_keys
     end
-    character_data = character_data.slice(:name, :description, :active, :character_ids, :party_ids, :site_ids, :juncture_ids, :schtick_ids)
+    character_data = character_data.slice(:name, :description, :active, :character_ids, :party_ids, :site_ids, :juncture_ids, :schtick_ids, :action_values, :skills)
 
     # Handle image attachment if present
     if params[:image].present?
@@ -193,7 +196,7 @@ end
 
       render json: @character
     else
-      render json: { errors: @character.errors.full_messages }, status: :unprocessable_entity
+      render json: { errors: @character.errors }, status: :unprocessable_entity
     end
   end
 
@@ -222,6 +225,7 @@ end
 
   def duplicate
     @new_character = CharacterDuplicatorService.duplicate_character(@character, current_user)
+    @new_character.is_template = false
 
     if @new_character.save
       Rails.cache.delete_matched("characters/#{current_campaign.id}/*")

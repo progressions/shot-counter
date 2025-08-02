@@ -7,6 +7,12 @@ Rails.application.routes.draw do
   }
   namespace :api do
     namespace :v2 do
+      resources :ai, only: [:create]
+      resources :ai_images, only: [:create] do
+        collection do
+          post "attach", to: "ai_images#attach"
+        end
+      end
       get "image_positions/:positionable_type/:positionable_id", to: "image_positions#show"
       patch "image_positions/:positionable_type/:positionable_id", to: "image_positions#update"
       resources :image_positions, only: [:create] do
