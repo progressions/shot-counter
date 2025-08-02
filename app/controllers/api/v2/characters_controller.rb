@@ -45,6 +45,9 @@ def index
   characters_query = characters_query.where("action_values->>'Type' = ?", params["type"]) if params["type"].present?
   characters_query = characters_query.where("action_values->>'Archetype' = ?", params["archetype"]) if params["archetype"].present?
   characters_query = characters_query.where("is_template = ?", true) if params["is_template"].present? && params["is_template"] == "true"
+  if params[:party_id].present?
+    characters_query = characters_query.joins(:parties).where(parties: { id: params[:party_id] })
+  end
 
   # Cache key
   cache_key = [
@@ -148,7 +151,7 @@ end
       character_data = character_params.to_h.symbolize_keys
     end
 
-    character_data = character_data.slice(:name, :description, :active, :character_ids, :party_ids, :site_ids, :juncture_ids, :schtick_ids)
+    character_data = character_data.slice(:name, :description, :active, :character_ids, :party_ids, :site_ids, :juncture_ids, :schtick_ids, :weapon_ids)
 
     @character = current_campaign.characters.new(character_data)
 
@@ -178,7 +181,7 @@ end
     else
       character_data = character_params.to_h.symbolize_keys
     end
-    character_data = character_data.slice(:name, :description, :active, :character_ids, :party_ids, :site_ids, :juncture_ids, :schtick_ids, :action_values, :skills)
+    character_data = character_data.slice(:name, :description, :active, :character_ids, :party_ids, :site_ids, :juncture_ids, :schtick_ids, :action_values, :skills, :weapon_ids)
 
     # Handle image attachment if present
     if params[:image].present?
@@ -194,7 +197,7 @@ end
       Rails.cache.delete_matched("characters/#{current_campaign.id}/*")
       SyncCharacterToNotionJob.perform_later(@character.id)
 
-      render json: @character
+      render json: @character, serializer: CharacterSerializer, status: :ok
     else
       render json: { errors: @character.errors }, status: :unprocessable_entity
     end
@@ -305,7 +308,7 @@ end
       .require(:character)
       .permit(:name, :defense, :impairments, :color, :notion_page_id,
               :user_id, :active, :faction_id, :image, :task, :juncture_id, :wealth,
-              schtick_ids: [],
+              schtick_ids: [], weapon_ids: [],
               action_values: {},
               description: Character::DEFAULT_DESCRIPTION.keys,
               schticks: [], skills: params.fetch(:character, {}).fetch(:skills, {}).keys || {})

@@ -34,8 +34,7 @@ class Api::V2::PartiesController < ApplicationController
       @parties = @parties.where(faction_id: params[:faction_id])
     end
     if params[:character_id].present?
-      @party_ids = Attunement.where(party_id: @parties).where(character_id: params[:character_id]).pluck(:party_id)
-      @parties = @parties.where.not(id: @party_ids)
+      @parties = @parties.joins(:characters).where(characters: { id: params[:character_id] })
     end
     if params[:user_id].present?
       @parties = @parties.joins(:characters).where(characters: { user_id: params[:user_id] })
@@ -98,7 +97,6 @@ class Api::V2::PartiesController < ApplicationController
       party_data = party_params.to_h.symbolize_keys
     end
     party_data = party_data.slice(:name, :description, :active, :faction_id, :character_ids)
-
 
     # Handle image attachment if present
     if params[:image].present?

@@ -7,11 +7,11 @@ class CharacterSerializer < ActiveModel::Serializer
   belongs_to :user, serializer: UserSerializer
   belongs_to :faction, serializer: FactionSerializer
   belongs_to :juncture, serializer: JunctureSerializer
-  has_many :schticks, serializer: SchtickSerializer
-  has_many :advancements, serializer: AdvancementSerializer
-  has_many :weapons, through: :carries, serializer: WeaponSerializer
-  has_many :sites, through: :attunements, serializer: SiteSerializer
-  has_many :parties, through: :party_memberships, serializer: PartySerializer
+  # has_many :schticks, serializer: SchtickSerializer
+  # has_many :advancements, serializer: AdvancementSerializer
+  # has_many :weapons, through: :carries, serializer: WeaponSerializer
+  # has_many :sites, through: :attunements, serializer: SiteSerializer
+  # has_many :parties, through: :party_memberships, serializer: PartySerializer
   has_many :image_positions, serializer: ImagePositionSerializer
 
   def entity_class

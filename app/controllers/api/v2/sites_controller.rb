@@ -32,8 +32,7 @@ class Api::V2::SitesController < ApplicationController
       @sites = @sites.where(faction_id: params[:faction_id])
     end
     if params[:character_id].present?
-      @site_ids = Attunement.where(site_id: @sites).where(character_id: params[:character_id]).pluck(:site_id)
-      @sites = @sites.where.not(id: @site_ids)
+      @sites = @sites.joins(:characters).where(characters: { id: params[:character_id] })
     end
 
     @sites = paginate(@sites, per_page: (params[:per_page] || 10), page: (params[:page] || 1))

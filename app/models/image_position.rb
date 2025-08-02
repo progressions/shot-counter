@@ -6,6 +6,8 @@ class ImagePosition < ApplicationRecord
     "mobile_index" => "mobile_index",
     "desktop_entity" => "desktop_entity",
     "mobile_entity" => "mobile_entity"
+    "desktop_edit" => "desktop_edit",
+    "mobile_edit" => "mobile_edit"
   }
 
   validates :context, presence: true

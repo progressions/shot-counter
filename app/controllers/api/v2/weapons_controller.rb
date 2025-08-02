@@ -25,26 +25,21 @@ class Api::V2::WeaponsController < ApplicationController
       .weapons
       .order(sort)
 
-    if params[:id].present?
-      @weapons = @weapons.where(id: params[:id])
-    end
+    @weapons = @weapons.where(id: params[:id]) if params[:id].present?
+    @weapons = @weapons.joins(:carries).where(carries: { character_id: params[:character_id] }) if params[:character_id].present?
+    @weapons = @weapons.where(juncture: params[:juncture]) if params[:juncture].present?
+    @weapons = @weapons.where(category: params[:category]) if params[:category].present?
+    @weapons = @weapons.where("name ILIKE ?", "%#{params[:name]}%") if params[:name].present?
 
-    if params[:juncture].present?
-      @weapons = @weapons.where(juncture: params[:juncture])
-    end
-
-    if params[:category].present?
-      @weapons = @weapons.where(category: params[:category])
-    end
-
-    if params[:name].present?
-      @weapons = @weapons.where("name ILIKE ?", "%#{params[:name]}%")
-    end
+    @categories = @weapons.pluck(:category).uniq.compact.sort
+    @junctures = @weapons.pluck(:juncture).uniq.compact.sort
 
     @weapons = paginate(@weapons, per_page: (params[:per_page] || 10), page: (params[:page] || 1))
 
     render json: {
       weapons: ActiveModelSerializers::SerializableResource.new(@weapons, each_serializer: WeaponSerializer).serializable_hash,
+      categories: @categories,
+      junctures: @junctures,
       meta: pagination_meta(@weapons),
     }
   end

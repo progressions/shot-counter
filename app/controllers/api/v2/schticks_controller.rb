@@ -26,22 +26,14 @@ class Api::V2::SchticksController < ApplicationController
     end
 
     if params[:character_id].present?
-      @character = current_campaign.characters.find(params[:character_id])
-      if @character.action_values["Type"] == "PC"
-        @schticks = @schticks
-          .where(prerequisite_id: [@character.schtick_ids, nil].flatten)
-          .where.not(id: @character.schtick_ids)
-      else
-        @schticks = @schticks
-          .where.not(id: @character.schtick_ids)
-      end
+      @schticks = @schticks.joins(:characters).where(characters: { id: params[:character_id] })
     end
 
-    @categories = @schticks.pluck(:category).uniq.compact
+    @categories = @schticks.pluck(:category).uniq.compact.sort
 
     if params[:category].present?
       @schticks = @schticks.where(category: params[:category])
-      @paths = @schticks.pluck(:path).uniq.compact
+      @paths = @schticks.pluck(:path).uniq.compact.sort
     end
 
     if params[:path].present?
