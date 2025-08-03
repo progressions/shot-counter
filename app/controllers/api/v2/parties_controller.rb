@@ -76,7 +76,7 @@ class Api::V2::PartiesController < ApplicationController
     end
 
     if @party.save
-      render json: @party, status: :created
+      render json: @party, serializer: PartySerializer, status: :created
     else
       render json: { errors: @party.errors.full_messages }, status: :unprocessable_entity
     end

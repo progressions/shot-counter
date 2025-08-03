@@ -48,6 +48,9 @@ def index
   if params[:party_id].present?
     characters_query = characters_query.joins(:parties).where(parties: { id: params[:party_id] })
   end
+  if params[:fight_id].present?
+    characters_query = characters_query.joins(:fights).where(fights: { id: params[:fight_id] })
+  end
 
   # Cache key
   cache_key = [
@@ -151,7 +154,7 @@ end
       character_data = character_params.to_h.symbolize_keys
     end
 
-    character_data = character_data.slice(:name, :description, :active, :character_ids, :party_ids, :site_ids, :juncture_ids, :schtick_ids, :weapon_ids)
+    character_data = character_data.slice(:name, :description, :active, :juncture_id, :character_ids, :party_ids, :site_ids, :juncture_ids, :schtick_ids, :weapon_ids, :faction_id, :skills)
 
     @character = current_campaign.characters.new(character_data)
 
@@ -181,7 +184,7 @@ end
     else
       character_data = character_params.to_h.symbolize_keys
     end
-    character_data = character_data.slice(:name, :description, :active, :character_ids, :party_ids, :site_ids, :juncture_ids, :schtick_ids, :action_values, :skills, :weapon_ids)
+    character_data = character_data.slice(:name, :description, :active, :character_ids, :party_ids, :site_ids, :juncture_ids, :schtick_ids, :action_values, :skills, :weapon_ids, :juncture_id, :faction_id)
 
     # Handle image attachment if present
     if params[:image].present?

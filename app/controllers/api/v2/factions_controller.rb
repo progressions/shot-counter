@@ -34,10 +34,17 @@ class Api::V2::FactionsController < ApplicationController
 
     @factions = paginate(@factions, per_page: (params[:per_page] || 10), page: (params[:page] || 1))
 
-    render json: {
-      factions: ActiveModelSerializers::SerializableResource.new(@factions, each_serializer: FactionSerializer).serializable_hash,
-      meta: pagination_meta(@factions)
-    }
+    if params[:autocomplete]
+      render json: {
+        factions: ActiveModelSerializers::SerializableResource.new(@factions, each_serializer: FactionAutocompleteSerializer).serializable_hash,
+        meta: pagination_meta(@factions)
+      }
+    else
+      render json: {
+        factions: ActiveModelSerializers::SerializableResource.new(@factions, each_serializer: FactionSerializer).serializable_hash,
+        meta: pagination_meta(@factions)
+      }
+    end
   end
 
   def show
