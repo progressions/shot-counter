@@ -33,7 +33,7 @@ class Schtick < ApplicationRecord
   has_many :image_positions, as: :positionable, dependent: :destroy
 
   validates :name, presence: true, uniqueness: { scope: :category }
-  validates :category, inclusion: { in: CATEGORIES }, allow_nil: true, unless: -> { path == "Core" }
+  validates :category, inclusion: { in: CATEGORIES }, unless: -> { path == "Core" }
   validate :prerequisite_must_be_in_same_category_and_path
 
   has_one_attached :image

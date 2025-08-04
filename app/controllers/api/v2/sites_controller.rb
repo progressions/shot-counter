@@ -61,7 +61,7 @@ class Api::V2::SitesController < ApplicationController
       site_data = site_params.to_h.symbolize_keys
     end
 
-    site_data.slice(:name, :description, :active, :faction_id)
+    site_data = site_data.slice(:name, :description, :active, :faction_id)
 
     @site = current_campaign.sites.new(site_data)
 

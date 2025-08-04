@@ -55,14 +55,17 @@ class Api::V2::SchticksController < ApplicationController
   end
 
   def categories
-    @categories = current_campaign.schticks.pluck(:category).uniq.compact
-
+    all_categories = current_campaign.schticks.pluck(:category).uniq.compact
+    core_categories = current_campaign.schticks.where(path: "Core").pluck(:category).uniq.compact
+    general_categories = all_categories - core_categories
     if params[:search].present?
-      @categories = @categories.select { |category| category.downcase.include?(params[:search].downcase) }
+      search = params[:search].downcase
+      general_categories = general_categories.select { |category| category.downcase.include?(search) }
+      core_categories = core_categories.select { |category| category.downcase.include?(search) }
     end
-
     render json: {
-      categories: @categories,
+      general: general_categories.sort,
+      core: core_categories.sort
     }
   end
 
@@ -102,7 +105,7 @@ class Api::V2::SchticksController < ApplicationController
       schtick_data = schtick_params.to_h.symbolize_keys
     end
 
-    schtick_data.slice(:name, :description, :active, :faction_id)
+    schtick_data = schtick_data.slice(:name, :description, :active, :faction_id, :category, :path, :color)
 
     @schtick = current_campaign.schticks.new(schtick_data)
 
@@ -114,7 +117,7 @@ class Api::V2::SchticksController < ApplicationController
     if @schtick.save
       render json: @schtick, status: :created
     else
-      render json: { errors: @schtick.errors.full_messages }, status: :unprocessable_entity
+      render json: { errors: @schtick.errors }, status: :unprocessable_entity
     end
   end
 
@@ -147,7 +150,7 @@ class Api::V2::SchticksController < ApplicationController
     if @schtick.update(schtick_data)
       render json: @schtick
     else
-      render json: { errors: @schtick.errors.full_messages }, status: :unprocessable_entity
+      render json: { errors: @schtick.errors}, status: :unprocessable_entity
     end
   end
 
