@@ -8,8 +8,8 @@ class ImagePosition < ApplicationRecord
     "mobile_entity" => "mobile_entity",
     "desktop_edit" => "desktop_edit",
     "mobile_edit" => "mobile_edit",
-    "desktop_play" => "desktop_play",
-    "mobile_play" => "mobile_play",
+    "desktop_encounter" => "desktop_encounter",
+    "mobile_encounter" => "mobile_encounter",
   }
 
   validates :context, presence: true
