@@ -68,6 +68,7 @@ def index
     params["faction_id"],
     params["type"],
     params["archetype"],
+    params["is_template"],
   ].join("/")
 
   cached_result = Rails.cache.fetch(cache_key, expires_in: 5.minutes) do
