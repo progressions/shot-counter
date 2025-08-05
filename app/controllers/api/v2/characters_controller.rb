@@ -44,12 +44,14 @@ def index
   characters_query = characters_query.where("characters.name ILIKE ?", "%#{params['search']}%") if params["search"].present?
   characters_query = characters_query.where("action_values->>'Type' = ?", params["type"]) if params["type"].present?
   characters_query = characters_query.where("action_values->>'Archetype' = ?", params["archetype"]) if params["archetype"].present?
-  characters_query = characters_query.where("is_template = ?", true) if params["is_template"].present? && params["is_template"] == "true"
-  if params[:party_id].present?
-    characters_query = characters_query.joins(:parties).where(parties: { id: params[:party_id] })
-  end
-  if params[:fight_id].present?
-    characters_query = characters_query.joins(:fights).where(fights: { id: params[:fight_id] })
+  characters_query = characters_query.joins(:parties).where(parties: { id: params[:party_id] }) if params[:party_id].present?
+  characters_query = characters_query.joins(:fights).where(fights: { id: params[:fight_id] }) if params[:fight_id].present?
+  characters_query = characters_query.joins(:attunements).where(attunements: { id: params[:site_id] }) if params[:site_id].present?
+
+  if params[:is_template] == "true"
+    characters_query = characters_query.where("is_template = ?", true)
+  else
+    characters_query = characters_query.where("is_template = ?", false)
   end
 
   # Cache key
@@ -60,6 +62,7 @@ def index
     order,
     page,
     per_page,
+    params["site_id"],
     params["search"],
     params["user_id"],
     params["faction_id"],

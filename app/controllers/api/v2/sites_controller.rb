@@ -32,7 +32,7 @@ class Api::V2::SitesController < ApplicationController
       @sites = @sites.where(faction_id: params[:faction_id])
     end
     if params[:character_id].present?
-      @sites = @sites.joins(:characters).where(characters: { id: params[:character_id] })
+      @sites = @sites.joins(:attunements).where(attunements: { id: params[:character_id] })
     end
 
     @sites = paginate(@sites, per_page: (params[:per_page] || 10), page: (params[:page] || 1))
