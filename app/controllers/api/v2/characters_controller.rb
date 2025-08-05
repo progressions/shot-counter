@@ -44,9 +44,11 @@ def index
   characters_query = characters_query.where("characters.name ILIKE ?", "%#{params['search']}%") if params["search"].present?
   characters_query = characters_query.where("action_values->>'Type' = ?", params["type"]) if params["type"].present?
   characters_query = characters_query.where("action_values->>'Archetype' = ?", params["archetype"]) if params["archetype"].present?
-  characters_query = characters_query.joins(:parties).where(parties: { id: params[:party_id] }) if params[:party_id].present?
-  characters_query = characters_query.joins(:fights).where(fights: { id: params[:fight_id] }) if params[:fight_id].present?
-  characters_query = characters_query.joins(:attunements).where(attunements: { id: params[:site_id] }) if params[:site_id].present?
+
+  # Join associations
+  characters_query = characters_query.joins(:memberships).where(memberships: { party_id: params[:party_id] }) if params[:party_id].present?
+  characters_query = characters_query.joins(:shots).where(shots: { fight_id: params[:fight_id] }) if params[:fight_id].present?
+  characters_query = characters_query.joins(:attunements).where(attunements: { site_id: params[:site_id] }) if params[:site_id].present?
 
   if params[:is_template] == "true"
     characters_query = characters_query.where("is_template = ?", true)
@@ -63,6 +65,8 @@ def index
     page,
     per_page,
     params["site_id"],
+    params["fight_id"],
+    params["party_id"],
     params["search"],
     params["user_id"],
     params["faction_id"],
