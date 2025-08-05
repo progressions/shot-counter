@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_08_01_115942) do
+ActiveRecord::Schema[8.0].define(version: 2025_08_04_144233) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -193,6 +193,10 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_01_115942) do
     t.bigint "server_id"
     t.string "fight_message_id"
     t.bigint "channel_id"
+    t.datetime "started_at", precision: nil
+    t.datetime "ended_at", precision: nil
+    t.integer "season"
+    t.integer "session"
     t.index "lower((name)::text)", name: "index_fights_on_lower_name"
     t.index ["campaign_id"], name: "index_fights_on_campaign_id"
   end

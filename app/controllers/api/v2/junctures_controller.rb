@@ -25,8 +25,7 @@ class Api::V2::JuncturesController < ApplicationController
       @junctures = @junctures.where(faction_id: params[:faction_id])
     end
     if params[:character_id].present?
-      @character = current_campaign.characters.find(params[:character_id])
-      @junctures = @junctures.where.not(id: @character.juncture_id)
+      @junctures = @junctures.joins(:characters).where(characters: { id: params[:character_id] })
     end
 
     @factions = current_campaign.factions.joins(:junctures).where(junctures: @junctures).order("factions.name").distinct

@@ -18,7 +18,8 @@ class Api::V2::FightsController < ApplicationController
     @fights = current_campaign
       .fights
       .where(archived: false)
-      .select(:id, :campaign_id, :name, :sequence, :active, :archived, :description, :created_at, :updated_at)
+      .select(:id, :campaign_id, :name, :sequence, :active, :archived, :description, :created_at,
+              :updated_at, :started_at, :ended_at, :season, :session)
       .includes(:characters, :vehicles, :image_positions)
       .order(sort)
 
@@ -45,14 +46,6 @@ class Api::V2::FightsController < ApplicationController
 
     @fights = paginate(@fights, per_page: (params[:per_page] || 6), page: (params[:page] || 1))
 
-    @fights_json = @fights.map do |fight|
-      character_names = fight.characters
-      vehicle_names = fight.vehicles
-      fight.as_v1_json.slice(:id, :name, :sequence, :active, :archived, :description, :created_at, :updated_at, :image_url).merge({
-        actors: character_names + vehicle_names,
-      })
-    end
-
     render json: {
       fights: ActiveModelSerializers::SerializableResource.new(@fights, each_serializer: FightSerializer).serializable_hash,
       meta: pagination_meta(@fights)
@@ -76,7 +69,7 @@ class Api::V2::FightsController < ApplicationController
       fight_data = fight_params.to_h.symbolize_keys
     end
 
-    fight_data = fight_data.slice(:name, :sequence, :active, :archived, :description, :image, :character_ids, :vehicle_ids)
+    fight_data = fight_data.slice(:name, :sequence, :active, :archived, :description, :image, :character_ids, :vehicle_ids, :started_at, :ended_at, :season, :session)
 
     @fight = current_campaign.fights.new(fight_data)
 
@@ -106,7 +99,7 @@ class Api::V2::FightsController < ApplicationController
     else
       fight_data = fight_params.to_h.symbolize_keys
     end
-    fight_data = fight_data.slice(:name, :sequence, :active, :archived, :description, :character_ids, :vehicle_ids)
+    fight_data = fight_data.slice(:name, :sequence, :active, :archived, :description, :character_ids, :vehicle_ids, :started_at, :ended_at, :season, :session)
 
     # Handle image attachment if present
     if params[:image].present?
@@ -148,6 +141,6 @@ class Api::V2::FightsController < ApplicationController
   end
 
   def fight_params
-    params.require(:fight).permit(:name, :sequence, :active, :archived, :description, :image, character_ids: [], vehicle_ids: [])
+    params.require(:fight).permit(:name, :sequence, :active, :archived, :description, :image, :started_at, :ended_at, :season, :session, character_ids: [], vehicle_ids: [])
   end
 end

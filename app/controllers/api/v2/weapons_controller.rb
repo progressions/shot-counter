@@ -97,7 +97,7 @@ class Api::V2::WeaponsController < ApplicationController
     if @weapon.save
       render json: @weapon, status: :created
     else
-      render json: { errors: @weapon.errors.full_messages }, status: :unprocessable_entity
+      render json: { errors: @weapon.errors }, status: :unprocessable_entity
     end
   end
 
@@ -128,9 +128,9 @@ class Api::V2::WeaponsController < ApplicationController
     end
 
     if @weapon.update(weapon_data)
-      render json: @weapon
+      render json: @weapon, serializer: WeaponSerializer, status: :ok
     else
-      render json: { errors: @weapon.errors.full_messages }, status: :unprocessable_entity
+      render json: { errors: @weapon.errors }, status: :unprocessable_entity
     end
   end
 
@@ -144,10 +144,18 @@ class Api::V2::WeaponsController < ApplicationController
   end
 
   def destroy
+    if @weapon.carry_ids.any? && !params[:force]
+      render json: { errors: { carries: true  } }, status: 400 and return
+    end
+
+    if @weapon.carry_ids.any? && params[:force]
+      Carry.where(id: @weapon.carry_ids).destroy_all
+    end
+
     if @weapon.destroy!
       render :ok
     else
-      render json: @weapon.as_v1_json, status: 400
+      render json: { errors: @weapon.errors }, status: 400
     end
   end
 
