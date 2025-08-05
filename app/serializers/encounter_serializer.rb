@@ -23,6 +23,7 @@ class EncounterSerializer < ActiveModel::Serializer
             'name', characters.name,
             'entity_class', 'Character',
             'action_values', characters.action_values,
+            'faction_id', characters.faction_id,
             'color', characters.color,
             'count', shots.count,
             'impairments', shots.impairments
@@ -38,6 +39,7 @@ class EncounterSerializer < ActiveModel::Serializer
         characters = (record.characters || []).map do |character|
           character_model = characters_by_id[character["id"]]
           character.merge("image_url" => character_model&.image_url)
+          character.merge("faction" => character_model&.faction)
         end
         [record.shot, characters]
       end
