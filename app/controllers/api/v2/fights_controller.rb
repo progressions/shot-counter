@@ -27,6 +27,14 @@ class Api::V2::FightsController < ApplicationController
       @fights = @fights.where(active: true)
     end
 
+    if params[:unstarted].present?
+      @fights = @fights.where(started_at: nil)
+    end
+
+    if params[:unended].present?
+      @fights = @fights.where(ended_at: nil)
+    end
+
     if params[:user_id].present?
       @fights = @fights.joins(:characters).where(characters: { user_id: params[:user_id] })
     end
