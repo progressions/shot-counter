@@ -28,8 +28,7 @@ class Api::V2::FactionsController < ApplicationController
       @factions = @factions.where("name ILIKE ?", "%#{params[:search]}%")
     end
     if params[:character_id].present?
-      character = current_campaign.characters.find(params[:character_id])
-      @factions = @factions.where.not(id: character.faction_id)
+      @factions = @factions.joins(:characters).where(characters: { id: params[:character_id] })
     end
 
     @factions = paginate(@factions, per_page: (params[:per_page] || 10), page: (params[:page] || 1))

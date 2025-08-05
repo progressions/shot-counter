@@ -41,6 +41,8 @@ class Api::V2::VehiclesController < ApplicationController
     vehicles_query = vehicles_query.where("vehicles.name ILIKE ?", "%#{params['search']}%") if params["search"].present?
     vehicles_query = vehicles_query.where("action_values->>'Type' = ?", params["type"]) if params["type"].present?
     vehicles_query = vehicles_query.where("action_values->>'Archetype' = ?", params["archetype"]) if params["archetype"].present?
+    vehicles_query = vehicles_query.joins(:shots).where(shots: { character_id: params[:character_id] }) if params[:character_id].present?
+    vehicles_query = vehicles_query.joins(:shots).where(shots: { fight_id: params[:fight_id] }) if params[:fight_id].present?
 
     # Cache key
     cache_key = [
@@ -52,7 +54,9 @@ class Api::V2::VehiclesController < ApplicationController
       per_page,
       params["search"],
       params["user_id"],
+      params["character_id"],
       params["faction_id"],
+      params["fight_id"],
       params["type"],
       params["archetype"],
     ].join("/")
@@ -210,8 +214,19 @@ class Api::V2::VehiclesController < ApplicationController
   end
 
   def destroy
-    @vehicle.destroy!
-    render :ok
+    if @vehicle.carry_ids.any? && !params[:force]
+      render json: { errors: { carries: true  } }, status: 400 and return
+    end
+
+    if @vehicle.carry_ids.any? && params[:force]
+      carry.where(id: @vehicle.carry_ids).destroy_all
+    end
+
+    if @vehicle.destroy!
+      render :ok
+    else
+      render json: { errors: @vehicle.errors }, status: 400
+    end
   end
 
   def remove_image
