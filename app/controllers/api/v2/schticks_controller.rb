@@ -21,8 +21,8 @@ class Api::V2::SchticksController < ApplicationController
 
     @paths = []
 
-    if params[:id].present?
-      @schticks = @schticks.where(id: params[:id])
+    if params[:ids].present?
+      @schticks = @schticks.where(id: params[:ids].split(","))
     end
 
     if params[:character_id].present?
@@ -53,6 +53,37 @@ class Api::V2::SchticksController < ApplicationController
       categories: @categories
     }
   end
+
+  def batch
+    ids = params[:ids].split(",")
+    if ids.blank?
+      render json: { schticks: [], categories: [], meta: { current_page: 1, next_page: nil, prev_page: nil, total_pages: 1, total_count: 0 } }, status: :ok
+      return
+    end
+
+    cache_key = [
+      "schticks_batch",
+      current_campaign.id,
+      ids.sort.join(","),
+      params[:per_page] || 200,
+      params[:page] || 1
+    ].join("/")
+
+    cached_response = Rails.cache.fetch(cache_key, expires_in: 12.hours) do
+      schticks = current_campaign
+        .schticks
+        .where(id: ids)
+        .select(:id, :name, :description, :image_url, :category, :path)
+      schticks = paginate(schticks, per_page: (params[:per_page] || 200), page: (params[:page] || 1))
+
+      {
+        schticks: ActiveModelSerializers::SerializableResource.new(schticks, each_serializer: EncounterSchtickSerializer).serializable_hash,
+      }
+    end
+
+    render json: cached_response, status: :ok
+  end
+
 
   def categories
     all_categories = current_campaign.schticks.pluck(:category).uniq.compact

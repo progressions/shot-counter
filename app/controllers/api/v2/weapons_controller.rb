@@ -25,7 +25,7 @@ class Api::V2::WeaponsController < ApplicationController
       .weapons
       .order(sort)
 
-    @weapons = @weapons.where(id: params[:id]) if params[:id].present?
+    @weapons = @weapons.where(id: params[:ids].split(",")) if params[:ids].present?
     @weapons = @weapons.joins(:carries).where(carries: { character_id: params[:character_id] }) if params[:character_id].present?
     @weapons = @weapons.where(juncture: params[:juncture]) if params[:juncture].present?
     @weapons = @weapons.where(category: params[:category]) if params[:category].present?
@@ -42,6 +42,36 @@ class Api::V2::WeaponsController < ApplicationController
       junctures: @junctures,
       meta: pagination_meta(@weapons),
     }
+  end
+
+  def batch
+    ids = params[:ids].split(",")
+    if ids.blank?
+      render json: { weapons: [] }, status: :ok
+      return
+    end
+
+    cache_key = [
+      "weapons_batch",
+      current_campaign.id,
+      ids.sort.join(","),
+      params[:per_page] || 200,
+      params[:page] || 1
+    ].join("/")
+
+    cached_response = Rails.cache.fetch(cache_key, expires_in: 12.hours) do
+      weapons = current_campaign
+        .weapons
+        .where(id: ids)
+        .select(:id, :name, :description, :image_url, :damage, :concealment, :reload_value, :mook_bonus, :kachunk)
+      weapons = paginate(weapons, per_page: (params[:per_page] || 200), page: (params[:page] || 1))
+
+      {
+        weapons: ActiveModelSerializers::SerializableResource.new(weapons, each_serializer: EncounterWeaponSerializer).serializable_hash,
+      }
+    end
+
+    render json: cached_response, status: :ok
   end
 
   def categories

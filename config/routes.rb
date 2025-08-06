@@ -33,6 +33,7 @@ Rails.application.routes.draw do
         end
       end
       resources :weapons do
+        post :batch, on: :collection
         get :junctures, on: :collection
         get :categories, on: :collection
         member do
@@ -60,6 +61,7 @@ Rails.application.routes.draw do
         end
       end
       resources :schticks do
+        post :batch, on: :collection
         get :categories, on: :collection
         get :paths, on: :collection
         member do

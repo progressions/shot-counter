@@ -6,9 +6,13 @@ class EncounterSerializer < ActiveModel::Serializer
   end
 
   def shots
-    # Load characters to call image_url
+    # Load characters and associations for post-processing
     character_ids = object.shots.pluck(:character_id).uniq.compact
     characters_by_id = Character.where(id: character_ids).index_by(&:id)
+    carries = Carry.where(character_id: character_ids).group(:character_id).pluck(:character_id, "array_agg(weapon_id::text)")
+    carries_map = carries.to_h
+    schticks = CharacterSchtick.where(character_id: character_ids).group(:character_id).pluck(:character_id, "array_agg(schtick_id::text)")
+    schticks_map = schticks.to_h
 
     object.shots
       .where(fight_id: object.id)
@@ -37,9 +41,13 @@ class EncounterSerializer < ActiveModel::Serializer
       )
       .map do |record|
         characters = (record.characters || []).map do |character|
-          character_model = characters_by_id[character["id"]]
-          character.merge("image_url" => character_model&.image_url)
-          character.merge("faction" => character_model&.faction)
+          character_id = character["id"]
+          character_model = characters_by_id[character_id]
+          character
+            .merge("image_url" => character_model&.image_url)
+            .merge("faction" => character_model&.faction ? { "id" => character_model.faction.id, "name" => character_model.faction.name } : nil)
+            .merge("weapon_ids" => carries_map[character_id] || [])
+            .merge("schtick_ids" => schticks_map[character_id] || [])
         end
         [record.shot, characters]
       end
