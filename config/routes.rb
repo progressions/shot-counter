@@ -7,7 +7,9 @@ Rails.application.routes.draw do
   }
   namespace :api do
     namespace :v2 do
-      resources :encounters, only: [:show]
+      resources :encounters, only: [:show] do
+        patch :act, on: :member, to: "encounters#act"
+      end
       resources :ai, only: [:create]
       resources :ai_images, only: [:create] do
         collection do

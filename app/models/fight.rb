@@ -12,6 +12,7 @@ class Fight < ApplicationRecord
 
   after_update :enqueue_discord_notification
   after_update :broadcast_update
+  after_update :broadcast_encounter_update!
 
   has_many :image_positions, as: :positionable, dependent: :destroy
 
@@ -75,6 +76,12 @@ class Fight < ApplicationRecord
           .compact
         ]
       }.reject { |shot, shot_chars| shot_chars.empty? }
+  end
+
+  def broadcast_encounter_update!
+    if started_at? && ended_at.nil?
+      BroadcastEncounterUpdateJob.perform_later(id)
+    end
   end
 
   private

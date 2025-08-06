@@ -179,7 +179,7 @@ class Api::V2::WeaponsController < ApplicationController
     end
 
     if @weapon.carry_ids.any? && params[:force]
-      carry.where(id: @weapon.carry_ids).destroy_all
+      @weapon.carries.destroy_all
     end
 
     if @weapon.destroy!

@@ -1,15 +1,20 @@
 class Shot < ApplicationRecord
-  belongs_to :fight
+  belongs_to :fight, touch: true
   belongs_to :character, optional: true
   belongs_to :vehicle, optional: true
   belongs_to :driver_shot, optional: true, class_name: "Shot", foreign_key: "driver_id"
   belongs_to :driving_shot, optional: true, class_name: "Shot", foreign_key: "driving_id"
   has_many :character_effects, dependent: :destroy
 
+  after_update :broadcast_encounter_update
   before_destroy :unlink_driver
   before_destroy :unlink_vehicle
 
   validate :ensure_campaign
+
+  def broadcast_encounter_update
+    fight.broadcast_encounter_update!
+  end
 
   def as_v1_json(args={})
     if driving_shot.present?

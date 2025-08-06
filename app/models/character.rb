@@ -90,6 +90,8 @@ class Character < ApplicationRecord
   before_save :ensure_integer_skills
   before_save :ensure_non_integer_action_values
 
+  after_update :broadcast_encounter_update
+
   validates :name, presence: true, uniqueness: { scope: :campaign_id }
 
   scope :active, -> { where(active: true) }
@@ -99,6 +101,10 @@ class Character < ApplicationRecord
   end
 
   attr_accessor :attaching_image
+
+  def broadcast_encounter_update
+    fights.each(&:broadcast_encounter_update!)
+  end
 
   def image_url
     return unless image.attached?
