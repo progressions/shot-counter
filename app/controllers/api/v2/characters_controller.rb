@@ -51,9 +51,9 @@ def index
   characters_query = characters_query.joins(:attunements).where(attunements: { site_id: params[:site_id] }) if params[:site_id].present?
 
   if params[:is_template] == "true"
-    characters_query = characters_query.where("is_template = ?", true)
+     # characters_query = characters_query.where(is_template: true)
   else
-    characters_query = characters_query.where("is_template = ?", false)
+    # characters_query = characters_query.where(is_template: false)
   end
 
   # Cache key
@@ -100,10 +100,10 @@ def index
       ).serializable_hash,
       "archetypes" => archetypes,
       "meta" => pagination_meta(characters)
-    }.to_json
+    }
   end
 
-  render json: JSON.parse(cached_result)
+  render json: cached_result
 end
 
   def autocomplete

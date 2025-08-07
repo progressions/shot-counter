@@ -1,5 +1,6 @@
 class Fight < ApplicationRecord
   include Broadcastable
+  include WithImagekit
 
   belongs_to :campaign
   has_many :shots, dependent: :destroy
@@ -37,11 +38,6 @@ class Fight < ApplicationRecord
       vehicle_effects: character_effects.where("character_effects.vehicle_id IS NOT NULL").group_by { |ce| ce.shot_id },
       image_url: image_url
     }
-  end
-
-  def image_url
-    image.attached? ? image.url : nil
-  # rescue
   end
 
   def current_shot

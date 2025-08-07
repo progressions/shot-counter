@@ -16,9 +16,6 @@ module Broadcastable
     BroadcastCampaignReloadJob.perform_later(self.class.name, campaign_id)
   end
 
-  def image_url=(anything=nil)
-  end
-
   def entity_class=(anything=nil)
   end
 end

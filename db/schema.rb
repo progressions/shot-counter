@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_08_04_144233) do
+ActiveRecord::Schema[8.0].define(version: 2025_08_06_222953) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -132,9 +132,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_04_144233) do
     t.uuid "notion_page_id"
     t.datetime "last_synced_to_notion_at"
     t.string "summary"
-    t.boolean "is_template"
     t.uuid "juncture_id"
     t.string "wealth"
+    t.boolean "is_template"
     t.index "lower((name)::text)", name: "index_characters_on_lower_name"
     t.index ["action_values"], name: "index_characters_on_action_values", using: :gin
     t.index ["campaign_id"], name: "index_characters_on_campaign_id"
@@ -197,6 +197,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_04_144233) do
     t.datetime "ended_at", precision: nil
     t.integer "season"
     t.integer "session"
+    t.uuid "action_id"
     t.index "lower((name)::text)", name: "index_fights_on_lower_name"
     t.index ["campaign_id"], name: "index_fights_on_campaign_id"
   end

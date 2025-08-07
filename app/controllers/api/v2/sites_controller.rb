@@ -35,13 +35,31 @@ class Api::V2::SitesController < ApplicationController
       @sites = @sites.joins(:attunements).where(attunements: { id: params[:character_id] })
     end
 
-    @sites = paginate(@sites, per_page: (params[:per_page] || 10), page: (params[:page] || 1))
+    cache_key = [
+      "sites/index",
+      current_campaign.id,
+      sort,
+      order,
+      params[:page],
+      params[:per_page],
+      params[:id],
+      params[:search],
+      params[:faction_id],
+      params[:character_id],
+      params[:secret],
+    ].join("/")
 
-    render json: {
+    cached_result = Rails.cache.fetch(cache_key, expires_in: 12.hours) do
+      @sites = paginate(@sites, per_page: (params[:per_page] || 10), page: (params[:page] || 1))
+
+      {
       sites: ActiveModelSerializers::SerializableResource.new(@sites, each_serializer: SiteSerializer).serializable_hash,
       factions: ActiveModelSerializers::SerializableResource.new(@factions, each_serializer: FactionSerializer).serializable_hash,
       meta: pagination_meta(@sites),
-    }
+      }
+    end
+
+    render json: cached_result
   end
 
   def show

@@ -1,5 +1,6 @@
 class Vehicle < ApplicationRecord
   include Broadcastable
+  include WithImagekit
 
   DEFAULT_ACTION_VALUES = {
     "Acceleration" => 0,
@@ -97,10 +98,6 @@ class Vehicle < ApplicationRecord
 
   scope :by_type, -> (player_type) do
     where("vehicles.action_values->>'Type' IN (?)", player_type)
-  end
-
-  def image_url
-    image.attached? ? image.url : nil
   end
 
   def sort_order(shot_id=nil)

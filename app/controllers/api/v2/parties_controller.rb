@@ -40,13 +40,32 @@ class Api::V2::PartiesController < ApplicationController
       @parties = @parties.joins(:characters).where(characters: { user_id: params[:user_id] })
     end
 
-    @parties = paginate(@parties, per_page: (params[:per_page] || 6), page: (params[:page] || 1))
+    cache_key = [
+      "parties/index",
+      current_campaign.id,
+      sort,
+      order,
+      params[:page],
+      params[:per_page],
+      params[:id],
+      params[:search],
+      params[:faction_id],
+      params[:character_id],
+      params[:user_id],
+      params[:secret],
+    ].join("/")
 
-    render json: {
-      parties: ActiveModelSerializers::SerializableResource.new(@parties, each_serializer: PartySerializer).serializable_hash,
-      factions: ActiveModelSerializers::SerializableResource.new(@factions, each_serializer: FactionSerializer).serializable_hash,
-      meta: pagination_meta(@parties),
-    }
+    cached_result = Rails.cache.fetch(cache_key, expires_in: 12.hours) do
+      @parties = paginate(@parties, per_page: (params[:per_page] || 6), page: (params[:page] || 1))
+
+      {
+        parties: ActiveModelSerializers::SerializableResource.new(@parties, each_serializer: PartySerializer).serializable_hash,
+        factions: ActiveModelSerializers::SerializableResource.new(@factions, each_serializer: FactionSerializer).serializable_hash,
+        meta: pagination_meta(@parties),
+      }
+    end
+
+    render json: cached_result
   end
 
   def show

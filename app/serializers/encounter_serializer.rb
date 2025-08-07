@@ -1,5 +1,5 @@
 class EncounterSerializer < ActiveModel::Serializer
-  attributes :id, :entity_class, :name, :sequence, :description, :shots, :started_at, :ended_at, :image_url, :character_ids, :vehicle_ids
+  attributes :id, :entity_class, :name, :sequence, :description, :shots, :started_at, :ended_at, :image_url, :character_ids, :vehicle_ids, :action_id
 
   def entity_class
     "Fight"

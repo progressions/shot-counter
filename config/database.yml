@@ -23,7 +23,7 @@ default: &default
 
 development:
   <<: *default
-  database: shot_server_development
+  database: shot_counter_local
 
   # The specified database role being used to connect to postgres.
   # To create additional roles in postgres see `$ createuser --help`.

@@ -6,7 +6,6 @@ class Api::V2::FightsController < ApplicationController
   def index
     sort = params["sort"] || "created_at"
     order = params["order"] || "DESC"
-
     if sort == "name"
       sort = Arel.sql("LOWER(fights.name) #{order}")
     elsif sort == "created_at"
@@ -17,47 +16,65 @@ class Api::V2::FightsController < ApplicationController
 
     @fights = current_campaign
       .fights
+      .with_attached_image
       .where(archived: false)
       .select(:id, :campaign_id, :name, :sequence, :active, :archived, :description, :created_at,
               :updated_at, :started_at, :ended_at, :season, :session)
-      .includes(:characters, :vehicles, :image_positions)
+      .includes(
+        { characters: :image_attachment },
+        { vehicles: :image_attachment },
+        :image_positions,
+        { shots: [:character, :vehicle] }
+      )
       .order(sort)
 
     if params[:show_all] != "true"
       @fights = @fights.where(active: true)
     end
-
     if params[:unstarted].present?
       @fights = @fights.where(started_at: nil)
     end
-
     if params[:unended].present?
       @fights = @fights.where(ended_at: nil)
     end
-
     if params[:user_id].present?
       @fights = @fights.joins(:characters).where(characters: { user_id: params[:user_id] })
     end
-
     if params[:id].present?
       @fights = @fights.where(id: params[:id])
     end
-
     if params[:search].present?
       @fights = @fights.where("name ILIKE ?", "%#{params[:search]}%")
     end
-
     if params[:character_id].present?
-      @fight_ids = Attunement.where(fight_id: @fights).where(character_id: params[:character_id]).pluck(:fight_id)
-      @fights = @fights.where.not(id: @fight_ids)
+      @fights = @fights.joins(:shots).where(shots: { character_id: params[:character_id] })
     end
 
-    @fights = paginate(@fights, per_page: (params[:per_page] || 6), page: (params[:page] || 1))
+    cache_key = [
+      "fights/index",
+      current_campaign.id,
+      sort,
+      order,
+      params[:page],
+      params[:per_page],
+      params[:show_all],
+      params[:unstarted],
+      params[:unended],
+      params[:id],
+      params[:search],
+      params[:character_id],
+      params[:user_id],
+    ].join("/")
 
-    render json: {
-      fights: ActiveModelSerializers::SerializableResource.new(@fights, each_serializer: FightSerializer).serializable_hash,
-      meta: pagination_meta(@fights)
-    }
+    cached_result = Rails.cache.fetch(cache_key, expires_in: 12.hours) do
+      @fights = paginate(@fights, per_page: (params[:per_page] || 6), page: (params[:page] || 1))
+      {
+        fights: ActiveModelSerializers::SerializableResource.new(@fights, each_serializer: FightSerializer).serializable_hash,
+        meta: pagination_meta(@fights)
+      }
+    end
+
+    render json: cached_result
   end
 
   def show

@@ -1,5 +1,6 @@
 class Character < ApplicationRecord
   include Broadcastable
+  include WithImagekit
 
   DEFAULT_ACTION_VALUES = {
     "Guns" => 0,
@@ -104,12 +105,6 @@ class Character < ApplicationRecord
 
   def broadcast_encounter_update
     fights.each(&:broadcast_encounter_update!)
-  end
-
-  def image_url
-    return unless image.attached?
-    Rails.logger.debug("Generating URL for blob: #{image.blob.inspect}")
-    image.url
   end
 
   def as_v1_json(args={})
