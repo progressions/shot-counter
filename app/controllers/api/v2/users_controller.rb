@@ -15,7 +15,9 @@ class Api::V2::UsersController < ApplicationController
       sort = Arel.sql("users.created_at DESC")
     end
 
-    @users = User.order(sort)
+    @users = User
+      .with_attached_image
+      .order(sort)
     @users = paginate(@users, per_page: (params[:per_page] || 12), page: (params[:page] || 1))
 
     render json: {
