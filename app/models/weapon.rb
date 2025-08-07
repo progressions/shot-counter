@@ -1,5 +1,6 @@
 class Weapon < ApplicationRecord
   include Broadcastable
+  include WithImagekit
 
   belongs_to :campaign
   has_many :carries
@@ -25,9 +26,5 @@ class Weapon < ApplicationRecord
       kachunk: kachunk,
       image_url: image_url
     }
-  end
-
-  def image_url
-    image.attached? ? image.url : nil
   end
 end

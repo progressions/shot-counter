@@ -4,10 +4,6 @@ class CharacterIndexSerializer < ActiveModel::Serializer
   belongs_to :faction, serializer: FactionSerializer
   has_many :image_positions, serializer: ImagePositionSerializer
 
-  def image_url
-    object.image.attached? ? Rails.application.routes.url_helpers.url_for(object.image) : object.image_url
-  end
-
   def user_id
     object[:user_id]
   end

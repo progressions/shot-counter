@@ -1,5 +1,6 @@
 class Faction < ApplicationRecord
   include Broadcastable
+  include WithImagekit
 
   belongs_to :campaign
   has_many :characters
@@ -31,7 +32,4 @@ class Faction < ApplicationRecord
     }
   end
 
-  def image_url
-    image.attached? ? image.url : nil
-  end
 end

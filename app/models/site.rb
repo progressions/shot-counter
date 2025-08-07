@@ -1,5 +1,6 @@
 class Site < ApplicationRecord
   include Broadcastable
+  include WithImagekit
 
   belongs_to :campaign
   belongs_to :faction, optional: true
@@ -29,10 +30,5 @@ class Site < ApplicationRecord
       },
       image_url: image_url
     }
-  end
-
-  def image_url
-    image.attached? ? image.url : nil
-  rescue
   end
 end

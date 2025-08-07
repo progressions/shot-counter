@@ -1,5 +1,6 @@
 class Party < ApplicationRecord
   include Broadcastable
+  include WithImagekit
 
   has_many :memberships, dependent: :destroy
   has_many :characters, through: :memberships
@@ -42,8 +43,4 @@ class Party < ApplicationRecord
     }
   end
 
-  def image_url
-    image.attached? ? image.url : nil
-  rescue
-  end
 end
