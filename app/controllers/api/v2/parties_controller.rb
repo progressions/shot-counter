@@ -15,9 +15,23 @@ class Api::V2::PartiesController < ApplicationController
       sort = Arel.sql("parties.created_at DESC")
     end
 
-    @parties = current_campaign.parties.includes(:faction, :image_attachment).order(sort)
+    @parties = current_campaign
+      .parties
+      .with_attached_image
+      .select(:id, :name, :description, :campaign_id, :faction_id, :secret, :created_at, :updated_at)
+      .includes(
+        { faction: [:image_attachment, :image_blob] },
+        { memberships: [
+          { character: [:image_attachment, :image_blob] },
+          { vehicle: [:image_attachment, :image_blob] }
+        ] },
+        :image_positions,
+      )
+      .order(sort)
 
-    @factions = current_campaign.factions.joins(:parties).where(parties: @parties).order("factions.name").distinct
+    ActiveRecord::Associations::Preloader.new(records: [current_campaign], associations: { user: [:image_attachment, :image_blob] })
+
+    # @factions = current_campaign.factions.joins(:parties).where(parties: @parties).order("factions.name").distinct
 
     if params[:id].present?
       @parties = @parties.where(id: params[:id])
@@ -59,8 +73,8 @@ class Api::V2::PartiesController < ApplicationController
       @parties = paginate(@parties, per_page: (params[:per_page] || 6), page: (params[:page] || 1))
 
       {
-        parties: ActiveModelSerializers::SerializableResource.new(@parties, each_serializer: PartySerializer).serializable_hash,
-        factions: ActiveModelSerializers::SerializableResource.new(@factions, each_serializer: FactionSerializer).serializable_hash,
+        parties: ActiveModelSerializers::SerializableResource.new(@parties, each_serializer: PartyIndexSerializer).serializable_hash,
+        # factions: ActiveModelSerializers::SerializableResource.new(@factions, each_serializer: FactionSerializer).serializable_hash,
         meta: pagination_meta(@parties),
       }
     end

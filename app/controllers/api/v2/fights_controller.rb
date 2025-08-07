@@ -15,18 +15,20 @@ class Api::V2::FightsController < ApplicationController
     end
 
     @fights = current_campaign
-    .fights
-    .with_attached_image
-    .where(archived: false)
-    .select(:id, :campaign_id, :name, :sequence, :active, :archived, :description, :created_at,
-            :updated_at, :started_at, :ended_at, :season, :session)
-    .includes(
-      { characters: [:image_attachment, :image_blob] },
-      { vehicles: [:image_attachment, :image_blob] },
-      :image_positions,
-      { shots: [{ character: [:image_attachment, :image_blob] }, { vehicle: [:image_attachment, :image_blob] }] }
-    )
-    .order(sort)
+      .fights
+      .with_attached_image
+      .where(archived: false)
+      .select(:id, :campaign_id, :name, :sequence, :active, :archived, :description, :created_at,
+              :updated_at, :started_at, :ended_at, :season, :session)
+      .includes(
+        { characters: [:image_attachment, :image_blob] },
+        { vehicles: [:image_attachment, :image_blob] },
+        :image_positions,
+        { shots: [{ character: [:image_attachment, :image_blob] }, { vehicle: [:image_attachment, :image_blob] }] }
+      )
+      .order(sort)
+
+    ActiveRecord::Associations::Preloader.new(records: [current_campaign], associations: { user: [:image_attachment, :image_blob] })
 
     if params[:show_all] != "true"
       @fights = @fights.where(active: true)
