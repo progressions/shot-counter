@@ -3,6 +3,7 @@ require "bcrypt"
 class User < ApplicationRecord
   # include Broadcastable
   include Devise::JWT::RevocationStrategies::JTIMatcher
+  include WithImagekit
 
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
   devise :database_authenticatable, :registerable,
@@ -46,10 +47,6 @@ class User < ApplicationRecord
   def password=(new_password)
     @password = Password.create(new_password)
     self.encrypted_password = @password
-  end
-
-  def image_url
-    image.attached? ? image.url : nil
   end
 
   def jwt_payload

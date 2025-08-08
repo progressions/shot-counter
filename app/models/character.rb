@@ -321,10 +321,6 @@ class Character < ApplicationRecord
     action_values.fetch(main)
   end
 
-  def image_url
-    image.attached? ? image.url : nil
-  end
-
   def category
     "character"
   end

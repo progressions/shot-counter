@@ -80,8 +80,4 @@ class EncounterSerializer < ActiveModel::Serializer
         }
       end
   end
-
-  def image_url
-    object.image.attached? ? object.image.url : nil
-  end
 end

@@ -1,5 +1,6 @@
 class Juncture < ApplicationRecord
   include Broadcastable
+  include WithImagekit
 
   belongs_to :campaign
   belongs_to :faction, optional: true
@@ -30,9 +31,5 @@ class Juncture < ApplicationRecord
   rescue StandardError => e
     Rails.logger.error "Error in Juncture#as_v1_json for juncture #{id}: #{e.message}"
     raise # Re-raise to help diagnose in controller
-  end
-
-  def image_url
-    image.attached? ? image.url : nil
   end
 end

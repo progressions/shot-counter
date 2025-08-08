@@ -1,5 +1,6 @@
 class Schtick < ApplicationRecord
   include Broadcastable
+  include WithImagekit
 
   CATEGORIES = [
     "Guns",
@@ -119,9 +120,5 @@ class Schtick < ApplicationRecord
     end
 
     result
-  end
-
-  def image_url
-    image.attached? ? image.url : nil
   end
 end

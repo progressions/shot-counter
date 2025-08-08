@@ -88,7 +88,7 @@ class Api::V2::CampaignsController < ApplicationController
 
   def show
     if @campaign
-      render json: @campaign
+      render json: @campaign, serializer: CampaignLiteSerializer, status: :ok
     else
       render status: nil
     end

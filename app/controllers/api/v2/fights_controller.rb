@@ -21,12 +21,14 @@ class Api::V2::FightsController < ApplicationController
       .select(:id, :campaign_id, :name, :sequence, :active, :archived, :description, :created_at,
               :updated_at, :started_at, :ended_at, :season, :session)
       .includes(
-        { characters: :image_attachment },
-        { vehicles: :image_attachment },
+        { characters: [:image_attachment, :image_blob] },
+        { vehicles: [:image_attachment, :image_blob] },
         :image_positions,
-        { shots: [:character, :vehicle] }
+        { shots: [{ character: [:image_attachment, :image_blob] }, { vehicle: [:image_attachment, :image_blob] }] }
       )
       .order(sort)
+
+    ActiveRecord::Associations::Preloader.new(records: [current_campaign], associations: { user: [:image_attachment, :image_blob] })
 
     if params[:show_all] != "true"
       @fights = @fights.where(active: true)
@@ -101,6 +103,8 @@ class Api::V2::FightsController < ApplicationController
     # Handle image attachment if present
     if params[:image].present?
       @fight.image.attach(params[:image])
+      extension = params[:image].original_filename.split('.').last
+      @fight.image.blob.update(imagekit_filename: "image_#{@fight.id}__#{rand(1000)}__#{SecureRandom.hex(4)}.#{extension}")
     end
 
     if @fight.save
@@ -130,6 +134,9 @@ class Api::V2::FightsController < ApplicationController
     if params[:image].present?
       @fight.image.purge if @fight.image.attached? # Remove existing image
       @fight.image.attach(params[:image])
+      extension = params[:image].original_filename.split('.').last
+      @fight.image.blob.update(imagekit_filename: "image_#{@fight.id}__#{rand(1000)}__#{SecureRandom.hex(4)}.#{extension}")
+      binding.pry
     end
 
     if @fight.update(fight_data)

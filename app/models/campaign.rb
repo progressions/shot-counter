@@ -1,5 +1,6 @@
 class Campaign < ApplicationRecord
   include Broadcastable
+  include WithImagekit
 
   belongs_to :user
   has_many :fights
@@ -28,10 +29,6 @@ class Campaign < ApplicationRecord
       players: players,
       invitations: invitations,
     }
-  end
-
-  def image_url
-    image.attached? ? image.url : nil
   end
 
   private
