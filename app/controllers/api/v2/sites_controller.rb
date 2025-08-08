@@ -46,6 +46,10 @@ class Api::V2::SitesController < ApplicationController
     if params[:character_id].present?
       @sites = @sites.joins(:attunements).where(attunements: { id: params[:character_id] })
     end
+    if params[:user_id].present?
+      @sites = @sites.joins(:characters).where(characters: { user_id: params[:user_id] })
+    end
+
 
     cache_key = [
       "sites/index",
@@ -56,6 +60,7 @@ class Api::V2::SitesController < ApplicationController
       params[:per_page],
       params[:id],
       params[:search],
+      params[:user_id],
       params[:faction_id],
       params[:character_id],
       params[:secret],
