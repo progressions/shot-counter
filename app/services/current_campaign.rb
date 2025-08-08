@@ -6,7 +6,7 @@ module CurrentCampaign
 
       if user
         current_campaign = Campaign
-          .includes(:image_positions)
+          .includes(:image_positions, :user)
           .with_attached_image
           .find_by(id: user.current_campaign_id)
 
