@@ -31,6 +31,22 @@ RSpec.describe "Api::V2::Characters", type: :request do
       expect(body["factions"].map { |f| f["name"] }).to eq(["The Ascended", "The Dragons"])
     end
 
+    it "sorts by created_at ascending" do
+      get "/api/v2/characters?sort=created_at&order=asc", headers: @headers
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["characters"].map { |c| c["name"] }).to eq(["Amanda Yin", "Angie Lo", "Brick Manly", "Serena", "Thug", "Ugly Shing"])
+      expect(body["factions"].map { |f| f["name"] }).to eq(["The Ascended", "The Dragons"])
+    end
+
+    it "sorts by created_at descending" do
+      get "/api/v2/characters?sort=created_at&order=desc", headers: @headers
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["characters"].map { |c| c["name"] }).to eq(["Ugly Shing", "Thug", "Serena", "Brick Manly", "Angie Lo", "Amanda Yin"])
+      expect(body["factions"].map { |f| f["name"] }).to eq(["The Ascended", "The Dragons"])
+    end
+
     it "sorts by name ascending" do
       get "/api/v2/characters?sort=name&order=asc", headers: @headers
       expect(response).to have_http_status(:success)
