@@ -10,7 +10,6 @@ class Api::V2::CharactersController < ApplicationController
     selects = [
       "characters.id",
       "characters.name",
-      "characters.image_url",
       "characters.faction_id",
       "characters.action_values",
       "characters.description",
