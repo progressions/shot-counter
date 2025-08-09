@@ -4,22 +4,11 @@ class Api::V2::CampaignsController < ApplicationController
   before_action :set_campaign, only: [:show, :set, :update]
 
   def index
-    sort = params["sort"] || "created_at"
-    order = params["order"] || "DESC"
-
-    if sort == "name"
-      sort = Arel.sql("LOWER(campaigns.name) #{order}")
-    elsif sort == "created_at"
-      sort = Arel.sql("campaigns.created_at #{order}")
-    else
-      sort = Arel.sql("campaigns.created_at DESC")
-    end
-
     @campaigns = current_user
       .campaigns
       .distinct
       .with_attached_image
-      .order(sort)
+      .order(Arel.sql(sort_order))
 
     if params[:search].present?
       @campaigns = @campaigns.where("name ILIKE ?", "%#{params[:search]}%")
@@ -138,4 +127,18 @@ class Api::V2::CampaignsController < ApplicationController
   def campaign_params
     params.require(:campaign).permit(:name, :description, :image, player_ids: [])
   end
+
+  def sort_order
+    sort = params["sort"] || "created_at"
+    order = params["order"] || "DESC"
+
+    if sort == "name"
+      "LOWER(campaigns.name) #{order}, id"
+    elsif sort == "created_at"
+      "campaigns.created_at #{order}, id"
+    else
+      "campaigns.created_at DESC, id"
+    end
+  end
+
 end

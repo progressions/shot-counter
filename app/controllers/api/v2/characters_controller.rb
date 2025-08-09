@@ -5,21 +5,8 @@ class Api::V2::CharactersController < ApplicationController
   before_action :set_character, only: [:update, :destroy, :remove_image, :sync, :pdf, :duplicate]
 
 def index
-  sort = params["sort"] || "created_at"
-  order = params["order"] || "DESC"
   per_page = (params["per_page"] || 15).to_i
   page = (params["page"] || 1).to_i
-
-  # Define sort SQL
-  if sort == "type"
-    sort_sql = Arel.sql("COALESCE(action_values->>'Type', '') #{order}")
-  elsif sort == "name"
-    sort_sql = Arel.sql("LOWER(characters.name) #{order}")
-  elsif sort == "created_at"
-    sort_sql = Arel.sql("characters.created_at #{order}")
-  else
-    sort_sql = Arel.sql("characters.created_at DESC")
-  end
 
   # Base query with minimal fields and preload
   characters_query = @scoped_characters
@@ -61,8 +48,7 @@ def index
   cache_key = [
     "characters/index",
     current_campaign.id,
-    sort,
-    order,
+    sort_order,
     page,
     per_page,
     params["site_id"],
@@ -77,7 +63,10 @@ def index
   ].join("/")
 
   cached_result = Rails.cache.fetch(cache_key, expires_in: 5.minutes) do
-    characters = characters_query.order(sort_sql).page(page).per(per_page)
+    characters = characters_query
+      .order(Arel.sql(sort_order))
+
+    characters = paginate(characters, per_page: per_page, page: page)
 
     # Fetch factions
     faction_ids = characters.pluck(:faction_id).uniq.compact
@@ -324,5 +313,20 @@ end
               action_values: {},
               description: Character::DEFAULT_DESCRIPTION.keys,
               schticks: [], skills: params.fetch(:character, {}).fetch(:skills, {}).keys || {})
+  end
+
+  def sort_order
+    sort = params["sort"] || "created_at"
+    order = params["order"] || "DESC"
+
+    if sort == "type"
+      "COALESCE(action_values->>'Type', '') #{order}"
+    elsif sort == "name"
+      "LOWER(characters.name) #{order}"
+    elsif sort == "created_at"
+      "characters.created_at #{order}"
+    else
+      "characters.created_at DESC"
+    end
   end
 end

@@ -3,16 +3,6 @@ class Api::V2::SitesController < ApplicationController
   before_action :require_current_campaign
 
   def index
-    sort = params["sort"] || "created_at"
-    order = params["order"] || "DESC"
-    if sort == "name"
-      sort = "LOWER(name) #{order}, id"
-    elsif sort == "created_at"
-      sort = "created_at #{order}, id"
-    else
-      sort = "created_at DESC, id"
-    end
-
     @sites = current_campaign
       .sites
       .distinct
@@ -42,8 +32,7 @@ class Api::V2::SitesController < ApplicationController
     cache_key = [
       "sites/index",
       current_campaign.id,
-      sort,
-      order,
+      sort_order,
       params[:page],
       params[:per_page],
       params[:id],
@@ -65,7 +54,7 @@ class Api::V2::SitesController < ApplicationController
         ] },
         :image_positions,
       )
-      .order(sort)
+      .order(Arel.sql(sort_order))
 
     cached_result = Rails.cache.fetch(cache_key, expires_in: 12.hours) do
       @sites = paginate(@sites, per_page: (params[:per_page] || 10), page: (params[:page] || 1))

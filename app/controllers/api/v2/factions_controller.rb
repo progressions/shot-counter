@@ -3,15 +3,6 @@ class Api::V2::FactionsController < ApplicationController
   before_action :require_current_campaign
 
   def index
-    sort = params["sort"] || "created_at"
-    order = params["order"] || "DESC"
-    if sort == "name"
-      sort = "LOWER(name) #{order}, id"
-    elsif sort == "created_at"
-      sort = "created_at #{order}, id"
-    else
-      sort = "created_at DESC, id"
-    end
     @factions = current_campaign
       .factions
       .with_attached_image
@@ -30,8 +21,7 @@ class Api::V2::FactionsController < ApplicationController
     cache_key = [
       "factions/index",
       current_campaign.id,
-      sort,
-      order,
+      sort_order,
       params[:page],
       params[:per_page],
       params[:id],
@@ -43,7 +33,7 @@ class Api::V2::FactionsController < ApplicationController
       .select(:id, :name, :description, :campaign_id, :created_at, :updated_at, "LOWER(name) AS lower_name")
       .includes(:image_positions)
       .distinct
-      .order(Arel.sql(sort))
+      .order(Arel.sql(sort_order))
     cached_result = Rails.cache.fetch(cache_key, expires_in: 12.hours) do
       @factions = paginate(@factions, per_page: (params[:per_page] || 10), page: (params[:page] || 1))
       if params[:autocomplete]
@@ -144,5 +134,18 @@ class Api::V2::FactionsController < ApplicationController
 
   def faction_params
     params.require(:faction).permit(:name, :description, :active, :image, character_ids: [], party_ids: [], site_ids: [], juncture_ids: [])
+  end
+
+  def sort_order
+    sort = params["sort"] || "created_at"
+    order = params["order"] || "DESC"
+
+    if sort == "name"
+      "LOWER(factions.name) #{order}"
+    elsif sort == "created_at"
+      "factions.created_at #{order}"
+    else
+      "factions.created_at DESC"
+    end
   end
 end

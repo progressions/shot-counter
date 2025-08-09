@@ -4,30 +4,20 @@ class Api::V2::FightsController < ApplicationController
   before_action :set_fight, only: [:show, :update, :destroy, :touch]
 
   def index
-    sort = params["sort"] || "created_at"
-    order = params["order"] || "DESC"
-    if sort == "name"
-      sort = Arel.sql("LOWER(fights.name) #{order}")
-    elsif sort == "created_at"
-      sort = Arel.sql("fights.created_at #{order}")
-    else
-      sort = Arel.sql("fights.created_at DESC")
-    end
-
     @fights = current_campaign
       .fights
       .distinct
       .with_attached_image
       .where(archived: false)
       .select(:id, :campaign_id, :name, :sequence, :active, :archived, :description, :created_at,
-              :updated_at, :started_at, :ended_at, :season, :session)
+              :updated_at, :started_at, :ended_at, :season, :session, "LOWER(fights.name) AS lower_name")
       .includes(
         { characters: [:image_attachment, :image_blob] },
         { vehicles: [:image_attachment, :image_blob] },
         :image_positions,
         { shots: [{ character: [:image_attachment, :image_blob] }, { vehicle: [:image_attachment, :image_blob] }] }
       )
-      .order(sort)
+      .order(Arel.sql(sort_order))
 
     ActiveRecord::Associations::Preloader.new(records: [current_campaign], associations: { user: [:image_attachment, :image_blob] })
 
@@ -56,8 +46,7 @@ class Api::V2::FightsController < ApplicationController
     cache_key = [
       "fights/index",
       current_campaign.id,
-      sort,
-      order,
+      sort_order,
       params[:page],
       params[:per_page],
       params[:show_all],
@@ -175,5 +164,17 @@ class Api::V2::FightsController < ApplicationController
 
   def fight_params
     params.require(:fight).permit(:name, :sequence, :active, :archived, :description, :image, :started_at, :ended_at, :season, :session, character_ids: [], vehicle_ids: [])
+  end
+
+  def sort_order
+    sort = params["sort"] || "created_at"
+    order = params["order"] || "DESC"
+    if sort == "name"
+      "LOWER(fights.name) #{order}, fights.id"
+    elsif sort == "created_at"
+      "fights.created_at #{order}, fights.id"
+    else
+      "fights.created_at DESC, fights.id"
+    end
   end
 end

@@ -3,24 +3,13 @@ class Api::V2::JuncturesController < ApplicationController
   before_action :require_current_campaign
 
   def index
-    sort = params[:sort] || "created_at"
-    order = params[:order] || "DESC"
-
     @junctures = current_campaign
       .junctures
       .distinct
       .with_attached_image
-      .order(sort => order)
-
-    Rails.logger.info("params[:active]: #{params[:active]}")
 
     if params[:id].present?
       @junctures = @junctures.where(id: params[:id])
-    end
-    if params[:hidden] == "true" && current_user.gamemaster?
-      @junctures = @junctures.where(active: [true, false])
-    else
-      @junctures = @junctures.where(active: true)
     end
     if params[:search].present?
       @junctures = @junctures.where("name ILIKE ?", "%#{params[:search]}%")
@@ -29,18 +18,46 @@ class Api::V2::JuncturesController < ApplicationController
       @junctures = @junctures.where(faction_id: params[:faction_id])
     end
     if params[:character_id].present?
-      @junctures = @junctures.joins(:characters).where(characters: { id: params[:character_id] })
+      @junctures = @junctures.joins(:attunements).where(attunements: { id: params[:character_id] })
     end
+    if params[:user_id].present?
+      @junctures = @junctures.joins(:characters).where(characters: { user_id: params[:user_id] })
+    end
+
+    cache_key = [
+      "junctures/index",
+      current_campaign.id,
+      sort_order,
+      params[:page],
+      params[:per_page],
+      params[:id],
+      params[:search],
+      params[:user_id],
+      params[:faction_id],
+      params[:character_id],
+    ].join("/")
 
     @factions = current_campaign.factions.joins(:junctures).where(junctures: @junctures).order("factions.name").distinct
 
-    @junctures = paginate(@junctures, per_page: (params[:per_page] || 10), page: (params[:page] || 1))
+    @junctures = @junctures
+      .select(:id, :name, :description, :campaign_id, :faction_id, :created_at, :updated_at)
+      .includes(
+        { faction: [:image_attachment, :image_blob] },
+        :image_positions,
+      )
+      .order(Arel.sql(sort_order))
 
-    render json: {
-      junctures: ActiveModelSerializers::SerializableResource.new(@junctures, each_serializer: JunctureSerializer).serializable_hash,
-      factions: ActiveModelSerializers::SerializableResource.new(@factions, each_serializer: FactionSerializer).serializable_hash,
-      meta: pagination_meta(@junctures),
-    }
+    cached_result = Rails.cache.fetch(cache_key, expires_in: 12.hours) do
+      @junctures = paginate(@junctures, per_page: (params[:per_page] || 10), page: (params[:page] || 1))
+
+      {
+        junctures: ActiveModelSerializers::SerializableResource.new(@junctures, each_serializer: JunctureIndexSerializer).serializable_hash,
+        factions: ActiveModelSerializers::SerializableResource.new(@factions, each_serializer: FactionLiteSerializer).serializable_hash,
+        meta: pagination_meta(@junctures),
+      }
+    end
+
+    render json: cached_result
   end
 
   def show
@@ -128,5 +145,17 @@ class Api::V2::JuncturesController < ApplicationController
 
   def juncture_params
     params.require(:juncture).permit(:name, :description, :active, :image, :faction_id, :character_ids)
+  end
+
+  def sort_order
+    sort = params["sort"] || "created_at"
+    order = params["order"] || "DESC"
+    if sort == "name"
+      "LOWER(junctures.name) #{order}, junctures.id"
+    elsif sort == "created_at"
+      "junctures.created_at #{order}, junctures.id"
+    else
+      "junctures.created_at DESC, junctures.id"
+    end
   end
 end
