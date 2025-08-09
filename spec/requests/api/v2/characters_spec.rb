@@ -152,4 +152,79 @@ RSpec.describe "Api::V2::Characters", type: :request do
       expect(body["error"]).to eq("Record not found")
     end
   end
+
+  describe "DELETE /destroy" do
+    it "deletes a character" do
+      delete "/api/v2/characters/#{@brick.id}", headers: @headers
+      expect(response).to have_http_status(:success)
+      expect(Character.exists?(@brick.id)).to be_falsey
+      expect { @brick.reload }.to raise_error(ActiveRecord::RecordNotFound)
+    end
+  end
+
+  describe "POST /duplicate" do
+    it "duplicates a character" do
+      @brick.weapons << @sword
+      @brick.weapons << @gun
+      post "/api/v2/characters/#{@brick.id}/duplicate", headers: @headers
+      expect(response).to have_http_status(:created)
+      expect(Character.count).to eq(9) # 8 original + 1 duplicate
+      body = JSON.parse(response.body)
+      expect(body["name"]).to eq("Brick Manly (1)")
+      expect(body["action_values"]["Type"]).to eq("PC")
+      expect(body["action_values"]["Archetype"]).to eq("Everyday Hero")
+      expect(body["faction_id"]).to eq(@dragons.id)
+      expect(body["user_id"]).to eq(@gamemaster.id)
+      expect(body["image_url"]).to be_nil
+      expect(body["weapon_ids"].sort).to eq([@sword.id, @gun.id].sort)
+    end
+
+    it "duplicates a character again" do
+      @brick.weapons << @sword
+      @brick.weapons << @gun
+      post "/api/v2/characters/#{@brick.id}/duplicate", headers: @headers
+      post "/api/v2/characters/#{@brick.id}/duplicate", headers: @headers
+      expect(response).to have_http_status(:created)
+      expect(Character.count).to eq(10)
+      body = JSON.parse(response.body)
+      expect(body["name"]).to eq("Brick Manly (2)")
+      expect(body["action_values"]["Type"]).to eq("PC")
+      expect(body["action_values"]["Archetype"]).to eq("Everyday Hero")
+      expect(body["faction_id"]).to eq(@dragons.id)
+      expect(body["user_id"]).to eq(@gamemaster.id)
+      expect(body["image_url"]).to be_nil
+      expect(body["weapon_ids"].sort).to eq([@sword.id, @gun.id].sort)
+    end
+
+    it "duplicates a character with an image" do
+      @brick.image.attach(io: File.open("spec/fixtures/files/image.jpg"), filename: "image.jpg", content_type: "image/jpg")
+      post "/api/v2/characters/#{@brick.id}/duplicate", headers: @headers
+      expect(response).to have_http_status(:created)
+      expect(Character.count).to eq(9) # 8 original + 1 duplicate
+      body = JSON.parse(response.body)
+      expect(body["name"]).to eq("Brick Manly (1)")
+      expect(body["image_url"]).not_to be_nil
+    end
+  end
+
+  describe "POST /pdf" do
+    it "uploads a pdf" do
+      file = fixture_file_upload("spec/fixtures/files/Archer.pdf", "application/pdf")
+      post "/api/v2/characters/pdf", params: { pdf_file: file }, headers: @headers
+      expect(response).to have_http_status(:created)
+      body = JSON.parse(response.body)
+      expect(body["name"]).to eq("Archer")
+      expect(body["action_values"]["Type"]).to eq("PC")
+      expect(body["action_values"]["Archetype"]).to eq("Archer")
+      expect(body["action_values"]["MainAttack"]).to eq("Guns")
+      expect(body["action_values"]["Guns"]).to eq(14)
+      expect(body["action_values"]["Defense"]).to eq(14)
+      expect(body["action_values"]["Toughness"]).to eq(6)
+      expect(body["action_values"]["Speed"]).to eq(8)
+      expect(body["action_values"]["FortuneType"]).to eq("Chi")
+      expect(body["action_values"]["Fortune"]).to eq(7)
+      expect(body["action_values"]["Max Fortune"]).to eq(7)
+    end
+  end
+
 end
