@@ -4,62 +4,75 @@ class Api::V2::WeaponsController < ApplicationController
   before_action :set_weapon, only: [:show, :update, :destroy, :remove_image]
 
   def index
-    @weapons = current_campaign
+    per_page = (params["per_page"] || 15).to_i
+    page = (params["page"] || 1).to_i
+    selects = [
+      "weapons.id",
+      "weapons.name",
+      "weapons.description",
+      "weapons.created_at",
+      "weapons.updated_at",
+      "weapons.juncture",
+      "weapons.category",
+      "weapons.damage",
+      "weapons.concealment",
+      "weapons.reload_value",
+      "weapons.mook_bonus",
+      "weapons.kachunk",
+    ]
+    includes = [
+      :image_positions,
+      image_attachment: :blob,
+      carries: { character: { image_attachment: :blob } },
+    ]
+    query = current_campaign
       .weapons
-      .distinct
-      .with_attached_image
+      .select(selects)
+      .includes(includes)
 
-    if params[:id].present?
-      @weapons = @weapons.where(id: params[:id])
-    end
-    if params[:search].present?
-      @weapons = @weapons.where("name ILIKE ?", "%#{params[:search]}%")
-    end
-    if params[:character_id].present?
-      @weapons = @weapons.joins(:carries).where(attunements: { id: params[:character_id] })
-    end
-    if params[:user_id].present?
-      @weapons = @weapons.joins(:characters).where(characters: { user_id: params[:user_id] })
-    end
-    if params[:category].present?
-      @weapons = @weapons.where(category: params[:category])
-    end
-    if params[:juncture].present?
-      @weapons = @weapons.where(juncture: params[:juncture])
-    end
+    # Apply filters
+    query = query.where(id: params["id"]) if params["id"].present?
+    query = query.where("weapons.name ILIKE ?", "%#{params['search']}%") if params["search"].present?
+    query = query.where("weapons.category = ?", params["category"]) if params["category"].present?
+    query = query.where("weapons.juncture = ?", params["juncture"]) if params["juncture"].present?
 
+    # Join associations
+    query = query.joins(:carries).where(character_weapons: { character_id: params[:character_id] }) if params[:character_id].present?
+    query = query.joins(:carries).where(carries: { character: { user_id: params[:user_id] } }) if params[:user_id].present?
+
+    # Cache key
     cache_key = [
       "weapons/index",
       current_campaign.id,
       sort_order,
-      params[:page],
-      params[:per_page],
-      params[:id],
-      params[:search],
-      params[:user_id],
-      params[:character_id],
-      params[:category],
-      params[:juncture],
+      page,
+      per_page,
+      params["search"],
+      params["user_id"],
+      params["category"],
+      params["character_id"],
+      params["juncture"],
+      params["autocomplete"],
     ].join("/")
 
-    @weapons = @weapons
-      .select(:id, :name, :description, :campaign_id, :created_at, :updated_at, :damage, :concealment, :reload_value, :juncture, :mook_bonus, :category, :kachunk, "LOWER(weapons.name) AS lower_name", "LOWER(weapons.category) AS lower_category", "LOWER(weapons.juncture) AS lower_juncture")
-      .includes(
-        :image_positions,
-      )
-      .order(Arel.sql(sort_order))
+    cached_result = Rails.cache.fetch(cache_key, expires_in: 5.minutes) do
+      weapons = query.order(Arel.sql(sort_order))
+      weapons = paginate(weapons, per_page: per_page, page: page)
 
-    cached_result = Rails.cache.fetch(cache_key, expires_in: 12.hours) do
-      @weapons = paginate(@weapons, per_page: (params[:per_page] || 10), page: (params[:page] || 1))
+      categories = weapons.pluck(:category).uniq.compact
+      junctures = weapons.pluck(:junctures).uniq.compact
 
       {
-        weapons: ActiveModelSerializers::SerializableResource.new(@weapons, each_serializer: WeaponIndexSerializer).serializable_hash,
-        categories: @weapons.pluck(:category).uniq.reject(&:blank?),
-        junctures: @weapons.pluck(:juncture).uniq.reject(&:blank?),
-        meta: pagination_meta(@weapons),
+        "weapons" => ActiveModelSerializers::SerializableResource.new(
+          weapons,
+          each_serializer: params[:autocomplete] ? SchtickAutocompleteSerializer : SchtickIndexLiteSerializer,
+          adapter: :attributes
+        ).serializable_hash,
+        "categories" => categories,
+        "junctures" => junctures,
+        "meta" => pagination_meta(weapons)
       }
     end
-
     render json: cached_result
   end
 
@@ -255,9 +268,9 @@ class Api::V2::WeaponsController < ApplicationController
     elsif sort == "updated_at"
       "weapons.updated_at #{order}"
     elsif sort == "category"
-      "LOWER(weapons.category) #{order}"
+      "LOWER(weapons.category) #{order}, LOWER(weapons.name) #{order}"
     elsif sort == "juncture"
-      "LOWER(weapons.juncture) #{order}"
+      "LOWER(weapons.juncture) #{order}, LOWER(weapons.name) #{order}"
     else
       "weapons.created_at DESC"
     end
