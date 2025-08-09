@@ -171,7 +171,7 @@ class Api::V2::CharactersController < ApplicationController
       advancements: [],
     ).find(params[:id])
 
-    render json: @character
+    render json: @character, serializer: CharacterSerializer, status: :ok
   end
 
   def destroy
