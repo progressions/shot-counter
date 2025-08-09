@@ -4,46 +4,63 @@ class Api::V2::WeaponsController < ApplicationController
   before_action :set_weapon, only: [:show, :update, :destroy, :remove_image]
 
   def index
-    sort = params["sort"] || "created_at"
-    order = params["order"] || "DESC"
-
-    if sort == "name"
-      sort = Arel.sql("LOWER(weapons.name) #{order}")
-    elsif sort == "created_at"
-      sort = Arel.sql("weapons.created_at #{order}")
-    elsif sort == "updated_at"
-      sort = Arel.sql("weapons.updated_at #{order}")
-    elsif sort == "category"
-      sort = Arel.sql("LOWER(weapons.category) #{order}")
-    elsif sort == "juncture"
-      sort = Arel.sql("LOWER(weapons.juncture) #{order}")
-    else
-      sort = Arel.sql("weapons.created_at DESC")
-    end
-
     @weapons = current_campaign
       .weapons
       .distinct
       .with_attached_image
-      .order(sort)
 
-    @weapons = @weapons.where(id: params[:ids].split(",")) if params[:ids].present?
-    @weapons = @weapons.joins(:carries).where(carries: { character_id: params[:character_id] }) if params[:character_id].present?
-    @weapons = @weapons.where(juncture: params[:juncture]) if params[:juncture].present?
-    @weapons = @weapons.where(category: params[:category]) if params[:category].present?
-    @weapons = @weapons.where("name ILIKE ?", "%#{params[:name]}%") if params[:name].present?
+    if params[:id].present?
+      @weapons = @weapons.where(id: params[:id])
+    end
+    if params[:search].present?
+      @weapons = @weapons.where("name ILIKE ?", "%#{params[:search]}%")
+    end
+    if params[:character_id].present?
+      @weapons = @weapons.joins(:carries).where(attunements: { id: params[:character_id] })
+    end
+    if params[:user_id].present?
+      @weapons = @weapons.joins(:characters).where(characters: { user_id: params[:user_id] })
+    end
+    if params[:category].present?
+      @weapons = @weapons.where(category: params[:category])
+    end
+    if params[:juncture].present?
+      @weapons = @weapons.where(juncture: params[:juncture])
+    end
 
-    @categories = @weapons.pluck(:category).uniq.compact.sort
-    @junctures = @weapons.pluck(:juncture).uniq.compact.sort
+    cache_key = [
+      "weapons/index",
+      current_campaign.id,
+      sort_order,
+      params[:page],
+      params[:per_page],
+      params[:id],
+      params[:search],
+      params[:user_id],
+      params[:character_id],
+      params[:category],
+      params[:juncture],
+    ].join("/")
 
-    @weapons = paginate(@weapons, per_page: (params[:per_page] || 10), page: (params[:page] || 1))
+    @weapons = @weapons
+      .select(:id, :name, :description, :campaign_id, :created_at, :updated_at, :damage, :concealment, :reload_value, :juncture, :mook_bonus, :category, :kachunk, "LOWER(weapons.name) AS lower_name")
+      .includes(
+        :image_positions,
+      )
+      .order(Arel.sql(sort_order))
 
-    render json: {
-      weapons: ActiveModelSerializers::SerializableResource.new(@weapons, each_serializer: WeaponSerializer).serializable_hash,
-      categories: @categories,
-      junctures: @junctures,
-      meta: pagination_meta(@weapons),
-    }
+    cached_result = Rails.cache.fetch(cache_key, expires_in: 12.hours) do
+      @weapons = paginate(@weapons, per_page: (params[:per_page] || 10), page: (params[:page] || 1))
+
+      {
+        weapons: ActiveModelSerializers::SerializableResource.new(@weapons, each_serializer: WeaponIndexSerializer).serializable_hash,
+        categories: @weapons.pluck(:category).uniq.reject(&:blank?),
+        junctures: @weapons.pluck(:juncture).uniq.reject(&:blank?),
+        meta: pagination_meta(@weapons),
+      }
+    end
+
+    render json: cached_result
   end
 
   def batch
@@ -65,7 +82,7 @@ class Api::V2::WeaponsController < ApplicationController
       weapons = current_campaign
         .weapons
         .where(id: ids)
-        .select(:id, :name, :description, :image_url, :damage, :concealment, :reload_value, :mook_bonus, :kachunk)
+        .select(:id, :name, :description, :image_url, :damage, :concealment, :reload_value, :mook_bonus, :kachunk, "LOWER(weapons.name) as lower_name")
       weapons = paginate(weapons, per_page: (params[:per_page] || 200), page: (params[:page] || 1))
 
       {
@@ -117,7 +134,7 @@ class Api::V2::WeaponsController < ApplicationController
       weapon_data = weapon_params.to_h.symbolize_keys
     end
 
-    weapon_data.slice(:name, :description, :active, :faction_id)
+    weapon_data.slice(:name, :description, :active)
 
     @weapon = current_campaign.weapons.new(weapon_data)
 
@@ -225,5 +242,24 @@ class Api::V2::WeaponsController < ApplicationController
       total_pages: object.total_pages,
       total_count: object.total_count
     }
+  end
+
+  def sort_order
+    sort = params["sort"] || "created_at"
+    order = params["order"] || "DESC"
+
+    if sort == "name"
+      "LOWER(weapons.name) #{order}"
+    elsif sort == "created_at"
+      "weapons.created_at #{order}"
+    elsif sort == "updated_at"
+      "weapons.updated_at #{order}"
+    elsif sort == "category"
+      "LOWER(weapons.category) #{order}"
+    elsif sort == "juncture"
+      "LOWER(weapons.juncture) #{order}"
+    else
+      "weapons.created_at DESC"
+    end
   end
 end
