@@ -13,7 +13,7 @@ module Broadcastable
   end
 
   def broadcast_reload
-    BroadcastCampaignReloadJob.perform_later(self.class.name, campaign_id)
+    BroadcastCampaignReloadJob.perform_later(self.class.name, self.campaign_id)
   end
 
   def entity_class=(anything=nil)

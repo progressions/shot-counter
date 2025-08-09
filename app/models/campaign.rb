@@ -46,4 +46,8 @@ class Campaign < ApplicationRecord
       ActionCable.server.broadcast(channel, payload)
     end
   end
+
+  def broadcast_reload
+    # noop
+  end
 end
