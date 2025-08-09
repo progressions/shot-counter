@@ -8,9 +8,7 @@ class Api::V2::CharactersController < ApplicationController
     per_page = (params["per_page"] || 15).to_i
     page = (params["page"] || 1).to_i
 
-    # Base query with minimal fields and preload
-    characters_query = @scoped_characters
-      .select(
+    selects = [
         "characters.id",
         "characters.name",
         "characters.image_url",
@@ -20,28 +18,35 @@ class Api::V2::CharactersController < ApplicationController
         "characters.created_at",
         "characters.updated_at",
         "characters.skills",
-      ).includes(
+        "LOWER(characters.name) AS lower_name",
+    ]
+    includes = [
         :image_positions,
         image_attachment: :blob,
         schticks: { image_attachment: :blob },
-      )
+    ]
+
+    # Base query with minimal fields and preload
+    query = @scoped_characters
+      .select(selects)
+      .includes(includes)
 
     # Apply filters
-    characters_query = characters_query.where(faction_id: params["faction_id"]) if params["faction_id"].present?
-    characters_query = characters_query.where(user_id: params["user_id"]) if params["user_id"].present?
-    characters_query = characters_query.where("characters.name ILIKE ?", "%#{params['search']}%") if params["search"].present?
-    characters_query = characters_query.where("action_values->>'Type' = ?", params["type"]) if params["type"].present?
-    characters_query = characters_query.where("action_values->>'Archetype' = ?", params["archetype"]) if params["archetype"].present?
+    query = query.where(faction_id: params["faction_id"]) if params["faction_id"].present?
+    query = query.where(user_id: params["user_id"]) if params["user_id"].present?
+    query = query.where("characters.name ILIKE ?", "%#{params['search']}%") if params["search"].present?
+    query = query.where("action_values->>'Type' = ?", params["type"]) if params["type"].present?
+    query = query.where("action_values->>'Archetype' = ?", params["archetype"]) if params["archetype"].present?
 
     # Join associations
-    characters_query = characters_query.joins(:memberships).where(memberships: { party_id: params[:party_id] }) if params[:party_id].present?
-    characters_query = characters_query.joins(:shots).where(shots: { fight_id: params[:fight_id] }) if params[:fight_id].present?
-    characters_query = characters_query.joins(:attunements).where(attunements: { site_id: params[:site_id] }) if params[:site_id].present?
+    query = query.joins(:memberships).where(memberships: { party_id: params[:party_id] }) if params[:party_id].present?
+    query = query.joins(:shots).where(shots: { fight_id: params[:fight_id] }) if params[:fight_id].present?
+    query = query.joins(:attunements).where(attunements: { site_id: params[:site_id] }) if params[:site_id].present?
 
     if params[:is_template] == "true"
-      characters_query = characters_query.where(is_template: true)
+      query = query.where(is_template: true)
     else
-      characters_query = characters_query.where(is_template: [false, nil])
+      query = query.where(is_template: [false, nil])
     end
 
     # Cache key
@@ -63,7 +68,7 @@ class Api::V2::CharactersController < ApplicationController
     ].join("/")
 
     cached_result = Rails.cache.fetch(cache_key, expires_in: 5.minutes) do
-      characters = characters_query
+      characters = query
         .order(Arel.sql(sort_order))
 
       characters = paginate(characters, per_page: per_page, page: page)
@@ -320,13 +325,13 @@ class Api::V2::CharactersController < ApplicationController
     order = params["order"] || "DESC"
 
     if sort == "type"
-      "COALESCE(action_values->>'Type', '') #{order}"
+      "COALESCE(action_values->>'Type', '') #{order}, characters.id"
     elsif sort == "name"
-      "LOWER(characters.name) #{order}"
+      "LOWER(characters.name) #{order}, characters.id"
     elsif sort == "created_at"
-      "characters.created_at #{order}"
+      "characters.created_at #{order}, characters.id"
     else
-      "characters.created_at DESC"
+      "characters.created_at DESC, characters.id"
     end
   end
 end

@@ -2,23 +2,12 @@ class Api::V2::UsersController < ApplicationController
   before_action :authenticate_user!
 
   def index
-    sort = params["sort"] || "created_at"
-    order = params["order"] || "DESC"
-
-    if sort == "name"
-      sort = Arel.sql("LOWER(users.last_name) #{order}, LOWER(users.first_name) #{order}")
-    elsif sort == "email"
-      sort = Arel.sql("LOWER(users.email) #{order}")
-    elsif sort == "created_at"
-      sort = Arel.sql("users.created_at #{order}")
-    else
-      sort = Arel.sql("users.created_at DESC")
-    end
-
     @users = User
       .distinct
       .with_attached_image
-      .order(sort)
+      .select(:id, :email, :first_name, :last_name, :admin, :gamemaster, :created_at, :updated_at, "LOWER(users.last_name) AS last_name_lower", "LOWER(users.first_name) AS first_name_lower")
+      .order(Arel.sql(sort_order))
+
     @users = paginate(@users, per_page: (params[:per_page] || 12), page: (params[:page] || 1))
 
     render json: {
@@ -134,4 +123,20 @@ class Api::V2::UsersController < ApplicationController
   def user_params
     params.require(:user).permit(:email, :first_name, :last_name, :admin, :gamemaster, :image)
   end
+
+  def sort_order
+    sort = params["sort"] || "created_at"
+    order = params["order"] || "DESC"
+
+    if sort == "name"
+      "LOWER(users.last_name) #{order}, LOWER(users.first_name) #{order}"
+    elsif sort == "email"
+      "LOWER(users.email) #{order}"
+    elsif sort == "created_at"
+      "users.created_at #{order}"
+    else
+      "users.created_at DESC"
+    end
+  end
+
 end

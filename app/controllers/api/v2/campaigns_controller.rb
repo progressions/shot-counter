@@ -6,6 +6,7 @@ class Api::V2::CampaignsController < ApplicationController
   def index
     @campaigns = current_user
       .campaigns
+      .select(:id, :user_id, :name, :description, :created_at, :updated_at, "LOWER(campaigns.name) AS name_lower")
       .distinct
       .with_attached_image
       .order(Arel.sql(sort_order))
