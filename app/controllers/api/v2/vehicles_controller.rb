@@ -2,7 +2,7 @@ class Api::V2::VehiclesController < ApplicationController
   before_action :authenticate_user!
   before_action :require_current_campaign
   before_action :set_scoped_vehicles
-  before_action :set_vehicle, only: [:update, :destroy, :show]
+  before_action :set_vehicle, only: [:update, :destroy]
 
   def index
     sort = params["sort"] || "created_at"
@@ -148,7 +148,7 @@ class Api::V2::VehiclesController < ApplicationController
       vehicle_data = vehicle_params.to_h.symbolize_keys
     end
 
-    vehicle_data = vehicle_data.slice(:name, :description, :active, :vehicle_ids, :party_ids, :site_ids, :juncture_ids, :schtick_ids)
+    vehicle_data = vehicle_data.slice(:name, :description, :active, :vehicle_ids, :party_ids, :site_ids, :juncture_ids, :schtick_ids, :action_values)
 
     @vehicle = current_campaign.vehicles.new(vehicle_data)
 
@@ -178,7 +178,7 @@ class Api::V2::VehiclesController < ApplicationController
     else
       vehicle_data = vehicle_params.to_h.symbolize_keys
     end
-    vehicle_data = vehicle_data.slice(:name, :description, :active, :vehicle_ids, :party_ids, :site_ids, :juncture_ids, :schtick_ids)
+    vehicle_data = vehicle_data.slice(:name, :description, :active, :vehicle_ids, :party_ids, :site_ids, :juncture_ids, :schtick_ids, :action_values)
 
     # Handle image attachment if present
     if params[:image].present?
@@ -204,10 +204,6 @@ class Api::V2::VehiclesController < ApplicationController
       user: { image_attachment: :blob },
       faction: { image_attachment: :blob },
       image_attachment: :blob,
-      attunements: { site: { image_attachment: :blob } },
-      carries: { weapon: { image_attachment: :blob } },
-      vehicle_schticks: :schtick,
-      advancements: []
     ).find(params[:id])
 
     render json: @vehicle
@@ -246,11 +242,7 @@ class Api::V2::VehiclesController < ApplicationController
   end
 
   def set_scoped_vehicles
-    if current_user.gamemaster?
-      @scoped_vehicles = current_campaign.vehicles
-    else
-      @scoped_vehicles = current_user.vehicles
-    end
+    @scoped_vehicles = current_campaign.vehicles
   end
 
   def vehicle_params
