@@ -16,7 +16,14 @@ RSpec.describe "Api::V2::Characters", type: :request do
     @fight = @campaign.fights.create!(name: "Big Brawl")
 
     @bandit = Character.create!(name: "Bandit", action_values: { "Type" => "PC", "Archetype" => "Bandit" }, campaign_id: @campaign.id, is_template: true, user_id: @gamemaster.id)
-    @brick = Character.create!(name: "Brick Manly", action_values: { "Type" => "PC", "Archetype" => "Everyday Hero" }, campaign_id: @campaign.id, faction_id: @dragons.id, user_id: @player.id)
+    @brick = Character.create!(
+      name: "Brick Manly",
+      action_values: { "Type" => "PC", "Archetype" => "Everyday Hero", "Martial Arts" => 13, "MainAttack" => "Martial Arts" },
+      description: { "Appearance" => "He's Brick Manly, son" },
+      campaign_id: @campaign.id,
+      faction_id: @dragons.id,
+      user_id: @player.id,
+    )
     @serena = Character.create!(name: "Serena", action_values: { "Type" => "PC", "Archetype" => "Sorcerer" }, campaign_id: @campaign.id, faction_id: @dragons.id, user_id: @player.id)
     @boss = Character.create!(name: "Ugly Shing", action_values: { "Type" => "Boss" }, campaign_id: @campaign.id, faction_id: @ascended.id, user_id: @gamemaster.id)
     @featured_foe = Character.create!(name: "Amanda Yin", action_values: { "Type" => "Featured Foe" }, campaign_id: @campaign.id, faction_id: @ascended.id, user_id: @gamemaster.id)
@@ -36,6 +43,25 @@ RSpec.describe "Api::V2::Characters", type: :request do
       body = JSON.parse(response.body)
       expect(body["characters"].map { |c| c["name"] }).to eq(["Angie Lo", "Thug", "Amanda Yin", "Ugly Shing", "Serena", "Brick Manly"])
       expect(body["factions"].map { |f| f["name"] }).to eq(["The Ascended", "The Dragons"])
+    end
+
+    it "returns character attributes" do
+      get "/api/v2/characters?search=Brick", headers: @headers
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["characters"].length).to eq(1)
+      puts body["characters"][0].inspect
+      expect(body["characters"][0]).to include("name" => "Brick Manly", "faction_id" => @dragons.id, "entity_class" => "Character")
+      expect(body["characters"][0].keys).to eq(["id", "name", "image_url", "faction_id", "action_values", "created_at", "updated_at", "description", "entity_class", "skills", "schticks", "image_positions"])
+    end
+
+    it "returns an empty array when no characters exist" do
+      Character.delete_all
+      get "/api/v2/characters", headers: @headers
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["characters"]).to eq([])
+      expect(body["factions"]).to eq([])
     end
 
     it "sorts by created_at ascending" do
@@ -245,5 +271,8 @@ RSpec.describe "Api::V2::Characters", type: :request do
       expect(body["characters"].map { |c| c["name"] }).to eq(["Bandit"])
       expect(body["factions"].map { |f| f["name"] }).to eq([])
     end
+  end
+
+  describe "GET /autocomplete" do
   end
 end
