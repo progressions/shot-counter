@@ -9,7 +9,7 @@ class Api::V2::VehiclesController < ApplicationController
     page = (params["page"] || 1).to_i
 
     # Base query with minimal fields and preload
-    vehicles_query = @scoped_vehicles
+    query = @scoped_vehicles
       .select(
         "vehicles.id",
         "vehicles.name",
@@ -25,13 +25,18 @@ class Api::V2::VehiclesController < ApplicationController
       )
 
     # Apply filters
-    vehicles_query = vehicles_query.where(faction_id: params["faction_id"]) if params["faction_id"].present?
-    vehicles_query = vehicles_query.where(user_id: params["user_id"]) if params["user_id"].present?
-    vehicles_query = vehicles_query.where("vehicles.name ILIKE ?", "%#{params['search']}%") if params["search"].present?
+    query = query.where(faction_id: params["faction_id"]) if params["faction_id"].present?
+    query = query.where(juncture_id: params["juncture_id"]) if params["juncture_id"].present?
+    query = query.where(user_id: params["user_id"]) if params["user_id"].present?
+    query = query.where("vehicles.name ILIKE ?", "%#{params['search']}%") if params["search"].present?
+    query = query.where(id: params["id"]) if params["id"].present?
+    query = query.where(id: params["ids"].split(",")) if params["ids"].present?
+    query = query.where("action_values->>'Type' = ?", params["type"]) if params["type"].present?
+    query = query.where("action_values->>'Archetype' = ?", params["archetype"]) if params["archetype"].present?
 
     # Join associations
-    vehicles_query = vehicles_query.joins(:memberships).where(memberships: { party_id: params[:party_id] }) if params[:party_id].present?
-    vehicles_query = vehicles_query.joins(:shots).where(shots: { fight_id: params[:fight_id] }) if params[:fight_id].present?
+    query = query.joins(:memberships).where(memberships: { party_id: params[:party_id] }) if params[:party_id].present?
+    query = query.joins(:shots).where(shots: { fight_id: params[:fight_id] }) if params[:fight_id].present?
 
     # Cache key
     cache_key = [
@@ -49,7 +54,7 @@ class Api::V2::VehiclesController < ApplicationController
     ].join("/")
 
     cached_result = Rails.cache.fetch(cache_key, expires_in: 5.minutes) do
-      vehicles = vehicles_query
+      vehicles = query
         .order(Arel.sql(sort_order))
 
       vehicles = paginate(vehicles, per_page: per_page, page: page)
@@ -247,10 +252,14 @@ class Api::V2::VehiclesController < ApplicationController
 
     if sort == "type"
       "COALESCE(action_values->>'Type', '') #{order}"
+    elsif sort == "archetype"
+      "COALESCE(action_values->>'Archetype', '') #{order}"
     elsif sort == "name"
       "LOWER(vehicles.name) #{order}"
     elsif sort == "created_at"
       "vehicles.created_at #{order}"
+    elsif sort == "update_at"
+      "vehicles.update_at #{order}"
     else
       "vehicles.created_at DESC"
     end
