@@ -230,4 +230,14 @@ RSpec.describe "Api::V2::Schticks", type: :request do
       expect(body["schticks"].map { |s| s["id"] }).to contain_exactly(@fireball.id, @blast.id)
     end
   end
+
+  describe "GET /categories" do
+    it "retrieves unique schtick categories" do
+      get "/api/v2/schticks/categories", headers: @headers
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["categories"]).to include("Sorcery", "Martial Arts")
+      expect(body["categories"].length).to eq(2)
+    end
+  end
 end
