@@ -16,6 +16,7 @@ class Api::V2::FightsController < ApplicationController
 
     @fights = current_campaign
       .fights
+      .distinct
       .with_attached_image
       .where(archived: false)
       .select(:id, :campaign_id, :name, :sequence, :active, :archived, :description, :created_at,

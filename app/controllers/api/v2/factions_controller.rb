@@ -14,7 +14,11 @@ class Api::V2::FactionsController < ApplicationController
       sort = Arel.sql("factions.created_at DESC")
     end
 
-    @factions = current_campaign.factions.includes(:image_attachment).order(sort)
+    @factions = current_campaign
+      .factions
+      .distinct
+      .with_attached_image
+      .order(sort)
 
     if params[:id].present?
       @factions = @factions.where(id: params[:id])

@@ -15,7 +15,11 @@ class Api::V2::CampaignsController < ApplicationController
       sort = Arel.sql("campaigns.created_at DESC")
     end
 
-    @campaigns = current_user.campaigns.includes(:image_attachment).order(sort)
+    @campaigns = current_user
+      .campaigns
+      .distinct
+      .with_attached_image
+      .order(sort)
 
     if params[:search].present?
       @campaigns = @campaigns.where("name ILIKE ?", "%#{params[:search]}%")

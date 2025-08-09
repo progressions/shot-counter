@@ -6,7 +6,11 @@ class Api::V2::JuncturesController < ApplicationController
     sort = params[:sort] || "created_at"
     order = params[:order] || "DESC"
 
-    @junctures = current_campaign.junctures.order(sort => order)
+    @junctures = current_campaign
+      .junctures
+      .distinct
+      .with_attached_image
+      .order(sort => order)
 
     Rails.logger.info("params[:active]: #{params[:active]}")
 

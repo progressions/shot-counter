@@ -17,6 +17,7 @@ class Api::V2::PartiesController < ApplicationController
 
     @parties = current_campaign
       .parties
+      .distinct
       .with_attached_image
       .select(:id, :name, :description, :campaign_id, :faction_id, :secret, :created_at, :updated_at)
       .includes(

@@ -16,6 +16,8 @@ class Api::V2::SchticksController < ApplicationController
 
     @schticks = current_campaign
       .schticks
+      .distinct
+      .with_attached_image
       .includes(:prerequisite)
       .order(sort)
 

@@ -22,21 +22,24 @@ def index
   end
 
   # Base query with minimal fields and preload
-  characters_query = @scoped_characters.select(
-    "characters.id",
-    "characters.name",
-    "characters.image_url",
-    "characters.faction_id",
-    "characters.action_values",
-    "characters.description",
-    "characters.created_at",
-    "characters.updated_at",
-    "characters.skills",
-  ).includes(
-    :image_positions,
-    image_attachment: :blob,
-    schticks: { image_attachment: :blob },
-  )
+  characters_query = @scoped_characters
+    .with_attached_image
+    .distinct
+    .select(
+      "characters.id",
+      "characters.name",
+      "characters.image_url",
+      "characters.faction_id",
+      "characters.action_values",
+      "characters.description",
+      "characters.created_at",
+      "characters.updated_at",
+      "characters.skills",
+    ).includes(
+      :image_positions,
+      image_attachment: :blob,
+      schticks: { image_attachment: :blob },
+    )
 
   # Apply filters
   characters_query = characters_query.where(faction_id: params["faction_id"]) if params["faction_id"].present?

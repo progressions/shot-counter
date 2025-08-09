@@ -22,18 +22,21 @@ class Api::V2::VehiclesController < ApplicationController
     end
 
     # Base query with minimal fields and preload
-    vehicles_query = @scoped_vehicles.select(
-      "vehicles.id",
-      "vehicles.name",
-      "vehicles.image_url",
-      "vehicles.faction_id",
-      "vehicles.action_values",
-      "vehicles.description",
-      "vehicles.created_at",
-      "vehicles.updated_at",
-      "vehicles.task",
-      "vehicles.active",
-    ).includes(image_attachment: :blob)
+    vehicles_query = @scoped_vehicles
+      .distinct
+      .with_attached_image
+      .select(
+        "vehicles.id",
+        "vehicles.name",
+        "vehicles.image_url",
+        "vehicles.faction_id",
+        "vehicles.action_values",
+        "vehicles.description",
+        "vehicles.created_at",
+        "vehicles.updated_at",
+        "vehicles.task",
+        "vehicles.active",
+      )
 
     # Apply filters
     vehicles_query = vehicles_query.where(faction_id: params["faction_id"]) if params["faction_id"].present?

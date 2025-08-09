@@ -16,6 +16,7 @@ class Api::V2::UsersController < ApplicationController
     end
 
     @users = User
+      .distinct
       .with_attached_image
       .order(sort)
     @users = paginate(@users, per_page: (params[:per_page] || 12), page: (params[:page] || 1))

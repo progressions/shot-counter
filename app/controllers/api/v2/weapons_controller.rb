@@ -23,6 +23,8 @@ class Api::V2::WeaponsController < ApplicationController
 
     @weapons = current_campaign
       .weapons
+      .distinct
+      .with_attached_image
       .order(sort)
 
     @weapons = @weapons.where(id: params[:ids].split(",")) if params[:ids].present?

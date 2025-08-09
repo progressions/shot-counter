@@ -13,8 +13,10 @@ class Api::V2::SitesController < ApplicationController
     else
       sort = Arel.sql("sites.created_at DESC")
     end
+
     @sites = current_campaign
       .sites
+      .distinct
       .with_attached_image
       .select(:id, :name, :description, :campaign_id, :faction_id, :secret, :created_at, :updated_at)
       .includes(
@@ -25,7 +27,6 @@ class Api::V2::SitesController < ApplicationController
         :image_positions,
       )
       .order(sort)
-
 
     # @factions = current_campaign.factions.joins(:sites).where(sites: @sites).order("factions.name").distinct
 
