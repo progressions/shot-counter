@@ -23,6 +23,8 @@ class Api::V2::CharactersController < ApplicationController
       :image_positions,
       image_attachment: :blob,
       schticks: { image_attachment: :blob },
+      attunements: { site: { image_attachment: :blob } },
+      memberships: { party: { image_attachment: :blob } },
     ]
     query = @scoped_characters
       .select(selects)
@@ -166,6 +168,7 @@ class Api::V2::CharactersController < ApplicationController
       user: { image_attachment: :blob },
       faction: { image_attachment: :blob },
       image_attachment: :blob,
+      memberships: { party: { image_attachment: :blob } },
       attunements: { site: { image_attachment: :blob } },
       carries: { weapon: { image_attachment: :blob } },
       character_schticks: :schtick,

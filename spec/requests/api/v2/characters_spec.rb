@@ -23,6 +23,10 @@ RSpec.describe "Api::V2::Characters", type: :request do
     @modern = @campaign.junctures.create!(name: "Modern", description: "The modern world.")
     @ancient = @campaign.junctures.create!(name: "Ancient", description: "The ancient world.")
 
+    # weapons
+    @sword = @campaign.weapons.create!(name: "Sword", description: "A sharp blade.", damage: 10, juncture: "Ancient", category: "Melee")
+    @gun = @campaign.weapons.create!(name: "Gun", description: "A ranged weapon.", damage: 15, juncture: "Modern", category: "Ranged")
+
     # fight
     @fight = @campaign.fights.create!(name: "Big Brawl")
 
@@ -122,6 +126,9 @@ RSpec.describe "Api::V2::Characters", type: :request do
 
   describe "GET /show" do
     it "retrieves a character" do
+      @brick.weapons << @sword
+      @brick.weapons << @gun
+
       get "/api/v2/characters/#{@brick.id}", headers: @headers
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
@@ -135,6 +142,14 @@ RSpec.describe "Api::V2::Characters", type: :request do
       expect(body["user"]).to eq({ "id" => @player.id, "name" => "Player One", "email" => @player.email })
       expect(body["faction"]).to eq({ "id" => @dragons.id, "name" => "The Dragons" })
       expect(body["juncture"]).to eq({ "id" => @modern.id, "name" => "Modern" })
+      expect(body["weapon_ids"].sort).to eq([@sword.id, @gun.id].sort)
+    end
+
+    it "returns a 404 for a non-existent character" do
+      get "/api/v2/characters/999999", headers: @headers
+      expect(response).to have_http_status(:not_found)
+      body = JSON.parse(response.body)
+      expect(body["error"]).to eq("Record not found")
     end
   end
 end
