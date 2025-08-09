@@ -29,6 +29,7 @@ class Api::V2::SchticksController < ApplicationController
     query = query.where(id: params["id"]) if params["id"].present?
     query = query.where("schticks.name ILIKE ?", "%#{params['search']}%") if params["search"].present?
     query = query.where("schticks.category = ?", params["category"]) if params["category"].present?
+    query = query.where("schticks.path = ?", params["path"]) if params["path"].present?
 
     # Join associations
     query = query.joins(:character_schticks).where(character_schticks: { character_id: params[:character_id] }) if params[:character_id].present?
@@ -286,17 +287,17 @@ class Api::V2::SchticksController < ApplicationController
     sort = params["sort"] || "created_at"
     order = params["order"] || "DESC"
     if sort == "name"
-      "LOWER(characters.name) #{order}, characters.id"
+      "LOWER(schticks.name) #{order}, schticks.id"
     elsif sort == "category"
-      "LOWER(characters.category) #{order}, characters.id"
+      "LOWER(schticks.category) #{order}, LOWER(schticks.name) #{order}, schticks.id"
     elsif sort == "path"
-      "LOWER(characters.path) #{order}, characters.id"
+      "LOWER(schticks.path) #{order}, LOWER(schticks.name) #{order}, schticks.id"
     elsif sort == "created_at"
-      "characters.created_at #{order}, characters.id"
+      "schticks.created_at #{order}, schticks.id"
     elsif sort == "updated_at"
-      "characters.updated_at #{order}, characters.id"
+      "schticks.updated_at #{order}, schticks.id"
     else
-      "characters.created_at DESC, characters.id"
+      "schticks.created_at DESC, schticks.id"
     end
   end
 end
