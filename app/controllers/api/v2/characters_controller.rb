@@ -218,9 +218,10 @@ class Api::V2::CharactersController < ApplicationController
         render json: @character.errors, status: :unprocessable_entity
       end
     else
-      @character = Character.new
       render json: { error: "No PDF file provided" }, status: :bad_request
     end
+  rescue StandardError => e
+    render json: { error: "Failed to import character: #{e.message}" }, status: :unprocessable_entity
   end
 
   def sync

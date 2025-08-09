@@ -225,6 +225,14 @@ RSpec.describe "Api::V2::Characters", type: :request do
       expect(body["action_values"]["Fortune"]).to eq(7)
       expect(body["action_values"]["Max Fortune"]).to eq(7)
     end
+
+    it "returns an error for an invalid pdf" do
+      file = fixture_file_upload("spec/fixtures/files/invalid.pdf", "application/pdf")
+      post "/api/v2/characters/pdf", params: { pdf_file: file }, headers: @headers
+      expect(response).to have_http_status(:unprocessable_entity)
+      body = JSON.parse(response.body)
+      expect(body["error"]).to eq("Failed to import character: Invalid PDF: Missing required fields")
+    end
   end
 
 end

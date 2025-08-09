@@ -70,7 +70,11 @@ module PdfService
       end
 
       fields = pdftk.get_fields(temp_file_path.to_s)
-      character_params = params.merge(pdf_attributes_for_character(fields, campaign))
+      if fields.find { |f| f.name == "Name" }
+        character_params = params.merge(pdf_attributes_for_character(fields, campaign))
+      else
+        raise "Invalid PDF: Missing required fields"
+      end
 
       @character = campaign.characters.new(character_params)
     end
