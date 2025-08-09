@@ -52,9 +52,9 @@ def index
   characters_query = characters_query.joins(:attunements).where(attunements: { site_id: params[:site_id] }) if params[:site_id].present?
 
   if params[:is_template] == "true"
-     # characters_query = characters_query.where(is_template: true)
+    characters_query = characters_query.where(is_template: true)
   else
-    # characters_query = characters_query.where(is_template: false)
+    characters_query = characters_query.where(is_template: [false, nil])
   end
 
   # Cache key
