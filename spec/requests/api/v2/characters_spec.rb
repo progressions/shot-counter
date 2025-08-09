@@ -133,6 +133,114 @@ RSpec.describe "Api::V2::Characters", type: :request do
       expect(@brick.name).to eq("Brick Manly")
       expect(@brick.juncture_id).to eq(@ancient.id)
     end
+
+    it "adds a schtick" do
+      schtick = @campaign.schticks.create!(name: "Super Strength", description: "Gives super strength.", category: "Everyday Hero", path: "Core")
+      patch "/api/v2/characters/#{@brick.id}", params: { character: { schtick_ids: [schtick.id] } }, headers: @headers
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["name"]).to eq("Brick Manly")
+      expect(body["schtick_ids"]).to include(schtick.id)
+      @brick.reload
+      expect(@brick.schticks).to include(schtick)
+    end
+
+    it "removes a schtick" do
+      schtick = @campaign.schticks.create!(name: "Super Strength", description: "Gives super strength.", category: "Everyday Hero", path: "Core")
+      schtick2 = @campaign.schticks.create!(name: "Super Speed", description: "Gives super speed.", category: "Everyday Hero", path: "Core")
+      @brick.schticks << schtick
+      @brick.schticks << schtick2
+      patch "/api/v2/characters/#{@brick.id}", params: { character: { schtick_ids: [schtick.id] } }, headers: @headers
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["name"]).to eq("Brick Manly")
+      expect(body["schtick_ids"]).to include(schtick.id)
+      expect(body["schtick_ids"]).not_to include(schtick2.id)
+      @brick.reload
+      expect(@brick.schticks).to include(schtick)
+      expect(@brick.schticks).not_to include(schtick2)
+    end
+
+    it "adds a weapon" do
+      weapon = @campaign.weapons.create!(name: "Laser Gun", description: "A futuristic weapon.", damage: 20, juncture: "Modern", category: "Ranged")
+      patch "/api/v2/characters/#{@brick.id}", params: { character: { weapon_ids: [weapon.id] } }, headers: @headers
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["name"]).to eq("Brick Manly")
+      expect(body["weapon_ids"]).to include(weapon.id)
+      @brick.reload
+      expect(@brick.weapons).to include(weapon)
+    end
+
+    it "removes a weapon" do
+      weapon = @campaign.weapons.create!(name: "Laser Gun", description: "A futuristic weapon.", damage: 20, juncture: "Modern", category: "Ranged")
+      weapon2 = @campaign.weapons.create!(name: "Plasma Rifle", description: "A powerful rifle.", damage: 25, juncture: "Modern", category: "Ranged")
+      @brick.weapons << weapon
+      @brick.weapons << weapon2
+      patch "/api/v2/characters/#{@brick.id}", params: { character: { weapon_ids: [weapon.id] } }, headers: @headers
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["name"]).to eq("Brick Manly")
+      expect(body["weapon_ids"]).to include(weapon.id)
+      expect(body["weapon_ids"]).not_to include(weapon2.id)
+      @brick.reload
+      expect(@brick.weapons).to include(weapon)
+      expect(@brick.weapons).not_to include(weapon2)
+    end
+
+    it "adds a site" do
+      site = @campaign.sites.create!(name: "New Site", description: "A new site for testing.", faction_id: @dragons.id)
+      patch "/api/v2/characters/#{@brick.id}", params: { character: { site_ids: [site.id] } }, headers: @headers
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["name"]).to eq("Brick Manly")
+      expect(body["site_ids"]).to include(site.id)
+      @brick.reload
+      expect(@brick.sites).to include(site)
+    end
+
+    it "removes a site" do
+      site = @campaign.sites.create!(name: "New Site", description: "A new site for testing.", faction_id: @dragons.id)
+      site2 = @campaign.sites.create!(name: "Another Site", description: "Another site for testing.", faction_id: @dragons.id)
+      @brick.sites << site
+      @brick.sites << site2
+      patch "/api/v2/characters/#{@brick.id}", params: { character: { site_ids: [site.id] } }, headers: @headers
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["name"]).to eq("Brick Manly")
+      expect(body["site_ids"]).to include(site.id)
+      expect(body["site_ids"]).not_to include(site2.id)
+      @brick.reload
+      expect(@brick.sites).to include(site)
+      expect(@brick.sites).not_to include(site2)
+    end
+
+    it "adds a party" do
+      party = @campaign.parties.create!(name: "New Party", description: "A new party for testing.", faction_id: @dragons.id)
+      patch "/api/v2/characters/#{@brick.id}", params: { character: { party_ids: [party.id] } }, headers: @headers
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["name"]).to eq("Brick Manly")
+      expect(body["party_ids"]).to include(party.id)
+      @brick.reload
+      expect(@brick.parties).to include(party)
+    end
+
+    it "removes a party" do
+      party = @campaign.parties.create!(name: "New Party", description: "A new party for testing.", faction_id: @dragons.id)
+      party2 = @campaign.parties.create!(name: "Another Party", description: "Another party for testing.", faction_id: @dragons.id)
+      @brick.parties << party
+      @brick.parties << party2
+      patch "/api/v2/characters/#{@brick.id}", params: { character: { party_ids: [party.id] } }, headers: @headers
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["name"]).to eq("Brick Manly")
+      expect(body["party_ids"]).to include(party.id)
+      expect(body["party_ids"]).not_to include(party2.id)
+      @brick.reload
+      expect(@brick.parties).to include(party)
+      expect(@brick.parties).not_to include(party2)
+    end
   end
 
   describe "GET /show" do

@@ -162,9 +162,9 @@ class Api::V2::VehiclesController < ApplicationController
     end
 
     if @vehicle.save
-      render json: @vehicle, status: :created
+      render json: @vehicle, serializer: VehicleSerializer, status: :created
     else
-      render json: { errors: @vehicle.errors.full_messages }, status: :unprocessable_entity
+      render json: { errors: @vehicle.errors }, status: :unprocessable_entity
     end
   end
 
@@ -182,7 +182,7 @@ class Api::V2::VehiclesController < ApplicationController
     else
       vehicle_data = vehicle_params.to_h.symbolize_keys
     end
-    vehicle_data = vehicle_data.slice(:name, :description, :active, :vehicle_ids, :party_ids, :site_ids, :juncture_ids, :schtick_ids, :action_values)
+    vehicle_data = vehicle_data.slice(:name, :description, :active, :vehicle_ids, :party_ids, :site_ids, :juncture_ids, :schtick_ids, :action_values, :faction_id)
 
     # Handle image attachment if present
     if params[:image].present?
@@ -199,7 +199,7 @@ class Api::V2::VehiclesController < ApplicationController
 
       render json: @vehicle
     else
-      render json: { errors: @vehicle.errors.full_messages }, status: :unprocessable_entity
+      render json: { errors: @vehicle.errors }, status: :unprocessable_entity
     end
   end
 
