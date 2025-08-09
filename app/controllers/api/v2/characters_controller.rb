@@ -102,6 +102,8 @@ class Api::V2::CharactersController < ApplicationController
       "LOWER(characters.name) #{order}, characters.id"
     elsif sort == "created_at"
       "characters.created_at #{order}, characters.id"
+    elsif sort == "updated_at"
+      "characters.updated_at #{order}, characters.id"
     else
       "characters.created_at DESC, characters.id"
     end

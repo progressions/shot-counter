@@ -7,6 +7,12 @@ RSpec.describe "Api::V2::Characters", type: :request do
     @campaign = @gamemaster.campaigns.create!(name: "Adventure")
     @dragons = @campaign.factions.create!(name: "The Dragons", description: "A bunch of heroes.")
     @ascended = @campaign.factions.create!(name: "The Ascended", description: "A bunch of villains.")
+
+    @dragons_hq = @campaign.sites.create!(name: "Dragons HQ", description: "The Dragons' headquarters.", faction_id: @dragons.id)
+    @ascended_hq = @campaign.sites.create!(name: "Ascended HQ", description: "The Ascended's headquarters.", faction_id: @ascended.id)
+
+    @dragons_party = @campaign.parties.create!(name: "Dragons Party", faction_id: @dragons.id)
+    @ascended_party = @campaign.parties.create!(name: "Ascended Party", faction_id: @ascended.id)
     @fight = @campaign.fights.create!(name: "Big Brawl")
 
     @brick = Character.create!(name: "Brick Manly", action_values: { "Type" => "PC", "Archetype" => "Everyday Hero" }, campaign_id: @campaign.id, faction_id: @dragons.id, user_id: @player.id)
@@ -35,7 +41,7 @@ RSpec.describe "Api::V2::Characters", type: :request do
       get "/api/v2/characters?sort=created_at&order=asc", headers: @headers
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
-      expect(body["characters"].map { |c| c["name"] }).to eq(["Amanda Yin", "Angie Lo", "Brick Manly", "Serena", "Thug", "Ugly Shing"])
+      expect(body["characters"].map { |c| c["name"] }).to eq(["Brick Manly", "Serena", "Ugly Shing", "Amanda Yin", "Thug", "Angie Lo"])
       expect(body["factions"].map { |f| f["name"] }).to eq(["The Ascended", "The Dragons"])
     end
 
@@ -43,7 +49,25 @@ RSpec.describe "Api::V2::Characters", type: :request do
       get "/api/v2/characters?sort=created_at&order=desc", headers: @headers
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
-      expect(body["characters"].map { |c| c["name"] }).to eq(["Ugly Shing", "Thug", "Serena", "Brick Manly", "Angie Lo", "Amanda Yin"])
+      expect(body["characters"].map { |c| c["name"] }).to eq(["Angie Lo", "Thug", "Amanda Yin", "Ugly Shing", "Serena", "Brick Manly"])
+      expect(body["factions"].map { |f| f["name"] }).to eq(["The Ascended", "The Dragons"])
+    end
+
+    it "sorts by updated_at ascending" do
+      @brick.touch
+      get "/api/v2/characters?sort=updated_at&order=asc", headers: @headers
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["characters"].map { |c| c["name"] }).to eq(["Serena", "Ugly Shing", "Amanda Yin", "Thug", "Angie Lo", "Brick Manly"])
+      expect(body["factions"].map { |f| f["name"] }).to eq(["The Ascended", "The Dragons"])
+    end
+
+    it "sorts by updated_at descending" do
+      @brick.touch
+      get "/api/v2/characters?sort=updated_at&order=desc", headers: @headers
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["characters"].map { |c| c["name"] }).to eq(["Brick Manly", "Angie Lo", "Thug", "Amanda Yin", "Ugly Shing", "Serena"])
       expect(body["factions"].map { |f| f["name"] }).to eq(["The Ascended", "The Dragons"])
     end
 
@@ -161,6 +185,56 @@ RSpec.describe "Api::V2::Characters", type: :request do
       body = JSON.parse(response.body)
       expect(body["characters"].map { |c| c["name"] }).to eq(["Brick Manly"])
       expect(body["factions"].map { |f| f["name"] }).to eq(["The Dragons"])
+    end
+
+    it "filters by party" do
+      @dragons_party.characters << @brick
+      get "/api/v2/characters?party_id=#{@dragons_party.id}", headers: @headers
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["characters"].map { |c| c["name"] }).to eq(["Brick Manly"])
+      expect(body["factions"].map { |f| f["name"] }).to eq(["The Dragons"])
+    end
+
+    it "filters by party" do
+      @ascended_party.characters << @boss
+      @ascended_party.characters << @mook
+      get "/api/v2/characters?party_id=#{@ascended_party.id}", headers: @headers
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["characters"].map { |c| c["name"] }).to eq(["Thug", "Ugly Shing"])
+      expect(body["factions"].map { |f| f["name"] }).to eq(["The Ascended"])
+    end
+
+    it "filters by fight" do
+      @fight.characters << @brick
+      @fight.characters << @serena
+      @fight.characters << @boss
+      get "/api/v2/characters?sort=name&order=asc&fight_id=#{@fight.id}", headers: @headers
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["characters"].map { |c| c["name"] }).to eq(["Brick Manly", "Serena", "Ugly Shing"])
+      expect(body["factions"].map { |f| f["name"] }).to eq(["The Ascended", "The Dragons"])
+    end
+
+    it "filters by site" do
+      @dragons_hq.characters << @brick
+      @dragons_hq.characters << @serena
+      get "/api/v2/characters?site_id=#{@dragons_hq.id}", headers: @headers
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["characters"].map { |c| c["name"] }).to eq(["Serena", "Brick Manly"])
+      expect(body["factions"].map { |f| f["name"] }).to eq(["The Dragons"])
+    end
+
+    it "filters by site" do
+      @ascended_hq.characters << @boss
+      @ascended_hq.characters << @featured_foe
+      get "/api/v2/characters?site_id=#{@ascended_hq.id}", headers: @headers
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["characters"].map { |c| c["name"] }).to eq(["Amanda Yin", "Ugly Shing"])
+      expect(body["factions"].map { |f| f["name"] }).to eq(["The Ascended"])
     end
   end
 end
