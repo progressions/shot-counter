@@ -23,8 +23,6 @@ def index
 
   # Base query with minimal fields and preload
   characters_query = @scoped_characters
-    .with_attached_image
-    .distinct
     .select(
       "characters.id",
       "characters.name",
