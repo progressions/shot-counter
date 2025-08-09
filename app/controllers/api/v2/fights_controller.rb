@@ -12,6 +12,8 @@ class Api::V2::FightsController < ApplicationController
       "fights.description",
       "fights.created_at",
       "fights.updated_at",
+      "fights.started_at",
+      "fights.ended_at",
       "fights.active",
     ]
     includes = [
@@ -34,7 +36,7 @@ class Api::V2::FightsController < ApplicationController
     end
     query = query.where(id: params["id"]) if params["id"].present?
     query = query.where(started_at: nil) if params["unstarted"].present?
-    query = query.where(ended_at: nil) if params["unended"].present?
+    query = query.where.not(started_at: nil).where(ended_at: nil) if params["unended"].present?
     # Join associations
     query = query.joins(:shots).where(shots: { character_id: params[:character_id] }) if params[:character_id].present?
     query = query.joins(:shots).where(shots: { vehicle_id: params[:vehicle_id] }) if params[:vehicle_id].present?
