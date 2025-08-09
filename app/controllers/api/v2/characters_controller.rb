@@ -30,6 +30,7 @@ class Api::V2::CharactersController < ApplicationController
 
     # Apply filters
     query = query.where(faction_id: params["faction_id"]) if params["faction_id"].present?
+    query = query.where(juncture_id: params["juncture_id"]) if params["juncture_id"].present?
     query = query.where(user_id: params["user_id"]) if params["user_id"].present?
     query = query.where("characters.name ILIKE ?", "%#{params['search']}%") if params["search"].present?
     query = query.where("action_values->>'Type' = ?", params["type"]) if params["type"].present?
