@@ -30,7 +30,7 @@ class Api::V2::FactionsController < ApplicationController
       params[:character_id],
     ].join("/")
     @factions = @factions
-      .select(:id, :name, :description, :campaign_id, :created_at, :updated_at, "LOWER(name) AS lower_name")
+      .select(:id, :name, :description, :campaign_id, :created_at, :updated_at, :active, "LOWER(name) AS lower_name")
       .includes(:image_positions)
       .distinct
       .order(Arel.sql(sort_order))
@@ -69,7 +69,7 @@ class Api::V2::FactionsController < ApplicationController
       faction_data = faction_params.to_h.symbolize_keys
     end
 
-    faction_data = faction_data.slice(:name, :description, :active, :character_ids, :party_ids, :site_ids, :juncture_ids)
+    faction_data = faction_data.slice(:name, :description, :character_ids, :party_ids, :site_ids, :juncture_ids)
 
     @faction = current_campaign.factions.new(faction_data)
 
@@ -99,7 +99,7 @@ class Api::V2::FactionsController < ApplicationController
     else
       faction_data = faction_params.to_h.symbolize_keys
     end
-    faction_data = faction_data.slice(:name, :description, :active, :character_ids, :party_ids, :site_ids, :juncture_ids)
+    faction_data = faction_data.slice(:name, :description, :character_ids, :party_ids, :site_ids, :juncture_ids)
 
     # Handle image attachment if present
     if params[:image].present?
@@ -133,7 +133,7 @@ class Api::V2::FactionsController < ApplicationController
   private
 
   def faction_params
-    params.require(:faction).permit(:name, :description, :active, :image, character_ids: [], party_ids: [], site_ids: [], juncture_ids: [])
+    params.require(:faction).permit(:name, :description, :image, character_ids: [], party_ids: [], site_ids: [], juncture_ids: [])
   end
 
   def sort_order

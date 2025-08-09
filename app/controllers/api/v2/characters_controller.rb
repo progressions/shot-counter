@@ -4,97 +4,97 @@ class Api::V2::CharactersController < ApplicationController
   before_action :set_scoped_characters
   before_action :set_character, only: [:update, :destroy, :remove_image, :sync, :pdf, :duplicate]
 
-def index
-  per_page = (params["per_page"] || 15).to_i
-  page = (params["page"] || 1).to_i
+  def index
+    per_page = (params["per_page"] || 15).to_i
+    page = (params["page"] || 1).to_i
 
-  # Base query with minimal fields and preload
-  characters_query = @scoped_characters
-    .select(
-      "characters.id",
-      "characters.name",
-      "characters.image_url",
-      "characters.faction_id",
-      "characters.action_values",
-      "characters.description",
-      "characters.created_at",
-      "characters.updated_at",
-      "characters.skills",
-    ).includes(
-      :image_positions,
-      image_attachment: :blob,
-      schticks: { image_attachment: :blob },
-    )
+    # Base query with minimal fields and preload
+    characters_query = @scoped_characters
+      .select(
+        "characters.id",
+        "characters.name",
+        "characters.image_url",
+        "characters.faction_id",
+        "characters.action_values",
+        "characters.description",
+        "characters.created_at",
+        "characters.updated_at",
+        "characters.skills",
+      ).includes(
+        :image_positions,
+        image_attachment: :blob,
+        schticks: { image_attachment: :blob },
+      )
 
-  # Apply filters
-  characters_query = characters_query.where(faction_id: params["faction_id"]) if params["faction_id"].present?
-  characters_query = characters_query.where(user_id: params["user_id"]) if params["user_id"].present?
-  characters_query = characters_query.where("characters.name ILIKE ?", "%#{params['search']}%") if params["search"].present?
-  characters_query = characters_query.where("action_values->>'Type' = ?", params["type"]) if params["type"].present?
-  characters_query = characters_query.where("action_values->>'Archetype' = ?", params["archetype"]) if params["archetype"].present?
+    # Apply filters
+    characters_query = characters_query.where(faction_id: params["faction_id"]) if params["faction_id"].present?
+    characters_query = characters_query.where(user_id: params["user_id"]) if params["user_id"].present?
+    characters_query = characters_query.where("characters.name ILIKE ?", "%#{params['search']}%") if params["search"].present?
+    characters_query = characters_query.where("action_values->>'Type' = ?", params["type"]) if params["type"].present?
+    characters_query = characters_query.where("action_values->>'Archetype' = ?", params["archetype"]) if params["archetype"].present?
 
-  # Join associations
-  characters_query = characters_query.joins(:memberships).where(memberships: { party_id: params[:party_id] }) if params[:party_id].present?
-  characters_query = characters_query.joins(:shots).where(shots: { fight_id: params[:fight_id] }) if params[:fight_id].present?
-  characters_query = characters_query.joins(:attunements).where(attunements: { site_id: params[:site_id] }) if params[:site_id].present?
+    # Join associations
+    characters_query = characters_query.joins(:memberships).where(memberships: { party_id: params[:party_id] }) if params[:party_id].present?
+    characters_query = characters_query.joins(:shots).where(shots: { fight_id: params[:fight_id] }) if params[:fight_id].present?
+    characters_query = characters_query.joins(:attunements).where(attunements: { site_id: params[:site_id] }) if params[:site_id].present?
 
-  if params[:is_template] == "true"
-    characters_query = characters_query.where(is_template: true)
-  else
-    characters_query = characters_query.where(is_template: [false, nil])
+    if params[:is_template] == "true"
+      characters_query = characters_query.where(is_template: true)
+    else
+      characters_query = characters_query.where(is_template: [false, nil])
+    end
+
+    # Cache key
+    cache_key = [
+      "characters/index",
+      current_campaign.id,
+      sort_order,
+      page,
+      per_page,
+      params["site_id"],
+      params["fight_id"],
+      params["party_id"],
+      params["search"],
+      params["user_id"],
+      params["faction_id"],
+      params["type"],
+      params["archetype"],
+      params["is_template"],
+    ].join("/")
+
+    cached_result = Rails.cache.fetch(cache_key, expires_in: 5.minutes) do
+      characters = characters_query
+        .order(Arel.sql(sort_order))
+
+      characters = paginate(characters, per_page: per_page, page: page)
+
+      # Fetch factions
+      faction_ids = characters.pluck(:faction_id).uniq.compact
+      factions = Faction.where(id: faction_ids)
+                        .select("factions.id", "factions.name")
+                        .order("LOWER(factions.name) ASC")
+
+      # Archetypes
+      archetypes = characters.map { |c| c.action_values["Archetype"] }.compact.uniq.sort
+
+      {
+        "characters" => ActiveModelSerializers::SerializableResource.new(
+          characters,
+          each_serializer: CharacterIndexLiteSerializer,
+          adapter: :attributes
+        ).serializable_hash,
+        "factions" => ActiveModelSerializers::SerializableResource.new(
+          factions,
+          each_serializer: FactionLiteSerializer,
+          adapter: :attributes
+        ).serializable_hash,
+        "archetypes" => archetypes,
+        "meta" => pagination_meta(characters)
+      }
+    end
+
+    render json: cached_result
   end
-
-  # Cache key
-  cache_key = [
-    "characters/index",
-    current_campaign.id,
-    sort_order,
-    page,
-    per_page,
-    params["site_id"],
-    params["fight_id"],
-    params["party_id"],
-    params["search"],
-    params["user_id"],
-    params["faction_id"],
-    params["type"],
-    params["archetype"],
-    params["is_template"],
-  ].join("/")
-
-  cached_result = Rails.cache.fetch(cache_key, expires_in: 5.minutes) do
-    characters = characters_query
-      .order(Arel.sql(sort_order))
-
-    characters = paginate(characters, per_page: per_page, page: page)
-
-    # Fetch factions
-    faction_ids = characters.pluck(:faction_id).uniq.compact
-    factions = Faction.where(id: faction_ids)
-                      .select("factions.id", "factions.name")
-                      .order("LOWER(factions.name) ASC")
-
-    # Archetypes
-    archetypes = characters.map { |c| c.action_values["Archetype"] }.compact.uniq.sort
-
-    {
-      "characters" => ActiveModelSerializers::SerializableResource.new(
-        characters,
-        each_serializer: CharacterIndexLiteSerializer,
-        adapter: :attributes
-      ).serializable_hash,
-      "factions" => ActiveModelSerializers::SerializableResource.new(
-        factions,
-        each_serializer: FactionLiteSerializer,
-        adapter: :attributes
-      ).serializable_hash,
-      "archetypes" => archetypes,
-      "meta" => pagination_meta(characters)
-    }
-  end
-
-  render json: cached_result
-end
 
   def autocomplete
     characters = current_campaign.characters.active

@@ -46,7 +46,7 @@ class Api::V2::SitesController < ApplicationController
     @factions = current_campaign.factions.joins(:sites).where(sites: @sites).order("factions.name").distinct
 
     @sites = @sites
-      .select(:id, :name, :description, :campaign_id, :faction_id, :secret, :created_at, :updated_at)
+      .select(:id, :name, :description, :campaign_id, :faction_id, :secret, :created_at, :updated_at, "LOWER(sites.name) AS lower_name")
       .includes(
         { faction: [:image_attachment, :image_blob] },
         { attunements: [
@@ -157,5 +157,20 @@ class Api::V2::SitesController < ApplicationController
 
   def site_params
     params.require(:site).permit(:name, :description, :faction_id, :secret, :image, character_ids: [])
+  end
+
+  def sort_order
+    sort = params["sort"] || "created_at"
+    order = params["order"] || "DESC"
+
+    if sort == "name"
+      "LOWER(sites.name) #{order}"
+    elsif sort == "created_at"
+      "sites.created_at #{order}"
+    elsif sort == "updated_at"
+      "sites.updated_at #{order}"
+    else
+      "sites.created_at DESC"
+    end
   end
 end

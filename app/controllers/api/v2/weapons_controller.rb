@@ -43,7 +43,7 @@ class Api::V2::WeaponsController < ApplicationController
     ].join("/")
 
     @weapons = @weapons
-      .select(:id, :name, :description, :campaign_id, :created_at, :updated_at, :damage, :concealment, :reload_value, :juncture, :mook_bonus, :category, :kachunk, "LOWER(weapons.name) AS lower_name")
+      .select(:id, :name, :description, :campaign_id, :created_at, :updated_at, :damage, :concealment, :reload_value, :juncture, :mook_bonus, :category, :kachunk, "LOWER(weapons.name) AS lower_name", "LOWER(weapons.category) AS lower_category", "LOWER(weapons.juncture) AS lower_juncture")
       .includes(
         :image_positions,
       )

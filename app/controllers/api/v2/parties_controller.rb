@@ -19,7 +19,7 @@ class Api::V2::PartiesController < ApplicationController
       .parties
       .distinct
       .with_attached_image
-      .select(:id, :name, :description, :campaign_id, :faction_id, :secret, :created_at, :updated_at)
+      .select(:id, :name, :description, :campaign_id, :faction_id, :secret, :created_at, :updated_at, "LOWER(parties.name) AS lower_name")
       .includes(
         { faction: [:image_attachment, :image_blob] },
         { memberships: [

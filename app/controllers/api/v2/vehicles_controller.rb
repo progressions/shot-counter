@@ -5,26 +5,11 @@ class Api::V2::VehiclesController < ApplicationController
   before_action :set_vehicle, only: [:update, :destroy]
 
   def index
-    sort = params["sort"] || "created_at"
-    order = params["order"] || "DESC"
     per_page = (params["per_page"] || 15).to_i
     page = (params["page"] || 1).to_i
 
-    # Define sort SQL
-    if sort == "type"
-      sort_sql = Arel.sql("COALESCE(action_values->>'Type', '') #{order}")
-    elsif sort == "name"
-      sort_sql = Arel.sql("LOWER(vehicles.name) #{order}")
-    elsif sort == "created_at"
-      sort_sql = Arel.sql("vehicles.created_at #{order}")
-    else
-      sort_sql = Arel.sql("vehicles.created_at DESC")
-    end
-
     # Base query with minimal fields and preload
     vehicles_query = @scoped_vehicles
-      .distinct
-      .with_attached_image
       .select(
         "vehicles.id",
         "vehicles.name",
@@ -34,38 +19,40 @@ class Api::V2::VehiclesController < ApplicationController
         "vehicles.description",
         "vehicles.created_at",
         "vehicles.updated_at",
-        "vehicles.task",
-        "vehicles.active",
+      ).includes(
+        :image_positions,
+        image_attachment: :blob,
       )
 
     # Apply filters
     vehicles_query = vehicles_query.where(faction_id: params["faction_id"]) if params["faction_id"].present?
     vehicles_query = vehicles_query.where(user_id: params["user_id"]) if params["user_id"].present?
     vehicles_query = vehicles_query.where("vehicles.name ILIKE ?", "%#{params['search']}%") if params["search"].present?
-    vehicles_query = vehicles_query.where("action_values->>'Type' = ?", params["type"]) if params["type"].present?
-    vehicles_query = vehicles_query.where("action_values->>'Archetype' = ?", params["archetype"]) if params["archetype"].present?
-    vehicles_query = vehicles_query.joins(:shots).where(shots: { character_id: params[:character_id] }) if params[:character_id].present?
+
+    # Join associations
+    vehicles_query = vehicles_query.joins(:memberships).where(memberships: { party_id: params[:party_id] }) if params[:party_id].present?
     vehicles_query = vehicles_query.joins(:shots).where(shots: { fight_id: params[:fight_id] }) if params[:fight_id].present?
 
     # Cache key
     cache_key = [
       "vehicles/index",
       current_campaign.id,
-      sort,
-      order,
+      sort_order,
       page,
       per_page,
+      params["site_id"],
+      params["fight_id"],
+      params["party_id"],
       params["search"],
       params["user_id"],
-      params["character_id"],
       params["faction_id"],
-      params["fight_id"],
-      params["type"],
-      params["archetype"],
     ].join("/")
 
     cached_result = Rails.cache.fetch(cache_key, expires_in: 5.minutes) do
-      vehicles = vehicles_query.order(sort_sql).page(page).per(per_page)
+      vehicles = vehicles_query
+        .order(Arel.sql(sort_order))
+
+      vehicles = paginate(vehicles, per_page: per_page, page: page)
 
       # Fetch factions
       faction_ids = vehicles.pluck(:faction_id).uniq.compact
@@ -79,7 +66,7 @@ class Api::V2::VehiclesController < ApplicationController
       {
         "vehicles" => ActiveModelSerializers::SerializableResource.new(
           vehicles,
-          each_serializer: VehicleSerializer,
+          each_serializer: VehicleIndexSerializer,
           adapter: :attributes
         ).serializable_hash,
         "factions" => ActiveModelSerializers::SerializableResource.new(
@@ -89,10 +76,10 @@ class Api::V2::VehiclesController < ApplicationController
         ).serializable_hash,
         "archetypes" => archetypes,
         "meta" => pagination_meta(vehicles)
-      }.to_json
+      }
     end
 
-    render json: JSON.parse(cached_result)
+    render json: cached_result
   end
 
   def autocomplete
@@ -151,7 +138,7 @@ class Api::V2::VehiclesController < ApplicationController
       vehicle_data = vehicle_params.to_h.symbolize_keys
     end
 
-    vehicle_data = vehicle_data.slice(:name, :description, :active, :vehicle_ids, :party_ids, :site_ids, :juncture_ids, :schtick_ids, :action_values)
+    vehicle_data = vehicle_data.slice(:name, :description, :active, :vehicle_ids, :faction_id, :party_ids, :action_values)
 
     @vehicle = current_campaign.vehicles.new(vehicle_data)
 
@@ -250,8 +237,22 @@ class Api::V2::VehiclesController < ApplicationController
 
   def vehicle_params
     params.require(:vehicle).permit(:name, :character_id, :faction_id, :defense,
-      :impairments, :count, :color, :user_id, :active, :image_url, :image, :task,
+      :impairments, :count, :color, :user_id, :active, :image_url, :image,
       :action_values)
   end
 
+  def sort_order
+    sort = params["sort"] || "created_at"
+    order = params["order"] || "DESC"
+
+    if sort == "type"
+      "COALESCE(action_values->>'Type', '') #{order}"
+    elsif sort == "name"
+      "LOWER(vehicles.name) #{order}"
+    elsif sort == "created_at"
+      "vehicles.created_at #{order}"
+    else
+      "vehicles.created_at DESC"
+    end
+  end
 end

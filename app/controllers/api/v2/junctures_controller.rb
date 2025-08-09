@@ -40,7 +40,7 @@ class Api::V2::JuncturesController < ApplicationController
     @factions = current_campaign.factions.joins(:junctures).where(junctures: @junctures).order("factions.name").distinct
 
     @junctures = @junctures
-      .select(:id, :name, :description, :campaign_id, :faction_id, :created_at, :updated_at)
+      .select(:id, :name, :description, :campaign_id, :faction_id, :created_at, :updated_at, "LOWER(junctures.name) AS lower_name")
       .includes(
         { faction: [:image_attachment, :image_blob] },
         :image_positions,
