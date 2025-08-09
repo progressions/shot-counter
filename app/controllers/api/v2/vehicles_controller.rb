@@ -96,49 +96,6 @@ class Api::V2::VehiclesController < ApplicationController
     render json: cached_result
   end
 
-  def autocomplete
-    vehicles = current_campaign.vehicles.active
-      .select("vehicles.id", "vehicles.name", "vehicles.faction_id", "vehicles.action_values", "vehicles.description")
-
-    if params["faction_id"].present?
-      vehicles = vehicles.where(faction_id: params["faction_id"])
-    end
-
-    if params["type"].present?
-      vehicles = vehicles.where("action_values ->> 'Type' = ?", params["type"])
-    end
-
-    if params["archetype"].present?
-      vehicles = vehicles.where("action_values ->> 'Archetype' = ?", params["archetype"])
-    end
-
-    vehicles = vehicles.order("LOWER(vehicles.name) #{params['order'] || 'asc'}")
-      .limit(params["per_page"] || 75)
-      .offset((params["page"]&.to_i || 0) * (params["per_page"]&.to_i || 75))
-
-    # Get unique factions based on matching vehicles
-    faction_ids = vehicles.pluck(:faction_id).uniq.compact
-    factions = Faction.where(id: faction_ids)
-                      .select("factions.id", "factions.name")
-                      .order("LOWER(factions.name) ASC")
-
-    archetypes = vehicles.map { |c| c.action_values["Archetype"] }.compact.uniq.sort
-
-    render json: {
-      vehicles: ActiveModelSerializers::SerializableResource.new(
-        vehicles,
-        each_serializer: VehicleAutocompleteSerializer,
-        adapter: :attributes
-      ),
-      factions: ActiveModelSerializers::SerializableResource.new(
-        factions,
-        each_serializer: FactionAutocompleteSerializer,
-        adapter: :attributes
-      ),
-      archetypes: archetypes
-    }
-  end
-
   def create
     # Check if request is multipart/form-data with a JSON string
     if params[:vehicle].present? && params[:vehicle].is_a?(String)
