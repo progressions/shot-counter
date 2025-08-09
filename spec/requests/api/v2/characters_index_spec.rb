@@ -163,6 +163,14 @@ RSpec.describe "Api::V2::Characters", type: :request do
       expect(body["factions"].map { |f| f["name"] }).to eq(["The Ascended", "The Dragons"])
     end
 
+    it "filters by id" do
+      get "/api/v2/characters", params: { id: @brick.id }, headers: @headers
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["characters"].map { |c| c["name"] }).to eq(["Brick Manly"])
+      expect(body["factions"].map { |f| f["name"] }).to eq(["The Dragons"])
+    end
+
     it "filters by faction_id" do
       get "/api/v2/characters", params: { faction_id: @dragons.id }, headers: @headers
       expect(response).to have_http_status(:success)
@@ -540,6 +548,21 @@ RSpec.describe "Api::V2::Characters", type: :request do
       body = JSON.parse(response.body)
       expect(body["characters"].map { |c| c["name"] }).to eq(["Bandit"])
       expect(body["factions"].map { |f| f["name"] }).to eq([])
+    end
+
+    it "gets only active characters when show_all is false" do
+      get "/api/v2/characters", params: { show_all: false }, headers: @headers
+      expect(response).to have_http_status(200)
+      body = JSON.parse(response.body)
+      expect(body["characters"].map { |f| f["name"] }).to eq(["Angie Lo", "Thug", "Amanda Yin", "Ugly Shing", "Serena", "Brick Manly"])
+      expect(body["characters"].map { |f| f["name"] }).not_to include("Dead Guy")
+    end
+
+    it "gets all characters when show_all is true" do
+      get "/api/v2/characters", params: { show_all: true }, headers: @headers
+      expect(response).to have_http_status(200)
+      body = JSON.parse(response.body)
+      expect(body["characters"].map { |f| f["name"] }).to eq(["Dead Guy", "Angie Lo", "Thug", "Amanda Yin", "Ugly Shing", "Serena", "Brick Manly"])
     end
   end
 end

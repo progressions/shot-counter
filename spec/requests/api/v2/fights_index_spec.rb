@@ -28,6 +28,7 @@ RSpec.describe "Api::V2::Fights", type: :request do
     @brawl = @campaign.fights.create!(name: "Big Brawl", description: "A large fight in the city.")
     @skirmish = @campaign.fights.create!(name: "Small Skirmish", description: "A minor fight in the alley.")
     @airport_battle = @campaign.fights.create!(name: "Airport Battle", description: "A fight at the airport.")
+    @inactive_fight = @campaign.fights.create!(name: "Inactive Fight", description: "This fight is inactive.", active: false)
 
     # characters
     @bandit = Character.create!(name: "Bandit", action_values: { "Type" => "PC", "Archetype" => "Bandit" }, campaign_id: @campaign.id, is_template: true, user_id: @gamemaster.id)
@@ -58,6 +59,53 @@ RSpec.describe "Api::V2::Fights", type: :request do
       expect(response).to have_http_status(200)
       body = JSON.parse(response.body)
       expect(body["fights"].map { |f| f["name"] }).to include("Big Brawl", "Small Skirmish", "Airport Battle")
+    end
+
+    it "filters fights by search term" do
+      get "/api/v2/fights", params: { search: "Brawl" }, headers: @headers
+      expect(response).to have_http_status(200)
+      body = JSON.parse(response.body)
+      expect(body["fights"].length).to eq(1)
+      expect(body["fights"].first["name"]).to eq("Big Brawl")
+    end
+
+    it "filters fights by search term" do
+      get "/api/v2/fights", params: { search: "Airport" }, headers: @headers
+      expect(response).to have_http_status(200)
+      body = JSON.parse(response.body)
+      expect(body["fights"].length).to eq(1)
+      expect(body["fights"].first["name"]).to eq("Airport Battle")
+    end
+
+    it "filters fights by id" do
+      get "/api/v2/fights", params: { id: @skirmish.id }, headers: @headers
+      expect(response).to have_http_status(200)
+      body = JSON.parse(response.body)
+      expect(body["fights"].length).to eq(1)
+      expect(body["fights"].first["name"]).to eq("Small Skirmish")
+    end
+
+    it "filters fights by id" do
+      get "/api/v2/fights", params: { id: @brawl.id }, headers: @headers
+      expect(response).to have_http_status(200)
+      body = JSON.parse(response.body)
+      expect(body["fights"].length).to eq(1)
+      expect(body["fights"].first["name"]).to eq("Big Brawl")
+    end
+
+    it "gets only active fights when show_all is false" do
+      get "/api/v2/fights", params: { show_all: false }, headers: @headers
+      expect(response).to have_http_status(200)
+      body = JSON.parse(response.body)
+      expect(body["fights"].map { |f| f["name"] }).to include("Big Brawl", "Small Skirmish", "Airport Battle")
+      expect(body["fights"].map { |f| f["name"] }).not_to include("Inactive Fight")
+    end
+
+    it "gets all fights when show_all is true" do
+      get "/api/v2/fights", params: { show_all: true }, headers: @headers
+      expect(response).to have_http_status(200)
+      body = JSON.parse(response.body)
+      expect(body["fights"].map { |f| f["name"] }).to include("Big Brawl", "Small Skirmish", "Airport Battle", "Inactive Fight")
     end
   end
 

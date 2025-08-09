@@ -30,14 +30,18 @@ class Api::V2::CharactersController < ApplicationController
       .includes(includes)
 
     # Apply filters
+    query = query.where(id: params["id"]) if params["id"].present?
     query = query.where(faction_id: params["faction_id"]) if params["faction_id"].present?
     query = query.where(juncture_id: params["juncture_id"]) if params["juncture_id"].present?
     query = query.where(user_id: params["user_id"]) if params["user_id"].present?
     query = query.where("characters.name ILIKE ?", "%#{params['search']}%") if params["search"].present?
     query = query.where("action_values->>'Type' = ?", params["type"]) if params["type"].present?
     query = query.where("action_values->>'Archetype' = ?", params["archetype"]) if params["archetype"].present?
-    query = query.where(active: true) if !params["active"].present?
-    query = query.where(active: params["active"]) if params["active"].present?
+    if params["show_all"] == "true"
+      query = query.where(active: [true, false, nil])
+    else
+      query = query.where(active: true)
+    end
     # Join associations
     query = query.joins(:memberships).where(memberships: { party_id: params[:party_id] }) if params[:party_id].present?
     query = query.joins(:shots).where(shots: { fight_id: params[:fight_id] }) if params[:fight_id].present?
