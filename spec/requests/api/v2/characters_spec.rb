@@ -47,7 +47,7 @@ RSpec.describe "Api::V2::Characters", type: :request do
     end
 
     it "returns character attributes" do
-      get "/api/v2/characters?search=Brick", headers: @headers
+      get "/api/v2/characters", params: { search: "Brick" }, headers: @headers
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
       expect(body["characters"].length).to eq(1)
@@ -65,7 +65,7 @@ RSpec.describe "Api::V2::Characters", type: :request do
     end
 
     it "sorts by created_at ascending" do
-      get "/api/v2/characters?sort=created_at&order=asc", headers: @headers
+      get "/api/v2/characters", params: { sort: "created_at", order: "asc" }, headers: @headers
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
       expect(body["characters"].map { |c| c["name"] }).to eq(["Brick Manly", "Serena", "Ugly Shing", "Amanda Yin", "Thug", "Angie Lo"])
@@ -73,7 +73,7 @@ RSpec.describe "Api::V2::Characters", type: :request do
     end
 
     it "sorts by created_at descending" do
-      get "/api/v2/characters?sort=created_at&order=desc", headers: @headers
+      get "/api/v2/characters", params: { sort: "created_at", order: "desc" }, headers: @headers
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
       expect(body["characters"].map { |c| c["name"] }).to eq(["Angie Lo", "Thug", "Amanda Yin", "Ugly Shing", "Serena", "Brick Manly"])
@@ -82,7 +82,7 @@ RSpec.describe "Api::V2::Characters", type: :request do
 
     it "sorts by updated_at ascending" do
       @brick.touch
-      get "/api/v2/characters?sort=updated_at&order=asc", headers: @headers
+      get "/api/v2/characters", params: { sort: "updated_at", order: "asc" }, headers: @headers
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
       expect(body["characters"].map { |c| c["name"] }).to eq(["Serena", "Ugly Shing", "Amanda Yin", "Thug", "Angie Lo", "Brick Manly"])
@@ -91,7 +91,7 @@ RSpec.describe "Api::V2::Characters", type: :request do
 
     it "sorts by updated_at descending" do
       @brick.touch
-      get "/api/v2/characters?sort=updated_at&order=desc", headers: @headers
+      get "/api/v2/characters", params: { sort: "updated_at", order: "desc" }, headers: @headers
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
       expect(body["characters"].map { |c| c["name"] }).to eq(["Brick Manly", "Angie Lo", "Thug", "Amanda Yin", "Ugly Shing", "Serena"])
@@ -99,7 +99,7 @@ RSpec.describe "Api::V2::Characters", type: :request do
     end
 
     it "sorts by name ascending" do
-      get "/api/v2/characters?sort=name&order=asc", headers: @headers
+      get "/api/v2/characters", params: { sort: "name", order: "asc" }, headers: @headers
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
       expect(body["characters"].map { |c| c["name"] }).to eq(["Amanda Yin", "Angie Lo", "Brick Manly", "Serena", "Thug", "Ugly Shing"])
@@ -107,7 +107,7 @@ RSpec.describe "Api::V2::Characters", type: :request do
     end
 
     it "sorts by name descending" do
-      get "/api/v2/characters?sort=name&order=desc", headers: @headers
+      get "/api/v2/characters", params: { sort: "name", order: "desc" }, headers: @headers
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
       expect(body["characters"].map { |c| c["name"] }).to eq(["Ugly Shing", "Thug", "Serena", "Brick Manly", "Angie Lo", "Amanda Yin"])
@@ -115,7 +115,7 @@ RSpec.describe "Api::V2::Characters", type: :request do
     end
 
     it "sorts by type ascending" do
-      get "/api/v2/characters?sort=type&order=asc", headers: @headers
+      get "/api/v2/characters", params: { sort: "type", order: "asc" }, headers: @headers
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
       expect(body["characters"].map { |c| c["name"] }).to eq(["Angie Lo", "Ugly Shing", "Amanda Yin", "Thug", "Brick Manly", "Serena"])
@@ -124,7 +124,7 @@ RSpec.describe "Api::V2::Characters", type: :request do
     end
 
     it "sorts by type descending" do
-      get "/api/v2/characters?sort=type&order=desc", headers: @headers
+      get "/api/v2/characters", params: { sort: "type", order: "desc" }, headers: @headers
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
       expect(body["characters"].map { |c| c["name"] }).to eq(["Brick Manly", "Serena", "Thug", "Amanda Yin", "Ugly Shing", "Angie Lo"])
@@ -133,7 +133,7 @@ RSpec.describe "Api::V2::Characters", type: :request do
     end
 
     it "sorts by archetype ascending" do
-      get "/api/v2/characters?sort=archetype&order=asc", headers: @headers
+      get "/api/v2/characters", params: { sort: "archetype", order: "asc" }, headers: @headers
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
       expect(body["characters"].map { |c| c["name"] }).to eq(["Amanda Yin", "Angie Lo", "Thug", "Ugly Shing", "Brick Manly", "Serena"])
@@ -142,7 +142,7 @@ RSpec.describe "Api::V2::Characters", type: :request do
     end
 
     it "sorts by archetype descending" do
-      get "/api/v2/characters?sort=archetype&order=desc", headers: @headers
+      get "/api/v2/characters", params: { sort: "archetype", order: "desc" }, headers: @headers
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
       expect(body["characters"].map { |c| c["name"] }).to eq(["Serena", "Brick Manly", "Amanda Yin", "Angie Lo", "Thug", "Ugly Shing"])
@@ -151,7 +151,7 @@ RSpec.describe "Api::V2::Characters", type: :request do
     end
 
     it "filters by faction_id" do
-      get "/api/v2/characters?faction_id=#{@dragons.id}", headers: @headers
+      get "/api/v2/characters", params: { faction_id: @dragons.id }, headers: @headers
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
       expect(body["characters"].map { |c| c["name"] }).to eq(["Angie Lo", "Serena", "Brick Manly"])
@@ -159,7 +159,7 @@ RSpec.describe "Api::V2::Characters", type: :request do
     end
 
     it "filters by user_id" do
-      get "/api/v2/characters?user_id=#{@gamemaster.id}", headers: @headers
+      get "/api/v2/characters", params: { user_id: @gamemaster.id }, headers: @headers
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
       expect(body["characters"].map { |c| c["name"] }).to eq(["Angie Lo", "Thug", "Amanda Yin", "Ugly Shing"])
@@ -167,7 +167,7 @@ RSpec.describe "Api::V2::Characters", type: :request do
     end
 
     it "filters by search string" do
-      get "/api/v2/characters?search=Ugly", headers: @headers
+      get "/api/v2/characters", params: { search: "Ugly" }, headers: @headers
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
       expect(body["characters"].map { |c| c["name"] }).to eq(["Ugly Shing"])
@@ -175,7 +175,7 @@ RSpec.describe "Api::V2::Characters", type: :request do
     end
 
     it "filters by search string" do
-      get "/api/v2/characters?search=Brick", headers: @headers
+      get "/api/v2/characters", params: { search: "Brick" }, headers: @headers
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
       expect(body["characters"].map { |c| c["name"] }).to eq(["Brick Manly"])
@@ -184,6 +184,7 @@ RSpec.describe "Api::V2::Characters", type: :request do
 
     it "filters by character type" do
       get "/api/v2/characters?type=Boss", headers: @headers
+      get "/api/v2/characters", params: { type: "Boss" }, headers: @headers
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
       expect(body["characters"].map { |c| c["name"] }).to eq(["Ugly Shing"])
@@ -191,7 +192,7 @@ RSpec.describe "Api::V2::Characters", type: :request do
     end
 
     it "filters by character type" do
-      get "/api/v2/characters?type=PC", headers: @headers
+      get "/api/v2/characters", params: { type: "PC" }, headers: @headers
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
       expect(body["characters"].map { |c| c["name"] }).to eq(["Serena", "Brick Manly"])
@@ -199,7 +200,7 @@ RSpec.describe "Api::V2::Characters", type: :request do
     end
 
     it "filters by archetype" do
-      get "/api/v2/characters?archetype=Sorcerer", headers: @headers
+      get "/api/v2/characters", params: { archetype: "Sorcerer" }, headers: @headers
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
       expect(body["characters"].map { |c| c["name"] }).to eq(["Serena"])
@@ -207,7 +208,7 @@ RSpec.describe "Api::V2::Characters", type: :request do
     end
 
     it "filters by archetype" do
-      get "/api/v2/characters?archetype=Everyday%20Hero", headers: @headers
+      get "/api/v2/characters", params: { archetype: "Everyday Hero" }, headers: @headers
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
       expect(body["characters"].map { |c| c["name"] }).to eq(["Brick Manly"])
@@ -216,7 +217,7 @@ RSpec.describe "Api::V2::Characters", type: :request do
 
     it "filters by party" do
       @dragons_party.characters << @brick
-      get "/api/v2/characters?party_id=#{@dragons_party.id}", headers: @headers
+      get "/api/v2/characters", params: { party_id: @dragons_party.id }, headers: @headers
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
       expect(body["characters"].map { |c| c["name"] }).to eq(["Brick Manly"])
@@ -226,7 +227,7 @@ RSpec.describe "Api::V2::Characters", type: :request do
     it "filters by party" do
       @ascended_party.characters << @boss
       @ascended_party.characters << @mook
-      get "/api/v2/characters?party_id=#{@ascended_party.id}", headers: @headers
+      get "/api/v2/characters", params: { party_id: @ascended_party.id }, headers: @headers
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
       expect(body["characters"].map { |c| c["name"] }).to eq(["Thug", "Ugly Shing"])
@@ -237,7 +238,7 @@ RSpec.describe "Api::V2::Characters", type: :request do
       @fight.characters << @brick
       @fight.characters << @serena
       @fight.characters << @boss
-      get "/api/v2/characters?sort=name&order=asc&fight_id=#{@fight.id}", headers: @headers
+      get "/api/v2/characters", params: { sort: "name", order: "asc", fight_id: @fight.id }, headers: @headers
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
       expect(body["characters"].map { |c| c["name"] }).to eq(["Brick Manly", "Serena", "Ugly Shing"])
@@ -247,7 +248,7 @@ RSpec.describe "Api::V2::Characters", type: :request do
     it "filters by site" do
       @dragons_hq.characters << @brick
       @dragons_hq.characters << @serena
-      get "/api/v2/characters?site_id=#{@dragons_hq.id}", headers: @headers
+      get "/api/v2/characters", params: { site_id: @dragons_hq.id }, headers: @headers
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
       expect(body["characters"].map { |c| c["name"] }).to eq(["Serena", "Brick Manly"])
@@ -257,7 +258,7 @@ RSpec.describe "Api::V2::Characters", type: :request do
     it "filters by site" do
       @ascended_hq.characters << @boss
       @ascended_hq.characters << @featured_foe
-      get "/api/v2/characters?site_id=#{@ascended_hq.id}", headers: @headers
+      get "/api/v2/characters", params: { site_id: @ascended_hq.id }, headers: @headers
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
       expect(body["characters"].map { |c| c["name"] }).to eq(["Amanda Yin", "Ugly Shing"])
@@ -265,7 +266,7 @@ RSpec.describe "Api::V2::Characters", type: :request do
     end
 
     it "filters by is_template" do
-      get "/api/v2/characters?is_template=true", headers: @headers
+      get "/api/v2/characters", params: { is_template: true }, headers: @headers
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
       expect(body["characters"].map { |c| c["name"] }).to eq(["Bandit"])
@@ -283,7 +284,7 @@ RSpec.describe "Api::V2::Characters", type: :request do
     end
 
     it "returns character attributes" do
-      get "/api/v2/characters?autocomplete=true&search=Brick", headers: @headers
+      get "/api/v2/characters", params: { autocomplete: true, search: "Brick" }, headers: @headers
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
       expect(body["characters"].length).to eq(1)
@@ -293,7 +294,7 @@ RSpec.describe "Api::V2::Characters", type: :request do
 
     it "returns an empty array when no characters exist" do
       Character.delete_all
-      get "/api/v2/characters?autocomplete=true", headers: @headers
+      get "/api/v2/characters", params: { autocomplete: true }, headers: @headers
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
       expect(body["characters"]).to eq([])
@@ -505,4 +506,39 @@ RSpec.describe "Api::V2::Characters", type: :request do
       expect(body["factions"].map { |f| f["name"] }).to eq([])
     end
   end
+
+  describe "POST /create" do
+    it "creates a new character" do
+      post "/api/v2/characters", params: { character: { name: "New Character", action_values: { "Type" => "PC" }, faction_id: @dragons.id } }, headers: @headers
+      expect(response).to have_http_status(:created)
+      body = JSON.parse(response.body)
+      expect(body["name"]).to eq("New Character")
+      expect(body["faction_id"]).to eq(@dragons.id)
+      expect(body["image_url"]).to be_nil
+      expect(Character.order("created_at").last.name).to eq("New Character")
+    end
+
+    it "returns an error when the character name is missing" do
+      post "/api/v2/characters", params: { character: { action_values: { "Type" => "PC" }, faction_id: @dragons.id } }, headers: @headers
+      expect(response).to have_http_status(:unprocessable_entity)
+      body = JSON.parse(response.body)
+      expect(body["errors"]).to include("name" => ["can't be blank"])
+    end
+
+    it "attaches an image" do
+      file = fixture_file_upload("spec/fixtures/files/image.jpg", "image/jpg")
+      post "/api/v2/characters", params: { image: file, character: { name: "Character with Image", action_values: { "Type" => "PC" }, faction_id: @dragons.id } }, headers: @headers
+      expect(response).to have_http_status(:created)
+      body = JSON.parse(response.body)
+      expect(body["name"]).to eq("Character with Image")
+      expect(body["image_url"]).not_to be_nil
+    end
+  end
+
+  describe "PATCH /update" do
+    it "updates an existing character" do
+      patch "/api/v2/characters/#{@brick.id}", params: { character: { name: "Updated Brick Manly", action_values: { "Type" => "PC", "Archetype" => "Everyday Hero" } } }, headers: @headers
+    end
+  end
+
 end

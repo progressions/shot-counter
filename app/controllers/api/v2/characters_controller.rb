@@ -24,7 +24,6 @@ class Api::V2::CharactersController < ApplicationController
       image_attachment: :blob,
       schticks: { image_attachment: :blob },
     ]
-    # Base query with minimal fields and preload
     query = @scoped_characters
       .select(selects)
       .includes(includes)
@@ -95,24 +94,6 @@ class Api::V2::CharactersController < ApplicationController
     render json: cached_result
   end
 
-  def sort_order
-    sort = params["sort"] || "created_at"
-    order = params["order"] || "DESC"
-    if sort == "type"
-      "LOWER(COALESCE(action_values->>'Type', '')) #{order}, LOWER(characters.name), characters.id"
-    elsif sort == "archetype"
-      "LOWER(COALESCE(action_values->>'Archetype', '')) #{order}, LOWER(characters.name), characters.id"
-    elsif sort == "name"
-      "LOWER(characters.name) #{order}, characters.id"
-    elsif sort == "created_at"
-      "characters.created_at #{order}, characters.id"
-    elsif sort == "updated_at"
-      "characters.updated_at #{order}, characters.id"
-    else
-      "characters.created_at DESC, characters.id"
-    end
-  end
-
   def create
     # Check if request is multipart/form-data with a JSON string
     if params[:character].present? && params[:character].is_a?(String)
@@ -136,9 +117,9 @@ class Api::V2::CharactersController < ApplicationController
     end
 
     if @character.save
-      render json: @character, status: :created
+      render json: @character, serializer: CharacterSerializer, status: :created
     else
-      render json: { errors: @character.errors.full_messages }, status: :unprocessable_entity
+      render json: { errors: @character.errors }, status: :unprocessable_entity
     end
   end
 
@@ -287,5 +268,23 @@ class Api::V2::CharactersController < ApplicationController
               action_values: {},
               description: Character::DEFAULT_DESCRIPTION.keys,
               schticks: [], skills: params.fetch(:character, {}).fetch(:skills, {}).keys || {})
+  end
+
+  def sort_order
+    sort = params["sort"] || "created_at"
+    order = params["order"] || "DESC"
+    if sort == "type"
+      "LOWER(COALESCE(action_values->>'Type', '')) #{order}, LOWER(characters.name), characters.id"
+    elsif sort == "archetype"
+      "LOWER(COALESCE(action_values->>'Archetype', '')) #{order}, LOWER(characters.name), characters.id"
+    elsif sort == "name"
+      "LOWER(characters.name) #{order}, characters.id"
+    elsif sort == "created_at"
+      "characters.created_at #{order}, characters.id"
+    elsif sort == "updated_at"
+      "characters.updated_at #{order}, characters.id"
+    else
+      "characters.created_at DESC, characters.id"
+    end
   end
 end
