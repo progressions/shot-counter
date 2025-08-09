@@ -79,7 +79,7 @@ class Api::V2::CharactersController < ApplicationController
       {
         "characters" => ActiveModelSerializers::SerializableResource.new(
           characters,
-          each_serializer: CharacterIndexLiteSerializer,
+          each_serializer: params[:autocomplete] ? CharacterAutocompleteSerializer : CharacterIndexLiteSerializer,
           adapter: :attributes
         ).serializable_hash,
         "factions" => ActiveModelSerializers::SerializableResource.new(
