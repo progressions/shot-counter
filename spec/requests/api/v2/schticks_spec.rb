@@ -233,11 +233,43 @@ RSpec.describe "Api::V2::Schticks", type: :request do
 
   describe "GET /categories" do
     it "retrieves unique schtick categories" do
+      @bandit_schtick = Schtick.create!(name: "Stealth", description: "Sneaky stuff", category: "Bandit", path: "Core", campaign_id: @campaign.id)
       get "/api/v2/schticks/categories", headers: @headers
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
-      expect(body["categories"]).to include("Sorcery", "Martial Arts")
-      expect(body["categories"].length).to eq(2)
+      expect(body["general"]).to eq(["Martial Arts", "Sorcery"])
+      expect(body["core"]).to eq(["Bandit"])
+    end
+
+    it "filters categories by search term" do
+      get "/api/v2/schticks/categories", params: { search: "martial" }, headers: @headers
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["general"]).to eq(["Martial Arts"])
+      expect(body["core"]).to be_empty
+    end
+  end
+
+  describe "GET /paths" do
+    it "retrieves unique schtick paths" do
+      get "/api/v2/schticks/paths", headers: @headers
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["paths"]).to contain_exactly("Fire", "Force", "Path of the Tiger")
+    end
+
+    it "filters paths by category" do
+      get "/api/v2/schticks/paths", params: { category: "Martial Arts" }, headers: @headers
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["paths"]).to contain_exactly("Path of the Tiger")
+    end
+
+    it "filters paths by search term" do
+      get "/api/v2/schticks/paths", params: { search: "fire" }, headers: @headers
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["paths"]).to contain_exactly("Fire")
     end
   end
 end

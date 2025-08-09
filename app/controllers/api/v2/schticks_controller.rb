@@ -104,11 +104,13 @@ class Api::V2::SchticksController < ApplicationController
     all_categories = current_campaign.schticks.pluck(:category).uniq.compact
     core_categories = current_campaign.schticks.where(path: "Core").pluck(:category).uniq.compact
     general_categories = all_categories - core_categories
+
     if params[:search].present?
       search = params[:search].downcase
       general_categories = general_categories.select { |category| category.downcase.include?(search) }
       core_categories = core_categories.select { |category| category.downcase.include?(search) }
     end
+
     render json: {
       general: general_categories.sort,
       core: core_categories.sort
@@ -135,7 +137,7 @@ class Api::V2::SchticksController < ApplicationController
   def show
     @schtick = current_campaign.schticks.find(params[:id])
 
-    render json: @schtick
+    render json: @schtick, serializer: SchtickSerializer
   end
 
   def create
