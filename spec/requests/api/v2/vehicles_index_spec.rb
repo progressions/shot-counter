@@ -29,6 +29,7 @@ RSpec.describe "Api::V2::Vehicles", type: :request do
     @bike = @campaign.vehicles.create!(name: "Bike", faction_id: @dragons.id, user_id: @player.id, action_values: { Type: "Mook", Archetype: "Bicycle" }, juncture_id: @ancient.id)
     @plane = @campaign.vehicles.create!(name: "Plane", faction_id: @ascended.id, user_id: @player.id, action_values: { Type: "Ally", Archetype: "Airplane" })
     @van = @campaign.vehicles.create!(name: "Van", faction_id: @ascended.id, user_id: @gamemaster.id, action_values: { Type: "Featured Foe", Archetype: "Van" })
+    @dead_vehicle = @campaign.vehicles.create!(name: "Dead Car", faction_id: @dragons.id, user_id: @player.id, action_values: { Type: "PC", Archetype: "Car" }, juncture_id: @modern.id, active: false)
 
     @headers = Devise::JWT::TestHelpers.auth_headers({}, @gamemaster)
     set_current_campaign(@gamemaster, @campaign)
@@ -279,28 +280,28 @@ RSpec.describe "Api::V2::Vehicles", type: :request do
       expect(body["vehicles"].map { |c| c["name"] }).to eq(["Car", "Tank"])
       expect(body["factions"].map { |f| f["name"] }).to eq(["The Ascended", "The Dragons"])
     end
+  end
 
-=begin
   describe "GET /autocomplete" do
     it "gets all vehicles" do
       get "/api/v2/vehicles", params: { autocomplete: true }, headers: @headers
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
-      expect(body["vehicles"].map { |c| c["name"] }).to eq(["Angie Lo", "Thug", "Amanda Yin", "Ugly Shing", "Serena", "Brick Manly"])
+      expect(body["vehicles"].map { |c| c["name"] }).to eq(["Van", "Plane", "Bike", "Tank", "Car"])
       expect(body["factions"].map { |f| f["name"] }).to eq(["The Ascended", "The Dragons"])
     end
 
     it "returns vehicle attributes" do
-      get "/api/v2/vehicles", params: { autocomplete: true, search: "Brick" }, headers: @headers
+      get "/api/v2/vehicles", params: { autocomplete: true, search: "Car" }, headers: @headers
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
       expect(body["vehicles"].length).to eq(1)
-      expect(body["vehicles"][0]).to include("name" => "Brick Manly")
+      expect(body["vehicles"][0]).to include("name" => "Car")
       expect(body["vehicles"][0].keys).to eq(["id", "name"])
     end
 
     it "returns an empty array when no vehicles exist" do
-      Character.delete_all
+      Vehicle.delete_all
       get "/api/v2/vehicles", params: { autocomplete: true }, headers: @headers
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
@@ -312,7 +313,7 @@ RSpec.describe "Api::V2::Vehicles", type: :request do
       get "/api/v2/vehicles", params: { autocomplete: true, sort: "created_at", order: "asc" }, headers: @headers
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
-      expect(body["vehicles"].map { |c| c["name"] }).to eq(["Brick Manly", "Serena", "Ugly Shing", "Amanda Yin", "Thug", "Angie Lo"])
+      expect(body["vehicles"].map { |c| c["name"] }).to eq(["Car", "Tank", "Bike", "Plane", "Van"])
       expect(body["factions"].map { |f| f["name"] }).to eq(["The Ascended", "The Dragons"])
     end
 
@@ -320,7 +321,7 @@ RSpec.describe "Api::V2::Vehicles", type: :request do
       get "/api/v2/vehicles", params: { autocomplete: true, sort: "created_at", order: "desc" }, headers: @headers
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
-      expect(body["vehicles"].map { |c| c["name"] }).to eq(["Angie Lo", "Thug", "Amanda Yin", "Ugly Shing", "Serena", "Brick Manly"])
+      expect(body["vehicles"].map { |c| c["name"] }).to eq(["Van", "Plane", "Bike", "Tank", "Car"])
       expect(body["factions"].map { |f| f["name"] }).to eq(["The Ascended", "The Dragons"])
     end
 
@@ -329,7 +330,7 @@ RSpec.describe "Api::V2::Vehicles", type: :request do
       get "/api/v2/vehicles", params: { autocomplete: true, sort: "updated_at", order: "asc" }, headers: @headers
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
-      expect(body["vehicles"].map { |c| c["name"] }).to eq(["Serena", "Ugly Shing", "Amanda Yin", "Thug", "Angie Lo", "Brick Manly"])
+      expect(body["vehicles"].map { |c| c["name"] }).to eq(["Van", "Plane", "Bike", "Tank", "Car"])
       expect(body["factions"].map { |f| f["name"] }).to eq(["The Ascended", "The Dragons"])
     end
 
@@ -338,7 +339,7 @@ RSpec.describe "Api::V2::Vehicles", type: :request do
       get "/api/v2/vehicles", params: { autocomplete: true, sort: "updated_at", order: "desc" }, headers: @headers
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
-      expect(body["vehicles"].map { |c| c["name"] }).to eq(["Brick Manly", "Angie Lo", "Thug", "Amanda Yin", "Ugly Shing", "Serena"])
+      expect(body["vehicles"].map { |c| c["name"] }).to eq(["Van", "Plane", "Bike", "Tank", "Car"])
       expect(body["factions"].map { |f| f["name"] }).to eq(["The Ascended", "The Dragons"])
     end
 
@@ -346,7 +347,7 @@ RSpec.describe "Api::V2::Vehicles", type: :request do
       get "/api/v2/vehicles", params: { autocomplete: true, sort: "name", order: "asc" }, headers: @headers
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
-      expect(body["vehicles"].map { |c| c["name"] }).to eq(["Amanda Yin", "Angie Lo", "Brick Manly", "Serena", "Thug", "Ugly Shing"])
+      expect(body["vehicles"].map { |c| c["name"] }).to eq(["Bike", "Car", "Plane", "Tank", "Van"])
       expect(body["factions"].map { |f| f["name"] }).to eq(["The Ascended", "The Dragons"])
     end
 
@@ -354,7 +355,7 @@ RSpec.describe "Api::V2::Vehicles", type: :request do
       get "/api/v2/vehicles", params: { autocomplete: true, sort: "name", order: "desc" }, headers: @headers
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
-      expect(body["vehicles"].map { |c| c["name"] }).to eq(["Ugly Shing", "Thug", "Serena", "Brick Manly", "Angie Lo", "Amanda Yin"])
+      expect(body["vehicles"].map { |c| c["name"] }).to eq(["Van", "Tank", "Plane", "Car", "Bike"])
       expect(body["factions"].map { |f| f["name"] }).to eq(["The Ascended", "The Dragons"])
     end
 
@@ -362,7 +363,7 @@ RSpec.describe "Api::V2::Vehicles", type: :request do
       get "/api/v2/vehicles", params: { autocomplete: true, sort: "type", order: "asc" }, headers: @headers
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
-      expect(body["vehicles"].map { |c| c["name"] }).to eq(["Angie Lo", "Ugly Shing", "Amanda Yin", "Thug", "Brick Manly", "Serena"])
+      expect(body["vehicles"].map { |c| c["name"] }).to eq( ["Plane", "Tank", "Van", "Bike", "Car"])
       expect(body["vehicles"].map { |c| c["action_values"] }.compact).to eq([])
       expect(body["factions"].map { |f| f["name"] }).to eq(["The Ascended", "The Dragons"])
     end
@@ -371,7 +372,7 @@ RSpec.describe "Api::V2::Vehicles", type: :request do
       get "/api/v2/vehicles", params: { autocomplete: true, sort: "type", order: "desc" }, headers: @headers
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
-      expect(body["vehicles"].map { |c| c["name"] }).to eq(["Brick Manly", "Serena", "Thug", "Amanda Yin", "Ugly Shing", "Angie Lo"])
+      expect(body["vehicles"].map { |c| c["name"] }).to eq(["Car", "Bike", "Van", "Tank", "Plane"])
       expect(body["factions"].map { |f| f["name"] }).to eq(["The Ascended", "The Dragons"])
     end
 
@@ -379,7 +380,7 @@ RSpec.describe "Api::V2::Vehicles", type: :request do
       get "/api/v2/vehicles", params: { autocomplete: true, sort: "archetype", order: "asc" }, headers: @headers
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
-      expect(body["vehicles"].map { |c| c["name"] }).to eq(["Amanda Yin", "Angie Lo", "Thug", "Ugly Shing", "Brick Manly", "Serena"])
+      expect(body["vehicles"].map { |c| c["name"] }).to eq(["Plane", "Bike", "Car", "Tank", "Van"])
       expect(body["factions"].map { |f| f["name"] }).to eq(["The Ascended", "The Dragons"])
     end
 
@@ -387,7 +388,7 @@ RSpec.describe "Api::V2::Vehicles", type: :request do
       get "/api/v2/vehicles", params: { autocomplete: true, sort: "archetype", order: "desc" }, headers: @headers
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
-      expect(body["vehicles"].map { |c| c["name"] }).to eq(["Serena", "Brick Manly", "Amanda Yin", "Angie Lo", "Thug", "Ugly Shing"])
+      expect(body["vehicles"].map { |c| c["name"] }).to eq(["Van", "Tank", "Car", "Bike", "Plane"])
       expect(body["factions"].map { |f| f["name"] }).to eq(["The Ascended", "The Dragons"])
     end
 
@@ -395,7 +396,7 @@ RSpec.describe "Api::V2::Vehicles", type: :request do
       get "/api/v2/vehicles", params: { autocomplete: true, faction_id: @dragons.id }, headers: @headers
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
-      expect(body["vehicles"].map { |c| c["name"] }).to eq(["Angie Lo", "Serena", "Brick Manly"])
+      expect(body["vehicles"].map { |c| c["name"] }).to eq( ["Bike", "Car"])
       expect(body["factions"].map { |f| f["name"] }).to eq(["The Dragons"])
     end
 
@@ -403,23 +404,23 @@ RSpec.describe "Api::V2::Vehicles", type: :request do
       get "/api/v2/vehicles", params: { autocomplete: true, user_id: @gamemaster.id }, headers: @headers
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
-      expect(body["vehicles"].map { |c| c["name"] }).to eq(["Angie Lo", "Thug", "Amanda Yin", "Ugly Shing"])
-      expect(body["factions"].map { |f| f["name"] }).to eq(["The Ascended", "The Dragons"])
-    end
-
-    it "filters by search string" do
-      get "/api/v2/vehicles", params: { autocomplete: true, search: "Ugly" }, headers: @headers
-      expect(response).to have_http_status(:success)
-      body = JSON.parse(response.body)
-      expect(body["vehicles"].map { |c| c["name"] }).to eq(["Ugly Shing"])
+      expect(body["vehicles"].map { |c| c["name"] }).to eq(["Van"])
       expect(body["factions"].map { |f| f["name"] }).to eq(["The Ascended"])
     end
 
     it "filters by search string" do
-      get "/api/v2/vehicles", params: { autocomplete: true, search: "Brick" }, headers: @headers
+      get "/api/v2/vehicles", params: { autocomplete: true, search: "lane" }, headers: @headers
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
-      expect(body["vehicles"].map { |c| c["name"] }).to eq(["Brick Manly"])
+      expect(body["vehicles"].map { |c| c["name"] }).to eq(["Plane"])
+      expect(body["factions"].map { |f| f["name"] }).to eq(["The Ascended"])
+    end
+
+    it "filters by search string" do
+      get "/api/v2/vehicles", params: { autocomplete: true, search: "Car" }, headers: @headers
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["vehicles"].map { |c| c["name"] }).to eq(["Car"])
       expect(body["factions"].map { |f| f["name"] }).to eq(["The Dragons"])
     end
 
@@ -427,7 +428,7 @@ RSpec.describe "Api::V2::Vehicles", type: :request do
       get "/api/v2/vehicles", params: { autocomplete: true, type: "Boss" }, headers: @headers
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
-      expect(body["vehicles"].map { |c| c["name"] }).to eq(["Ugly Shing"])
+      expect(body["vehicles"].map { |c| c["name"] }).to eq(["Tank"])
       expect(body["factions"].map { |f| f["name"] }).to eq(["The Ascended"])
     end
 
@@ -435,23 +436,23 @@ RSpec.describe "Api::V2::Vehicles", type: :request do
       get "/api/v2/vehicles", params: { autocomplete: true, type: "PC" }, headers: @headers
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
-      expect(body["vehicles"].map { |c| c["name"] }).to eq(["Serena", "Brick Manly"])
+      expect(body["vehicles"].map { |c| c["name"] }).to eq( ["Car"])
       expect(body["factions"].map { |f| f["name"] }).to eq(["The Dragons"])
     end
 
     it "filters by archetype" do
-      get "/api/v2/vehicles", params: { autocomplete: true, archetype: "Sorcerer" }, headers: @headers
+      get "/api/v2/vehicles", params: { autocomplete: true, archetype: "Airplane" }, headers: @headers
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
-      expect(body["vehicles"].map { |c| c["name"] }).to eq(["Serena"])
-      expect(body["factions"].map { |f| f["name"] }).to eq(["The Dragons"])
+      expect(body["vehicles"].map { |c| c["name"] }).to eq(["Plane"])
+      expect(body["factions"].map { |f| f["name"] }).to eq(["The Ascended"])
     end
 
     it "filters by archetype" do
-      get "/api/v2/vehicles", params: { autocomplete: true, archetype: "Everyday Hero" }, headers: @headers
+      get "/api/v2/vehicles", params: { autocomplete: true, archetype: "Car" }, headers: @headers
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
-      expect(body["vehicles"].map { |c| c["name"] }).to eq(["Brick Manly"])
+      expect(body["vehicles"].map { |c| c["name"] }).to eq(["Car"])
       expect(body["factions"].map { |f| f["name"] }).to eq(["The Dragons"])
     end
 
@@ -460,73 +461,44 @@ RSpec.describe "Api::V2::Vehicles", type: :request do
       get "/api/v2/vehicles", params: { autocomplete: true, party_id: @dragons_party.id }, headers: @headers
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
-      expect(body["vehicles"].map { |c| c["name"] }).to eq(["Brick Manly"])
+      expect(body["vehicles"].map { |c| c["name"] }).to eq(["Car"])
       expect(body["factions"].map { |f| f["name"] }).to eq(["The Dragons"])
     end
 
     it "filters by party" do
-      @ascended_party.vehicles << @boss
-      @ascended_party.vehicles << @mook
+      @ascended_party.vehicles << @plane
+      @ascended_party.vehicles << @bike
       get "/api/v2/vehicles", params: { autocomplete: true, party_id: @ascended_party.id }, headers: @headers
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
-      expect(body["vehicles"].map { |c| c["name"] }).to eq(["Thug", "Ugly Shing"])
-      expect(body["factions"].map { |f| f["name"] }).to eq(["The Ascended"])
+      expect(body["vehicles"].map { |c| c["name"] }).to eq(["Plane", "Bike"])
+      expect(body["factions"].map { |f| f["name"] }).to eq(["The Ascended", "The Dragons"])
     end
 
     it "filters by fight" do
       @fight.vehicles << @car
       @fight.vehicles << @tank
-      @fight.vehicles << @boss
+      @fight.vehicles << @plane
       get "/api/v2/vehicles", params: { autocomplete: true, sort: "name", order: "asc", fight_id: @fight.id }, headers: @headers
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
-      expect(body["vehicles"].map { |c| c["name"] }).to eq(["Brick Manly", "Serena", "Ugly Shing"])
+      expect(body["vehicles"].map { |c| c["name"] }).to eq(["Car", "Plane", "Tank"])
       expect(body["factions"].map { |f| f["name"] }).to eq(["The Ascended", "The Dragons"])
-    end
-
-    it "filters by site" do
-      @dragons_hq.vehicles << @car
-      @dragons_hq.vehicles << @tank
-      get "/api/v2/vehicles", params: { autocomplete: true, site_id: @dragons_hq.id }, headers: @headers
-      expect(response).to have_http_status(:success)
-      body = JSON.parse(response.body)
-      expect(body["vehicles"].map { |c| c["name"] }).to eq(["Serena", "Brick Manly"])
-      expect(body["factions"].map { |f| f["name"] }).to eq(["The Dragons"])
-    end
-
-    it "filters by site" do
-      @ascended_hq.vehicles << @boss
-      @ascended_hq.vehicles << @featured_foe
-      get "/api/v2/vehicles", params: { autocomplete: true, site_id: @ascended_hq.id }, headers: @headers
-      expect(response).to have_http_status(:success)
-      body = JSON.parse(response.body)
-      expect(body["vehicles"].map { |c| c["name"] }).to eq(["Amanda Yin", "Ugly Shing"])
-      expect(body["factions"].map { |f| f["name"] }).to eq(["The Ascended"])
-    end
-
-    it "filters by is_template" do
-      get "/api/v2/vehicles", params: { autocomplete: true, is_template: true }, headers: @headers
-      expect(response).to have_http_status(:success)
-      body = JSON.parse(response.body)
-      expect(body["vehicles"].map { |c| c["name"] }).to eq(["Bandit"])
-      expect(body["factions"].map { |f| f["name"] }).to eq([])
     end
 
     it "gets only active vehicles when show_all is false" do
       get "/api/v2/vehicles", params: { show_all: false }, headers: @headers
       expect(response).to have_http_status(200)
       body = JSON.parse(response.body)
-      expect(body["vehicles"].map { |f| f["name"] }).to eq(["Angie Lo", "Thug", "Amanda Yin", "Ugly Shing", "Serena", "Brick Manly"])
-      expect(body["vehicles"].map { |f| f["name"] }).not_to include("Dead Guy")
+      expect(body["vehicles"].map { |f| f["name"] }).to eq(["Van", "Plane", "Bike", "Tank", "Car"])
+      expect(body["vehicles"].map { |f| f["name"] }).not_to include("Dead Car")
     end
 
     it "gets all vehicles when show_all is true" do
       get "/api/v2/vehicles", params: { show_all: true }, headers: @headers
       expect(response).to have_http_status(200)
       body = JSON.parse(response.body)
-      expect(body["vehicles"].map { |f| f["name"] }).to eq(["Dead Guy", "Angie Lo", "Thug", "Amanda Yin", "Ugly Shing", "Serena", "Brick Manly"])
+      expect(body["vehicles"].map { |f| f["name"] }).to eq(["Dead Car", "Van", "Plane", "Bike", "Tank", "Car"])
     end
-=end
   end
 end

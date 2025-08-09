@@ -33,6 +33,11 @@ class Api::V2::VehiclesController < ApplicationController
     query = query.where(id: params["ids"].split(",")) if params["ids"].present?
     query = query.where("action_values->>'Type' = ?", params["type"]) if params["type"].present?
     query = query.where("action_values->>'Archetype' = ?", params["archetype"]) if params["archetype"].present?
+    if params["show_all"] == "true"
+      query = query.where(active: [true, false, nil])
+    else
+      query = query.where(active: true)
+    end
 
     # Join associations
     query = query.joins(:memberships).where(memberships: { party_id: params[:party_id] }) if params[:party_id].present?
@@ -51,6 +56,10 @@ class Api::V2::VehiclesController < ApplicationController
       params["search"],
       params["user_id"],
       params["faction_id"],
+      params["autocomplete"],
+      params["juncture_id"],
+      params["type"],
+      params["archetype"],
     ].join("/")
 
     cached_result = Rails.cache.fetch(cache_key, expires_in: 5.minutes) do
@@ -71,7 +80,7 @@ class Api::V2::VehiclesController < ApplicationController
       {
         "vehicles" => ActiveModelSerializers::SerializableResource.new(
           vehicles,
-          each_serializer: VehicleIndexSerializer,
+          each_serializer: params[:autocomplete] ? VehicleLiteSerializer : VehicleIndexSerializer,
           adapter: :attributes
         ).serializable_hash,
         "factions" => ActiveModelSerializers::SerializableResource.new(
