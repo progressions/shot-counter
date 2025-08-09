@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe "Api::V2::Characters", type: :request do
+RSpec.describe "Api::V2::Schticks", type: :request do
   before(:each) do
     # players
     @gamemaster = User.create!(email: "gamemaster@example.com", confirmed_at: Time.now, gamemaster: true)

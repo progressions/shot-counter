@@ -206,7 +206,7 @@ class Api::V2::SchticksController < ApplicationController
       schtick_data = schtick_params.to_h.symbolize_keys
     end
 
-    schtick_data = schtick_data.slice(:name, :description, :active, :faction_id, :category, :path, :color)
+    schtick_data = schtick_data.slice(:name, :description, :active, :category, :path, :color, :prerequisite_id)
 
     @schtick = current_campaign.schticks.new(schtick_data)
 
@@ -236,7 +236,7 @@ class Api::V2::SchticksController < ApplicationController
     else
       schtick_data = schtick_params.to_h.symbolize_keys
     end
-    schtick_data = schtick_data.slice(:name, :description, :category, :path, :color)
+    schtick_data = schtick_data.slice(:name, :description, :category, :path, :color, :prerequisite_id)
 
     # Handle image attachment if present
     if params[:image].present?
@@ -266,10 +266,19 @@ class Api::V2::SchticksController < ApplicationController
 
   def destroy
     @schtick = current_campaign.schticks.find(params[:id])
+
+    if @schtick.character_schtick_ids.any? && !params[:force]
+      render json: { errors: { characters: true  } }, status: 400 and return
+    end
+
+    if @schtick.character_schtick_ids.any? && params[:force]
+      @schtick.character_schticks.destroy_all
+    end
+
     if @schtick.destroy!
       render :ok
     else
-      render json: @schtick, status: 400
+      render json: { errors: @schtick.errors }, status: 400
     end
   end
 
@@ -280,7 +289,7 @@ class Api::V2::SchticksController < ApplicationController
   end
 
   def schtick_params
-    params.require(:schtick).permit(:name, :description, :category, :path, :color, :image_url)
+    params.require(:schtick).permit(:name, :description, :category, :path, :color, :image_url, :prerequisite_id)
   end
 
   def sort_order
