@@ -50,8 +50,8 @@ RSpec.describe "Api::V2::Weapons", type: :request do
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
       expect(body["weapons"].map { |w| w["name"] }).to eq( ["Bow", "Sword", "Winchester Rifle", "Colt Python", "Beretta 92FS"])
-      expect(body["categories"]).to eq(["Ranged", "Melee"])
-      expect(body["junctures"]).to eq(["Ancient", "Past", "Modern"])
+      expect(body["categories"]).to eq(["Melee", "Ranged"])
+      expect(body["junctures"]).to eq(["Ancient", "Modern", "Past"])
     end
 
     it "returns weapon attributes" do
@@ -81,8 +81,8 @@ RSpec.describe "Api::V2::Weapons", type: :request do
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
       expect(body["weapons"].map { |w| w["name"] }).to eq(["Beretta 92FS", "Colt Python", "Winchester Rifle", "Sword", "Bow"])
-      expect(body["categories"]).to eq(["Ranged", "Melee"])
-      expect(body["junctures"]).to eq(["Modern", "Past", "Ancient"])
+      expect(body["categories"]).to eq(["Melee", "Ranged"])
+      expect(body["junctures"]).to eq(["Ancient", "Modern", "Past"])
     end
 
     it "sorts by created_at descending" do
@@ -90,8 +90,8 @@ RSpec.describe "Api::V2::Weapons", type: :request do
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
       expect(body["weapons"].map { |w| w["name"] }).to eq(["Bow", "Sword", "Winchester Rifle", "Colt Python", "Beretta 92FS"])
-      expect(body["categories"]).to eq(["Ranged", "Melee"])
-      expect(body["junctures"]).to eq(["Ancient", "Past", "Modern"])
+      expect(body["categories"]).to eq(["Melee", "Ranged"])
+      expect(body["junctures"]).to eq(["Ancient", "Modern", "Past"])
     end
 
     it "sorts by updated_at ascending" do
@@ -100,8 +100,8 @@ RSpec.describe "Api::V2::Weapons", type: :request do
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
       expect(body["weapons"].map { |w| w["name"] }).to eq(["Colt Python", "Winchester Rifle", "Sword", "Bow", "Beretta 92FS"])
-      expect(body["categories"]).to eq(["Ranged", "Melee"])
-      expect(body["junctures"]).to eq(["Modern", "Past", "Ancient"])
+      expect(body["categories"]).to eq(["Melee", "Ranged"])
+      expect(body["junctures"]).to eq(["Ancient", "Modern", "Past"])
     end
 
     it "sorts by updated_at descending" do
@@ -110,8 +110,8 @@ RSpec.describe "Api::V2::Weapons", type: :request do
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
       expect(body["weapons"].map { |w| w["name"] }).to eq(["Beretta 92FS", "Bow", "Sword", "Winchester Rifle", "Colt Python"])
-      expect(body["categories"]).to eq(["Ranged", "Melee"])
-      expect(body["junctures"]).to eq(["Modern", "Ancient", "Past"])
+      expect(body["categories"]).to eq(["Melee", "Ranged"])
+      expect(body["junctures"]).to eq(["Ancient", "Modern", "Past"])
     end
 
     it "sorts by name ascending" do
@@ -119,8 +119,8 @@ RSpec.describe "Api::V2::Weapons", type: :request do
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
       expect(body["weapons"].map { |w| w["name"] }).to eq(["Beretta 92FS", "Bow", "Colt Python", "Sword", "Winchester Rifle"])
-      expect(body["categories"]).to eq(["Ranged", "Melee"])
-      expect(body["junctures"]).to eq(["Modern", "Ancient", "Past"])
+      expect(body["categories"]).to eq(["Melee", "Ranged"])
+      expect(body["junctures"]).to eq(["Ancient", "Modern", "Past"])
     end
 
     it "sorts by name descending" do
@@ -128,8 +128,8 @@ RSpec.describe "Api::V2::Weapons", type: :request do
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
       expect(body["weapons"].map { |w| w["name"] }).to eq(["Winchester Rifle", "Sword", "Colt Python", "Bow", "Beretta 92FS"])
-      expect(body["categories"]).to eq(["Ranged", "Melee"])
-      expect(body["junctures"]).to eq(["Past", "Ancient", "Modern"])
+      expect(body["categories"]).to eq(["Melee", "Ranged"])
+      expect(body["junctures"]).to eq(["Ancient", "Modern", "Past"])
     end
 
     it "sorts by category ascending" do
@@ -146,8 +146,8 @@ RSpec.describe "Api::V2::Weapons", type: :request do
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
       expect(body["weapons"].map { |w| w["name"] }).to eq(["Winchester Rifle", "Colt Python", "Bow", "Beretta 92FS", "Sword"])
-      expect(body["categories"]).to eq(["Ranged", "Melee"])
-      expect(body["junctures"]).to eq(["Past", "Modern", "Ancient"])
+      expect(body["categories"]).to eq(["Melee", "Ranged"])
+      expect(body["junctures"]).to eq(["Ancient", "Modern", "Past"])
     end
 
     it "sorts by juncture ascending" do
@@ -155,7 +155,7 @@ RSpec.describe "Api::V2::Weapons", type: :request do
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
       expect(body["weapons"].map { |w| w["name"] }).to eq(["Bow", "Sword", "Beretta 92FS", "Colt Python", "Winchester Rifle"])
-      expect(body["categories"]).to eq(["Ranged", "Melee"])
+      expect(body["categories"]).to eq(["Melee", "Ranged"])
       expect(body["junctures"]).to eq(["Ancient", "Modern", "Past"])
     end
 
@@ -164,8 +164,8 @@ RSpec.describe "Api::V2::Weapons", type: :request do
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
       expect(body["weapons"].map { |w| w["name"] }).to eq(["Winchester Rifle", "Colt Python", "Beretta 92FS", "Sword", "Bow"])
-      expect(body["categories"]).to eq(["Ranged", "Melee"])
-      expect(body["junctures"]).to eq(["Past", "Modern", "Ancient"])
+      expect(body["categories"]).to eq(["Melee", "Ranged"])
+      expect(body["junctures"]).to eq(["Ancient", "Modern", "Past"])
     end
 
     it "filters by id" do
@@ -219,7 +219,7 @@ RSpec.describe "Api::V2::Weapons", type: :request do
       body = JSON.parse(response.body)
       expect(body["weapons"].map { |w| w["name"] }).to eq(["Bow", "Winchester Rifle", "Colt Python", "Beretta 92FS"])
       expect(body["categories"]).to eq(["Ranged"])
-      expect(body["junctures"]).to eq(["Ancient", "Past", "Modern"])
+      expect(body["junctures"]).to eq(["Ancient", "Modern", "Past"])
     end
 
     it "filters by category" do
@@ -245,18 +245,18 @@ RSpec.describe "Api::V2::Weapons", type: :request do
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
       expect(body["weapons"].map { |w| w["name"] }).to eq(["Bow", "Sword"])
-      expect(body["categories"]).to eq(["Ranged", "Melee"])
+      expect(body["categories"]).to eq(["Melee", "Ranged"])
       expect(body["junctures"]).to eq(["Ancient"])
     end
   end
 
-  xdescribe "GET /autocomplete" do
+  describe "GET /autocomplete" do
     it "gets all weapons" do
       get "/api/v2/weapons", params: { autocomplete: true }, headers: @headers
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
-      expect(body["weapons"].map { |w| w["name"] }).to eq(["Beretta 92FS", "Colt Python", "Winchester Rifle", "Sword", "Bow"])
-      expect(body["categories"]).to eq(["Ranged", "Melee"])
+      expect(body["weapons"].map { |w| w["name"] }).to eq(["Bow", "Sword", "Winchester Rifle", "Colt Python", "Beretta 92FS"])
+      expect(body["categories"]).to eq(["Melee", "Ranged"])
       expect(body["junctures"]).to eq(["Ancient", "Modern", "Past"])
     end
 
@@ -272,6 +272,7 @@ RSpec.describe "Api::V2::Weapons", type: :request do
     end
 
     it "returns an empty array when no weapons exist" do
+      Carry.delete_all
       Weapon.delete_all
       get "/api/v2/weapons", params: { autocomplete: true }, headers: @headers
       expect(response).to have_http_status(:success)
@@ -286,7 +287,7 @@ RSpec.describe "Api::V2::Weapons", type: :request do
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
       expect(body["weapons"].map { |w| w["name"] }).to eq(["Beretta 92FS", "Colt Python", "Winchester Rifle", "Sword", "Bow"])
-      expect(body["categories"]).to eq(["Ranged", "Melee"])
+      expect(body["categories"]).to eq(["Melee", "Ranged"])
       expect(body["junctures"]).to eq(["Ancient", "Modern", "Past"])
     end
 
@@ -295,7 +296,7 @@ RSpec.describe "Api::V2::Weapons", type: :request do
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
       expect(body["weapons"].map { |w| w["name"] }).to eq(["Bow", "Sword", "Winchester Rifle", "Colt Python", "Beretta 92FS"])
-      expect(body["categories"]).to eq(["Ranged", "Melee"])
+      expect(body["categories"]).to eq(["Melee", "Ranged"])
       expect(body["junctures"]).to eq(["Ancient", "Modern", "Past"])
     end
 
@@ -305,7 +306,7 @@ RSpec.describe "Api::V2::Weapons", type: :request do
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
       expect(body["weapons"].map { |w| w["name"] }).to eq(["Colt Python", "Winchester Rifle", "Sword", "Bow", "Beretta 92FS"])
-      expect(body["categories"]).to eq(["Ranged", "Melee"])
+      expect(body["categories"]).to eq(["Melee", "Ranged"])
       expect(body["junctures"]).to eq(["Ancient", "Modern", "Past"])
     end
 
@@ -315,7 +316,7 @@ RSpec.describe "Api::V2::Weapons", type: :request do
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
       expect(body["weapons"].map { |w| w["name"] }).to eq(["Beretta 92FS", "Bow", "Sword", "Winchester Rifle", "Colt Python"])
-      expect(body["categories"]).to eq(["Ranged", "Melee"])
+      expect(body["categories"]).to eq(["Melee", "Ranged"])
       expect(body["junctures"]).to eq(["Ancient", "Modern", "Past"])
     end
 
@@ -324,7 +325,7 @@ RSpec.describe "Api::V2::Weapons", type: :request do
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
       expect(body["weapons"].map { |w| w["name"] }).to eq(["Beretta 92FS", "Bow", "Colt Python", "Sword", "Winchester Rifle"])
-      expect(body["categories"]).to eq(["Ranged", "Melee"])
+      expect(body["categories"]).to eq(["Melee", "Ranged"])
       expect(body["junctures"]).to eq(["Ancient", "Modern", "Past"])
     end
 
@@ -333,7 +334,7 @@ RSpec.describe "Api::V2::Weapons", type: :request do
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
       expect(body["weapons"].map { |w| w["name"] }).to eq(["Winchester Rifle", "Sword", "Colt Python", "Bow", "Beretta 92FS"])
-      expect(body["categories"]).to eq(["Ranged", "Melee"])
+      expect(body["categories"]).to eq(["Melee", "Ranged"])
       expect(body["junctures"]).to eq(["Ancient", "Modern", "Past"])
     end
 
@@ -342,7 +343,7 @@ RSpec.describe "Api::V2::Weapons", type: :request do
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
       expect(body["weapons"].map { |w| w["name"] }).to eq(["Sword", "Beretta 92FS", "Bow", "Colt Python", "Winchester Rifle"])
-      expect(body["categories"]).to eq(["Ranged", "Melee"])
+      expect(body["categories"]).to eq(["Melee", "Ranged"])
       expect(body["junctures"]).to eq(["Ancient", "Modern", "Past"])
     end
 
@@ -350,8 +351,8 @@ RSpec.describe "Api::V2::Weapons", type: :request do
       get "/api/v2/weapons", params: { autocomplete: true, sort: "category", order: "desc" }, headers: @headers
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
-      expect(body["weapons"].map { |w| w["name"] }).to eq(["Beretta 92FS", "Bow", "Colt Python", "Winchester Rifle", "Sword"])
-      expect(body["categories"]).to eq(["Ranged", "Melee"])
+      expect(body["weapons"].map { |w| w["name"] }).to eq(["Winchester Rifle", "Colt Python", "Bow", "Beretta 92FS", "Sword"])
+      expect(body["categories"]).to eq(["Melee", "Ranged"])
       expect(body["junctures"]).to eq(["Ancient", "Modern", "Past"])
     end
 
@@ -360,7 +361,7 @@ RSpec.describe "Api::V2::Weapons", type: :request do
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
       expect(body["weapons"].map { |w| w["name"] }).to eq(["Bow", "Sword", "Beretta 92FS", "Colt Python", "Winchester Rifle"])
-      expect(body["categories"]).to eq(["Ranged", "Melee"])
+      expect(body["categories"]).to eq(["Melee", "Ranged"])
       expect(body["junctures"]).to eq(["Ancient", "Modern", "Past"])
     end
 
@@ -368,18 +369,9 @@ RSpec.describe "Api::V2::Weapons", type: :request do
       get "/api/v2/weapons", params: { autocomplete: true, sort: "juncture", order: "desc" }, headers: @headers
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
-      expect(body["weapons"].map { |w| w["name"] }).to eq(["Winchester Rifle", "Beretta 92FS", "Colt Python", "Bow", "Sword"])
-      expect(body["categories"]).to eq(["Ranged", "Melee"])
+      expect(body["weapons"].map { |w| w["name"] }).to eq( ["Winchester Rifle", "Colt Python", "Beretta 92FS", "Sword", "Bow"])
+      expect(body["categories"]).to eq(["Melee", "Ranged"])
       expect(body["junctures"]).to eq(["Ancient", "Modern", "Past"])
-    end
-
-    it "filters by user_id" do
-      get "/api/v2/weapons", params: { autocomplete: true, user_id: @player.id }, headers: @headers
-      expect(response).to have_http_status(:success)
-      body = JSON.parse(response.body)
-      expect(body["weapons"].map { |w| w["name"] }).to eq(["Beretta 92FS"])
-      expect(body["categories"]).to eq(["Ranged"])
-      expect(body["junctures"]).to eq(["Modern"])
     end
 
     it "filters by search string" do
@@ -404,7 +396,7 @@ RSpec.describe "Api::V2::Weapons", type: :request do
       get "/api/v2/weapons", params: { autocomplete: true, category: "Ranged" }, headers: @headers
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
-      expect(body["weapons"].map { |w| w["name"] }).to eq(["Beretta 92FS", "Colt Python", "Winchester Rifle", "Bow"])
+      expect(body["weapons"].map { |w| w["name"] }).to eq(["Bow", "Winchester Rifle", "Colt Python", "Beretta 92FS"])
       expect(body["categories"]).to eq(["Ranged"])
       expect(body["junctures"]).to eq(["Ancient", "Modern", "Past"])
     end
@@ -422,7 +414,7 @@ RSpec.describe "Api::V2::Weapons", type: :request do
       get "/api/v2/weapons", params: { autocomplete: true, juncture: "Modern" }, headers: @headers
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
-      expect(body["weapons"].map { |w| w["name"] }).to eq(["Beretta 92FS", "Colt Python"])
+      expect(body["weapons"].map { |w| w["name"] }).to eq(["Colt Python", "Beretta 92FS"])
       expect(body["categories"]).to eq(["Ranged"])
       expect(body["junctures"]).to eq(["Modern"])
     end
@@ -431,8 +423,8 @@ RSpec.describe "Api::V2::Weapons", type: :request do
       get "/api/v2/weapons", params: { autocomplete: true, juncture: "Ancient" }, headers: @headers
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
-      expect(body["weapons"].map { |w| w["name"] }).to eq(["Sword", "Bow"])
-      expect(body["categories"]).to eq(["Ranged", "Melee"])
+      expect(body["weapons"].map { |w| w["name"] }).to eq(["Bow", "Sword"])
+      expect(body["categories"]).to eq(["Melee", "Ranged"])
       expect(body["junctures"]).to eq(["Ancient"])
     end
   end

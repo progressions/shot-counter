@@ -58,8 +58,8 @@ class Api::V2::WeaponsController < ApplicationController
       weapons = query.order(Arel.sql(sort_order))
       weapons = paginate(weapons, per_page: per_page, page: page)
 
-      categories = weapons.pluck(:category).uniq.compact
-      junctures = weapons.pluck(:juncture).uniq.compact
+      categories = weapons.pluck(:category).uniq.compact.sort
+      junctures = weapons.pluck(:juncture).uniq.compact.sort
 
       {
         "weapons" => ActiveModelSerializers::SerializableResource.new(
