@@ -70,60 +70,6 @@ class Api::V2::SchticksController < ApplicationController
     render json: cached_result
   end
 
-  def zindex
-    sort = params["sort"] || "created_at"
-    order = params["order"] || "DESC"
-
-    if sort == "name"
-      sort = Arel.sql("LOWER(schticks.name) #{order}")
-    elsif sort == "created_at"
-      sort = Arel.sql("schticks.created_at #{order}")
-    else
-      sort = Arel.sql("schticks.created_at DESC")
-    end
-
-    @schticks = current_campaign
-      .schticks
-      .distinct
-      .with_attached_image
-      .includes(:prerequisite)
-      .order(sort)
-
-    @paths = []
-
-    if params[:ids].present?
-      @schticks = @schticks.where(id: params[:ids].split(","))
-    end
-
-    if params[:character_id].present?
-      @schticks = @schticks.joins(:characters).where(characters: { id: params[:character_id] })
-    end
-
-    @categories = @schticks.pluck(:category).uniq.compact.sort
-
-    if params[:category].present?
-      @schticks = @schticks.where(category: params[:category])
-      @paths = @schticks.pluck(:path).uniq.compact.sort
-    end
-
-    if params[:path].present?
-      @schticks = @schticks.where(path: params[:path])
-    end
-
-    if params[:search].present?
-      @schticks = @schticks.where("name ILIKE ?", "%#{params[:name]}%")
-    end
-
-    @schticks = paginate(@schticks, per_page: (params[:per_page] || 10), page: (params[:page] || 1))
-
-    render json: {
-      schticks: ActiveModelSerializers::SerializableResource.new(@schticks, each_serializer: SchtickSerializer).serializable_hash,
-      meta: pagination_meta(@schticks),
-      paths: @paths,
-      categories: @categories
-    }
-  end
-
   def batch
     ids = params[:ids].split(",")
     if ids.blank?

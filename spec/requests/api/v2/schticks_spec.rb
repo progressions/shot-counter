@@ -220,4 +220,14 @@ RSpec.describe "Api::V2::Schticks", type: :request do
       expect(body["error"]).to eq("Record not found")
     end
   end
+
+  describe "POST /batch" do
+    it "retrieves multiple schticks by IDs" do
+      post "/api/v2/schticks/batch", params: { ids: [@fireball.id, @blast.id].join(",") }, headers: @headers
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["schticks"].length).to eq(2)
+      expect(body["schticks"].map { |s| s["id"] }).to contain_exactly(@fireball.id, @blast.id)
+    end
+  end
 end
