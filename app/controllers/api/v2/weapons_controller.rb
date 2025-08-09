@@ -37,8 +37,7 @@ class Api::V2::WeaponsController < ApplicationController
     query = query.where("weapons.juncture = ?", params["juncture"]) if params["juncture"].present?
 
     # Join associations
-    query = query.joins(:carries).where(character_weapons: { character_id: params[:character_id] }) if params[:character_id].present?
-    query = query.joins(:carries).where(carries: { character: { user_id: params[:user_id] } }) if params[:user_id].present?
+    query = query.joins(:carries).where(carries: { character_id: params[:character_id] }) if params[:character_id].present?
 
     # Cache key
     cache_key = [
@@ -60,12 +59,12 @@ class Api::V2::WeaponsController < ApplicationController
       weapons = paginate(weapons, per_page: per_page, page: page)
 
       categories = weapons.pluck(:category).uniq.compact
-      junctures = weapons.pluck(:junctures).uniq.compact
+      junctures = weapons.pluck(:juncture).uniq.compact
 
       {
         "weapons" => ActiveModelSerializers::SerializableResource.new(
           weapons,
-          each_serializer: params[:autocomplete] ? SchtickAutocompleteSerializer : SchtickIndexLiteSerializer,
+          each_serializer: params[:autocomplete] ? WeaponAutocompleteSerializer : WeaponIndexSerializer,
           adapter: :attributes
         ).serializable_hash,
         "categories" => categories,
