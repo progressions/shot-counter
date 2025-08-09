@@ -2,7 +2,7 @@ class Api::V2::VehiclesController < ApplicationController
   before_action :authenticate_user!
   before_action :require_current_campaign
   before_action :set_scoped_vehicles
-  before_action :set_vehicle, only: [:update, :destroy]
+  before_action :set_vehicle, only: [:update, :destroy, :remove_image]
 
   def index
     per_page = (params["per_page"] || 15).to_i
@@ -152,7 +152,7 @@ class Api::V2::VehiclesController < ApplicationController
       vehicle_data = vehicle_params.to_h.symbolize_keys
     end
 
-    vehicle_data = vehicle_data.slice(:name, :description, :active, :vehicle_ids, :faction_id, :party_ids, :action_values)
+    vehicle_data = vehicle_data.slice(:name, :description, :active, :vehicle_ids, :faction_id, :party_ids, :action_values, :juncture_id)
 
     @vehicle = current_campaign.vehicles.new(vehicle_data)
 
@@ -182,7 +182,7 @@ class Api::V2::VehiclesController < ApplicationController
     else
       vehicle_data = vehicle_params.to_h.symbolize_keys
     end
-    vehicle_data = vehicle_data.slice(:name, :description, :active, :vehicle_ids, :party_ids, :site_ids, :juncture_ids, :schtick_ids, :action_values, :faction_id)
+    vehicle_data = vehicle_data.slice(:name, :description, :active, :vehicle_ids, :party_ids, :site_ids, :juncture_id, :schtick_ids, :action_values, :faction_id)
 
     # Handle image attachment if present
     if params[:image].present?
@@ -214,14 +214,6 @@ class Api::V2::VehiclesController < ApplicationController
   end
 
   def destroy
-    if @vehicle.carry_ids.any? && !params[:force]
-      render json: { errors: { carries: true  } }, status: 400 and return
-    end
-
-    if @vehicle.carry_ids.any? && params[:force]
-      carry.where(id: @vehicle.carry_ids).destroy_all
-    end
-
     if @vehicle.destroy!
       render :ok
     else
@@ -252,7 +244,7 @@ class Api::V2::VehiclesController < ApplicationController
   def vehicle_params
     params.require(:vehicle).permit(:name, :character_id, :faction_id, :defense,
       :impairments, :count, :color, :user_id, :active, :image_url, :image,
-      :action_values)
+      :action_values, :description, :task, :juncture_id, party_ids: [])
   end
 
   def sort_order

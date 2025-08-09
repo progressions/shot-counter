@@ -28,6 +28,7 @@ class Vehicle < ApplicationRecord
   belongs_to :user, optional: true
   belongs_to :campaign
   belongs_to :faction, optional: true
+  belongs_to :juncture, optional: true
   has_many :character_effects
   has_many :memberships
   has_many :parties, through: :memberships
