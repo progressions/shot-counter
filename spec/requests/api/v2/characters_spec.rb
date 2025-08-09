@@ -235,4 +235,20 @@ RSpec.describe "Api::V2::Characters", type: :request do
     end
   end
 
+  describe "DELETE /remove_image" do
+    it "removes an image from a character" do
+      allow_any_instance_of(ActiveStorage::Blob).to receive(:purge).and_return(true)
+      image = fixture_file_upload("spec/fixtures/files/image.jpg", "image/jpg")
+      @brick.image.attach(image)
+      expect(@brick.image.attached?).to be_truthy
+      delete "/api/v2/characters/#{@brick.id}/image", headers: @headers
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["image_url"]).to be_nil
+      @brick.reload
+      expect(@brick.image.attached?).to be_falsey
+      expect(@brick.image_url).to be_nil
+    end
+  end
+
 end
