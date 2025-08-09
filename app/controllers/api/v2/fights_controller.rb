@@ -40,6 +40,7 @@ class Api::V2::FightsController < ApplicationController
     # Join associations
     query = query.joins(:shots).where(shots: { character_id: params[:character_id] }) if params[:character_id].present?
     query = query.joins(:shots).where(shots: { vehicle_id: params[:vehicle_id] }) if params[:vehicle_id].present?
+    query = query.joins(:shots).joins("INNER JOIN characters ON shots.character_id = characters.id").where(characters: { user_id: params[:user_id] }) if params[:user_id].present?
 
     # Cache key
     cache_key = [
@@ -53,6 +54,7 @@ class Api::V2::FightsController < ApplicationController
       params["character_id"],
       params["vehicle_id"],
       params["autocomplete"],
+      params["user_id"],
     ].join("/")
 
     ActiveRecord::Associations::Preloader.new(records: [current_campaign], associations: { user: [:image_attachment, :image_blob] })
@@ -63,7 +65,7 @@ class Api::V2::FightsController < ApplicationController
       {
         "fights" => ActiveModelSerializers::SerializableResource.new(
           fights,
-          each_serializer: params[:autocomplete] ? FightAutocompleteSerializer : FightIndexLiteSerializer,
+          each_serializer: params[:autocomplete] ? FightLiteSerializer : FightIndexLiteSerializer,
         ).serializable_hash,
         "meta" => pagination_meta(fights)
       }

@@ -163,6 +163,17 @@ RSpec.describe "Api::V2::Fights", type: :request do
       expect(body["fights"].first["name"]).to eq("Airport Battle")
     end
 
+    it "filters by player involvement" do
+      # Add Brick (player's character) to Big Brawl
+      @brawl.characters << @brick
+      @brawl.save!
+      get "/api/v2/fights", params: { user_id: @player.id }, headers: @headers
+      expect(response).to have_http_status(200)
+      body = JSON.parse(response.body)
+      expect(body["fights"].length).to eq(1)
+      expect(body["fights"].first["name"]).to eq("Big Brawl")
+    end
+
     it "returns fight attributes" do
       get "/api/v2/fights", params: { id: @brawl.id }, headers: @headers
       expect(response).to have_http_status(200)
@@ -202,6 +213,167 @@ RSpec.describe "Api::V2::Fights", type: :request do
       fight = body["fights"].first
       vehicle_names = fight["vehicles"].map { |v| v["name"] }
       expect(vehicle_names).to include("Tank")
+    end
+  end
+
+  describe "GET /fights?autocomplete=true" do
+    it "gets all fights" do
+      get "/api/v2/fights", params: { autocomplete: true }, headers: @headers
+      expect(response).to have_http_status(200)
+      body = JSON.parse(response.body)
+      expect(body["fights"].map { |f| f["name"] }).to include("Big Brawl", "Small Skirmish", "Airport Battle")
+    end
+
+    it "filters fights by search term" do
+      get "/api/v2/fights", params: { autocomplete: true, search: "Brawl" }, headers: @headers
+      expect(response).to have_http_status(200)
+      body = JSON.parse(response.body)
+      expect(body["fights"].length).to eq(1)
+      expect(body["fights"].first["name"]).to eq("Big Brawl")
+    end
+
+    it "filters fights by search term" do
+      get "/api/v2/fights", params: { autocomplete: true, search: "Airport" }, headers: @headers
+      expect(response).to have_http_status(200)
+      body = JSON.parse(response.body)
+      expect(body["fights"].length).to eq(1)
+      expect(body["fights"].first["name"]).to eq("Airport Battle")
+    end
+
+    it "filters fights by id" do
+      get "/api/v2/fights", params: { autocomplete: true, id: @skirmish.id }, headers: @headers
+      expect(response).to have_http_status(200)
+      body = JSON.parse(response.body)
+      expect(body["fights"].length).to eq(1)
+      expect(body["fights"].first["name"]).to eq("Small Skirmish")
+    end
+
+    it "filters fights by id" do
+      get "/api/v2/fights", params: { autocomplete: true, id: @brawl.id }, headers: @headers
+      expect(response).to have_http_status(200)
+      body = JSON.parse(response.body)
+      expect(body["fights"].length).to eq(1)
+      expect(body["fights"].first["name"]).to eq("Big Brawl")
+    end
+
+    it "gets only active fights when show_all is false" do
+      get "/api/v2/fights", params: { autocomplete: true, show_all: false }, headers: @headers
+      expect(response).to have_http_status(200)
+      body = JSON.parse(response.body)
+      expect(body["fights"].map { |f| f["name"] }).to include("Big Brawl", "Small Skirmish", "Airport Battle")
+      expect(body["fights"].map { |f| f["name"] }).not_to include("Inactive Fight")
+    end
+
+    it "gets all fights when show_all is true" do
+      get "/api/v2/fights", params: { autocomplete: true, show_all: true }, headers: @headers
+      expect(response).to have_http_status(200)
+      body = JSON.parse(response.body)
+      expect(body["fights"].map { |f| f["name"] }).to include("Big Brawl", "Small Skirmish", "Airport Battle", "Inactive Fight")
+    end
+
+    it "filters unstarted fights" do
+      @brawl.update(started_at: Time.now)
+      get "/api/v2/fights", params: { autocomplete: true, unstarted: true }, headers: @headers
+      expect(response).to have_http_status(200)
+      body = JSON.parse(response.body)
+      expect(body["fights"].map { |f| f["name"] }).to eq(["Airport Battle", "Small Skirmish"])
+      expect(body["fights"].map { |f| f["name"] }).not_to include("Big Brawl")
+    end
+
+    it "filters unended fights" do
+      @brawl.update(started_at: 1.hour.ago)
+      get "/api/v2/fights", params: { autocomplete: true, unended: true }, headers: @headers
+      expect(response).to have_http_status(200)
+      body = JSON.parse(response.body)
+      expect(body["fights"].map { |f| f["name"] }).to eq(["Big Brawl"])
+    end
+
+    it "filters by character involvement" do
+      # Add Brick to Big Brawl
+      @brawl.characters << @brick
+      @brawl.save!
+
+      get "/api/v2/fights", params: { autocomplete: true, character_id: @brick.id }, headers: @headers
+      expect(response).to have_http_status(200)
+      body = JSON.parse(response.body)
+      expect(body["fights"].length).to eq(1)
+      expect(body["fights"].first["name"]).to eq("Big Brawl")
+    end
+
+    it "filters by character involvement" do
+      # Add Serena to Small Skirmish
+      @skirmish.characters << @serena
+      @skirmish.save!
+
+      get "/api/v2/fights", params: { autocomplete: true, character_id: @serena.id }, headers: @headers
+      expect(response).to have_http_status(200)
+      body = JSON.parse(response.body)
+      expect(body["fights"].length).to eq(1)
+      expect(body["fights"].first["name"]).to eq("Small Skirmish")
+    end
+
+    it "filters by vehicle involvement" do
+      # Create vehicle and add to Airport Battle
+      vehicle = Vehicle.create!(name: "Speedster", campaign_id: @campaign.id, user_id: @player.id)
+      shot = Shot.create!(fight: @airport_battle, vehicle: vehicle)
+      @airport_battle.shots << shot
+      @airport_battle.save!
+
+      get "/api/v2/fights", params: { autocomplete: true, vehicle_id: vehicle.id }, headers: @headers
+      expect(response).to have_http_status(200)
+      body = JSON.parse(response.body)
+      expect(body["fights"].length).to eq(1)
+      expect(body["fights"].first["name"]).to eq("Airport Battle")
+    end
+
+    it "filters by player involvement" do
+      # Add Brick (player's character) to Big Brawl
+      @brawl.characters << @brick
+      @brawl.save!
+      get "/api/v2/fights", params: { autocomplete: true, user_id: @player.id }, headers: @headers
+      expect(response).to have_http_status(200)
+      body = JSON.parse(response.body)
+      expect(body["fights"].length).to eq(1)
+      expect(body["fights"].first["name"]).to eq("Big Brawl")
+    end
+
+    it "returns fight attributes" do
+      get "/api/v2/fights", params: { autocomplete: true, id: @brawl.id }, headers: @headers
+      expect(response).to have_http_status(200)
+      body = JSON.parse(response.body)
+      fight = body["fights"].first
+      expect(fight["name"]).to eq("Big Brawl")
+      expect(fight["description"]).to be_nil
+      expect(fight["started_at"]).to be_nil
+      expect(fight["ended_at"]).to be_nil
+      expect(fight["active"]).to be_nil
+    end
+
+    it "doesn't return characters in fight" do
+      # Add Brick and Serena to Big Brawl
+      @brawl.characters << @brick
+      @brawl.characters << @serena
+      @brawl.save!
+
+      get "/api/v2/fights", params: { autocomplete: true, id: @brawl.id }, headers: @headers
+      expect(response).to have_http_status(200)
+      body = JSON.parse(response.body)
+      fight = body["fights"].first
+      expect(fight["characters"]).not_to be_present
+    end
+
+    it "returns vehicles in fight" do
+      # Create vehicle and add to Big Brawl
+      vehicle = Vehicle.create!(name: "Tank", campaign_id: @campaign.id, user_id: @player.id)
+      shot = Shot.create!(fight: @brawl, vehicle: vehicle)
+      @brawl.shots << shot
+      @brawl.save!
+
+      get "/api/v2/fights", params: { autocomplete: true, id: @brawl.id }, headers: @headers
+      expect(response).to have_http_status(200)
+      body = JSON.parse(response.body)
+      fight = body["fights"].first
+      expect(fight["vehicles"]).not_to be_present
     end
   end
 
