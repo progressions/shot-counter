@@ -18,17 +18,6 @@ class Api::V2::SitesController < ApplicationController
       .sites
       .distinct
       .with_attached_image
-      .select(:id, :name, :description, :campaign_id, :faction_id, :secret, :created_at, :updated_at)
-      .includes(
-        { faction: [:image_attachment, :image_blob] },
-        { attunements: [
-          { character: [:image_attachment, :image_blob] },
-        ] },
-        :image_positions,
-      )
-      .order(sort)
-
-    # @factions = current_campaign.factions.joins(:sites).where(sites: @sites).order("factions.name").distinct
 
     if params[:id].present?
       @sites = @sites.where(id: params[:id])
@@ -51,7 +40,6 @@ class Api::V2::SitesController < ApplicationController
       @sites = @sites.joins(:characters).where(characters: { user_id: params[:user_id] })
     end
 
-
     cache_key = [
       "sites/index",
       current_campaign.id,
@@ -67,13 +55,26 @@ class Api::V2::SitesController < ApplicationController
       params[:secret],
     ].join("/")
 
+    @factions = current_campaign.factions.joins(:sites).where(sites: @sites).order("factions.name").distinct
+
+    @sites = @sites
+      .select(:id, :name, :description, :campaign_id, :faction_id, :secret, :created_at, :updated_at)
+      .includes(
+        { faction: [:image_attachment, :image_blob] },
+        { attunements: [
+          { character: [:image_attachment, :image_blob] },
+        ] },
+        :image_positions,
+      )
+      .order(sort)
+
     cached_result = Rails.cache.fetch(cache_key, expires_in: 12.hours) do
       @sites = paginate(@sites, per_page: (params[:per_page] || 10), page: (params[:page] || 1))
 
       {
-      sites: ActiveModelSerializers::SerializableResource.new(@sites, each_serializer: SiteIndexSerializer).serializable_hash,
-      # factions: ActiveModelSerializers::SerializableResource.new(@factions, each_serializer: FactionSerializer).serializable_hash,
-      meta: pagination_meta(@sites),
+        sites: ActiveModelSerializers::SerializableResource.new(@sites, each_serializer: SiteIndexSerializer).serializable_hash,
+        factions: ActiveModelSerializers::SerializableResource.new(@factions, each_serializer: FactionLiteSerializer).serializable_hash,
+        meta: pagination_meta(@sites),
       }
     end
 

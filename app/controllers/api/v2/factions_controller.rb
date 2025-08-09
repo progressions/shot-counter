@@ -5,49 +5,60 @@ class Api::V2::FactionsController < ApplicationController
   def index
     sort = params["sort"] || "created_at"
     order = params["order"] || "DESC"
-
     if sort == "name"
-      sort = Arel.sql("LOWER(factions.name) #{order}")
+      sort = "LOWER(name) #{order}, id"
     elsif sort == "created_at"
-      sort = Arel.sql("factions.created_at #{order}")
+      sort = "created_at #{order}, id"
     else
-      sort = Arel.sql("factions.created_at DESC")
+      sort = "created_at DESC, id"
     end
-
     @factions = current_campaign
       .factions
-      .distinct
       .with_attached_image
-      .order(sort)
-
     if params[:id].present?
       @factions = @factions.where(id: params[:id])
-    end
-    if params[:show_all] == "true" && current_user.gamemaster?
-      @factions = @factions.where(active: [true, false])
-    else
-      @factions = @factions.where(active: true)
     end
     if params[:search].present?
       @factions = @factions.where("name ILIKE ?", "%#{params[:search]}%")
     end
     if params[:character_id].present?
-      @factions = @factions.joins(:characters).where(characters: { id: params[:character_id] })
+      @factions = @factions.joins(:attunements).where(attunements: { id: params[:character_id] })
     end
-
-    @factions = paginate(@factions, per_page: (params[:per_page] || 10), page: (params[:page] || 1))
-
-    if params[:autocomplete]
-      render json: {
-        factions: ActiveModelSerializers::SerializableResource.new(@factions, each_serializer: FactionAutocompleteSerializer).serializable_hash,
-        meta: pagination_meta(@factions)
-      }
-    else
-      render json: {
-        factions: ActiveModelSerializers::SerializableResource.new(@factions, each_serializer: FactionSerializer).serializable_hash,
-        meta: pagination_meta(@factions)
-      }
+    if params[:user_id].present?
+      @factions = @factions.joins(:characters).where(characters: { user_id: params[:user_id] })
     end
+    cache_key = [
+      "factions/index",
+      current_campaign.id,
+      sort,
+      order,
+      params[:page],
+      params[:per_page],
+      params[:id],
+      params[:search],
+      params[:user_id],
+      params[:character_id],
+    ].join("/")
+    @factions = @factions
+      .select(:id, :name, :description, :campaign_id, :created_at, :updated_at, "LOWER(name) AS lower_name")
+      .includes(:image_positions)
+      .distinct
+      .order(Arel.sql(sort))
+    cached_result = Rails.cache.fetch(cache_key, expires_in: 12.hours) do
+      @factions = paginate(@factions, per_page: (params[:per_page] || 10), page: (params[:page] || 1))
+      if params[:autocomplete]
+        {
+          factions: ActiveModelSerializers::SerializableResource.new(@factions, each_serializer: FactionLiteSerializer).serializable_hash,
+          meta: pagination_meta(@factions),
+        }
+      else
+        {
+          meta: pagination_meta(@factions),
+          factions: ActiveModelSerializers::SerializableResource.new(@factions, each_serializer: FactionSerializer).serializable_hash,
+        }
+      end
+    end
+    render json: cached_result
   end
 
   def show
