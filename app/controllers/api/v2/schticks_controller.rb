@@ -3,6 +3,73 @@ class Api::V2::SchticksController < ApplicationController
   before_action :require_current_campaign
 
   def index
+    per_page = (params["per_page"] || 15).to_i
+    page = (params["page"] || 1).to_i
+    selects = [
+      "schticks.id",
+      "schticks.name",
+      "schticks.description",
+      "schticks.created_at",
+      "schticks.updated_at",
+      "schticks.category",
+      "schticks.path",
+      "schticks.prerequisite_id",
+    ]
+    includes = [
+      :image_positions,
+      image_attachment: :blob,
+      character_schticks: { character: { image_attachment: :blob } },
+    ]
+    query = current_campaign
+      .schticks
+      .select(selects)
+      .includes(includes)
+
+    # Apply filters
+    query = query.where(id: params["id"]) if params["id"].present?
+    query = query.where("schticks.name ILIKE ?", "%#{params['search']}%") if params["search"].present?
+    query = query.where("schticks.category = ?", params["category"]) if params["category"].present?
+
+    # Join associations
+    query = query.joins(:character_schticks).where(character_schticks: { character_id: params[:character_id] }) if params[:character_id].present?
+
+    # Cache key
+    cache_key = [
+      "schticks/index",
+      current_campaign.id,
+      sort_order,
+      page,
+      per_page,
+      params["search"],
+      params["user_id"],
+      params["category"],
+      params["character_id"],
+      params["autocomplete"],
+      params["path"],
+    ].join("/")
+
+    cached_result = Rails.cache.fetch(cache_key, expires_in: 5.minutes) do
+      schticks = query.order(Arel.sql(sort_order))
+      schticks = paginate(schticks, per_page: per_page, page: page)
+
+      categories = schticks.pluck(:category).uniq.compact
+      paths = schticks.pluck(:path).uniq.compact
+
+      {
+        "schticks" => ActiveModelSerializers::SerializableResource.new(
+          schticks,
+          each_serializer: params[:autocomplete] ? SchtickAutocompleteSerializer : SchtickIndexLiteSerializer,
+          adapter: :attributes
+        ).serializable_hash,
+        "categories" => categories,
+        "paths" => paths,
+        "meta" => pagination_meta(schticks)
+      }
+    end
+    render json: cached_result
+  end
+
+  def zindex
     sort = params["sort"] || "created_at"
     order = params["order"] || "DESC"
 
@@ -213,5 +280,23 @@ class Api::V2::SchticksController < ApplicationController
 
   def schtick_params
     params.require(:schtick).permit(:name, :description, :category, :path, :color, :image_url)
+  end
+
+  def sort_order
+    sort = params["sort"] || "created_at"
+    order = params["order"] || "DESC"
+    if sort == "name"
+      "LOWER(characters.name) #{order}, characters.id"
+    elsif sort == "category"
+      "LOWER(characters.category) #{order}, characters.id"
+    elsif sort == "path"
+      "LOWER(characters.path) #{order}, characters.id"
+    elsif sort == "created_at"
+      "characters.created_at #{order}, characters.id"
+    elsif sort == "updated_at"
+      "characters.updated_at #{order}, characters.id"
+    else
+      "characters.created_at DESC, characters.id"
+    end
   end
 end
