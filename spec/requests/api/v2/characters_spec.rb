@@ -122,6 +122,17 @@ RSpec.describe "Api::V2::Characters", type: :request do
       expect(@brick.name).to eq("Brick Manly")
       expect(@brick.faction_id).to eq(@ascended.id)
     end
+
+    it "updates the juncture" do
+      patch "/api/v2/characters/#{@brick.id}", params: { character: { juncture_id: @ancient.id } }, headers: @headers
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["name"]).to eq("Brick Manly")
+      expect(body["juncture_id"]).to eq(@ancient.id)
+      @brick.reload
+      expect(@brick.name).to eq("Brick Manly")
+      expect(@brick.juncture_id).to eq(@ancient.id)
+    end
   end
 
   describe "GET /show" do

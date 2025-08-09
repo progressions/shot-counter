@@ -163,14 +163,12 @@ class Api::V2::FightsController < ApplicationController
     # Handle image attachment if present
     if params[:image].present?
       @fight.image.attach(params[:image])
-      extension = params[:image].original_filename.split('.').last
-      @fight.image.blob.update(imagekit_filename: "image_#{@fight.id}__#{rand(1000)}__#{SecureRandom.hex(4)}.#{extension}")
     end
 
     if @fight.save
       render json: @fight, serializer: FightSerializer, status: :created
     else
-      render json: { errors: @fight.errors.full_messages }, status: :unprocessable_entity
+      render json: { errors: @fight.errors }, status: :unprocessable_entity
     end
   end
 
@@ -194,15 +192,12 @@ class Api::V2::FightsController < ApplicationController
     if params[:image].present?
       @fight.image.purge if @fight.image.attached? # Remove existing image
       @fight.image.attach(params[:image])
-      extension = params[:image].original_filename.split('.').last
-      @fight.image.blob.update(imagekit_filename: "image_#{@fight.id}__#{rand(1000)}__#{SecureRandom.hex(4)}.#{extension}")
-      binding.pry
     end
 
     if @fight.update(fight_data)
       render json: @fight.reload, serializer: FightSerializer, status: :ok
     else
-      render json: { errors: @fight.errors.full_messages }, status: :unprocessable_entity
+      render json: { errors: @fight.errors }, status: :unprocessable_entity
     end
   end
 
