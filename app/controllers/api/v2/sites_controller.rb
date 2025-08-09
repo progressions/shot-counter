@@ -5,13 +5,12 @@ class Api::V2::SitesController < ApplicationController
   def index
     sort = params["sort"] || "created_at"
     order = params["order"] || "DESC"
-
     if sort == "name"
-      sort = Arel.sql("LOWER(sites.name) #{order}")
+      sort = "LOWER(name) #{order}, id"
     elsif sort == "created_at"
-      sort = Arel.sql("sites.created_at #{order}")
+      sort = "created_at #{order}, id"
     else
-      sort = Arel.sql("sites.created_at DESC")
+      sort = "created_at DESC, id"
     end
 
     @sites = current_campaign
