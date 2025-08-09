@@ -100,7 +100,6 @@ class Api::V2::SchticksController < ApplicationController
     render json: cached_response, status: :ok
   end
 
-
   def categories
     all_categories = current_campaign.schticks.pluck(:category).uniq.compact
     core_categories = current_campaign.schticks.where(path: "Core").pluck(:category).uniq.compact
