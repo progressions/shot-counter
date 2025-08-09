@@ -15,6 +15,7 @@ RSpec.describe "Api::V2::Characters", type: :request do
     @ascended_party = @campaign.parties.create!(name: "Ascended Party", faction_id: @ascended.id)
     @fight = @campaign.fights.create!(name: "Big Brawl")
 
+    @bandit = Character.create!(name: "Bandit", action_values: { "Type" => "PC", "Archetype" => "Bandit" }, campaign_id: @campaign.id, is_template: true, user_id: @gamemaster.id)
     @brick = Character.create!(name: "Brick Manly", action_values: { "Type" => "PC", "Archetype" => "Everyday Hero" }, campaign_id: @campaign.id, faction_id: @dragons.id, user_id: @player.id)
     @serena = Character.create!(name: "Serena", action_values: { "Type" => "PC", "Archetype" => "Sorcerer" }, campaign_id: @campaign.id, faction_id: @dragons.id, user_id: @player.id)
     @boss = Character.create!(name: "Ugly Shing", action_values: { "Type" => "Boss" }, campaign_id: @campaign.id, faction_id: @ascended.id, user_id: @gamemaster.id)
@@ -235,6 +236,14 @@ RSpec.describe "Api::V2::Characters", type: :request do
       body = JSON.parse(response.body)
       expect(body["characters"].map { |c| c["name"] }).to eq(["Amanda Yin", "Ugly Shing"])
       expect(body["factions"].map { |f| f["name"] }).to eq(["The Ascended"])
+    end
+
+    it "filters by is_template" do
+      get "/api/v2/characters?is_template=true", headers: @headers
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["characters"].map { |c| c["name"] }).to eq(["Bandit"])
+      expect(body["factions"].map { |f| f["name"] }).to eq([])
     end
   end
 end
