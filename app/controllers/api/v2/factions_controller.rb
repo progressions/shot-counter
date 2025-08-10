@@ -139,7 +139,7 @@ class Api::V2::FactionsController < ApplicationController
       faction_data = faction_params.to_h.symbolize_keys
     end
 
-    faction_data = faction_data.slice(:name, :description, :character_ids, :party_ids, :site_ids, :juncture_ids)
+    faction_data = faction_data.slice(:name, :description, :character_ids, :party_ids, :site_ids, :juncture_ids, :vehicle_ids)
 
     @faction = current_campaign.factions.new(faction_data)
 
@@ -169,7 +169,7 @@ class Api::V2::FactionsController < ApplicationController
     else
       faction_data = faction_params.to_h.symbolize_keys
     end
-    faction_data = faction_data.slice(:name, :description, :character_ids, :party_ids, :site_ids, :juncture_ids)
+    faction_data = faction_data.slice(:name, :description, :character_ids, :party_ids, :site_ids, :juncture_ids, :vehicle_ids)
 
     # Handle image attachment if present
     if params[:image].present?
@@ -189,10 +189,20 @@ class Api::V2::FactionsController < ApplicationController
   end
 
   def destroy
+    @faction = current_campaign.factions.find(params[:id])
     if @faction.character_ids.any? && !params[:force]
-      render json: { errors: { characters: true  } }, status: 400 and return
+      render json: { errors: { characters: true } }, status: 400 and return
     end
-
+    if @faction.vehicle_ids.any? && !params[:force]
+      render json: { errors: { vehicles: true } }, status: 400 and return
+    end
+    if params[:force]
+      @faction.characters.update_all(faction_id: nil)
+      @faction.vehicles.update_all(faction_id: nil)
+      @faction.parties.update_all(faction_id: nil)
+      @faction.sites.update_all(faction_id: nil)
+      @faction.junctures.update_all(faction_id: nil)
+    end
     if @faction.destroy!
       render :ok
     else
@@ -209,7 +219,7 @@ class Api::V2::FactionsController < ApplicationController
   private
 
   def faction_params
-    params.require(:faction).permit(:name, :description, :image, character_ids: [], party_ids: [], site_ids: [], juncture_ids: [])
+    params.require(:faction).permit(:name, :description, :image, character_ids: [], party_ids: [], site_ids: [], juncture_ids: [], vehicle_ids: [])
   end
 
   def sort_order
