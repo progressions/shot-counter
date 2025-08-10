@@ -6,6 +6,7 @@ class Party < ApplicationRecord
   has_many :characters, through: :memberships
   has_many :vehicles, through: :memberships
   belongs_to :faction, optional: true
+  belongs_to :juncture, optional: true
   belongs_to :campaign
   has_one_attached :image
   has_many :image_positions, as: :positionable, dependent: :destroy

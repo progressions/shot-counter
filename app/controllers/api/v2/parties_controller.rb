@@ -22,7 +22,7 @@ class Api::V2::PartiesController < ApplicationController
       image_attachment: :blob,
       faction: { image_attachment: :blob },
       juncture: { image_attachment: :blob },
-      attunements: { character: { image_attachment: :blob } },
+      memberships: { character: { image_attachment: :blob } },
     ]
     query = current_campaign
       .parties
@@ -32,6 +32,7 @@ class Api::V2::PartiesController < ApplicationController
     # Apply filters
     query = query.where(id: params["id"]) if params["id"].present?
     query = query.where(faction_id: params["faction_id"]) if params["faction_id"].present?
+    query = query.where(juncture_id: params["juncture_id"]) if params["juncture_id"].present?
     query = query.where("parties.name ILIKE ?", "%#{params['search']}%") if params["search"].present?
     if params["show_all"] == "true"
       query = query.where(active: [true, false, nil])
@@ -52,6 +53,7 @@ class Api::V2::PartiesController < ApplicationController
       params["fight_id"],
       params["search"],
       params["faction_id"],
+      params["juncture_id"],
       params["autocomplete"],
       params["character_id"],
       params["show_all"],

@@ -49,7 +49,7 @@ RSpec.describe "Api::V2::Parties", type: :request do
       get "/api/v2/parties", headers: @headers
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
-      expect(body["parties"].map { |p| p["name"] }).to eq(["Ascended Party", "Dragons Party", "Rogue Team"])
+      expect(body["parties"].map { |p| p["name"] }).to eq(["Rogue Team", "Ascended Party", "Dragons Party"])
       expect(body["factions"].map { |f| f["name"] }).to eq(["The Ascended", "The Dragons"])
     end
 
@@ -59,7 +59,7 @@ RSpec.describe "Api::V2::Parties", type: :request do
       body = JSON.parse(response.body)
       expect(body["parties"].length).to eq(1)
       expect(body["parties"][0]).to include("name" => "Dragons Party", "faction_id" => @dragons.id, "juncture_id" => @modern.id)
-      expect(body["parties"][0].keys).to eq(["id", "name", "campaign_id", "faction_id", "juncture_id", "description", "created_at", "updated_at", "active", "entity_class", "image_positions"])
+      expect(body["parties"][0].keys).to eq(["id", "name", "description", "active", "created_at", "updated_at", "faction_id", "campaign_id", "image_url", "juncture_id", "entity_class", "characters", "vehicles", "faction", "juncture", "image_positions"])
       expect(body["factions"].map { |f| f["name"] }).to eq(["The Dragons"])
     end
 
@@ -199,7 +199,7 @@ RSpec.describe "Api::V2::Parties", type: :request do
       get "/api/v2/parties", params: { show_all: "false" }, headers: @headers
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
-      expect(body["parties"].map { |p| p["name"] }).to eq(["Ascended Party", "Dragons Party", "Rogue Team"])
+      expect(body["parties"].map { |p| p["name"] }).to eq(["Rogue Team", "Ascended Party", "Dragons Party"])
       expect(body["parties"].map { |p| p["name"] }).not_to include("Inactive Team")
       expect(body["factions"].map { |f| f["name"] }).to eq(["The Ascended", "The Dragons"])
     end
@@ -208,7 +208,7 @@ RSpec.describe "Api::V2::Parties", type: :request do
       get "/api/v2/parties", params: { show_all: "true" }, headers: @headers
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
-      expect(body["parties"].map { |p| p["name"] }).to eq(["Ascended Party", "Dragons Party", "Inactive Team", "Rogue Team"])
+      expect(body["parties"].map { |p| p["name"] }).to eq(["Inactive Team", "Rogue Team", "Ascended Party", "Dragons Party"])
       expect(body["factions"].map { |f| f["name"] }).to eq(["The Ascended", "The Dragons"])
     end
   end
@@ -218,7 +218,7 @@ RSpec.describe "Api::V2::Parties", type: :request do
       get "/api/v2/parties", params: { autocomplete: true }, headers: @headers
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
-      expect(body["parties"].map { |p| p["name"] }).to eq(["Ascended Party", "Dragons Party", "Rogue Team"])
+      expect(body["parties"].map { |p| p["name"] }).to eq(["Rogue Team", "Ascended Party", "Dragons Party"])
       expect(body["factions"].map { |f| f["name"] }).to eq(["The Ascended", "The Dragons"])
     end
 

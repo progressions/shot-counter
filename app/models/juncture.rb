@@ -6,6 +6,7 @@ class Juncture < ApplicationRecord
   belongs_to :faction, optional: true
   has_many :characters
   has_many :sites
+  has_many :parties
   has_many :image_positions, as: :positionable, dependent: :destroy
   has_one_attached :image
 
