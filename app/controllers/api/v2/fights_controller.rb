@@ -4,20 +4,20 @@ class Api::V2::FightsController < ApplicationController
   before_action :set_fight, only: [:show, :update, :destroy, :touch]
 
   def index
-    per_page = (params["per_page"] || 10).to_i
+    per_page = (params["per_page"] || 15).to_i
     page = (params["page"] || 1).to_i
     selects = [
       "fights.id",
       "fights.name",
       "fights.description",
-      "fights.created_at",
-      "fights.updated_at",
+      "fights.campaign_id",
       "fights.started_at",
       "fights.ended_at",
+      "fights.created_at",
+      "fights.updated_at",
       "fights.active",
-      "fights.campaign_id",
-      "fights.session",
       "fights.season",
+      "fights.session",
       "LOWER(fights.name) AS name_lower",
     ]
     includes = [
@@ -26,11 +26,7 @@ class Api::V2::FightsController < ApplicationController
       shots: { character: { image_attachment: :blob } },
       shots: { vehicle: { image_attachment: :blob } },
     ]
-    query = current_campaign
-      .fights
-      .select(selects)
-      .includes(includes)
-
+    query = current_campaign.fights.distinct.select(selects).includes(includes)
     # Apply filters
     query = query.where("fights.name ILIKE ?", "%#{params['search']}%") if params["search"].present?
     if params["show_all"] == "true"
@@ -41,11 +37,11 @@ class Api::V2::FightsController < ApplicationController
     query = query.where(id: params["id"]) if params["id"].present?
     query = query.where(started_at: nil) if params["unstarted"].present?
     query = query.where.not(started_at: nil).where(ended_at: nil) if params["unended"].present?
-    # Join associations
+    query = query.where(season: params["season"]) if params["season"].present?
+    query = query.where(session: params["session"]) if params["session"].present?
     query = query.joins(:shots).where(shots: { character_id: params[:character_id] }) if params[:character_id].present?
     query = query.joins(:shots).where(shots: { vehicle_id: params[:vehicle_id] }) if params[:vehicle_id].present?
     query = query.joins(:shots).joins("INNER JOIN characters ON shots.character_id = characters.id").where(characters: { user_id: params[:user_id] }) if params[:user_id].present?
-
     # Cache key
     cache_key = [
       "fights/index",
@@ -57,12 +53,13 @@ class Api::V2::FightsController < ApplicationController
       params["active"],
       params["character_id"],
       params["vehicle_id"],
-      params["autocomplete"],
       params["user_id"],
+      params["unstarted"],
+      params["unended"],
+      params["season"],
+      params["session"],
+      params["autocomplete"],
     ].join("/")
-
-    ActiveRecord::Associations::Preloader.new(records: [current_campaign], associations: { user: [:image_attachment, :image_blob] })
-
     cached_result = Rails.cache.fetch(cache_key, expires_in: 5.minutes) do
       fights = query.distinct.order(Arel.sql(sort_order))
       fights = paginate(fights, per_page: per_page, page: page)
@@ -70,6 +67,7 @@ class Api::V2::FightsController < ApplicationController
         "fights" => ActiveModelSerializers::SerializableResource.new(
           fights,
           each_serializer: params[:autocomplete] ? FightLiteSerializer : FightIndexLiteSerializer,
+          adapter: :attributes
         ).serializable_hash,
         "meta" => pagination_meta(fights)
       }
@@ -82,7 +80,6 @@ class Api::V2::FightsController < ApplicationController
   end
 
   def create
-    # Check if request is multipart/form-data with a JSON string
     if params[:fight].present? && params[:fight].is_a?(String)
       begin
         fight_data = JSON.parse(params[:fight]).symbolize_keys
@@ -93,16 +90,11 @@ class Api::V2::FightsController < ApplicationController
     else
       fight_data = fight_params.to_h.symbolize_keys
     end
-
     fight_data = fight_data.slice(:name, :sequence, :active, :archived, :description, :image, :character_ids, :vehicle_ids, :started_at, :ended_at, :season, :session)
-
     @fight = current_campaign.fights.new(fight_data)
-
-    # Handle image attachment if present
     if params[:image].present?
       @fight.image.attach(params[:image])
     end
-
     if @fight.save
       render json: @fight, serializer: FightSerializer, status: :created
     else
@@ -112,8 +104,6 @@ class Api::V2::FightsController < ApplicationController
 
   def update
     @fight = current_campaign.fights.find(params[:id])
-
-    # Handle multipart/form-data for updates if present
     if params[:fight].present? && params[:fight].is_a?(String)
       begin
         fight_data = JSON.parse(params[:fight]).symbolize_keys
@@ -125,13 +115,10 @@ class Api::V2::FightsController < ApplicationController
       fight_data = fight_params.to_h.symbolize_keys
     end
     fight_data = fight_data.slice(:name, :sequence, :active, :archived, :description, :character_ids, :vehicle_ids, :started_at, :ended_at, :season, :session)
-
-    # Handle image attachment if present
     if params[:image].present?
-      @fight.image.purge if @fight.image.attached? # Remove existing image
+      @fight.image.purge if @fight.image.attached?
       @fight.image.attach(params[:image])
     end
-
     if @fight.update(fight_data)
       render json: @fight.reload, serializer: FightSerializer, status: :ok
     else
@@ -141,7 +128,6 @@ class Api::V2::FightsController < ApplicationController
 
   def touch
     @fight.send(:broadcast_update)
-
     render json: @fight
   end
 
@@ -173,13 +159,15 @@ class Api::V2::FightsController < ApplicationController
     sort = params["sort"] || "created_at"
     order = params["order"] || "DESC"
     if sort == "name"
-      "LOWER(fights.name) #{order}, fights.id"
+      "name_lower #{order}, fights.id"
     elsif sort == "created_at"
       "fights.created_at #{order}, fights.id"
     elsif sort == "updated_at"
       "fights.updated_at #{order}, fights.id"
     elsif sort == "season"
-      "fights.season #{order}, fights.session, LOWER(fights.name)"
+      "fights.season #{order}, fights.session #{order}, LOWER(fights.name)"
+    elsif sort == "session"
+      "fights.session #{order}, LOWER(fights.name)"
     else
       "fights.created_at DESC, fights.id"
     end

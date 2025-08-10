@@ -18,10 +18,10 @@ RSpec.describe "Api::V2::Fights", type: :request do
     @modern = @campaign.junctures.create!(name: "Modern", description: "The modern world.")
     @ancient = @campaign.junctures.create!(name: "Ancient", description: "The ancient world.")
     # fights
-    @brawl = @campaign.fights.create!(name: "Big Brawl", description: "A large fight in the city.", started_at: 1.hour.ago)
-    @skirmish = @campaign.fights.create!(name: "Small Skirmish", description: "A minor fight in the alley.")
-    @airport_battle = @campaign.fights.create!(name: "Airport Battle", description: "A fight at the airport.")
-    @inactive_fight = @campaign.fights.create!(name: "Inactive Fight", description: "This fight is inactive.", active: false)
+    @brawl = @campaign.fights.create!(name: "Big Brawl", description: "A large fight in the city.", started_at: 1.hour.ago, season: 1, session: 1)
+    @skirmish = @campaign.fights.create!(name: "Small Skirmish", description: "A minor fight in the alley.", season: 2, session: 2)
+    @airport_battle = @campaign.fights.create!(name: "Airport Battle", description: "A fight at the airport.", season: 1, session: 3)
+    @inactive_fight = @campaign.fights.create!(name: "Inactive Fight", description: "This fight is inactive.", active: false, season: 3, session: 1)
     # characters
     @bandit = Character.create!(name: "Bandit", action_values: { "Type" => "PC", "Archetype" => "Bandit" }, campaign_id: @campaign.id, is_template: true, user_id: @gamemaster.id)
     @brick = Character.create!(
@@ -117,7 +117,7 @@ RSpec.describe "Api::V2::Fights", type: :request do
       get "/api/v2/fights", params: { sort: "updated_at", order: "asc" }, headers: @headers
       expect(response).to have_http_status(200)
       body = JSON.parse(response.body)
-      expect(body["fights"].map { |f| f["name"] }).to eq( ["Big Brawl", "Airport Battle", "Small Skirmish"])
+      expect(body["fights"].map { |f| f["name"] }).to eq(["Big Brawl", "Airport Battle", "Small Skirmish"])
     end
 
     it "sorts by updated_at descending" do
@@ -126,6 +126,48 @@ RSpec.describe "Api::V2::Fights", type: :request do
       expect(response).to have_http_status(200)
       body = JSON.parse(response.body)
       expect(body["fights"].map { |f| f["name"] }).to eq(["Small Skirmish", "Airport Battle", "Big Brawl"])
+    end
+
+    it "sorts by season ascending" do
+      get "/api/v2/fights", params: { sort: "season", order: "asc" }, headers: @headers
+      expect(response).to have_http_status(200)
+      body = JSON.parse(response.body)
+      expect(body["fights"].map { |f| f["name"] }).to eq(["Big Brawl", "Airport Battle", "Small Skirmish"])
+    end
+
+    it "sorts by season descending" do
+      get "/api/v2/fights", params: { sort: "season", order: "desc" }, headers: @headers
+      expect(response).to have_http_status(200)
+      body = JSON.parse(response.body)
+      expect(body["fights"].map { |f| f["name"] }).to eq(["Small Skirmish", "Airport Battle", "Big Brawl"])
+    end
+
+    it "sorts by session ascending" do
+      get "/api/v2/fights", params: { sort: "session", order: "asc" }, headers: @headers
+      expect(response).to have_http_status(200)
+      body = JSON.parse(response.body)
+      expect(body["fights"].map { |f| f["name"] }).to eq(["Big Brawl", "Small Skirmish", "Airport Battle"])
+    end
+
+    it "sorts by session descending" do
+      get "/api/v2/fights", params: { sort: "session", order: "desc" }, headers: @headers
+      expect(response).to have_http_status(200)
+      body = JSON.parse(response.body)
+      expect(body["fights"].map { |f| f["name"] }).to eq(["Airport Battle", "Small Skirmish", "Big Brawl"])
+    end
+
+    it "filters by season" do
+      get "/api/v2/fights", params: { season: 1 }, headers: @headers
+      expect(response).to have_http_status(200)
+      body = JSON.parse(response.body)
+      expect(body["fights"].map { |f| f["name"] }).to eq(["Airport Battle", "Big Brawl"])
+    end
+
+    it "filters by session" do
+      get "/api/v2/fights", params: { session: 2 }, headers: @headers
+      expect(response).to have_http_status(200)
+      body = JSON.parse(response.body)
+      expect(body["fights"].map { |f| f["name"] }).to eq(["Small Skirmish"])
     end
 
     it "gets only active fights when show_all is false" do
@@ -140,7 +182,7 @@ RSpec.describe "Api::V2::Fights", type: :request do
       get "/api/v2/fights", params: { show_all: true }, headers: @headers
       expect(response).to have_http_status(200)
       body = JSON.parse(response.body)
-      expect(body["fights"].map { |f| f["name"] }).to eq( ["Inactive Fight", "Airport Battle", "Small Skirmish", "Big Brawl"])
+      expect(body["fights"].map { |f| f["name"] }).to eq(["Inactive Fight", "Airport Battle", "Small Skirmish", "Big Brawl"])
     end
 
     it "filters unstarted fights" do
@@ -161,7 +203,8 @@ RSpec.describe "Api::V2::Fights", type: :request do
     end
 
     it "filters by character involvement" do
-      @brawl.characters << @brick
+      shot = Shot.create!(fight: @brawl, character: @brick)
+      @brawl.shots << shot
       @brawl.save!
       get "/api/v2/fights", params: { character_id: @brick.id }, headers: @headers
       expect(response).to have_http_status(200)
@@ -171,7 +214,8 @@ RSpec.describe "Api::V2::Fights", type: :request do
     end
 
     it "filters by character involvement" do
-      @skirmish.characters << @serena
+      shot = Shot.create!(fight: @skirmish, character: @serena)
+      @skirmish.shots << shot
       @skirmish.save!
       get "/api/v2/fights", params: { character_id: @serena.id }, headers: @headers
       expect(response).to have_http_status(200)
@@ -193,7 +237,8 @@ RSpec.describe "Api::V2::Fights", type: :request do
     end
 
     it "filters by player involvement" do
-      @brawl.characters << @brick
+      shot = Shot.create!(fight: @brawl, character: @brick)
+      @brawl.shots << shot
       @brawl.save!
       get "/api/v2/fights", params: { user_id: @player.id }, headers: @headers
       expect(response).to have_http_status(200)
@@ -203,9 +248,10 @@ RSpec.describe "Api::V2::Fights", type: :request do
     end
 
     it "returns distinct fights when user has multiple characters in the same fight" do
-      @brawl.characters << @boss
-      @brawl.characters << @featured_foe
-      @brawl.characters << @mook
+      shot1 = Shot.create!(fight: @brawl, character: @boss)
+      shot2 = Shot.create!(fight: @brawl, character: @featured_foe)
+      shot3 = Shot.create!(fight: @brawl, character: @mook)
+      @brawl.shots << [shot1, shot2, shot3]
       @brawl.save!
       get "/api/v2/fights", params: { user_id: @gamemaster.id }, headers: @headers
       expect(response).to have_http_status(200)
@@ -223,13 +269,16 @@ RSpec.describe "Api::V2::Fights", type: :request do
       expect(fight["description"]).to eq("A large fight in the city.")
       expect(fight["started_at"]).not_to be_nil
       expect(fight["ended_at"]).to be_nil
+      expect(fight["season"]).to eq(1)
+      expect(fight["session"]).to eq(1)
       expect(fight["active"]).to be true
-      expect(fight.keys).to include("id", "name", "description", "campaign_id", "started_at", "ended_at", "created_at", "updated_at", "active", "entity_class", "image_positions")
+      expect(fight.keys).to include("id", "name", "description", "campaign_id", "started_at", "ended_at", "created_at", "updated_at", "active", "season", "session", "entity_class", "image_positions")
     end
 
     it "returns characters in fight" do
-      @brawl.characters << @brick
-      @brawl.characters << @serena
+      shot1 = Shot.create!(fight: @brawl, character: @brick)
+      shot2 = Shot.create!(fight: @brawl, character: @serena)
+      @brawl.shots << [shot1, shot2]
       @brawl.save!
       get "/api/v2/fights", params: { id: @brawl.id }, headers: @headers
       expect(response).to have_http_status(200)
@@ -258,7 +307,7 @@ RSpec.describe "Api::V2::Fights", type: :request do
       get "/api/v2/fights", params: { autocomplete: true }, headers: @headers
       expect(response).to have_http_status(200)
       body = JSON.parse(response.body)
-      expect(body["fights"].map { |f| f["name"] }).to eq( ["Airport Battle", "Small Skirmish", "Big Brawl"])
+      expect(body["fights"].map { |f| f["name"] }).to eq(["Airport Battle", "Small Skirmish", "Big Brawl"])
     end
 
     it "filters fights by search term" do
@@ -337,6 +386,48 @@ RSpec.describe "Api::V2::Fights", type: :request do
       expect(body["fights"].map { |f| f["name"] }).to eq(["Small Skirmish", "Airport Battle", "Big Brawl"])
     end
 
+    it "sorts by season ascending" do
+      get "/api/v2/fights", params: { autocomplete: true, sort: "season", order: "asc" }, headers: @headers
+      expect(response).to have_http_status(200)
+      body = JSON.parse(response.body)
+      expect(body["fights"].map { |f| f["name"] }).to eq(["Big Brawl", "Airport Battle", "Small Skirmish"])
+    end
+
+    it "sorts by season descending" do
+      get "/api/v2/fights", params: { autocomplete: true, sort: "season", order: "desc" }, headers: @headers
+      expect(response).to have_http_status(200)
+      body = JSON.parse(response.body)
+      expect(body["fights"].map { |f| f["name"] }).to eq( ["Small Skirmish", "Airport Battle", "Big Brawl"])
+    end
+
+    it "sorts by session ascending" do
+      get "/api/v2/fights", params: { autocomplete: true, sort: "session", order: "asc" }, headers: @headers
+      expect(response).to have_http_status(200)
+      body = JSON.parse(response.body)
+      expect(body["fights"].map { |f| f["name"] }).to eq(["Big Brawl", "Small Skirmish", "Airport Battle"])
+    end
+
+    it "sorts by session descending" do
+      get "/api/v2/fights", params: { autocomplete: true, sort: "session", order: "desc" }, headers: @headers
+      expect(response).to have_http_status(200)
+      body = JSON.parse(response.body)
+      expect(body["fights"].map { |f| f["name"] }).to eq(["Airport Battle", "Small Skirmish", "Big Brawl"])
+    end
+
+    it "filters by season" do
+      get "/api/v2/fights", params: { autocomplete: true, season: 1 }, headers: @headers
+      expect(response).to have_http_status(200)
+      body = JSON.parse(response.body)
+      expect(body["fights"].map { |f| f["name"] }).to eq(["Airport Battle", "Big Brawl"])
+    end
+
+    it "filters by session" do
+      get "/api/v2/fights", params: { autocomplete: true, session: 2 }, headers: @headers
+      expect(response).to have_http_status(200)
+      body = JSON.parse(response.body)
+      expect(body["fights"].map { |f| f["name"] }).to eq(["Small Skirmish"])
+    end
+
     it "gets only active fights when show_all is false" do
       get "/api/v2/fights", params: { autocomplete: true, show_all: false }, headers: @headers
       expect(response).to have_http_status(200)
@@ -370,7 +461,8 @@ RSpec.describe "Api::V2::Fights", type: :request do
     end
 
     it "filters by character involvement" do
-      @brawl.characters << @brick
+      shot = Shot.create!(fight: @brawl, character: @brick)
+      @brawl.shots << shot
       @brawl.save!
       get "/api/v2/fights", params: { autocomplete: true, character_id: @brick.id }, headers: @headers
       expect(response).to have_http_status(200)
@@ -380,7 +472,8 @@ RSpec.describe "Api::V2::Fights", type: :request do
     end
 
     it "filters by character involvement" do
-      @skirmish.characters << @serena
+      shot = Shot.create!(fight: @skirmish, character: @serena)
+      @skirmish.shots << shot
       @skirmish.save!
       get "/api/v2/fights", params: { autocomplete: true, character_id: @serena.id }, headers: @headers
       expect(response).to have_http_status(200)
@@ -402,7 +495,8 @@ RSpec.describe "Api::V2::Fights", type: :request do
     end
 
     it "filters by player involvement" do
-      @brawl.characters << @brick
+      shot = Shot.create!(fight: @brawl, character: @brick)
+      @brawl.shots << shot
       @brawl.save!
       get "/api/v2/fights", params: { autocomplete: true, user_id: @player.id }, headers: @headers
       expect(response).to have_http_status(200)
@@ -412,9 +506,10 @@ RSpec.describe "Api::V2::Fights", type: :request do
     end
 
     it "returns distinct fights when user has multiple characters in the same fight" do
-      @brawl.characters << @boss
-      @brawl.characters << @featured_foe
-      @brawl.characters << @mook
+      shot1 = Shot.create!(fight: @brawl, character: @boss)
+      shot2 = Shot.create!(fight: @brawl, character: @featured_foe)
+      shot3 = Shot.create!(fight: @brawl, character: @mook)
+      @brawl.shots << [shot1, shot2, shot3]
       @brawl.save!
       get "/api/v2/fights", params: { autocomplete: true, user_id: @gamemaster.id }, headers: @headers
       expect(response).to have_http_status(200)
@@ -433,8 +528,9 @@ RSpec.describe "Api::V2::Fights", type: :request do
     end
 
     it "does not return characters in fight" do
-      @brawl.characters << @brick
-      @brawl.characters << @serena
+      shot1 = Shot.create!(fight: @brawl, character: @brick)
+      shot2 = Shot.create!(fight: @brawl, character: @serena)
+      @brawl.shots << [shot1, shot2]
       @brawl.save!
       get "/api/v2/fights", params: { autocomplete: true, id: @brawl.id }, headers: @headers
       expect(response).to have_http_status(200)
