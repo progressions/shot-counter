@@ -3,6 +3,76 @@ class Api::V2::FactionsController < ApplicationController
   before_action :require_current_campaign
 
   def index
+    per_page = (params["per_page"] || 15).to_i
+    page = (params["page"] || 1).to_i
+    selects = [
+      "factions.id",
+      "factions.name",
+      "factions.campaign_id",
+      "factions.description",
+      "factions.created_at",
+      "factions.updated_at",
+      "factions.active",
+    ]
+    includes = [
+      :image_positions,
+      image_attachment: :blob,
+      junctures: { image_attachment: :blob },
+      characters: { image_attachment: :blob },
+      vehicles: { image_attachment: :blob },
+    ]
+    query = current_campaign
+      .factions
+      .select(selects)
+      .includes(includes)
+
+    # Apply filters
+    query = query.where(id: params["id"]) if params["id"].present?
+    query = query.where("factions.name ILIKE ?", "%#{params['search']}%") if params["search"].present?
+    if params["show_all"] == "true"
+      query = query.where(active: [true, false, nil])
+    else
+      query = query.where(active: true)
+    end
+    # Join associations
+    query = query.joins(:characters).where(characters: { id: params[:character_id] }) if params[:character_id].present?
+    query = query.joins(:vehicles).where(vehicles: { id: params[:vehicle_id] }) if params[:vehicle_id].present?
+    query = query.joins(:junctures).where(junctures: { id: params[:juncture_id] }) if params[:juncture_id].present?
+
+    # Cache key
+    cache_key = [
+      "factions/index",
+      current_campaign.id,
+      sort_order,
+      page,
+      per_page,
+      params["search"],
+      params["juncture_id"],
+      params["autocomplete"],
+      params["character_id"],
+      params["vehicle_id"],
+      params["show_all"],
+    ].join("/")
+
+    ActiveRecord::Associations::Preloader.new(records: [current_campaign], associations: { user: [:image_attachment, :image_blob] })
+
+    cached_result = Rails.cache.fetch(cache_key, expires_in: 5.minutes) do
+      factions = query.order(Arel.sql(sort_order))
+      factions = paginate(factions, per_page: per_page, page: page)
+
+      {
+        "factions" => ActiveModelSerializers::SerializableResource.new(
+          factions,
+          each_serializer: params[:autocomplete] ? FactionAutocompleteSerializer : FactionIndexSerializer,
+          adapter: :attributes
+        ).serializable_hash,
+        "meta" => pagination_meta(factions)
+      }
+    end
+    render json: cached_result
+  end
+
+  def oldindex
     @factions = current_campaign
       .factions
       .with_attached_image
@@ -119,9 +189,15 @@ class Api::V2::FactionsController < ApplicationController
   end
 
   def destroy
-    faction = current_campaign.factions.find(params[:id])
-    faction.destroy
-    head :ok
+    if @faction.character_ids.any? && !params[:force]
+      render json: { errors: { characters: true  } }, status: 400 and return
+    end
+
+    if @faction.destroy!
+      render :ok
+    else
+      render json: { errors: @faction.errors }, status: 400
+    end
   end
 
   def remove_image

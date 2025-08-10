@@ -4,6 +4,7 @@ class Faction < ApplicationRecord
 
   belongs_to :campaign
   has_many :characters
+  has_many :vehicles
   has_many :sites
   has_many :junctures
   has_many :parties

@@ -52,7 +52,6 @@ class Api::V2::PartiesController < ApplicationController
       page,
       per_page,
       params["party_id"],
-      params["fight_id"],
       params["search"],
       params["faction_id"],
       params["juncture_id"],
@@ -60,6 +59,8 @@ class Api::V2::PartiesController < ApplicationController
       params["character_id"],
       params["show_all"],
     ].join("/")
+
+    ActiveRecord::Associations::Preloader.new(records: [current_campaign], associations: { user: [:image_attachment, :image_blob] })
 
     cached_result = Rails.cache.fetch(cache_key, expires_in: 5.minutes) do
       parties = query.order(Arel.sql(sort_order))
@@ -84,86 +85,6 @@ class Api::V2::PartiesController < ApplicationController
         "meta" => pagination_meta(parties)
       }
     end
-    render json: cached_result
-  end
-
-  def oldindex
-    sort = params["sort"] || "created_at"
-    order = params["order"] || "DESC"
-
-    if sort == "name"
-      sort = Arel.sql("LOWER(parties.name) #{order}")
-    elsif sort == "created_at"
-      sort = Arel.sql("parties.created_at #{order}")
-    else
-      sort = Arel.sql("parties.created_at DESC")
-    end
-
-    @parties = current_campaign
-      .parties
-      .distinct
-      .with_attached_image
-      .select(:id, :name, :description, :campaign_id, :faction_id, :secret, :created_at, :updated_at, "LOWER(parties.name) AS lower_name")
-      .includes(
-        { faction: [:image_attachment, :image_blob] },
-        { memberships: [
-          { character: [:image_attachment, :image_blob] },
-          { vehicle: [:image_attachment, :image_blob] }
-        ] },
-        :image_positions,
-      )
-      .order(sort)
-
-    ActiveRecord::Associations::Preloader.new(records: [current_campaign], associations: { user: [:image_attachment, :image_blob] })
-
-    # @factions = current_campaign.factions.joins(:parties).where(parties: @parties).order("factions.name").distinct
-
-    if params[:id].present?
-      @parties = @parties.where(id: params[:id])
-    end
-    if params[:secret] == "true" && current_user.gamemaster?
-      @parties = @parties.where(secret: [true, false])
-    else
-      @parties = @parties.where(secret: false)
-    end
-    if params[:search].present?
-      @parties = @parties.where("name ILIKE ?", "%#{params[:search]}%")
-    end
-    if params[:faction_id].present?
-      @parties = @parties.where(faction_id: params[:faction_id])
-    end
-    if params[:character_id].present?
-      @parties = @parties.joins(:characters).where(characters: { id: params[:character_id] })
-    end
-    if params[:user_id].present?
-      @parties = @parties.joins(:characters).where(characters: { user_id: params[:user_id] })
-    end
-
-    cache_key = [
-      "parties/index",
-      current_campaign.id,
-      sort,
-      order,
-      params[:page],
-      params[:per_page],
-      params[:id],
-      params[:search],
-      params[:faction_id],
-      params[:character_id],
-      params[:user_id],
-      params[:secret],
-    ].join("/")
-
-    cached_result = Rails.cache.fetch(cache_key, expires_in: 12.hours) do
-      @parties = paginate(@parties, per_page: (params[:per_page] || 6), page: (params[:page] || 1))
-
-      {
-        parties: ActiveModelSerializers::SerializableResource.new(@parties, each_serializer: PartyIndexSerializer).serializable_hash,
-        # factions: ActiveModelSerializers::SerializableResource.new(@factions, each_serializer: FactionSerializer).serializable_hash,
-        meta: pagination_meta(@parties),
-      }
-    end
-
     render json: cached_result
   end
 
