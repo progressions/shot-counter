@@ -38,8 +38,14 @@ RSpec.describe "Api::V2::Parties", type: :request do
       juncture_id: @ancient.id,
       user_id: @player.id,
     )
+    # vehicles
+    @tank = @campaign.vehicles.create!(name: "Tank", campaign_id: @campaign.id)
+    @jet = @campaign.vehicles.create!(name: "Jet", campaign_id: @campaign.id)
+    # memberships
     @brick.parties << @dragons_party
     @serena.parties << @inactive_team
+    @dragons_party.vehicles << @tank
+    @dragons_party.vehicles << @jet
     @headers = Devise::JWT::TestHelpers.auth_headers({}, @gamemaster)
     set_current_campaign(@gamemaster, @campaign)
     Rails.cache.clear
@@ -96,31 +102,37 @@ RSpec.describe "Api::V2::Parties", type: :request do
 
   describe "PATCH /update" do
     it "updates an existing party" do
-      patch "/api/v2/parties/#{@dragons_party.id}", params: { party: { name: "Updated Dragons Party", description: "Updated group", faction_id: @ascended.id, active: false, character_ids: [@serena.id] } }, headers: @headers
+      patch "/api/v2/parties/#{@dragons_party.id}", params: { party: { name: "Updated Dragons Party", description: "Updated group", faction_id: @ascended.id, active: false, character_ids: [@serena.id], vehicle_ids: [@tank.id, @jet.id] } }, headers: @headers
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
       expect(body["name"]).to eq("Updated Dragons Party")
       expect(body["description"]).to eq("Updated group")
       expect(body["faction_id"]).to eq(@ascended.id)
       expect(body["active"]).to eq(false)
+      expect(body["character_ids"]).to include(@serena.id)
+      expect(body["vehicle_ids"]).to include(@tank.id, @jet.id)
       @dragons_party.reload
       expect(@dragons_party.name).to eq("Updated Dragons Party")
       expect(@dragons_party.description).to eq("Updated group")
       expect(@dragons_party.faction_id).to eq(@ascended.id)
       expect(@dragons_party.characters).to include(@serena)
+      expect(@dragons_party.vehicles).to include(@tank, @jet)
     end
 
     it "updates an existing party with JSON string" do
-      patch "/api/v2/parties/#{@dragons_party.id}", params: { party: { name: "Json Dragons Party", description: "JSON updated group", faction_id: @ascended.id, active: false, character_ids: [@serena.id] }.to_json }, headers: @headers
+      patch "/api/v2/parties/#{@dragons_party.id}", params: { party: { name: "Json Dragons Party", description: "JSON updated group", faction_id: @ascended.id, active: false, character_ids: [@serena.id], vehicle_ids: [@tank.id, @jet.id] }.to_json }, headers: @headers
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
       expect(body["name"]).to eq("Json Dragons Party")
       expect(body["description"]).to eq("JSON updated group")
       expect(body["faction_id"]).to eq(@ascended.id)
       expect(body["active"]).to eq(false)
+      expect(body["character_ids"]).to include(@serena.id)
+      expect(body["vehicle_ids"]).to include(@tank.id, @jet.id)
       @dragons_party.reload
       expect(@dragons_party.name).to eq("Json Dragons Party")
       expect(@dragons_party.characters).to include(@serena)
+      expect(@dragons_party.vehicles).to include(@tank, @jet)
     end
 
     it "returns an error when the party name is missing" do
@@ -165,10 +177,52 @@ RSpec.describe "Api::V2::Parties", type: :request do
       @dragons_party.reload
       expect(@dragons_party.image.attached?).to be_truthy
     end
+
+    it "adds a character to a party" do
+      patch "/api/v2/parties/#{@ascended_party.id}", params: { party: { character_ids: [@brick.id] } }, headers: @headers
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["name"]).to eq("Ascended Party")
+      expect(body["character_ids"]).to include(@brick.id)
+      @ascended_party.reload
+      expect(@ascended_party.characters).to include(@brick)
+    end
+
+    it "removes a character from a party" do
+      @ascended_party.characters << @brick
+      patch "/api/v2/parties/#{@ascended_party.id}", params: { party: { character_ids: [] } }, headers: @headers
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["name"]).to eq("Ascended Party")
+      expect(body["character_ids"]).not_to include(@brick.id)
+      @ascended_party.reload
+      expect(@ascended_party.characters).not_to include(@brick)
+    end
+
+    it "adds a vehicle to a party" do
+      patch "/api/v2/parties/#{@ascended_party.id}", params: { party: { vehicle_ids: [@tank.id] } }, headers: @headers
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["name"]).to eq("Ascended Party")
+      expect(body["vehicle_ids"]).to include(@tank.id)
+      @ascended_party.reload
+      expect(@ascended_party.vehicles).to include(@tank)
+    end
+
+    it "removes a vehicle from a party" do
+      @ascended_party.vehicles << @tank
+      patch "/api/v2/parties/#{@ascended_party.id}", params: { party: { vehicle_ids: [] } }, headers: @headers
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["name"]).to eq("Ascended Party")
+      expect(body["vehicle_ids"]).not_to include(@tank.id)
+      @ascended_party.reload
+      expect(@ascended_party.vehicles).not_to include(@tank)
+    end
   end
 
   describe "GET /show" do
-    it "retrieves a party" do
+    it "retrieves a party with vehicles" do
       get "/api/v2/parties/#{@dragons_party.id}", headers: @headers
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
@@ -178,7 +232,9 @@ RSpec.describe "Api::V2::Parties", type: :request do
       expect(body["juncture_id"]).to eq(@modern.id)
       expect(body["active"]).to eq(true)
       expect(body["image_url"]).to be_nil
-      expect(body.keys).to include("id", "name", "description", "faction_id", "juncture_id", "active", "image_url", "created_at", "updated_at")
+      expect(body["character_ids"]).to include(@brick.id)
+      expect(body["vehicle_ids"]).to include(@tank.id, @jet.id)
+      expect(body.keys).to include("id", "name", "description", "faction_id", "juncture_id", "active", "image_url", "created_at", "updated_at", "character_ids", "vehicle_ids")
     end
 
     it "returns a 404 for a non-existent party" do
@@ -211,6 +267,8 @@ RSpec.describe "Api::V2::Parties", type: :request do
       expect(Party.exists?(@dragons_party.id)).to be_falsey
       expect { @dragons_party.reload }.to raise_error(ActiveRecord::RecordNotFound)
       expect(@brick.reload.parties).not_to include(@dragons_party)
+      expect(@tank.reload.parties).not_to include(@dragons_party)
+      expect(@jet.reload.parties).not_to include(@dragons_party)
     end
 
     it "returns an error for a non-existent party" do

@@ -23,6 +23,7 @@ class Api::V2::PartiesController < ApplicationController
       faction: { image_attachment: :blob },
       juncture: { image_attachment: :blob },
       memberships: { character: { image_attachment: :blob } },
+      memberships: { vehicle: { image_attachment: :blob } },
     ]
     query = current_campaign
       .parties
@@ -41,6 +42,7 @@ class Api::V2::PartiesController < ApplicationController
     end
     # Join associations
     query = query.joins(:memberships).where(memberships: { character_id: params[:character_id] }) if params[:character_id].present?
+    query = query.joins(:memberships).where(memberships: { vehicle_id: params[:vehicle_id] }) if params[:vehicle_id].present?
 
     # Cache key
     cache_key = [
@@ -182,7 +184,7 @@ class Api::V2::PartiesController < ApplicationController
       party_data = party_params.to_h.symbolize_keys
     end
 
-    party_data.slice(:name, :description, :active, :faction_id, :juncture_id, :character_ids)
+    party_data.slice(:name, :description, :active, :faction_id, :juncture_id, :character_ids, :vehicle_ids)
 
     @party = current_campaign.parties.new(party_data)
 
@@ -212,7 +214,7 @@ class Api::V2::PartiesController < ApplicationController
     else
       party_data = party_params.to_h.symbolize_keys
     end
-    party_data = party_data.slice(:name, :description, :active, :faction_id, :character_ids, :juncture_id)
+    party_data = party_data.slice(:name, :description, :active, :faction_id, :character_ids, :vehicle_ids, :juncture_id)
 
     # Handle image attachment if present
     if params[:image].present?
@@ -279,7 +281,7 @@ class Api::V2::PartiesController < ApplicationController
   end
 
   def party_params
-    params.require(:party).permit(:name, :description, :faction_id, :active, :image, :juncture_id, character_ids: [])
+    params.require(:party).permit(:name, :description, :faction_id, :active, :image, :juncture_id, vehicle_ids: [], character_ids: [])
   end
 
   def sort_order
