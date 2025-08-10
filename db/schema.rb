@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_08_06_222953) do
+ActiveRecord::Schema[8.0].define(version: 2025_08_10_033245) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -74,6 +74,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_06_222953) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "name"
+    t.boolean "active", default: true, null: false
     t.index "lower((name)::text)", name: "index_campaigns_on_lower_name"
     t.index ["user_id"], name: "index_campaigns_on_user_id"
   end
@@ -264,9 +265,12 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_06_222953) do
     t.datetime "updated_at", null: false
     t.uuid "faction_id"
     t.boolean "secret", default: false
+    t.uuid "juncture_id"
+    t.boolean "active", default: true, null: false
     t.index "lower((name)::text)", name: "index_parties_on_lower_name"
     t.index ["campaign_id"], name: "index_parties_on_campaign_id"
     t.index ["faction_id"], name: "index_parties_on_faction_id"
+    t.index ["juncture_id"], name: "index_parties_on_juncture_id"
   end
 
   create_table "schticks", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -317,10 +321,13 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_06_222953) do
     t.string "name"
     t.uuid "faction_id"
     t.boolean "secret", default: false
+    t.uuid "juncture_id"
+    t.boolean "active", default: true, null: false
     t.index "lower((name)::text)", name: "index_sites_on_lower_name"
     t.index ["campaign_id", "name"], name: "index_sites_on_campaign_id_and_name", unique: true
     t.index ["campaign_id"], name: "index_sites_on_campaign_id"
     t.index ["faction_id"], name: "index_sites_on_faction_id"
+    t.index ["juncture_id"], name: "index_sites_on_juncture_id"
   end
 
   create_table "users", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -345,6 +352,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_06_222953) do
     t.string "unlock_token"
     t.datetime "locked_at"
     t.uuid "current_campaign_id"
+    t.string "name"
+    t.boolean "active", default: true, null: false
+    t.index "lower((name)::text)", name: "index_users_on_lower_name"
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["jti"], name: "index_users_on_jti", unique: true
@@ -430,6 +440,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_06_222953) do
   add_foreign_key "memberships", "vehicles"
   add_foreign_key "parties", "campaigns"
   add_foreign_key "parties", "factions"
+  add_foreign_key "parties", "junctures"
   add_foreign_key "schticks", "campaigns"
   add_foreign_key "schticks", "schticks", column: "prerequisite_id"
   add_foreign_key "shots", "characters"
@@ -439,6 +450,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_06_222953) do
   add_foreign_key "shots", "vehicles"
   add_foreign_key "sites", "campaigns"
   add_foreign_key "sites", "factions"
+  add_foreign_key "sites", "junctures"
   add_foreign_key "users", "campaigns", column: "current_campaign_id"
   add_foreign_key "vehicles", "campaigns"
   add_foreign_key "vehicles", "factions"

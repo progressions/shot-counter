@@ -8,6 +8,13 @@ module CharacterDuplicatorService
       @duplicated_character.schticks = character.schticks
       @duplicated_character.weapons = character.weapons
       @duplicated_character = set_unique_name(@duplicated_character)
+      if character.image.attached?
+        @duplicated_character.image.attach(
+          io: StringIO.new(character.image.blob.download),
+          filename: character.image.blob.filename,
+          content_type: character.image.blob.content_type
+        )
+      end
 
       @duplicated_character
     end

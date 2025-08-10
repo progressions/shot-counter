@@ -4,6 +4,7 @@ class Site < ApplicationRecord
 
   belongs_to :campaign
   belongs_to :faction, optional: true
+  belongs_to :juncture, optional: true
   has_many :attunements, dependent: :destroy
   has_many :characters, through: :attunements
   has_many :image_positions, as: :positionable, dependent: :destroy

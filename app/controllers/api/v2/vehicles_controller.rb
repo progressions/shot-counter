@@ -2,14 +2,14 @@ class Api::V2::VehiclesController < ApplicationController
   before_action :authenticate_user!
   before_action :require_current_campaign
   before_action :set_scoped_vehicles
-  before_action :set_vehicle, only: [:update, :destroy]
+  before_action :set_vehicle, only: [:update, :destroy, :remove_image]
 
   def index
     per_page = (params["per_page"] || 15).to_i
     page = (params["page"] || 1).to_i
 
     # Base query with minimal fields and preload
-    vehicles_query = @scoped_vehicles
+    query = @scoped_vehicles
       .select(
         "vehicles.id",
         "vehicles.name",
@@ -25,13 +25,23 @@ class Api::V2::VehiclesController < ApplicationController
       )
 
     # Apply filters
-    vehicles_query = vehicles_query.where(faction_id: params["faction_id"]) if params["faction_id"].present?
-    vehicles_query = vehicles_query.where(user_id: params["user_id"]) if params["user_id"].present?
-    vehicles_query = vehicles_query.where("vehicles.name ILIKE ?", "%#{params['search']}%") if params["search"].present?
+    query = query.where(faction_id: params["faction_id"]) if params["faction_id"].present?
+    query = query.where(juncture_id: params["juncture_id"]) if params["juncture_id"].present?
+    query = query.where(user_id: params["user_id"]) if params["user_id"].present?
+    query = query.where("vehicles.name ILIKE ?", "%#{params['search']}%") if params["search"].present?
+    query = query.where(id: params["id"]) if params["id"].present?
+    query = query.where(id: params["ids"].split(",")) if params["ids"].present?
+    query = query.where("action_values->>'Type' = ?", params["type"]) if params["type"].present?
+    query = query.where("action_values->>'Archetype' = ?", params["archetype"]) if params["archetype"].present?
+    if params["show_all"] == "true"
+      query = query.where(active: [true, false, nil])
+    else
+      query = query.where(active: true)
+    end
 
     # Join associations
-    vehicles_query = vehicles_query.joins(:memberships).where(memberships: { party_id: params[:party_id] }) if params[:party_id].present?
-    vehicles_query = vehicles_query.joins(:shots).where(shots: { fight_id: params[:fight_id] }) if params[:fight_id].present?
+    query = query.joins(:memberships).where(memberships: { party_id: params[:party_id] }) if params[:party_id].present?
+    query = query.joins(:shots).where(shots: { fight_id: params[:fight_id] }) if params[:fight_id].present?
 
     # Cache key
     cache_key = [
@@ -46,10 +56,14 @@ class Api::V2::VehiclesController < ApplicationController
       params["search"],
       params["user_id"],
       params["faction_id"],
+      params["autocomplete"],
+      params["juncture_id"],
+      params["type"],
+      params["archetype"],
     ].join("/")
 
     cached_result = Rails.cache.fetch(cache_key, expires_in: 5.minutes) do
-      vehicles = vehicles_query
+      vehicles = query
         .order(Arel.sql(sort_order))
 
       vehicles = paginate(vehicles, per_page: per_page, page: page)
@@ -66,7 +80,7 @@ class Api::V2::VehiclesController < ApplicationController
       {
         "vehicles" => ActiveModelSerializers::SerializableResource.new(
           vehicles,
-          each_serializer: VehicleIndexSerializer,
+          each_serializer: params[:autocomplete] ? VehicleLiteSerializer : VehicleIndexSerializer,
           adapter: :attributes
         ).serializable_hash,
         "factions" => ActiveModelSerializers::SerializableResource.new(
@@ -82,49 +96,6 @@ class Api::V2::VehiclesController < ApplicationController
     render json: cached_result
   end
 
-  def autocomplete
-    vehicles = current_campaign.vehicles.active
-      .select("vehicles.id", "vehicles.name", "vehicles.faction_id", "vehicles.action_values", "vehicles.description")
-
-    if params["faction_id"].present?
-      vehicles = vehicles.where(faction_id: params["faction_id"])
-    end
-
-    if params["type"].present?
-      vehicles = vehicles.where("action_values ->> 'Type' = ?", params["type"])
-    end
-
-    if params["archetype"].present?
-      vehicles = vehicles.where("action_values ->> 'Archetype' = ?", params["archetype"])
-    end
-
-    vehicles = vehicles.order("LOWER(vehicles.name) #{params['order'] || 'asc'}")
-      .limit(params["per_page"] || 75)
-      .offset((params["page"]&.to_i || 0) * (params["per_page"]&.to_i || 75))
-
-    # Get unique factions based on matching vehicles
-    faction_ids = vehicles.pluck(:faction_id).uniq.compact
-    factions = Faction.where(id: faction_ids)
-                      .select("factions.id", "factions.name")
-                      .order("LOWER(factions.name) ASC")
-
-    archetypes = vehicles.map { |c| c.action_values["Archetype"] }.compact.uniq.sort
-
-    render json: {
-      vehicles: ActiveModelSerializers::SerializableResource.new(
-        vehicles,
-        each_serializer: VehicleAutocompleteSerializer,
-        adapter: :attributes
-      ),
-      factions: ActiveModelSerializers::SerializableResource.new(
-        factions,
-        each_serializer: FactionAutocompleteSerializer,
-        adapter: :attributes
-      ),
-      archetypes: archetypes
-    }
-  end
-
   def create
     # Check if request is multipart/form-data with a JSON string
     if params[:vehicle].present? && params[:vehicle].is_a?(String)
@@ -138,7 +109,7 @@ class Api::V2::VehiclesController < ApplicationController
       vehicle_data = vehicle_params.to_h.symbolize_keys
     end
 
-    vehicle_data = vehicle_data.slice(:name, :description, :active, :vehicle_ids, :faction_id, :party_ids, :action_values)
+    vehicle_data = vehicle_data.slice(:name, :description, :active, :vehicle_ids, :faction_id, :party_ids, :action_values, :juncture_id)
 
     @vehicle = current_campaign.vehicles.new(vehicle_data)
 
@@ -148,9 +119,9 @@ class Api::V2::VehiclesController < ApplicationController
     end
 
     if @vehicle.save
-      render json: @vehicle, status: :created
+      render json: @vehicle, serializer: VehicleSerializer, status: :created
     else
-      render json: { errors: @vehicle.errors.full_messages }, status: :unprocessable_entity
+      render json: { errors: @vehicle.errors }, status: :unprocessable_entity
     end
   end
 
@@ -168,7 +139,7 @@ class Api::V2::VehiclesController < ApplicationController
     else
       vehicle_data = vehicle_params.to_h.symbolize_keys
     end
-    vehicle_data = vehicle_data.slice(:name, :description, :active, :vehicle_ids, :party_ids, :site_ids, :juncture_ids, :schtick_ids, :action_values)
+    vehicle_data = vehicle_data.slice(:name, :description, :active, :vehicle_ids, :party_ids, :site_ids, :juncture_id, :schtick_ids, :action_values, :faction_id)
 
     # Handle image attachment if present
     if params[:image].present?
@@ -185,7 +156,7 @@ class Api::V2::VehiclesController < ApplicationController
 
       render json: @vehicle
     else
-      render json: { errors: @vehicle.errors.full_messages }, status: :unprocessable_entity
+      render json: { errors: @vehicle.errors }, status: :unprocessable_entity
     end
   end
 
@@ -200,14 +171,6 @@ class Api::V2::VehiclesController < ApplicationController
   end
 
   def destroy
-    if @vehicle.carry_ids.any? && !params[:force]
-      render json: { errors: { carries: true  } }, status: 400 and return
-    end
-
-    if @vehicle.carry_ids.any? && params[:force]
-      carry.where(id: @vehicle.carry_ids).destroy_all
-    end
-
     if @vehicle.destroy!
       render :ok
     else
@@ -238,7 +201,7 @@ class Api::V2::VehiclesController < ApplicationController
   def vehicle_params
     params.require(:vehicle).permit(:name, :character_id, :faction_id, :defense,
       :impairments, :count, :color, :user_id, :active, :image_url, :image,
-      :action_values)
+      :action_values, :description, :task, :juncture_id, party_ids: [])
   end
 
   def sort_order
@@ -247,10 +210,14 @@ class Api::V2::VehiclesController < ApplicationController
 
     if sort == "type"
       "COALESCE(action_values->>'Type', '') #{order}"
+    elsif sort == "archetype"
+      "COALESCE(action_values->>'Archetype', '') #{order}"
     elsif sort == "name"
       "LOWER(vehicles.name) #{order}"
     elsif sort == "created_at"
       "vehicles.created_at #{order}"
+    elsif sort == "update_at"
+      "vehicles.update_at #{order}"
     else
       "vehicles.created_at DESC"
     end

@@ -10,30 +10,38 @@ class Api::V2::CharactersController < ApplicationController
     selects = [
       "characters.id",
       "characters.name",
-      "characters.image_url",
       "characters.faction_id",
       "characters.action_values",
       "characters.description",
       "characters.created_at",
       "characters.updated_at",
       "characters.skills",
+      "characters.active",
     ]
     includes = [
       :image_positions,
       image_attachment: :blob,
       schticks: { image_attachment: :blob },
+      attunements: { site: { image_attachment: :blob } },
+      memberships: { party: { image_attachment: :blob } },
     ]
-    # Base query with minimal fields and preload
     query = @scoped_characters
       .select(selects)
       .includes(includes)
 
     # Apply filters
+    query = query.where(id: params["id"]) if params["id"].present?
     query = query.where(faction_id: params["faction_id"]) if params["faction_id"].present?
+    query = query.where(juncture_id: params["juncture_id"]) if params["juncture_id"].present?
     query = query.where(user_id: params["user_id"]) if params["user_id"].present?
     query = query.where("characters.name ILIKE ?", "%#{params['search']}%") if params["search"].present?
     query = query.where("action_values->>'Type' = ?", params["type"]) if params["type"].present?
     query = query.where("action_values->>'Archetype' = ?", params["archetype"]) if params["archetype"].present?
+    if params["show_all"] == "true"
+      query = query.where(active: [true, false, nil])
+    else
+      query = query.where(active: true)
+    end
     # Join associations
     query = query.joins(:memberships).where(memberships: { party_id: params[:party_id] }) if params[:party_id].present?
     query = query.joins(:shots).where(shots: { fight_id: params[:fight_id] }) if params[:fight_id].present?
@@ -61,6 +69,7 @@ class Api::V2::CharactersController < ApplicationController
       params["type"],
       params["archetype"],
       params["is_template"],
+      params["autocomplete"],
     ].join("/")
 
     cached_result = Rails.cache.fetch(cache_key, expires_in: 5.minutes) do
@@ -76,7 +85,7 @@ class Api::V2::CharactersController < ApplicationController
       {
         "characters" => ActiveModelSerializers::SerializableResource.new(
           characters,
-          each_serializer: CharacterIndexLiteSerializer,
+          each_serializer: params[:autocomplete] ? CharacterAutocompleteSerializer : CharacterIndexLiteSerializer,
           adapter: :attributes
         ).serializable_hash,
         "factions" => ActiveModelSerializers::SerializableResource.new(
@@ -89,65 +98,6 @@ class Api::V2::CharactersController < ApplicationController
       }
     end
     render json: cached_result
-  end
-
-  def sort_order
-    sort = params["sort"] || "created_at"
-    order = params["order"] || "DESC"
-    if sort == "type"
-      "LOWER(COALESCE(action_values->>'Type', '')) #{order}, LOWER(characters.name), characters.id"
-    elsif sort == "archetype"
-      "LOWER(COALESCE(action_values->>'Archetype', '')) #{order}, LOWER(characters.name), characters.id"
-    elsif sort == "name"
-      "LOWER(characters.name) #{order}, characters.id"
-    elsif sort == "created_at"
-      "characters.created_at #{order}, characters.id"
-    else
-      "characters.created_at DESC, characters.id"
-    end
-  end
-
-  def autocomplete
-    characters = current_campaign.characters.active
-      .select("characters.id", "characters.name", "characters.faction_id", "characters.action_values")
-
-    if params["faction_id"].present?
-      characters = characters.where(faction_id: params["faction_id"])
-    end
-
-    if params["type"].present?
-      characters = characters.where("action_values ->> 'Type' = ?", params["type"])
-    end
-
-    if params["archetype"].present?
-      characters = characters.where("action_values ->> 'Archetype' = ?", params["archetype"])
-    end
-
-    characters = characters.order("LOWER(characters.name) #{params['order'] || 'asc'}")
-      .limit(params["per_page"] || 75)
-      .offset((params["page"]&.to_i || 0) * (params["per_page"]&.to_i || 75))
-
-    # Get unique factions based on matching characters
-    faction_ids = characters.pluck(:faction_id).uniq.compact
-    factions = Faction.where(id: faction_ids)
-                      .select("factions.id", "factions.name")
-                      .order("LOWER(factions.name) ASC")
-
-    archetypes = characters.map { |c| c.action_values["Archetype"] }.compact.uniq.sort
-
-    render json: {
-      characters: ActiveModelSerializers::SerializableResource.new(
-        characters,
-        each_serializer: CharacterAutocompleteSerializer,
-        adapter: :attributes
-      ),
-      factions: ActiveModelSerializers::SerializableResource.new(
-        factions,
-        each_serializer: FactionAutocompleteSerializer,
-        adapter: :attributes
-      ),
-      archetypes: archetypes
-    }
   end
 
   def create
@@ -173,9 +123,9 @@ class Api::V2::CharactersController < ApplicationController
     end
 
     if @character.save
-      render json: @character, status: :created
+      render json: @character, serializer: CharacterSerializer, status: :created
     else
-      render json: { errors: @character.errors.full_messages }, status: :unprocessable_entity
+      render json: { errors: @character.errors }, status: :unprocessable_entity
     end
   end
 
@@ -221,13 +171,14 @@ class Api::V2::CharactersController < ApplicationController
       user: { image_attachment: :blob },
       faction: { image_attachment: :blob },
       image_attachment: :blob,
+      memberships: { party: { image_attachment: :blob } },
       attunements: { site: { image_attachment: :blob } },
       carries: { weapon: { image_attachment: :blob } },
       character_schticks: :schtick,
       advancements: [],
     ).find(params[:id])
 
-    render json: @character
+    render json: @character, serializer: CharacterSerializer, status: :ok
   end
 
   def destroy
@@ -270,9 +221,10 @@ class Api::V2::CharactersController < ApplicationController
         render json: @character.errors, status: :unprocessable_entity
       end
     else
-      @character = Character.new
       render json: { error: "No PDF file provided" }, status: :bad_request
     end
+  rescue StandardError => e
+    render json: { error: "Failed to import character: #{e.message}" }, status: :unprocessable_entity
   end
 
   def sync
@@ -320,9 +272,27 @@ class Api::V2::CharactersController < ApplicationController
       .require(:character)
       .permit(:name, :defense, :impairments, :color, :notion_page_id,
               :user_id, :active, :faction_id, :image, :task, :juncture_id, :wealth,
-              schtick_ids: [], weapon_ids: [],
+              schtick_ids: [], weapon_ids: [], site_ids: [], party_ids: [],
               action_values: {},
               description: Character::DEFAULT_DESCRIPTION.keys,
               schticks: [], skills: params.fetch(:character, {}).fetch(:skills, {}).keys || {})
+  end
+
+  def sort_order
+    sort = params["sort"] || "created_at"
+    order = params["order"] || "DESC"
+    if sort == "type"
+      "LOWER(COALESCE(action_values->>'Type', '')) #{order}, LOWER(characters.name), characters.id"
+    elsif sort == "archetype"
+      "LOWER(COALESCE(action_values->>'Archetype', '')) #{order}, LOWER(characters.name), characters.id"
+    elsif sort == "name"
+      "LOWER(characters.name) #{order}, characters.id"
+    elsif sort == "created_at"
+      "characters.created_at #{order}, characters.id"
+    elsif sort == "updated_at"
+      "characters.updated_at #{order}, characters.id"
+    else
+      "characters.created_at DESC, characters.id"
+    end
   end
 end

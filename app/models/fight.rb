@@ -17,6 +17,8 @@ class Fight < ApplicationRecord
 
   has_many :image_positions, as: :positionable, dependent: :destroy
 
+  validates :name, presence: true
+
   scope :active, -> { where(active: true) }
 
   SORT_ORDER = ["Uber-Boss", "Boss", "PC", "Featured Foe", "Ally", "Mook"]

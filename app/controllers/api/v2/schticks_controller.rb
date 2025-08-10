@@ -3,57 +3,71 @@ class Api::V2::SchticksController < ApplicationController
   before_action :require_current_campaign
 
   def index
-    sort = params["sort"] || "created_at"
-    order = params["order"] || "DESC"
-
-    if sort == "name"
-      sort = Arel.sql("LOWER(schticks.name) #{order}")
-    elsif sort == "created_at"
-      sort = Arel.sql("schticks.created_at #{order}")
-    else
-      sort = Arel.sql("schticks.created_at DESC")
-    end
-
-    @schticks = current_campaign
+    per_page = (params["per_page"] || 15).to_i
+    page = (params["page"] || 1).to_i
+    selects = [
+      "schticks.id",
+      "schticks.name",
+      "schticks.description",
+      "schticks.created_at",
+      "schticks.updated_at",
+      "schticks.category",
+      "schticks.path",
+      "schticks.prerequisite_id",
+    ]
+    includes = [
+      :image_positions,
+      image_attachment: :blob,
+      character_schticks: { character: { image_attachment: :blob } },
+    ]
+    query = current_campaign
       .schticks
-      .distinct
-      .with_attached_image
-      .includes(:prerequisite)
-      .order(sort)
+      .select(selects)
+      .includes(includes)
 
-    @paths = []
+    # Apply filters
+    query = query.where(id: params["id"]) if params["id"].present?
+    query = query.where("schticks.name ILIKE ?", "%#{params['search']}%") if params["search"].present?
+    query = query.where("schticks.category = ?", params["category"]) if params["category"].present?
+    query = query.where("schticks.path = ?", params["path"]) if params["path"].present?
 
-    if params[:ids].present?
-      @schticks = @schticks.where(id: params[:ids].split(","))
+    # Join associations
+    query = query.joins(:character_schticks).where(character_schticks: { character_id: params[:character_id] }) if params[:character_id].present?
+
+    # Cache key
+    cache_key = [
+      "schticks/index",
+      current_campaign.id,
+      sort_order,
+      page,
+      per_page,
+      params["search"],
+      params["user_id"],
+      params["category"],
+      params["character_id"],
+      params["autocomplete"],
+      params["path"],
+    ].join("/")
+
+    cached_result = Rails.cache.fetch(cache_key, expires_in: 5.minutes) do
+      schticks = query.order(Arel.sql(sort_order))
+      schticks = paginate(schticks, per_page: per_page, page: page)
+
+      categories = schticks.pluck(:category).uniq.compact
+      paths = schticks.pluck(:path).uniq.compact
+
+      {
+        "schticks" => ActiveModelSerializers::SerializableResource.new(
+          schticks,
+          each_serializer: params[:autocomplete] ? SchtickAutocompleteSerializer : SchtickIndexLiteSerializer,
+          adapter: :attributes
+        ).serializable_hash,
+        "categories" => categories,
+        "paths" => paths,
+        "meta" => pagination_meta(schticks)
+      }
     end
-
-    if params[:character_id].present?
-      @schticks = @schticks.joins(:characters).where(characters: { id: params[:character_id] })
-    end
-
-    @categories = @schticks.pluck(:category).uniq.compact.sort
-
-    if params[:category].present?
-      @schticks = @schticks.where(category: params[:category])
-      @paths = @schticks.pluck(:path).uniq.compact.sort
-    end
-
-    if params[:path].present?
-      @schticks = @schticks.where(path: params[:path])
-    end
-
-    if params[:search].present?
-      @schticks = @schticks.where("name ILIKE ?", "%#{params[:name]}%")
-    end
-
-    @schticks = paginate(@schticks, per_page: (params[:per_page] || 10), page: (params[:page] || 1))
-
-    render json: {
-      schticks: ActiveModelSerializers::SerializableResource.new(@schticks, each_serializer: SchtickSerializer).serializable_hash,
-      meta: pagination_meta(@schticks),
-      paths: @paths,
-      categories: @categories
-    }
+    render json: cached_result
   end
 
   def batch
@@ -86,16 +100,17 @@ class Api::V2::SchticksController < ApplicationController
     render json: cached_response, status: :ok
   end
 
-
   def categories
     all_categories = current_campaign.schticks.pluck(:category).uniq.compact
     core_categories = current_campaign.schticks.where(path: "Core").pluck(:category).uniq.compact
     general_categories = all_categories - core_categories
+
     if params[:search].present?
       search = params[:search].downcase
       general_categories = general_categories.select { |category| category.downcase.include?(search) }
       core_categories = core_categories.select { |category| category.downcase.include?(search) }
     end
+
     render json: {
       general: general_categories.sort,
       core: core_categories.sort
@@ -122,7 +137,7 @@ class Api::V2::SchticksController < ApplicationController
   def show
     @schtick = current_campaign.schticks.find(params[:id])
 
-    render json: @schtick
+    render json: @schtick, serializer: SchtickSerializer
   end
 
   def create
@@ -138,7 +153,7 @@ class Api::V2::SchticksController < ApplicationController
       schtick_data = schtick_params.to_h.symbolize_keys
     end
 
-    schtick_data = schtick_data.slice(:name, :description, :active, :faction_id, :category, :path, :color)
+    schtick_data = schtick_data.slice(:name, :description, :active, :category, :path, :color, :prerequisite_id)
 
     @schtick = current_campaign.schticks.new(schtick_data)
 
@@ -168,7 +183,7 @@ class Api::V2::SchticksController < ApplicationController
     else
       schtick_data = schtick_params.to_h.symbolize_keys
     end
-    schtick_data = schtick_data.slice(:name, :description, :category, :path, :color)
+    schtick_data = schtick_data.slice(:name, :description, :category, :path, :color, :prerequisite_id)
 
     # Handle image attachment if present
     if params[:image].present?
@@ -198,10 +213,19 @@ class Api::V2::SchticksController < ApplicationController
 
   def destroy
     @schtick = current_campaign.schticks.find(params[:id])
+
+    if @schtick.character_schtick_ids.any? && !params[:force]
+      render json: { errors: { characters: true  } }, status: 400 and return
+    end
+
+    if @schtick.character_schtick_ids.any? && params[:force]
+      @schtick.character_schticks.destroy_all
+    end
+
     if @schtick.destroy!
       render :ok
     else
-      render json: @schtick, status: 400
+      render json: { errors: @schtick.errors }, status: 400
     end
   end
 
@@ -212,6 +236,24 @@ class Api::V2::SchticksController < ApplicationController
   end
 
   def schtick_params
-    params.require(:schtick).permit(:name, :description, :category, :path, :color, :image_url)
+    params.require(:schtick).permit(:name, :description, :category, :path, :color, :image_url, :prerequisite_id)
+  end
+
+  def sort_order
+    sort = params["sort"] || "created_at"
+    order = params["order"] || "DESC"
+    if sort == "name"
+      "LOWER(schticks.name) #{order}, schticks.id"
+    elsif sort == "category"
+      "LOWER(schticks.category) #{order}, LOWER(schticks.name) #{order}, schticks.id"
+    elsif sort == "path"
+      "LOWER(schticks.path) #{order}, LOWER(schticks.name) #{order}, schticks.id"
+    elsif sort == "created_at"
+      "schticks.created_at #{order}, schticks.id"
+    elsif sort == "updated_at"
+      "schticks.updated_at #{order}, schticks.id"
+    else
+      "schticks.created_at DESC, schticks.id"
+    end
   end
 end

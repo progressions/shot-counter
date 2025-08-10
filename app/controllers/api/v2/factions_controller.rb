@@ -3,50 +3,71 @@ class Api::V2::FactionsController < ApplicationController
   before_action :require_current_campaign
 
   def index
-    @factions = current_campaign
+    per_page = (params["per_page"] || 15).to_i
+    page = (params["page"] || 1).to_i
+    selects = [
+      "factions.id",
+      "factions.name",
+      "factions.campaign_id",
+      "factions.description",
+      "factions.created_at",
+      "factions.updated_at",
+      "factions.active",
+    ]
+    includes = [
+      :image_positions,
+      image_attachment: :blob,
+      junctures: { image_attachment: :blob },
+      characters: { image_attachment: :blob },
+      vehicles: { image_attachment: :blob },
+    ]
+    query = current_campaign
       .factions
-      .with_attached_image
-    if params[:id].present?
-      @factions = @factions.where(id: params[:id])
+      .select(selects)
+      .includes(includes)
+
+    # Apply filters
+    query = query.where(id: params["id"]) if params["id"].present?
+    query = query.where("factions.name ILIKE ?", "%#{params['search']}%") if params["search"].present?
+    if params["show_all"] == "true"
+      query = query.where(active: [true, false, nil])
+    else
+      query = query.where(active: true)
     end
-    if params[:search].present?
-      @factions = @factions.where("name ILIKE ?", "%#{params[:search]}%")
-    end
-    if params[:character_id].present?
-      @factions = @factions.joins(:attunements).where(attunements: { id: params[:character_id] })
-    end
-    if params[:user_id].present?
-      @factions = @factions.joins(:characters).where(characters: { user_id: params[:user_id] })
-    end
+    # Join associations
+    query = query.joins(:characters).where(characters: { id: params[:character_id] }) if params[:character_id].present?
+    query = query.joins(:vehicles).where(vehicles: { id: params[:vehicle_id] }) if params[:vehicle_id].present?
+    query = query.joins(:junctures).where(junctures: { id: params[:juncture_id] }) if params[:juncture_id].present?
+
+    # Cache key
     cache_key = [
       "factions/index",
       current_campaign.id,
       sort_order,
-      params[:page],
-      params[:per_page],
-      params[:id],
-      params[:search],
-      params[:user_id],
-      params[:character_id],
+      page,
+      per_page,
+      params["search"],
+      params["juncture_id"],
+      params["autocomplete"],
+      params["character_id"],
+      params["vehicle_id"],
+      params["show_all"],
     ].join("/")
-    @factions = @factions
-      .select(:id, :name, :description, :campaign_id, :created_at, :updated_at, :active, "LOWER(name) AS lower_name")
-      .includes(:image_positions)
-      .distinct
-      .order(Arel.sql(sort_order))
-    cached_result = Rails.cache.fetch(cache_key, expires_in: 12.hours) do
-      @factions = paginate(@factions, per_page: (params[:per_page] || 10), page: (params[:page] || 1))
-      if params[:autocomplete]
-        {
-          factions: ActiveModelSerializers::SerializableResource.new(@factions, each_serializer: FactionLiteSerializer).serializable_hash,
-          meta: pagination_meta(@factions),
-        }
-      else
-        {
-          meta: pagination_meta(@factions),
-          factions: ActiveModelSerializers::SerializableResource.new(@factions, each_serializer: FactionSerializer).serializable_hash,
-        }
-      end
+
+    ActiveRecord::Associations::Preloader.new(records: [current_campaign], associations: { user: [:image_attachment, :image_blob] })
+
+    cached_result = Rails.cache.fetch(cache_key, expires_in: 5.minutes) do
+      factions = query.order(Arel.sql(sort_order))
+      factions = paginate(factions, per_page: per_page, page: page)
+
+      {
+        "factions" => ActiveModelSerializers::SerializableResource.new(
+          factions,
+          each_serializer: params[:autocomplete] ? FactionAutocompleteSerializer : FactionIndexSerializer,
+          adapter: :attributes
+        ).serializable_hash,
+        "meta" => pagination_meta(factions)
+      }
     end
     render json: cached_result
   end
@@ -69,7 +90,7 @@ class Api::V2::FactionsController < ApplicationController
       faction_data = faction_params.to_h.symbolize_keys
     end
 
-    faction_data = faction_data.slice(:name, :description, :character_ids, :party_ids, :site_ids, :juncture_ids)
+    faction_data = faction_data.slice(:name, :description, :character_ids, :party_ids, :site_ids, :juncture_ids, :vehicle_ids)
 
     @faction = current_campaign.factions.new(faction_data)
 
@@ -99,7 +120,7 @@ class Api::V2::FactionsController < ApplicationController
     else
       faction_data = faction_params.to_h.symbolize_keys
     end
-    faction_data = faction_data.slice(:name, :description, :character_ids, :party_ids, :site_ids, :juncture_ids)
+    faction_data = faction_data.slice(:name, :description, :character_ids, :party_ids, :site_ids, :juncture_ids, :vehicle_ids)
 
     # Handle image attachment if present
     if params[:image].present?
@@ -119,9 +140,25 @@ class Api::V2::FactionsController < ApplicationController
   end
 
   def destroy
-    faction = current_campaign.factions.find(params[:id])
-    faction.destroy
-    head :ok
+    @faction = current_campaign.factions.find(params[:id])
+    if @faction.character_ids.any? && !params[:force]
+      render json: { errors: { characters: true } }, status: 400 and return
+    end
+    if @faction.vehicle_ids.any? && !params[:force]
+      render json: { errors: { vehicles: true } }, status: 400 and return
+    end
+    if params[:force]
+      @faction.characters.update_all(faction_id: nil)
+      @faction.vehicles.update_all(faction_id: nil)
+      @faction.parties.update_all(faction_id: nil)
+      @faction.sites.update_all(faction_id: nil)
+      @faction.junctures.update_all(faction_id: nil)
+    end
+    if @faction.destroy!
+      render :ok
+    else
+      render json: { errors: @faction.errors }, status: 400
+    end
   end
 
   def remove_image
@@ -133,7 +170,7 @@ class Api::V2::FactionsController < ApplicationController
   private
 
   def faction_params
-    params.require(:faction).permit(:name, :description, :image, character_ids: [], party_ids: [], site_ids: [], juncture_ids: [])
+    params.require(:faction).permit(:name, :description, :image, character_ids: [], party_ids: [], site_ids: [], juncture_ids: [], vehicle_ids: [])
   end
 
   def sort_order

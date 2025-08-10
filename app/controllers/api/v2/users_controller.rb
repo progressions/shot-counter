@@ -1,27 +1,69 @@
 class Api::V2::UsersController < ApplicationController
   before_action :authenticate_user!
+  before_action :require_admin, only: [:index, :create, :destroy]
+  before_action :set_user, only: [:show, :update, :destroy, :remove_image]
+  before_action :require_self_or_admin, only: :update
 
   def index
-    @users = User
-      .distinct
-      .with_attached_image
-      .select(:id, :email, :first_name, :last_name, :admin, :gamemaster, :created_at, :updated_at, "LOWER(users.last_name) AS last_name_lower", "LOWER(users.first_name) AS first_name_lower")
-      .order(Arel.sql(sort_order))
-
-    @users = paginate(@users, per_page: (params[:per_page] || 12), page: (params[:page] || 1))
-
-    render json: {
-      users: ActiveModel::Serializer::CollectionSerializer.new(@users, each_serializer: UserSerializer),
-      meta: pagination_meta(@users),
-    }
+    per_page = (params["per_page"] || 15).to_i
+    page = (params["page"] || 1).to_i
+    selects = [
+      "users.id",
+      "users.name",
+      "users.first_name",
+      "users.last_name",
+      "users.email",
+      "users.created_at",
+      "users.updated_at",
+      "users.active",
+      "users.admin",
+      "users.gamemaster",
+    ]
+    includes = [
+      :image_positions,
+      image_attachment: :blob,
+      campaigns: { image_attachment: :blob },
+    ]
+    query = User.select(selects).includes(includes)
+    # Apply filters
+    query = query.where(id: params["id"]) if params["id"].present?
+    query = query.where(email: params["email"]) if params["email"].present?
+    query = query.where("users.first_name ILIKE ? OR users.last_name ILIKE ?", "%#{params['search']}%", "%#{params['search']}%") if params["search"].present?
+    if params["show_all"] == "true"
+      query = query.where(active: [true, false, nil])
+    else
+      query = query.where(active: true)
+    end
+    query = query.joins(:characters).where(characters: { id: params[:character_id] }) if params[:character_id].present?
+    # Cache key
+    cache_key = [
+      "users/index",
+      current_user.id,
+      sort_order,
+      page,
+      per_page,
+      params["id"],
+      params["email"],
+      params["search"],
+      params["character_id"],
+      params["show_all"],
+    ].join("/")
+    cached_result = Rails.cache.fetch(cache_key, expires_in: 5.minutes) do
+      users = query.order(Arel.sql(sort_order))
+      users = paginate(users, per_page: per_page, page: page)
+      {
+        "users" => ActiveModelSerializers::SerializableResource.new(
+          users,
+          each_serializer: params[:autocomplete] ? UserAutocompleteSerializer : UserIndexSerializer,
+          adapter: :attributes
+        ).serializable_hash,
+        "meta" => pagination_meta(users)
+      }
+    end
+    render json: cached_result
   end
 
   def show
-    if params[:id] == "confirmation_token"
-      @user = User.find_by(confirmation_token: params[:confirmation_token])
-    else
-      @user = User.find(params[:id])
-    end
     render json: @user, serializer: UserSerializer, status: :ok
   end
 
@@ -30,7 +72,6 @@ class Api::V2::UsersController < ApplicationController
   end
 
   def create
-    # Check if request is multipart/form-data with a JSON string
     if params[:user].present? && params[:user].is_a?(String)
       begin
         user_data = JSON.parse(params[:user]).symbolize_keys
@@ -41,27 +82,20 @@ class Api::V2::UsersController < ApplicationController
     else
       user_data = user_params.to_h.symbolize_keys
     end
-
-    user_data.slice(:name, :description, :active, :faction_id)
-
     @user = User.new(user_data)
-
-    # Handle image attachment if present
     if params[:image].present?
       @user.image.attach(params[:image])
     end
-
     if @user.save
-      render json: @user, status: :created
+      token = encode_jwt(@user)
+      response.set_header("Authorization", "Bearer #{token}")
+      render json: @user, serializer: UserSerializer, status: :created
     else
-      render json: { errors: @user.errors.full_messages }, status: :unprocessable_entity
+      render json: { errors: @user.errors }, status: :unprocessable_entity
     end
   end
 
   def update
-    @user = User.find(params[:id])
-
-    # Handle multipart/form-data for updates if present
     if params[:user].present? && params[:user].is_a?(String)
       begin
         user_data = JSON.parse(params[:user]).symbolize_keys
@@ -72,45 +106,81 @@ class Api::V2::UsersController < ApplicationController
     else
       user_data = user_params.to_h.symbolize_keys
     end
-    user_data = user_data.slice(:name, :description, :active, :faction_id, :character_ids)
-
-    # Handle image attachment if present
     if params[:image].present?
-      @user.image.purge if @user.image.attached? # Remove existing image
+      @user.image.purge if @user.image.attached?
       @user.image.attach(params[:image])
     end
-
     if @user.update(user_data)
-      render json: @user
+      token = encode_jwt(@user)
+      response.set_header("Authorization", "Bearer #{token}")
+      render json: @user, serializer: UserSerializer
     else
-      render json: { errors: @user.errors.full_messages }, status: :unprocessable_entity
+      render json: { errors: @user.errors }, status: :unprocessable_entity
     end
   end
 
   def destroy
-    @user = User.find(params[:id])
-    @user.destroy
-    render :ok
+    if @user.characters.any? && !params[:force]
+      render json: { errors: { characters: true } }, status: 400 and return
+    end
+    if params[:force]
+      @user.characters.update_all(user_id: nil)
+      @user.campaigns.update_all(user_id: nil)
+    end
+    if @user.destroy!
+      render :ok
+    else
+      render json: { errors: @user.errors }, status: 400
+    end
   end
 
   def remove_image
-    @user = current_user
-    @user.image.purge
+    if @user != current_user && !current_user.admin?
+      render json: { error: "Admin access required to remove another user's image" }, status: :forbidden
+      return
+    end
+    @user.image.purge if @user.image.attached?
     if @user.save
       token = encode_jwt(@user)
       response.set_header("Authorization", "Bearer #{token}")
-      render json: @user
+      render json: @user, serializer: UserSerializer
     else
-      render json: @user.errors, status: 400
+      render json: { errors: @user.errors.full_messages }, status: :unprocessable_entity
     end
   end
 
   private
 
+  def set_user
+    if params[:id] == "confirmation_token"
+      @user = User.find_by(confirmation_token: params[:confirmation_token])
+    else
+      @user = User.find(params[:id])
+    end
+    unless @user
+      render json: { error: "Record not found" }, status: :not_found
+      return
+    end
+  end
+
+  def require_admin
+    unless current_user.admin?
+      render json: { error: "Admin access required" }, status: :forbidden
+      return
+    end
+  end
+
+  def require_self_or_admin
+    unless @user == current_user || current_user.admin?
+      render json: { error: "You can only edit your own attributes or must be an admin" }, status: :forbidden
+      return
+    end
+  end
+
   def encode_jwt(user)
     payload = {
       jti: SecureRandom.uuid,
-      user: user.as_v1_json(only: [:email, :admin, :first_name, :last_name, :gamemaster, :current_campaign, :created_at, :updated_at, :image_url]),
+      user: UserSerializer.new(user).serializable_hash,
       sub: user.id,
       scp: "user",
       aud: nil,
@@ -127,16 +197,16 @@ class Api::V2::UsersController < ApplicationController
   def sort_order
     sort = params["sort"] || "created_at"
     order = params["order"] || "DESC"
-
     if sort == "name"
       "LOWER(users.last_name) #{order}, LOWER(users.first_name) #{order}"
     elsif sort == "email"
       "LOWER(users.email) #{order}"
     elsif sort == "created_at"
       "users.created_at #{order}"
+    elsif sort == "updated_at"
+      "users.updated_at #{order}"
     else
       "users.created_at DESC"
     end
   end
-
 end

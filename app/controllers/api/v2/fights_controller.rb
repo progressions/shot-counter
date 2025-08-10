@@ -4,6 +4,76 @@ class Api::V2::FightsController < ApplicationController
   before_action :set_fight, only: [:show, :update, :destroy, :touch]
 
   def index
+    per_page = (params["per_page"] || 15).to_i
+    page = (params["page"] || 1).to_i
+    selects = [
+      "fights.id",
+      "fights.name",
+      "fights.description",
+      "fights.created_at",
+      "fights.updated_at",
+      "fights.started_at",
+      "fights.ended_at",
+      "fights.active",
+    ]
+    includes = [
+      :image_positions,
+      image_attachment: :blob,
+      shots: { character: { image_attachment: :blob } },
+      shots: { vehicle: { image_attachment: :blob } },
+    ]
+    query = current_campaign
+      .fights
+      .select(selects)
+      .includes(includes)
+
+    # Apply filters
+    query = query.where("fights.name ILIKE ?", "%#{params['search']}%") if params["search"].present?
+    if params["show_all"] == "true"
+      query = query.where(active: [true, false, nil])
+    else
+      query = query.where(active: true)
+    end
+    query = query.where(id: params["id"]) if params["id"].present?
+    query = query.where(started_at: nil) if params["unstarted"].present?
+    query = query.where.not(started_at: nil).where(ended_at: nil) if params["unended"].present?
+    # Join associations
+    query = query.joins(:shots).where(shots: { character_id: params[:character_id] }) if params[:character_id].present?
+    query = query.joins(:shots).where(shots: { vehicle_id: params[:vehicle_id] }) if params[:vehicle_id].present?
+    query = query.joins(:shots).joins("INNER JOIN characters ON shots.character_id = characters.id").where(characters: { user_id: params[:user_id] }) if params[:user_id].present?
+
+    # Cache key
+    cache_key = [
+      "fights/index",
+      current_campaign.id,
+      sort_order,
+      page,
+      per_page,
+      params["search"],
+      params["active"],
+      params["character_id"],
+      params["vehicle_id"],
+      params["autocomplete"],
+      params["user_id"],
+    ].join("/")
+
+    ActiveRecord::Associations::Preloader.new(records: [current_campaign], associations: { user: [:image_attachment, :image_blob] })
+
+    cached_result = Rails.cache.fetch(cache_key, expires_in: 5.minutes) do
+      fights = query.order(Arel.sql(sort_order))
+      fights = paginate(fights, per_page: per_page, page: page)
+      {
+        "fights" => ActiveModelSerializers::SerializableResource.new(
+          fights,
+          each_serializer: params[:autocomplete] ? FightLiteSerializer : FightIndexLiteSerializer,
+        ).serializable_hash,
+        "meta" => pagination_meta(fights)
+      }
+    end
+    render json: cached_result
+  end
+
+  def indexz
     @fights = current_campaign
       .fights
       .distinct
@@ -93,14 +163,12 @@ class Api::V2::FightsController < ApplicationController
     # Handle image attachment if present
     if params[:image].present?
       @fight.image.attach(params[:image])
-      extension = params[:image].original_filename.split('.').last
-      @fight.image.blob.update(imagekit_filename: "image_#{@fight.id}__#{rand(1000)}__#{SecureRandom.hex(4)}.#{extension}")
     end
 
     if @fight.save
       render json: @fight, serializer: FightSerializer, status: :created
     else
-      render json: { errors: @fight.errors.full_messages }, status: :unprocessable_entity
+      render json: { errors: @fight.errors }, status: :unprocessable_entity
     end
   end
 
@@ -124,15 +192,12 @@ class Api::V2::FightsController < ApplicationController
     if params[:image].present?
       @fight.image.purge if @fight.image.attached? # Remove existing image
       @fight.image.attach(params[:image])
-      extension = params[:image].original_filename.split('.').last
-      @fight.image.blob.update(imagekit_filename: "image_#{@fight.id}__#{rand(1000)}__#{SecureRandom.hex(4)}.#{extension}")
-      binding.pry
     end
 
     if @fight.update(fight_data)
       render json: @fight.reload, serializer: FightSerializer, status: :ok
     else
-      render json: { errors: @fight.errors.full_messages }, status: :unprocessable_entity
+      render json: { errors: @fight.errors }, status: :unprocessable_entity
     end
   end
 
