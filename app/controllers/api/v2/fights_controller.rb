@@ -174,8 +174,8 @@ class Api::V2::FightsController < ApplicationController
       "LOWER(fights.name) #{order}, fights.id"
     elsif sort == "created_at"
       "fights.created_at #{order}, fights.id"
-    elsif sort == "update_at"
-      "fights.update_at #{order}, fights.id"
+    elsif sort == "updated_at"
+      "fights.updated_at #{order}, fights.id"
     else
       "fights.created_at DESC, fights.id"
     end

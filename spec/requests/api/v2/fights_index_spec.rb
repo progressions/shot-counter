@@ -117,7 +117,7 @@ RSpec.describe "Api::V2::Fights", type: :request do
       get "/api/v2/fights", params: { sort: "updated_at", order: "asc" }, headers: @headers
       expect(response).to have_http_status(200)
       body = JSON.parse(response.body)
-      expect(body["fights"].map { |f| f["name"] }).to eq(["Airport Battle", "Small Skirmish", "Big Brawl"])
+      expect(body["fights"].map { |f| f["name"] }).to eq( ["Big Brawl", "Airport Battle", "Small Skirmish"])
     end
 
     it "sorts by updated_at descending" do
@@ -125,7 +125,7 @@ RSpec.describe "Api::V2::Fights", type: :request do
       get "/api/v2/fights", params: { sort: "updated_at", order: "desc" }, headers: @headers
       expect(response).to have_http_status(200)
       body = JSON.parse(response.body)
-      expect(body["fights"].map { |f| f["name"] }).to eq(["Airport Battle", "Small Skirmish", "Big Brawl"])
+      expect(body["fights"].map { |f| f["name"] }).to eq(["Small Skirmish", "Airport Battle", "Big Brawl"])
     end
 
     it "gets only active fights when show_all is false" do
@@ -326,7 +326,7 @@ RSpec.describe "Api::V2::Fights", type: :request do
       get "/api/v2/fights", params: { autocomplete: true, sort: "updated_at", order: "asc" }, headers: @headers
       expect(response).to have_http_status(200)
       body = JSON.parse(response.body)
-      expect(body["fights"].map { |f| f["name"] }).to eq(["Airport Battle", "Small Skirmish", "Big Brawl"])
+      expect(body["fights"].map { |f| f["name"] }).to eq(["Big Brawl", "Airport Battle", "Small Skirmish"])
     end
 
     it "sorts by updated_at descending" do
@@ -334,7 +334,7 @@ RSpec.describe "Api::V2::Fights", type: :request do
       get "/api/v2/fights", params: { autocomplete: true, sort: "updated_at", order: "desc" }, headers: @headers
       expect(response).to have_http_status(200)
       body = JSON.parse(response.body)
-      expect(body["fights"].map { |f| f["name"] }).to eq(["Airport Battle", "Small Skirmish", "Big Brawl"])
+      expect(body["fights"].map { |f| f["name"] }).to eq(["Small Skirmish", "Airport Battle", "Big Brawl"])
     end
 
     it "gets only active fights when show_all is false" do
