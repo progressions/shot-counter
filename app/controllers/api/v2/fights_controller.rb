@@ -15,6 +15,8 @@ class Api::V2::FightsController < ApplicationController
       "fights.started_at",
       "fights.ended_at",
       "fights.active",
+      "fights.campaign_id",
+      "LOWER(fights.name) AS name_lower",
     ]
     includes = [
       :image_positions,
@@ -70,72 +72,6 @@ class Api::V2::FightsController < ApplicationController
         "meta" => pagination_meta(fights)
       }
     end
-    render json: cached_result
-  end
-
-  def indexz
-    @fights = current_campaign
-      .fights
-      .distinct
-      .with_attached_image
-      .where(archived: false)
-      .select(:id, :campaign_id, :name, :sequence, :active, :archived, :description, :created_at,
-              :updated_at, :started_at, :ended_at, :season, :session, "LOWER(fights.name) AS lower_name")
-      .includes(
-        { characters: [:image_attachment, :image_blob] },
-        { vehicles: [:image_attachment, :image_blob] },
-        :image_positions,
-        { shots: [{ character: [:image_attachment, :image_blob] }, { vehicle: [:image_attachment, :image_blob] }] }
-      )
-      .order(Arel.sql(sort_order))
-
-    ActiveRecord::Associations::Preloader.new(records: [current_campaign], associations: { user: [:image_attachment, :image_blob] })
-
-    if params[:show_all] != "true"
-      @fights = @fights.where(active: true)
-    end
-    if params[:unstarted].present?
-      @fights = @fights.where(started_at: nil)
-    end
-    if params[:unended].present?
-      @fights = @fights.where(ended_at: nil)
-    end
-    if params[:user_id].present?
-      @fights = @fights.joins(:characters).where(characters: { user_id: params[:user_id] })
-    end
-    if params[:id].present?
-      @fights = @fights.where(id: params[:id])
-    end
-    if params[:search].present?
-      @fights = @fights.where("name ILIKE ?", "%#{params[:search]}%")
-    end
-    if params[:character_id].present?
-      @fights = @fights.joins(:shots).where(shots: { character_id: params[:character_id] })
-    end
-
-    cache_key = [
-      "fights/index",
-      current_campaign.id,
-      sort_order,
-      params[:page],
-      params[:per_page],
-      params[:show_all],
-      params[:unstarted],
-      params[:unended],
-      params[:id],
-      params[:search],
-      params[:character_id],
-      params[:user_id],
-    ].join("/")
-
-    cached_result = Rails.cache.fetch(cache_key, expires_in: 12.hours) do
-      @fights = paginate(@fights, per_page: (params[:per_page] || 6), page: (params[:page] || 1))
-      {
-        fights: ActiveModelSerializers::SerializableResource.new(@fights, each_serializer: FightSerializer).serializable_hash,
-        meta: pagination_meta(@fights)
-      }
-    end
-
     render json: cached_result
   end
 
@@ -238,6 +174,8 @@ class Api::V2::FightsController < ApplicationController
       "LOWER(fights.name) #{order}, fights.id"
     elsif sort == "created_at"
       "fights.created_at #{order}, fights.id"
+    elsif sort == "update_at"
+      "fights.update_at #{order}, fights.id"
     else
       "fights.created_at DESC, fights.id"
     end
