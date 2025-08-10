@@ -21,6 +21,7 @@ class User < ApplicationRecord
   has_many :invitations
   has_one_attached :image
   has_many :image_positions, as: :positionable, dependent: :destroy
+  before_validation :set_name, if: -> { first_name_changed? || last_name_changed? }
   validates :email,
     uniqueness: true,
     allow_nil: true,
@@ -36,8 +37,8 @@ class User < ApplicationRecord
     ))
   end
 
-  def name
-    "#{first_name} #{last_name}".strip
+  def set_name
+    self.name = "#{first_name} #{last_name}".strip
   end
 
   def password
