@@ -58,7 +58,6 @@ RSpec.describe "Api::V2::Users", type: :request do
         body = JSON.parse(response.body)
         expect(body["users"].length).to eq(1)
         expect(body["users"][0]).to include("email" => "player@example.com", "first_name" => "Player", "last_name" => "One", "admin" => nil, "gamemaster" => false)
-        puts body["users"][0].keys.inspect
         expect(body["users"][0].keys).to include("id", "email", "first_name", "last_name", "admin", "gamemaster", "image_url", "name", "created_at", "updated_at", "entity_class", "active", "campaigns")
       end
 
