@@ -91,7 +91,7 @@ class Api::V2::UsersController < ApplicationController
       response.set_header("Authorization", "Bearer #{token}")
       render json: @user, serializer: UserSerializer, status: :created
     else
-      render json: { errors: @user.errors.full_messages }, status: :unprocessable_entity
+      render json: { errors: @user.errors }, status: :unprocessable_entity
     end
   end
 
@@ -115,7 +115,7 @@ class Api::V2::UsersController < ApplicationController
       response.set_header("Authorization", "Bearer #{token}")
       render json: @user, serializer: UserSerializer
     else
-      render json: { errors: @user.errors.full_messages }, status: :unprocessable_entity
+      render json: { errors: @user.errors }, status: :unprocessable_entity
     end
   end
 
@@ -180,7 +180,7 @@ class Api::V2::UsersController < ApplicationController
   def encode_jwt(user)
     payload = {
       jti: SecureRandom.uuid,
-      user: user.as_v1_json(only: [:email, :admin, :first_name, :last_name, :gamemaster, :current_campaign, :created_at, :updated_at, :image_url]),
+      user: UserSerializer.new(user).serializable_hash,
       sub: user.id,
       scp: "user",
       aud: nil,
