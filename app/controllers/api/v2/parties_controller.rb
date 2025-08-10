@@ -4,6 +4,86 @@ class Api::V2::PartiesController < ApplicationController
   before_action :set_party, only: [:show, :update, :destroy, :remove_image]
 
   def index
+    per_page = (params["per_page"] || 15).to_i
+    page = (params["page"] || 1).to_i
+    selects = [
+      "parties.id",
+      "parties.name",
+      "parties.campaign_id",
+      "parties.faction_id",
+      "parties.juncture_id",
+      "parties.description",
+      "parties.created_at",
+      "parties.updated_at",
+      "parties.active",
+    ]
+    includes = [
+      :image_positions,
+      image_attachment: :blob,
+      faction: { image_attachment: :blob },
+      juncture: { image_attachment: :blob },
+      attunements: { character: { image_attachment: :blob } },
+    ]
+    query = current_campaign
+      .parties
+      .select(selects)
+      .includes(includes)
+
+    # Apply filters
+    query = query.where(id: params["id"]) if params["id"].present?
+    query = query.where(faction_id: params["faction_id"]) if params["faction_id"].present?
+    query = query.where("parties.name ILIKE ?", "%#{params['search']}%") if params["search"].present?
+    if params["show_all"] == "true"
+      query = query.where(active: [true, false, nil])
+    else
+      query = query.where(active: true)
+    end
+    # Join associations
+    query = query.joins(:memberships).where(memberships: { character_id: params[:character_id] }) if params[:character_id].present?
+
+    # Cache key
+    cache_key = [
+      "parties/index",
+      current_campaign.id,
+      sort_order,
+      page,
+      per_page,
+      params["party_id"],
+      params["fight_id"],
+      params["search"],
+      params["faction_id"],
+      params["autocomplete"],
+      params["character_id"],
+      params["show_all"],
+    ].join("/")
+
+    cached_result = Rails.cache.fetch(cache_key, expires_in: 5.minutes) do
+      parties = query.order(Arel.sql(sort_order))
+      parties = paginate(parties, per_page: per_page, page: page)
+      # Fetch factions
+      faction_ids = parties.pluck(:faction_id).uniq.compact
+      factions = Faction.where(id: faction_ids)
+                        .select("factions.id", "factions.name")
+                        .order("LOWER(factions.name) ASC")
+      # Archetypes
+      {
+        "parties" => ActiveModelSerializers::SerializableResource.new(
+          parties,
+          each_serializer: params[:autocomplete] ? PartyAutocompleteSerializer : PartyIndexSerializer,
+          adapter: :attributes
+        ).serializable_hash,
+        "factions" => ActiveModelSerializers::SerializableResource.new(
+          factions,
+          each_serializer: FactionLiteSerializer,
+          adapter: :attributes
+        ).serializable_hash,
+        "meta" => pagination_meta(parties)
+      }
+    end
+    render json: cached_result
+  end
+
+  def oldindex
     sort = params["sort"] || "created_at"
     order = params["order"] || "DESC"
 
@@ -165,9 +245,19 @@ class Api::V2::PartiesController < ApplicationController
   end
 
   def destroy
-    @party.destroy!
+    if @party.membership_ids.any? && !params[:force]
+      render json: { errors: { memberships: true  } }, status: 400 and return
+    end
 
-    render :ok
+    if @party.membership_ids.any? && params[:force]
+      @party.memberships.destroy_all
+    end
+
+    if @party.destroy!
+      render :ok
+    else
+      render json: { errors: @party.errors }, status: 400
+    end
   end
 
   def remove_image
@@ -188,5 +278,20 @@ class Api::V2::PartiesController < ApplicationController
 
   def party_params
     params.require(:party).permit(:name, :description, :faction_id, :secret, :image, character_ids: [])
+  end
+
+  def sort_order
+    sort = params["sort"] || "created_at"
+    order = params["order"] || "DESC"
+
+    if sort == "name"
+      "LOWER(parties.name) #{order}"
+    elsif sort == "created_at"
+      "parties.created_at #{order}"
+    elsif sort == "updated_at"
+      "parties.updated_at #{order}"
+    else
+      "parties.created_at DESC"
+    end
   end
 end

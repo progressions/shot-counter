@@ -84,67 +84,6 @@ class Api::V2::SitesController < ApplicationController
     render json: cached_result
   end
 
-  def oldindex
-    @sites = current_campaign
-      .sites
-      .distinct
-      .with_attached_image
-
-    if params[:id].present?
-      @sites = @sites.where(id: params[:id])
-    end
-    if params[:search].present?
-      @sites = @sites.where("name ILIKE ?", "%#{params[:search]}%")
-    end
-    if params[:faction_id].present?
-      @sites = @sites.where(faction_id: params[:faction_id])
-    end
-    if params[:character_id].present?
-      @sites = @sites.joins(:attunements).where(attunements: { id: params[:character_id] })
-    end
-    if params[:user_id].present?
-      @sites = @sites.joins(:characters).where(characters: { user_id: params[:user_id] })
-    end
-
-    cache_key = [
-      "sites/index",
-      current_campaign.id,
-      sort_order,
-      params[:page],
-      params[:per_page],
-      params[:id],
-      params[:search],
-      params[:user_id],
-      params[:faction_id],
-      params[:character_id],
-    ].join("/")
-
-    @factions = current_campaign.factions.joins(:sites).where(sites: @sites).order("factions.name").distinct
-
-    @sites = @sites
-      .select(:id, :name, :description, :campaign_id, :faction_id, :active, :created_at, :updated_at, "LOWER(sites.name) AS lower_name")
-      .includes(
-        { faction: [:image_attachment, :image_blob] },
-        { attunements: [
-          { character: [:image_attachment, :image_blob] },
-        ] },
-        :image_positions,
-      )
-      .order(Arel.sql(sort_order))
-
-    cached_result = Rails.cache.fetch(cache_key, expires_in: 12.hours) do
-      @sites = paginate(@sites, per_page: (params[:per_page] || 10), page: (params[:page] || 1))
-
-      {
-        sites: ActiveModelSerializers::SerializableResource.new(@sites, each_serializer: SiteIndexSerializer).serializable_hash,
-        factions: ActiveModelSerializers::SerializableResource.new(@factions, each_serializer: FactionLiteSerializer).serializable_hash,
-        meta: pagination_meta(@sites),
-      }
-    end
-
-    render json: cached_result
-  end
-
   def show
     render json: SiteSerializer.new(current_campaign.sites.find(params[:id])).serializable_hash
   end

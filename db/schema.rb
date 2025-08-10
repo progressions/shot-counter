@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_08_10_002204) do
+ActiveRecord::Schema[8.0].define(version: 2025_08_10_004814) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -264,9 +264,12 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_10_002204) do
     t.datetime "updated_at", null: false
     t.uuid "faction_id"
     t.boolean "secret", default: false
+    t.uuid "juncture_id"
+    t.boolean "active", default: true, null: false
     t.index "lower((name)::text)", name: "index_parties_on_lower_name"
     t.index ["campaign_id"], name: "index_parties_on_campaign_id"
     t.index ["faction_id"], name: "index_parties_on_faction_id"
+    t.index ["juncture_id"], name: "index_parties_on_juncture_id"
   end
 
   create_table "schticks", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -433,6 +436,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_10_002204) do
   add_foreign_key "memberships", "vehicles"
   add_foreign_key "parties", "campaigns"
   add_foreign_key "parties", "factions"
+  add_foreign_key "parties", "junctures"
   add_foreign_key "schticks", "campaigns"
   add_foreign_key "schticks", "schticks", column: "prerequisite_id"
   add_foreign_key "shots", "characters"
