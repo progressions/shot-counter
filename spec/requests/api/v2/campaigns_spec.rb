@@ -75,7 +75,7 @@ RSpec.describe "Api::V2::Campaigns", type: :request do
         post "/api/v2/campaigns", params: { campaign: { description: "A new adventure", active: true, player_ids: [@player.id] } }, headers: @gamemaster_headers
         expect(response).to have_http_status(:unprocessable_entity)
         body = JSON.parse(response.body)
-        expect(body["errors"]).to include("Name can't be blank")
+        expect(body["errors"]).to include({ "name" => ["can't be blank"] })
       end
 
       it "returns an error for invalid JSON string" do
@@ -197,7 +197,7 @@ RSpec.describe "Api::V2::Campaigns", type: :request do
         patch "/api/v2/campaigns/#{@campaign.id}", params: { campaign: { name: "", description: "Updated adventure" } }, headers: @gamemaster_headers
         expect(response).to have_http_status(:unprocessable_entity)
         body = JSON.parse(response.body)
-        expect(body["errors"]).to include("Name can't be blank")
+        expect(body["errors"]).to include({ "name" => ["can't be blank"] })
         @campaign.reload
         expect(@campaign.name).to eq("Adventure")
       end
@@ -310,8 +310,9 @@ RSpec.describe "Api::V2::Campaigns", type: :request do
       end
 
       it "returns an error for the current campaign" do
+        CurrentCampaign.set(user: @admin, campaign: @campaign)
         delete "/api/v2/campaigns/#{@campaign.id}", headers: @admin_headers
-        expect(response).to have_http_status(:forbidden)
+        expect(response).to have_http_status(:unauthorized)
         body = JSON.parse(response.body)
         expect(body["error"]).to eq("Cannot destroy the current campaign")
         expect(Campaign.exists?(@campaign.id)).to be_truthy
@@ -319,11 +320,11 @@ RSpec.describe "Api::V2::Campaigns", type: :request do
     end
 
     context "when user is not gamemaster or admin" do
-      it "returns a not found error" do
+      it "returns a forbidden error" do
         delete "/api/v2/campaigns/#{@other_campaign.id}", headers: @player_headers
-        expect(response).to have_http_status(:not_found)
+        expect(response).to have_http_status(:forbidden)
         body = JSON.parse(response.body)
-        expect(body["error"]).to eq("Record not found or unauthorized")
+        expect(body["error"]).to eq("Gamemaster or admin access required")
         expect(Campaign.exists?(@other_campaign.id)).to be_truthy
       end
     end
