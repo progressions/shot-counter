@@ -1,5 +1,5 @@
 class CampaignSerializer < ActiveModel::Serializer
-  attributes :id, :name, :description, :gamemaster_id, :gamemaster, :created_at, :updated_at, :players, :player_ids, :image_url, :entity_class
+  attributes :id, :name, :description, :gamemaster_id, :gamemaster, :created_at, :updated_at, :players, :player_ids, :image_url, :entity_class, :active
   has_many :image_positions, serializer: ImagePositionSerializer
 
   def gamemaster
