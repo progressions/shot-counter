@@ -174,6 +174,18 @@ RSpec.describe "Api::V2::Fights", type: :request do
       expect(body["fights"].first["name"]).to eq("Big Brawl")
     end
 
+    it "returns distinct fights when user has multiple characters in the same fight" do
+      @brawl.characters << @boss
+      @brawl.characters << @featured_foe
+      @brawl.characters << @mook
+      @brawl.save!
+      get "/api/v2/fights", params: { autocomplete: true, user_id: @gamemaster.id }, headers: @headers
+      expect(response).to have_http_status(200)
+      body = JSON.parse(response.body)
+      expect(body["fights"].length).to eq(1)
+      expect(body["fights"].first["name"]).to eq("Big Brawl")
+    end
+
     it "returns fight attributes" do
       get "/api/v2/fights", params: { id: @brawl.id }, headers: @headers
       expect(response).to have_http_status(200)
@@ -347,6 +359,18 @@ RSpec.describe "Api::V2::Fights", type: :request do
       expect(fight["started_at"]).to be_nil
       expect(fight["ended_at"]).to be_nil
       expect(fight["active"]).to be_nil
+    end
+
+    it "returns distinct fights when user has multiple characters in the same fight" do
+      @brawl.characters << @boss
+      @brawl.characters << @featured_foe
+      @brawl.characters << @mook
+      @brawl.save!
+      get "/api/v2/fights", params: { autocomplete: true, user_id: @gamemaster.id }, headers: @headers
+      expect(response).to have_http_status(200)
+      body = JSON.parse(response.body)
+      expect(body["fights"].length).to eq(1)
+      expect(body["fights"].first["name"]).to eq("Big Brawl")
     end
 
     it "doesn't return characters in fight" do

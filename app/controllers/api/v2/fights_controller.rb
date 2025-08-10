@@ -60,7 +60,7 @@ class Api::V2::FightsController < ApplicationController
     ActiveRecord::Associations::Preloader.new(records: [current_campaign], associations: { user: [:image_attachment, :image_blob] })
 
     cached_result = Rails.cache.fetch(cache_key, expires_in: 5.minutes) do
-      fights = query.order(Arel.sql(sort_order))
+      fights = query.distinct.order(Arel.sql(sort_order))
       fights = paginate(fights, per_page: per_page, page: page)
       {
         "fights" => ActiveModelSerializers::SerializableResource.new(
