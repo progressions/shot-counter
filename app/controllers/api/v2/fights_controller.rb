@@ -4,7 +4,7 @@ class Api::V2::FightsController < ApplicationController
   before_action :set_fight, only: [:show, :update, :destroy, :touch]
 
   def index
-    per_page = (params["per_page"] || 15).to_i
+    per_page = (params["per_page"] || 10).to_i
     page = (params["page"] || 1).to_i
     selects = [
       "fights.id",
@@ -16,6 +16,8 @@ class Api::V2::FightsController < ApplicationController
       "fights.ended_at",
       "fights.active",
       "fights.campaign_id",
+      "fights.session",
+      "fights.season",
       "LOWER(fights.name) AS name_lower",
     ]
     includes = [
@@ -176,6 +178,8 @@ class Api::V2::FightsController < ApplicationController
       "fights.created_at #{order}, fights.id"
     elsif sort == "updated_at"
       "fights.updated_at #{order}, fights.id"
+    elsif sort == "season"
+      "fights.season #{order}, fights.session, LOWER(fights.name)"
     else
       "fights.created_at DESC, fights.id"
     end

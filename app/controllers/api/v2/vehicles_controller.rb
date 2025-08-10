@@ -216,8 +216,8 @@ class Api::V2::VehiclesController < ApplicationController
       "LOWER(vehicles.name) #{order}"
     elsif sort == "created_at"
       "vehicles.created_at #{order}"
-    elsif sort == "update_at"
-      "vehicles.update_at #{order}"
+    elsif sort == "updated_at"
+      "vehicles.updated_at #{order}"
     else
       "vehicles.created_at DESC"
     end

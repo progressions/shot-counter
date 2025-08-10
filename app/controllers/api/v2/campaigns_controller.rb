@@ -196,6 +196,8 @@ class Api::V2::CampaignsController < ApplicationController
       "LOWER(campaigns.name) #{order}"
     elsif sort == "created_at"
       "campaigns.created_at #{order}"
+    elsif sort == "updated_at"
+      "campaigns.updated_at #{order}"
     else
       "campaigns.created_at DESC"
     end
