@@ -136,6 +136,12 @@ class Api::V2::FightsController < ApplicationController
     render :ok
   end
 
+  def remove_image
+    @fight = current_campaign.fights.find(params[:id])
+    @fight.image.purge if @fight.image.attached?
+    render json: @fight
+  end
+
   private
 
   def require_current_campaign
