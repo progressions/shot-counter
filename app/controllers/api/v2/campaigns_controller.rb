@@ -4,6 +4,72 @@ class Api::V2::CampaignsController < ApplicationController
   before_action :set_campaign, only: [:show, :set, :update]
 
   def index
+    per_page = (params["per_page"] || 15).to_i
+    page = (params["page"] || 1).to_i
+    selects = [
+      "campaigns.id",
+      "campaigns.name",
+      "campaigns.description",
+      "campaigns.created_at",
+      "campaigns.updated_at",
+      "campaigns.active",
+    ]
+    includes = [
+      :image_positions,
+      image_attachment: :blob,
+      characters: { image_attachment: :blob },
+      vehicles: { image_attachment: :blob },
+    ]
+    query = current_campaign
+      .campaigns
+      .select(selects)
+      .includes(includes)
+
+    # Apply filters
+    query = query.where(id: params["id"]) if params["id"].present?
+    query = query.where("campaigns.name ILIKE ?", "%#{params['search']}%") if params["search"].present?
+    if params["show_all"] == "true"
+      query = query.where(active: [true, false, nil])
+    else
+      query = query.where(active: true)
+    end
+    # Join associations
+    query = query.joins(:characters).where(characters: { id: params[:character_id] }) if params[:character_id].present?
+    query = query.joins(:vehicles).where(vehicles: { id: params[:vehicle_id] }) if params[:vehicle_id].present?
+
+    # Cache key
+    cache_key = [
+      "campaigns/index",
+      current_campaign.id,
+      sort_order,
+      page,
+      per_page,
+      params["search"],
+      params["autocomplete"],
+      params["character_id"],
+      params["vehicle_id"],
+      params["show_all"],
+    ].join("/")
+
+    ActiveRecord::Associations::Preloader.new(records: [current_campaign], associations: { user: [:image_attachment, :image_blob] })
+
+    cached_result = Rails.cache.fetch(cache_key, expires_in: 5.minutes) do
+      campaigns = query.order(Arel.sql(sort_order))
+      campaigns = paginate(campaigns, per_page: per_page, page: page)
+
+      {
+        "campaigns" => ActiveModelSerializers::SerializableResource.new(
+          campaigns,
+          each_serializer: params[:autocomplete] ? CampaignAutocompleteSerializer : CampaignIndexSerializer,
+          adapter: :attributes
+        ).serializable_hash,
+        "meta" => pagination_meta(campaigns)
+      }
+    end
+    render json: cached_result
+  end
+
+  def oldindex
     @campaigns = current_user
       .campaigns
       .select(:id, :user_id, :name, :description, :created_at, :updated_at, "LOWER(campaigns.name) AS name_lower")
@@ -142,4 +208,16 @@ class Api::V2::CampaignsController < ApplicationController
     end
   end
 
+  def sort_order
+    sort = params["sort"] || "created_at"
+    order = params["order"] || "DESC"
+
+    if sort == "name"
+      "LOWER(campaigns.name) #{order}"
+    elsif sort == "created_at"
+      "campaigns.created_at #{order}"
+    else
+      "campaigns.created_at DESC"
+    end
+  end
 end
