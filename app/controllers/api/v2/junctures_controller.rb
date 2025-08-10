@@ -3,60 +3,72 @@ class Api::V2::JuncturesController < ApplicationController
   before_action :require_current_campaign
 
   def index
-    @junctures = current_campaign
+    per_page = (params["per_page"] || 15).to_i
+    page = (params["page"] || 1).to_i
+    selects = [
+      "junctures.id",
+      "junctures.name",
+      "junctures.campaign_id",
+      "junctures.faction_id",
+      "junctures.description",
+      "junctures.created_at",
+      "junctures.updated_at",
+      "junctures.active",
+    ]
+    includes = [
+      :image_positions,
+      image_attachment: :blob,
+      characters: { image_attachment: :blob },
+      vehicles: { image_attachment: :blob },
+    ]
+    query = current_campaign
       .junctures
-      .distinct
-      .with_attached_image
+      .select(selects)
+      .includes(includes)
 
-    if params[:id].present?
-      @junctures = @junctures.where(id: params[:id])
-    end
-    if params[:search].present?
-      @junctures = @junctures.where("name ILIKE ?", "%#{params[:search]}%")
-    end
-    if params[:faction_id].present?
-      @junctures = @junctures.where(faction_id: params[:faction_id])
-    end
-    if params[:character_id].present?
-      @junctures = @junctures.joins(:attunements).where(attunements: { id: params[:character_id] })
-    end
-    if params[:user_id].present?
-      @junctures = @junctures.joins(:characters).where(characters: { user_id: params[:user_id] })
-    end
+    # Apply filters
+    query = query.where(id: params["id"]) if params["id"].present?
+    query = query.where("junctures.name ILIKE ?", "%#{params['search']}%") if params["search"].present?
 
+    if params["show_all"] == "true"
+      query = query.where(active: [true, false, nil])
+    else
+      query = query.where(active: true)
+    end
+    # Join associations
+    query = query.joins(:characters).where(characters: { id: params[:character_id] }) if params[:character_id].present?
+    query = query.joins(:vehicles).where(vehicles: { id: params[:vehicle_id] }) if params[:vehicle_id].present?
+    query = query.where(faction_id: params[:faction_id]) if params[:faction_id].present?
+
+    # Cache key
     cache_key = [
       "junctures/index",
       current_campaign.id,
       sort_order,
-      params[:page],
-      params[:per_page],
-      params[:id],
-      params[:search],
-      params[:user_id],
-      params[:faction_id],
-      params[:character_id],
+      page,
+      per_page,
+      params["search"],
+      params["juncture_id"],
+      params["autocomplete"],
+      params["character_id"],
+      params["show_all"],
     ].join("/")
 
-    @factions = current_campaign.factions.joins(:junctures).where(junctures: @junctures).order("factions.name").distinct
+    ActiveRecord::Associations::Preloader.new(records: [current_campaign], associations: { user: [:image_attachment, :image_blob] })
 
-    @junctures = @junctures
-      .select(:id, :name, :description, :campaign_id, :faction_id, :created_at, :updated_at, "LOWER(junctures.name) AS lower_name")
-      .includes(
-        { faction: [:image_attachment, :image_blob] },
-        :image_positions,
-      )
-      .order(Arel.sql(sort_order))
-
-    cached_result = Rails.cache.fetch(cache_key, expires_in: 12.hours) do
-      @junctures = paginate(@junctures, per_page: (params[:per_page] || 10), page: (params[:page] || 1))
+    cached_result = Rails.cache.fetch(cache_key, expires_in: 5.minutes) do
+      junctures = query.order(Arel.sql(sort_order))
+      junctures = paginate(junctures, per_page: per_page, page: page)
 
       {
-        junctures: ActiveModelSerializers::SerializableResource.new(@junctures, each_serializer: JunctureIndexSerializer).serializable_hash,
-        factions: ActiveModelSerializers::SerializableResource.new(@factions, each_serializer: FactionLiteSerializer).serializable_hash,
-        meta: pagination_meta(@junctures),
+        "junctures" => ActiveModelSerializers::SerializableResource.new(
+          junctures,
+          each_serializer: params[:autocomplete] ? JunctureAutocompleteSerializer : JunctureIndexSerializer,
+          adapter: :attributes
+        ).serializable_hash,
+        "meta" => pagination_meta(junctures)
       }
     end
-
     render json: cached_result
   end
 
@@ -78,7 +90,7 @@ class Api::V2::JuncturesController < ApplicationController
       juncture_data = juncture_params.to_h.symbolize_keys
     end
 
-    juncture_data.slice(:name, :description, :active, :faction_id)
+    juncture_data.slice(:name, :description, :active, :faction_id, :character_ids, :vehicle_ids)
 
     @juncture = current_campaign.junctures.new(juncture_data)
 
@@ -108,7 +120,7 @@ class Api::V2::JuncturesController < ApplicationController
     else
       juncture_data = juncture_params.to_h.symbolize_keys
     end
-    juncture_data = juncture_data.slice(:name, :description, :active, :faction_id, :character_ids)
+    juncture_data = juncture_data.slice(:name, :description, :active, :faction_id, :character_ids, :vehicle_ids)
 
     # Handle image attachment if present
     if params[:image].present?
@@ -124,10 +136,24 @@ class Api::V2::JuncturesController < ApplicationController
   end
 
   def destroy
-    juncture = current_campaign.junctures.find(params[:id])
-    juncture.destroy
-
-    head :no_content
+    @juncture = current_campaign.junctures.find(params[:id])
+    if @juncture.character_ids.any? && !params[:force]
+      render json: { errors: { associations: true } }, status: 400 and return
+    end
+    if @juncture.vehicle_ids.any? && !params[:force]
+      render json: { errors: { associations: true } }, status: 400 and return
+    end
+    if params[:force]
+      @juncture.characters.update_all(juncture_id: nil)
+      @juncture.vehicles.update_all(juncture_id: nil)
+      @juncture.parties.update_all(juncture_id: nil)
+      @juncture.sites.update_all(juncture_id: nil)
+    end
+    if @juncture.destroy!
+      render :ok
+    else
+      render json: { errors: @juncture.errors }, status: 400
+    end
   end
 
   def remove_image
@@ -144,7 +170,7 @@ class Api::V2::JuncturesController < ApplicationController
   private
 
   def juncture_params
-    params.require(:juncture).permit(:name, :description, :active, :image, :faction_id, :character_ids)
+    params.require(:juncture).permit(:name, :description, :active, :image, :faction_id, character_ids: [], vehicle_ids: [])
   end
 
   def sort_order
@@ -154,6 +180,8 @@ class Api::V2::JuncturesController < ApplicationController
       "LOWER(junctures.name) #{order}, junctures.id"
     elsif sort == "created_at"
       "junctures.created_at #{order}, junctures.id"
+    elsif sort == "updated_at"
+      "junctures.updated_at #{order}, junctures.id"
     else
       "junctures.created_at DESC, junctures.id"
     end

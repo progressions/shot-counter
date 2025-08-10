@@ -72,55 +72,6 @@ class Api::V2::FactionsController < ApplicationController
     render json: cached_result
   end
 
-  def oldindex
-    @factions = current_campaign
-      .factions
-      .with_attached_image
-    if params[:id].present?
-      @factions = @factions.where(id: params[:id])
-    end
-    if params[:search].present?
-      @factions = @factions.where("name ILIKE ?", "%#{params[:search]}%")
-    end
-    if params[:character_id].present?
-      @factions = @factions.joins(:attunements).where(attunements: { id: params[:character_id] })
-    end
-    if params[:user_id].present?
-      @factions = @factions.joins(:characters).where(characters: { user_id: params[:user_id] })
-    end
-    cache_key = [
-      "factions/index",
-      current_campaign.id,
-      sort_order,
-      params[:page],
-      params[:per_page],
-      params[:id],
-      params[:search],
-      params[:user_id],
-      params[:character_id],
-    ].join("/")
-    @factions = @factions
-      .select(:id, :name, :description, :campaign_id, :created_at, :updated_at, :active, "LOWER(name) AS lower_name")
-      .includes(:image_positions)
-      .distinct
-      .order(Arel.sql(sort_order))
-    cached_result = Rails.cache.fetch(cache_key, expires_in: 12.hours) do
-      @factions = paginate(@factions, per_page: (params[:per_page] || 10), page: (params[:page] || 1))
-      if params[:autocomplete]
-        {
-          factions: ActiveModelSerializers::SerializableResource.new(@factions, each_serializer: FactionLiteSerializer).serializable_hash,
-          meta: pagination_meta(@factions),
-        }
-      else
-        {
-          meta: pagination_meta(@factions),
-          factions: ActiveModelSerializers::SerializableResource.new(@factions, each_serializer: FactionSerializer).serializable_hash,
-        }
-      end
-    end
-    render json: cached_result
-  end
-
   def show
     @faction = current_campaign.factions.includes(:image_attachment).find(params[:id])
     render json: @faction, serializer: FactionSerializer

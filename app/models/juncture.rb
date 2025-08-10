@@ -5,6 +5,7 @@ class Juncture < ApplicationRecord
   belongs_to :campaign
   belongs_to :faction, optional: true
   has_many :characters
+  has_many :vehicles
   has_many :sites
   has_many :parties
   has_many :image_positions, as: :positionable, dependent: :destroy
