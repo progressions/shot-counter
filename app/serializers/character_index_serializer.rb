@@ -1,5 +1,5 @@
 class CharacterIndexSerializer < ActiveModel::Serializer
-  attributes :id, :name, :defense, :impairments, :color, :image_url, :user_id, :faction_id, :action_values, :created_at, :active, :entity_class
+  attributes :id, :name, :task, :image_url, :user_id, :faction_id, :action_values, :created_at, :active, :entity_class
   belongs_to :user, serializer: UserSerializer
   belongs_to :faction, serializer: FactionSerializer
   has_many :image_positions, serializer: ImagePositionSerializer

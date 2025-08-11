@@ -1,5 +1,5 @@
 class FactionIndexSerializer < ActiveModel::Serializer
-  attributes :id, :name, :description, :created_at, :updated_at, :image_url, :entity_class, :active
+  attributes :id, :name, :description, :created_at, :updated_at, :image_url, :entity_class, :active, :characters
 
   has_many :characters, serializer: CharacterAutocompleteSerializer
   has_many :vehicles, serializer: VehicleLiteSerializer

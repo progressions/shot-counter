@@ -8,6 +8,7 @@ class Api::V2::CampaignsController < ApplicationController
     page = (params["page"] || 1).to_i
     selects = [
       "campaigns.id",
+      "campaigns.user_id",
       "campaigns.name",
       "campaigns.description",
       "campaigns.created_at",

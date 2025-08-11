@@ -1,5 +1,5 @@
 class PartyIndexSerializer < ActiveModel::Serializer
-  attributes :id, :name, :description, :active, :created_at, :updated_at, :faction_id, :campaign_id, :image_url, :juncture_id, :entity_class
+  attributes :id, :name, :description, :active, :created_at, :updated_at, :faction_id, :campaign_id, :image_url, :juncture_id, :entity_class, :characters
   has_many :characters, serializer: CharacterAutocompleteSerializer do
     object.memberships.map { |m| m.character }.compact
   end

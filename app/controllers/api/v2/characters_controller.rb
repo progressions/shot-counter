@@ -9,6 +9,8 @@ class Api::V2::CharactersController < ApplicationController
     page = (params["page"] || 1).to_i
     selects = [
       "characters.id",
+      "characters.user_id",
+      "characters.task",
       "characters.name",
       "characters.faction_id",
       "characters.action_values",
@@ -85,7 +87,7 @@ class Api::V2::CharactersController < ApplicationController
       {
         "characters" => ActiveModelSerializers::SerializableResource.new(
           characters,
-          each_serializer: params[:autocomplete] ? CharacterAutocompleteSerializer : CharacterIndexLiteSerializer,
+          each_serializer: params[:autocomplete] ? CharacterAutocompleteSerializer : CharacterIndexSerializer,
           adapter: :attributes
         ).serializable_hash,
         "factions" => ActiveModelSerializers::SerializableResource.new(

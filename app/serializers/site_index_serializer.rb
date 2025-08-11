@@ -1,5 +1,5 @@
 class SiteIndexSerializer < ActiveModel::Serializer
-  attributes :id, :name, :description, :active, :created_at, :updated_at, :faction_id, :campaign_id, :image_url, :juncture_id, :entity_class
+  attributes :id, :name, :description, :active, :created_at, :updated_at, :faction_id, :campaign_id, :image_url, :juncture_id, :entity_class, :entity_class, :characters
   has_many :characters, serializer: CharacterAutocompleteSerializer do
     object.attunements.map { |m| m.character }.compact
   end
