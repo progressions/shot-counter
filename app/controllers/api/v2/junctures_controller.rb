@@ -59,11 +59,21 @@ class Api::V2::JuncturesController < ApplicationController
     cached_result = Rails.cache.fetch(cache_key, expires_in: 5.minutes) do
       junctures = query.order(Arel.sql(sort_order))
       junctures = paginate(junctures, per_page: per_page, page: page)
+      # Fetch factions
+      faction_ids = junctures.pluck(:faction_id).uniq.compact
+      factions = Faction.where(id: faction_ids)
+                        .select("factions.id", "factions.name")
+                        .order("LOWER(factions.name) ASC")
 
       {
         "junctures" => ActiveModelSerializers::SerializableResource.new(
           junctures,
           each_serializer: params[:autocomplete] ? JunctureAutocompleteSerializer : JunctureIndexSerializer,
+          adapter: :attributes
+        ).serializable_hash,
+        "factions" => ActiveModelSerializers::SerializableResource.new(
+          factions,
+          each_serializer: FactionLiteSerializer,
           adapter: :attributes
         ).serializable_hash,
         "meta" => pagination_meta(junctures)
