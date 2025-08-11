@@ -40,6 +40,7 @@ class Api::V2::FightsController < ApplicationController
     query = query.where(id: params["id"]) if params["id"].present?
     query = query.where(started_at: nil) if params["unstarted"].present?
     query = query.where.not(started_at: nil).where(ended_at: nil) if params["unended"].present?
+    query = query.where.not(started_at: nil).where.not(ended_at: nil) if params["ended"].present?
     query = query.where(season: params["season"]) if params["season"].present?
     query = query.where(session: params["session"]) if params["session"].present?
     query = query.joins(:shots).where(shots: { character_id: params[:character_id] }) if params[:character_id].present?
@@ -59,6 +60,7 @@ class Api::V2::FightsController < ApplicationController
       params["user_id"],
       params["unstarted"],
       params["unended"],
+      params["ended"],
       params["season"],
       params["session"],
       params["autocomplete"],
