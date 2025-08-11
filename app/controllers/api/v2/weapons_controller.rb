@@ -56,10 +56,11 @@ class Api::V2::WeaponsController < ApplicationController
 
     cached_result = Rails.cache.fetch(cache_key, expires_in: 5.minutes) do
       weapons = query.order(Arel.sql(sort_order))
-      weapons = paginate(weapons, per_page: per_page, page: page)
 
       categories = weapons.pluck(:category).uniq.compact.sort
       junctures = weapons.pluck(:juncture).uniq.compact.sort
+
+      weapons = paginate(weapons, per_page: per_page, page: page)
 
       {
         "weapons" => ActiveModelSerializers::SerializableResource.new(

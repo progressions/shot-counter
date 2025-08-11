@@ -52,8 +52,13 @@ class Api::V2::SchticksController < ApplicationController
     cached_result = Rails.cache.fetch(cache_key, expires_in: 5.minutes) do
       schticks = query.order(Arel.sql(sort_order))
 
-      categories = schticks.pluck(:category).uniq.compact
-      paths = schticks.pluck(:path).uniq.compact
+      # Get categories without applying full sort_order
+      categories_query = query.select("schticks.category").distinct
+      categories = categories_query.pluck(:category).uniq
+
+      # Get seasons without applying full sort_order
+      paths_query = query.select("schticks.path").distinct
+      paths = paths_query.pluck(:path).uniq
 
       schticks = paginate(schticks, per_page: per_page, page: page)
 

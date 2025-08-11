@@ -26,7 +26,10 @@ class Api::V2::FightsController < ApplicationController
       shots: { character: { image_attachment: :blob } },
       shots: { vehicle: { image_attachment: :blob } },
     ]
-    query = current_campaign.fights.distinct.select(selects).includes(includes)
+    query = current_campaign
+      .fights
+      .select(selects)
+      .includes(includes)
     # Apply filters
     query = query.where("fights.name ILIKE ?", "%#{params['search']}%") if params["search"].present?
     if params["show_all"] == "true"
@@ -61,7 +64,14 @@ class Api::V2::FightsController < ApplicationController
       params["autocomplete"],
     ].join("/")
     cached_result = Rails.cache.fetch(cache_key, expires_in: 5.minutes) do
-      fights = query.distinct.order(Arel.sql(sort_order))
+      fights = query
+        .distinct(sort_order)
+        .order(Arel.sql(sort_order))
+
+      # Get seasons without applying full sort_order
+      seasons_query = query.select("fights.season").distinct
+      seasons = seasons_query.pluck(:season).uniq
+
       fights = paginate(fights, per_page: per_page, page: page)
       {
         "fights" => ActiveModelSerializers::SerializableResource.new(
@@ -69,6 +79,7 @@ class Api::V2::FightsController < ApplicationController
           each_serializer: params[:autocomplete] ? FightLiteSerializer : FightIndexLiteSerializer,
           adapter: :attributes
         ).serializable_hash,
+        "seasons" => seasons,
         "meta" => pagination_meta(fights)
       }
     end
@@ -165,7 +176,7 @@ class Api::V2::FightsController < ApplicationController
     sort = params["sort"] || "created_at"
     order = params["order"] || "DESC"
     if sort == "name"
-      "name_lower #{order}, fights.id"
+      "LOWER(fights.name) #{order}, fights.id"
     elsif sort == "created_at"
       "fights.created_at #{order}, fights.id"
     elsif sort == "updated_at"

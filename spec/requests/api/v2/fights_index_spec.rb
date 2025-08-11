@@ -52,6 +52,13 @@ RSpec.describe "Api::V2::Fights", type: :request do
       expect(body["fights"].map { |f| f["name"] }).to eq(["Airport Battle", "Small Skirmish", "Big Brawl"])
     end
 
+    it "collects seasons" do
+      get "/api/v2/fights", headers: @headers
+      expect(response).to have_http_status(200)
+      body = JSON.parse(response.body)
+      expect(body["seasons"]).to eq([1, 2])
+    end
+
     it "filters fights by search term" do
       get "/api/v2/fights", params: { search: "Brawl" }, headers: @headers
       expect(response).to have_http_status(200)
