@@ -271,6 +271,12 @@ class Api::V2::WeaponsController < ApplicationController
       "LOWER(weapons.category) #{order}, LOWER(weapons.name) #{order}"
     elsif sort == "juncture"
       "LOWER(weapons.juncture) #{order}, LOWER(weapons.name) #{order}"
+    elsif sort == "damage"
+      "weapons.damage #{order}, LOWER(weapons.name) #{order}"
+    elsif sort == "concealment"
+      "weapons.concealment #{order}, LOWER(weapons.name) #{order}"
+    elsif sort == "reload_value"
+      "weapons.reload_value #{order}, LOWER(weapons.name) #{order}"
     else
       "weapons.created_at DESC"
     end

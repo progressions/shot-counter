@@ -66,8 +66,6 @@ class Api::V2::VehiclesController < ApplicationController
       vehicles = query
         .order(Arel.sql(sort_order))
 
-      vehicles = paginate(vehicles, per_page: per_page, page: page)
-
       # Fetch factions
       faction_ids = vehicles.pluck(:faction_id).uniq.compact
       factions = Faction.where(id: faction_ids)
@@ -76,6 +74,9 @@ class Api::V2::VehiclesController < ApplicationController
 
       # Archetypes
       archetypes = vehicles.map { |c| c.action_values["Archetype"] }.compact.uniq.sort
+      types = vehicles.map { |c| c.action_values["Type"] }.compact.uniq.sort
+
+      vehicles = paginate(vehicles, per_page: per_page, page: page)
 
       {
         "vehicles" => ActiveModelSerializers::SerializableResource.new(
@@ -89,6 +90,7 @@ class Api::V2::VehiclesController < ApplicationController
           adapter: :attributes
         ).serializable_hash,
         "archetypes" => archetypes,
+        "types" => types,
         "meta" => pagination_meta(vehicles)
       }
     end
