@@ -51,10 +51,11 @@ class Api::V2::SchticksController < ApplicationController
 
     cached_result = Rails.cache.fetch(cache_key, expires_in: 5.minutes) do
       schticks = query.order(Arel.sql(sort_order))
-      schticks = paginate(schticks, per_page: per_page, page: page)
 
       categories = schticks.pluck(:category).uniq.compact
       paths = schticks.pluck(:path).uniq.compact
+
+      schticks = paginate(schticks, per_page: per_page, page: page)
 
       {
         "schticks" => ActiveModelSerializers::SerializableResource.new(

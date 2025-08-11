@@ -65,6 +65,13 @@ RSpec.describe "Api::V2::Schticks", type: :request do
       expect(body["schticks"]).to eq([])
     end
 
+    it "returns all categories, not just the current page" do
+      get "/api/v2/schticks", params: { per_page: 2, page: 1, sort: "category" }, headers: @headers
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["categories"]).to eq(["Sorcery", "Martial Arts"])
+    end
+
     it "sorts by created_at ascending" do
       get "/api/v2/schticks", params: { sort: "created_at", order: "asc" }, headers: @headers
       expect(response).to have_http_status(:success)
