@@ -30,6 +30,7 @@ class Api::V2::JuncturesController < ApplicationController
     query = query.where(id: params["id"]) if params["id"].present?
     query = query.where(id: params["ids"].split(",")) if params["ids"].present?
     query = query.where("junctures.name ILIKE ?", "%#{params['search']}%") if params["search"].present?
+    query = query.where(faction_id: params["faction_id"] == "__NONE__" ? nil : params["faction_id"]) if params["faction_id"].present?
 
     if params["show_all"] == "true"
       query = query.where(active: [true, false, nil])
@@ -39,7 +40,6 @@ class Api::V2::JuncturesController < ApplicationController
     # Join associations
     query = query.joins(:characters).where(characters: { id: params[:character_id] }) if params[:character_id].present?
     query = query.joins(:vehicles).where(vehicles: { id: params[:vehicle_id] }) if params[:vehicle_id].present?
-    query = query.where(faction_id: params[:faction_id]) if params[:faction_id].present?
 
     # Cache key
     cache_key = [

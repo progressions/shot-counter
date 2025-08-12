@@ -29,8 +29,8 @@ class Api::V2::SchticksController < ApplicationController
     query = query.where(id: params["id"]) if params["id"].present?
     query = query.where(id: params["ids"].split(",")) if params["ids"].present?
     query = query.where("schticks.name ILIKE ?", "%#{params['search']}%") if params["search"].present?
-    query = query.where("schticks.category = ?", params["category"]) if params["category"].present?
-    query = query.where("schticks.path = ?", params["path"]) if params["path"].present?
+    query = query.where("schticks.category = ?", params["category"] == "__NONE__" ? nil : params["category"]) if params["category"].present?
+    query = query.where("schticks.path = ?", params["path"] == "__NONE__" ? nil : params["path"]) if params["path"].present?
 
     # Join associations
     query = query.joins(:character_schticks).where(character_schticks: { character_id: params[:character_id] }) if params[:character_id].present?

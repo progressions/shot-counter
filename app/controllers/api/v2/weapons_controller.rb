@@ -34,8 +34,8 @@ class Api::V2::WeaponsController < ApplicationController
     query = query.where(id: params["id"]) if params["id"].present?
     query = query.where(id: params["ids"].split(",")) if params["ids"].present?
     query = query.where("weapons.name ILIKE ?", "%#{params['search']}%") if params["search"].present?
-    query = query.where("weapons.category = ?", params["category"]) if params["category"].present?
-    query = query.where("weapons.juncture = ?", params["juncture"]) if params["juncture"].present?
+    query = query.where("weapons.category = ?", params["category"] == "__NONE__" ? nil : params["category"]) if params["category"].present?
+    query = query.where("weapons.juncture = ?", params["juncture"] == "__NONE__" ? nil : params["juncture"]) if params["juncture"].present?
 
     # Join associations
     query = query.joins(:carries).where(carries: { character_id: params[:character_id] }) if params[:character_id].present?
