@@ -30,7 +30,7 @@ class Api::V2::JuncturesController < ApplicationController
     query = query.where(id: params["id"]) if params["id"].present?
     query = query.where(id: params["ids"].split(",")) if params["ids"].present?
     query = query.where("junctures.name ILIKE ?", "%#{params['search']}%") if params["search"].present?
-    query = query.where(faction_id: params["faction_id"] == "__NONE__" ? nil : params["faction_id"]) if params["faction_id"].present?
+    query = query.where(params["faction_id"] == "__NONE__" ? "junctures.faction_id IS NULL" : "junctures.faction_id = ?", params["faction_id"]) if params["faction_id"].present?
 
     if params["show_all"] == "true"
       query = query.where(active: [true, false, nil])

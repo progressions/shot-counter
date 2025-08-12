@@ -42,8 +42,8 @@ class Api::V2::FightsController < ApplicationController
     query = query.where(started_at: nil) if params["unstarted"].present?
     query = query.where.not(started_at: nil).where(ended_at: nil) if params["unended"].present?
     query = query.where.not(started_at: nil).where.not(ended_at: nil) if params["ended"].present?
-    query = query.where(season: params["season"] == "__NONE__" ? nil : params["season"]) if params["season"].present?
-    query = query.where(session: params["session"] == "__NONE__" ? nil : params["session"]) if params["session"].present?
+    query = query.where(params["season"] == "__NONE__" ? "fights.season IS NULL" : "fights.season = ?", params["season"]) if params["season"].present?
+    query = query.where(params["session"] == "__NONE__" ? "fights.session IS NULL" : "fights.session = ?", params["session"]) if params["session"].present?
     query = query.joins(:shots).where(shots: { character_id: params[:character_id] }) if params[:character_id].present?
     query = query.joins(:shots).where(shots: { vehicle_id: params[:vehicle_id] }) if params[:vehicle_id].present?
     query = query.joins(:shots).joins("INNER JOIN characters ON shots.character_id = characters.id").where(characters: { user_id: params[:user_id] }) if params[:user_id].present?
