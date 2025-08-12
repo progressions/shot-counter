@@ -7,7 +7,7 @@ class Campaign < ApplicationRecord
   has_many :characters
   has_many :vehicles
   has_many :campaign_memberships
-  has_many :players, through: :campaign_memberships, source: "user"
+  has_many :users, through: :campaign_memberships
   has_many :invitations
   has_many :schticks
   has_many :weapons
@@ -26,7 +26,7 @@ class Campaign < ApplicationRecord
       name: name,
       description: description,
       gamemaster: user,
-      players: players,
+      users: users,
       invitations: invitations,
     }
   end
@@ -35,8 +35,8 @@ class Campaign < ApplicationRecord
 
   def broadcast_campaign_update
     user_camp_ids = user.campaigns.map { |campaign| campaign.id }
-    player_camp_ids = players.map { |player| player.current_campaign_id }
-    campaign_ids = user_camp_ids + player_camp_ids
+    user_camp_ids = users.map { |user| user.current_campaign_id }
+    campaign_ids = user_camp_ids + user_camp_ids
 
     campaign_ids.uniq.each do |campaign_id|
       channel = "campaign_#{campaign_id}"

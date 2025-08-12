@@ -27,6 +27,7 @@ class Api::V2::SchticksController < ApplicationController
 
     # Apply filters
     query = query.where(id: params["id"]) if params["id"].present?
+    query = query.where(id: params["ids"].split(",")) if params["ids"].present?
     query = query.where("schticks.name ILIKE ?", "%#{params['search']}%") if params["search"].present?
     query = query.where("schticks.category = ?", params["category"]) if params["category"].present?
     query = query.where("schticks.path = ?", params["path"]) if params["path"].present?

@@ -28,6 +28,7 @@ class Api::V2::FactionsController < ApplicationController
 
     # Apply filters
     query = query.where(id: params["id"]) if params["id"].present?
+    query = query.where(id: params["ids"]) if params["ids"].present?
     query = query.where("factions.name ILIKE ?", "%#{params['search']}%") if params["search"].present?
     if params["show_all"] == "true"
       query = query.where(active: [true, false, nil])

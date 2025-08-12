@@ -28,6 +28,7 @@ class Api::V2::JuncturesController < ApplicationController
 
     # Apply filters
     query = query.where(id: params["id"]) if params["id"].present?
+    query = query.where(id: params["ids"].split(",")) if params["ids"].present?
     query = query.where("junctures.name ILIKE ?", "%#{params['search']}%") if params["search"].present?
 
     if params["show_all"] == "true"

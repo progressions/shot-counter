@@ -32,6 +32,7 @@ class Api::V2::WeaponsController < ApplicationController
 
     # Apply filters
     query = query.where(id: params["id"]) if params["id"].present?
+    query = query.where(id: params["ids"].split(",")) if params["ids"].present?
     query = query.where("weapons.name ILIKE ?", "%#{params['search']}%") if params["search"].present?
     query = query.where("weapons.category = ?", params["category"]) if params["category"].present?
     query = query.where("weapons.juncture = ?", params["juncture"]) if params["juncture"].present?

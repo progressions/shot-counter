@@ -29,6 +29,7 @@ class Api::V2::CampaignsController < ApplicationController
     query = query.select(selects).includes(includes)
     # Apply filters
     query = query.where(id: params["id"]) if params["id"].present?
+    query = query.where(id: params["ids"].split(",")) if params["ids"].present?
     query = query.where("campaigns.name ILIKE ?", "%#{params['search']}%") if params["search"].present?
     if params["show_all"] == "true"
       query = query.where(active: [true, false, nil])

@@ -32,6 +32,7 @@ class Api::V2::PartiesController < ApplicationController
 
     # Apply filters
     query = query.where(id: params["id"]) if params["id"].present?
+    query = query.where(id: params["ids"].split(",")) if params["ids"].present?
     query = query.where(faction_id: params["faction_id"]) if params["faction_id"].present?
     query = query.where(juncture_id: params["juncture_id"]) if params["juncture_id"].present?
     query = query.where("parties.name ILIKE ?", "%#{params['search']}%") if params["search"].present?

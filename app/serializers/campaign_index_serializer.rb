@@ -1,5 +1,5 @@
 class CampaignIndexSerializer < ActiveModel::Serializer
-  attributes :id, :name, :description, :image_url, :player_ids, :entity_class, :active, :created_at, :updated_at, :gamemaster, :gamemaster_id
+  attributes :id, :name, :description, :image_url, :user_ids, :entity_class, :active, :created_at, :updated_at, :gamemaster, :gamemaster_id
   has_many :image_positions, serializer: ImagePositionSerializer
   has_many :characters, serializer: CharacterIndexSerializer
 
