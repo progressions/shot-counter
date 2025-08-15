@@ -1,5 +1,5 @@
 class UserAutocompleteSerializer < ActiveModel::Serializer
-  attributes :id, :name, :email
+  attributes :id, :name, :email, :entity_class
 
   def name
     if object.first_name.present? && object.last_name.present?
@@ -7,5 +7,9 @@ class UserAutocompleteSerializer < ActiveModel::Serializer
     else
       object.email
     end
+  end
+
+  def entity_class
+    object.class.name
   end
 end
