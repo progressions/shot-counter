@@ -29,7 +29,9 @@ class Api::V2::CampaignsController < ApplicationController
     query = query.select(selects).includes(includes)
     # Apply filters
     query = query.where(id: params["id"]) if params["id"].present?
-    query = query.where(id: params["ids"].split(",")) if params["ids"].present?
+    if params.key?("ids")
+      query = params["ids"].blank? ? query.where(id: nil) : query.where(id: params["ids"].split(","))
+    end
     query = query.where("campaigns.name ILIKE ?", "%#{params['search']}%") if params["search"].present?
     if params["show_all"] == "true"
       query = query.where(active: [true, false, nil])
@@ -77,7 +79,7 @@ class Api::V2::CampaignsController < ApplicationController
     else
       campaign_data = campaign_params.to_h.symbolize_keys
     end
-    campaign_data = campaign_data.slice(:name, :description, :active, :player_ids)
+    campaign_data = campaign_data.slice(:name, :description, :active, :user_ids)
     @campaign = current_user.campaigns.new(campaign_data)
     if params[:image].present?
       @campaign.image.attach(params[:image])
@@ -104,7 +106,7 @@ class Api::V2::CampaignsController < ApplicationController
     else
       campaign_data = campaign_params.to_h.symbolize_keys
     end
-    campaign_data = campaign_data.slice(:name, :description, :active, :player_ids)
+    campaign_data = campaign_data.slice(:name, :description, :active, :user_ids)
     if params[:image].present?
       @campaign.image.purge if @campaign.image.attached?
       @campaign.image.attach(params[:image])
@@ -188,7 +190,7 @@ class Api::V2::CampaignsController < ApplicationController
   end
 
   def campaign_params
-    params.require(:campaign).permit(:name, :description, :image, :active, player_ids: [])
+    params.require(:campaign).permit(:name, :description, :image, :active, user_ids: [])
   end
 
   def sort_order

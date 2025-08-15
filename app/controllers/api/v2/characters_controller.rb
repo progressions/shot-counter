@@ -33,14 +33,16 @@ class Api::V2::CharactersController < ApplicationController
 
     # Apply filters
     query = query.where(id: params["id"]) if params["id"].present?
-    query = query.where(id: params["ids"].split(",")) if params["ids"].present?
+    if params.key?("ids")
+      query = params["ids"].blank? ? query.where(id: nil) : query.where(id: params["ids"].split(","))
+    end
     query = query.where(params["faction_id"] == "__NONE__" ? "characters.faction_id IS NULL" : "characters.faction_id = ?", params["faction_id"]) if params["faction_id"].present?
     query = query.where(params["juncture_id"] == "__NONE__" ? "characters.juncture_id IS NULL" : "characters.juncture_id = ?", params["juncture_id"]) if params["juncture_id"].present?
     query = query.where(user_id: params["user_id"]) if params["user_id"].present?
     query = query.where("characters.name ILIKE ?", "%#{params['search']}%") if params["search"].present?
     # Type can't be nil
-    query = query.where("action_values->>'Type' = ?", params["type"]) if params["type"].present?
-    query = query.where(params["archetype"] == "__NONE__" ? "action_values->>'Archetype' = ?", params["archetype"] == "__NONE__" ? "" : params["archetype"]) if params["archetype"].present?
+    query = query.where("action_values->>'Type' = ?", params["character_type"]) if params["character_type"].present?
+    query = query.where("action_values->>'Archetype' = ?", params["archetype"] == "__NONE__" ? "" : params["archetype"]) if params["archetype"].present?
     if params["show_all"] == "true"
       query = query.where(active: [true, false, nil])
     else
@@ -78,14 +80,15 @@ class Api::V2::CharactersController < ApplicationController
 
     cached_result = Rails.cache.fetch(cache_key, expires_in: 5.minutes) do
       characters = query.order(Arel.sql(sort_order))
-      characters = paginate(characters, per_page: per_page, page: page)
       # Fetch factions
       faction_ids = characters.pluck(:faction_id).uniq.compact
       factions = Faction.where(id: faction_ids)
                         .select("factions.id", "factions.name")
                         .order("LOWER(factions.name) ASC")
       # Archetypes
-      archetypes = characters.map { |c| c.action_values["Archetype"] }.compact.uniq.sort
+      archetypes = characters.map { |c| c.action_values["Archetype"] }.compact.uniq.reject(&:blank?).sort
+
+      characters = paginate(characters, per_page: per_page, page: page)
       {
         "characters" => ActiveModelSerializers::SerializableResource.new(
           characters,

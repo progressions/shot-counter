@@ -32,7 +32,9 @@ class Api::V2::WeaponsController < ApplicationController
 
     # Apply filters
     query = query.where(id: params["id"]) if params["id"].present?
-    query = query.where(id: params["ids"].split(",")) if params["ids"].present?
+    if params.key?("ids")
+      query = params["ids"].blank? ? query.where(id: nil) : query.where(id: params["ids"].split(","))
+    end
     query = query.where("weapons.name ILIKE ?", "%#{params['search']}%") if params["search"].present?
     query = query.where(params["category"] == "__NONE__" ? "weapons.category IS NULL" : "weapons.category = ?", params["category"]) if params["category"].present?
     query = query.where(params["juncture"] == "__NONE__" ? "weapons.juncture IS NULL" : "weapons.juncture = ?", params["juncture"]) if params["juncture"].present?
@@ -58,8 +60,8 @@ class Api::V2::WeaponsController < ApplicationController
     cached_result = Rails.cache.fetch(cache_key, expires_in: 5.minutes) do
       weapons = query.order(Arel.sql(sort_order))
 
-      categories = weapons.pluck(:category).uniq.compact.sort
-      junctures = weapons.pluck(:juncture).uniq.compact.sort
+      categories = weapons.pluck(:category).uniq.compact.reject(&:empty?).sort
+      junctures = weapons.pluck(:juncture).uniq.compact.reject(&:empty?).sort
 
       weapons = paginate(weapons, per_page: per_page, page: page)
 

@@ -27,9 +27,11 @@ class Api::V2::UsersController < ApplicationController
     query = User.select(selects).includes(includes)
     # Apply filters
     query = query.where(id: params["id"]) if params["id"].present?
-    query = query.where(id: params["ids"].split(",")) if params["ids"].present?
-    query = query.where(email: params["email"]) if params["email"].present?
+    if params.key?("ids")
+      query = params["ids"].blank? ? query.where(id: nil) : query.where(id: params["ids"].split(","))
+    end
     query = query.where("users.first_name ILIKE ? OR users.last_name ILIKE ?", "%#{params['search']}%", "%#{params['search']}%") if params["search"].present?
+    query = query.where("users.email ILIKE ?", "%#{params['email']}%") if params["email"].present?
     if params["show_all"] == "true"
       query = query.where(active: [true, false, nil])
     else

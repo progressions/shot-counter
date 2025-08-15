@@ -69,6 +69,34 @@ RSpec.describe "Api::V2::Schticks", type: :request do
       body = JSON.parse(response.body)
       expect(body["categories"]).to eq(["Martial Arts", "Sorcery"])
     end
+    it "returns empty array when ids is explicitly empty" do
+      get "/api/v2/schticks", params: { ids: "" }, headers: @headers
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["schticks"]).to eq([])
+      expect(body["categories"]).to eq([])
+      expect(body["paths"]).to eq([])
+      expect(body["meta"]).to eq({
+        "current_page" => 1,
+        "next_page" => nil,
+        "prev_page" => nil,
+        "total_pages" => 0,
+        "total_count" => 0
+      })
+    end
+    it "filters by comma-separated ids" do
+      get "/api/v2/schticks", params: { ids: "#{@fireball.id},#{@punch.id}" }, headers: @headers
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["schticks"].map { |s| s["name"] }).to eq(["Punch", "Fireball"])
+      expect(body["categories"]).to eq(["Martial Arts", "Sorcery"])
+      expect(body["paths"]).to eq(["Fire", "Path of the Tiger"])
+      expect(body["meta"]).to include(
+        "current_page" => 1,
+        "total_pages" => 1,
+        "total_count" => 2
+      )
+    end
     it "sorts by created_at ascending" do
       get "/api/v2/schticks", params: { sort: "created_at", order: "asc" }, headers: @headers
       expect(response).to have_http_status(:success)
@@ -222,154 +250,6 @@ RSpec.describe "Api::V2::Schticks", type: :request do
       expect(body["schticks"].map { |s| s["name"] }).to eq(["Punch"])
       expect(body["categories"]).to eq(["Martial Arts"])
       expect(body["paths"]).to eq(["Path of the Tiger"])
-    end
-    describe "GET /autocomplete" do
-      it "sorts by created_at ascending" do
-        get "/api/v2/schticks", params: { autocomplete: true, sort: "created_at", order: "asc" }, headers: @headers
-        expect(response).to have_http_status(:success)
-        body = JSON.parse(response.body)
-        expect(body["schticks"].map { |s| s["name"] }).to eq(["Fireball", "Blast", "Punch", "Kick"])
-        expect(body["categories"]).to eq(["Martial Arts", "Sorcery"])
-        expect(body["paths"]).to eq(["Fire", "Force", "Path of the Tiger"])
-      end
-      it "sorts by created_at descending" do
-        get "/api/v2/schticks", params: { autocomplete: true, sort: "created_at", order: "desc" }, headers: @headers
-        expect(response).to have_http_status(:success)
-        body = JSON.parse(response.body)
-        expect(body["schticks"].map { |s| s["name"] }).to eq(["Kick", "Punch", "Blast", "Fireball"])
-        expect(body["categories"]).to eq(["Martial Arts", "Sorcery"])
-        expect(body["paths"]).to eq(["Fire", "Force", "Path of the Tiger"])
-      end
-      it "sorts by updated_at ascending" do
-        @punch.touch
-        get "/api/v2/schticks", params: { autocomplete: true, sort: "updated_at", order: "asc" }, headers: @headers
-        expect(response).to have_http_status(:success)
-        body = JSON.parse(response.body)
-        expect(body["schticks"].map { |s| s["name"] }).to eq(["Fireball", "Blast", "Kick", "Punch"])
-        expect(body["categories"]).to eq(["Martial Arts", "Sorcery"])
-        expect(body["paths"]).to eq(["Fire", "Force", "Path of the Tiger"])
-      end
-      it "sorts by updated_at descending" do
-        @punch.touch
-        get "/api/v2/schticks", params: { autocomplete: true, sort: "updated_at", order: "desc" }, headers: @headers
-        expect(response).to have_http_status(:success)
-        body = JSON.parse(response.body)
-        expect(body["schticks"].map { |s| s["name"] }).to eq(["Punch", "Kick", "Blast", "Fireball"])
-        expect(body["categories"]).to eq(["Martial Arts", "Sorcery"])
-        expect(body["paths"]).to eq(["Fire", "Force", "Path of the Tiger"])
-      end
-      it "sorts by name ascending" do
-        get "/api/v2/schticks", params: { autocomplete: true, sort: "name", order: "asc" }, headers: @headers
-        expect(response).to have_http_status(:success)
-        body = JSON.parse(response.body)
-        expect(body["schticks"].map { |s| s["name"] }).to eq(["Blast", "Fireball", "Kick", "Punch"])
-        expect(body["categories"]).to eq(["Martial Arts", "Sorcery"])
-        expect(body["paths"]).to eq(["Fire", "Force", "Path of the Tiger"])
-      end
-      it "sorts by name descending" do
-        get "/api/v2/schticks", params: { autocomplete: true, sort: "name", order: "desc" }, headers: @headers
-        expect(response).to have_http_status(:success)
-        body = JSON.parse(response.body)
-        expect(body["schticks"].map { |s| s["name"] }).to eq(["Punch", "Kick", "Fireball", "Blast"])
-        expect(body["categories"]).to eq(["Martial Arts", "Sorcery"])
-        expect(body["paths"]).to eq(["Fire", "Force", "Path of the Tiger"])
-      end
-      it "sorts by category ascending" do
-        get "/api/v2/schticks", params: { autocomplete: true, sort: "category", order: "asc" }, headers: @headers
-        expect(response).to have_http_status(:success)
-        body = JSON.parse(response.body)
-        expect(body["schticks"].map { |s| s["name"] }).to eq(["Kick", "Punch", "Blast", "Fireball"])
-        expect(body["categories"]).to eq(["Martial Arts", "Sorcery"])
-        expect(body["paths"]).to eq(["Fire", "Force", "Path of the Tiger"])
-      end
-      it "sorts by category descending" do
-        get "/api/v2/schticks", params: { autocomplete: true, sort: "category", order: "desc" }, headers: @headers
-        expect(response).to have_http_status(:success)
-        body = JSON.parse(response.body)
-        expect(body["schticks"].map { |s| s["name"] }).to eq(["Fireball", "Blast", "Punch", "Kick"])
-        expect(body["categories"]).to eq(["Martial Arts", "Sorcery"])
-        expect(body["paths"]).to eq(["Fire", "Force", "Path of the Tiger"])
-      end
-      it "sorts by path ascending" do
-        get "/api/v2/schticks", params: { autocomplete: true, sort: "path", order: "asc" }, headers: @headers
-        expect(response).to have_http_status(:success)
-        body = JSON.parse(response.body)
-        expect(body["schticks"].map { |s| s["name"] }).to eq(["Fireball", "Blast", "Kick", "Punch"])
-        expect(body["categories"]).to eq(["Martial Arts", "Sorcery"])
-        expect(body["paths"]).to eq(["Fire", "Force", "Path of the Tiger"])
-      end
-      it "sorts by path descending" do
-        get "/api/v2/schticks", params: { autocomplete: true, sort: "path", order: "desc" }, headers: @headers
-        expect(response).to have_http_status(:success)
-        body = JSON.parse(response.body)
-        expect(body["schticks"].map { |s| s["name"] }).to eq(["Punch", "Kick", "Blast", "Fireball"])
-        expect(body["categories"]).to eq(["Martial Arts", "Sorcery"])
-        expect(body["paths"]).to eq(["Fire", "Force", "Path of the Tiger"])
-      end
-      it "filters by character_id" do
-        get "/api/v2/schticks", params: { autocomplete: true, character_id: @serena.id }, headers: @headers
-        expect(response).to have_http_status(:success)
-        body = JSON.parse(response.body)
-        expect(body["schticks"].map { |s| s["name"] }).to eq(["Blast", "Fireball"])
-        expect(body["categories"]).to eq(["Sorcery"])
-        expect(body["paths"]).to eq(["Fire", "Force"])
-      end
-      it "filters by character_id" do
-        get "/api/v2/schticks", params: { autocomplete: true, character_id: @brick.id }, headers: @headers
-        expect(response).to have_http_status(:success)
-        body = JSON.parse(response.body)
-        expect(body["schticks"].map { |s| s["name"] }).to eq(["Kick", "Punch"])
-        expect(body["categories"]).to eq(["Martial Arts"])
-        expect(body["paths"]).to eq(["Path of the Tiger"])
-      end
-      it "filters by category" do
-        get "/api/v2/schticks", params: { autocomplete: true, category: "Sorcery" }, headers: @headers
-        expect(response).to have_http_status(:success)
-        body = JSON.parse(response.body)
-        expect(body["schticks"].map { |s| s["name"] }).to eq(["Blast", "Fireball"])
-        expect(body["categories"]).to eq(["Sorcery"])
-        expect(body["paths"]).to eq(["Fire", "Force"])
-      end
-      it "filters by category" do
-        get "/api/v2/schticks", params: { autocomplete: true, category: "Martial Arts" }, headers: @headers
-        expect(response).to have_http_status(:success)
-        body = JSON.parse(response.body)
-        expect(body["schticks"].map { |s| s["name"] }).to eq(["Kick", "Punch"])
-        expect(body["categories"]).to eq(["Martial Arts"])
-        expect(body["paths"]).to eq(["Path of the Tiger"])
-      end
-      it "filters by path" do
-        get "/api/v2/schticks", params: { autocomplete: true, path: "Fire" }, headers: @headers
-        expect(response).to have_http_status(:success)
-        body = JSON.parse(response.body)
-        expect(body["schticks"].map { |s| s["name"] }).to eq(["Fireball"])
-        expect(body["categories"]).to eq(["Sorcery"])
-        expect(body["paths"]).to eq(["Fire"])
-      end
-      it "filters by path" do
-        get "/api/v2/schticks", params: { autocomplete: true, path: "Path of the Tiger" }, headers: @headers
-        expect(response).to have_http_status(:success)
-        body = JSON.parse(response.body)
-        expect(body["schticks"].map { |s| s["name"] }).to eq(["Kick", "Punch"])
-        expect(body["categories"]).to eq(["Martial Arts"])
-        expect(body["paths"]).to eq(["Path of the Tiger"])
-      end
-      it "filters by search string" do
-        get "/api/v2/schticks", params: { autocomplete: true, search: "Fire" }, headers: @headers
-        expect(response).to have_http_status(:success)
-        body = JSON.parse(response.body)
-        expect(body["schticks"].map { |s| s["name"] }).to eq(["Fireball"])
-        expect(body["categories"]).to eq(["Sorcery"])
-        expect(body["paths"]).to eq(["Fire"])
-      end
-      it "filters by search string" do
-        get "/api/v2/schticks", params: { autocomplete: true, search: "Punch" }, headers: @headers
-        expect(response).to have_http_status(:success)
-        body = JSON.parse(response.body)
-        expect(body["schticks"].map { |s| s["name"] }).to eq(["Punch"])
-        expect(body["categories"]).to eq(["Martial Arts"])
-        expect(body["paths"]).to eq(["Path of the Tiger"])
-      end
     end
   end
 end

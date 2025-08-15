@@ -30,7 +30,9 @@ class Api::V2::SitesController < ApplicationController
 
     # Apply filters
     query = query.where(id: params["id"]) if params["id"].present?
-    query = query.where(id: params["ids"].split(",")) if params["ids"].present?
+    if params.key?("ids")
+      query = params["ids"].blank? ? query.where(id: nil) : query.where(id: params["ids"].split(","))
+    end
     query = query.where(params["faction_id"] == "__NONE__" ? "sites.faction_id IS NULL" : "sites.faction_id = ?", params["faction_id"]) if params["faction_id"].present?
     query = query.where(params["juncture_id"] == "__NONE__" ? "sites.juncture_id IS NULL" : "sites.juncture_id = ?", params["juncture_id"]) if params["juncture_id"].present?
     query = query.where("sites.name ILIKE ?", "%#{params['search']}%") if params["search"].present?

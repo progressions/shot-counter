@@ -3,6 +3,7 @@ class Api::V2::SchticksController < ApplicationController
   before_action :require_current_campaign
 
   def index
+    Rails.logger.info("SCHTICKS PARAMS #{params.inspect}")
     per_page = (params["per_page"] || 15).to_i
     page = (params["page"] || 1).to_i
     selects = [
@@ -27,7 +28,9 @@ class Api::V2::SchticksController < ApplicationController
 
     # Apply filters
     query = query.where(id: params["id"]) if params["id"].present?
-    query = query.where(id: params["ids"].split(",")) if params["ids"].present?
+    if params.key?("ids")
+      query = params["ids"].blank? ? query.where(id: nil) : query.where(id: params["ids"].split(","))
+    end
     query = query.where("schticks.name ILIKE ?", "%#{params['search']}%") if params["search"].present?
     query = query.where(params["category"] == "__NONE__" ? "schticks.category IS NULL" : "schticks.category = ?", params["category"]) if params["category"].present?
     query = query.where(params["path"] == "__NONE__" ? "schticks.path IS NULL" : "schticks.path = ?", params["path"]) if params["path"].present?
@@ -78,32 +81,34 @@ class Api::V2::SchticksController < ApplicationController
   end
 
   def batch
-    ids = params[:ids].split(",")
-    if ids.blank?
+    unless params.key?("ids")
+      render json: { error: "ids parameter is required" }, status: :bad_request
+      return
+    end
+    if params["ids"].blank?
       render json: { schticks: [], categories: [], meta: { current_page: 1, next_page: nil, prev_page: nil, total_pages: 1, total_count: 0 } }, status: :ok
       return
     end
-
+    ids = params["ids"].split(",")
     cache_key = [
       "schticks_batch",
       current_campaign.id,
       ids.sort.join(","),
-      params[:per_page] || 200,
-      params[:page] || 1
+      params["per_page"] || 200,
+      params["page"] || 1
     ].join("/")
-
     cached_response = Rails.cache.fetch(cache_key, expires_in: 12.hours) do
       schticks = current_campaign
         .schticks
         .where(id: ids)
         .select(:id, :name, :description, :image_url, :category, :path)
       schticks = paginate(schticks, per_page: (params[:per_page] || 200), page: (params[:page] || 1))
-
       {
         schticks: ActiveModelSerializers::SerializableResource.new(schticks, each_serializer: EncounterSchtickSerializer).serializable_hash,
+        categories: [],
+        meta: pagination_meta(schticks)
       }
     end
-
     render json: cached_response, status: :ok
   end
 

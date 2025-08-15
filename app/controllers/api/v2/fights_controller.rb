@@ -38,10 +38,12 @@ class Api::V2::FightsController < ApplicationController
       query = query.where(active: true)
     end
     query = query.where(id: params["id"]) if params["id"].present?
-    query = query.where(id: params["ids"]) if params["ids"].present?
-    query = query.where(started_at: nil) if params["unstarted"].present?
-    query = query.where.not(started_at: nil).where(ended_at: nil) if params["unended"].present?
-    query = query.where.not(started_at: nil).where.not(ended_at: nil) if params["ended"].present?
+    if params.key?("ids")
+      query = params["ids"].blank? ? query.where(id: nil) : query.where(id: params["ids"].split(","))
+    end
+    query = query.where(started_at: nil) if params["status"] == "Unstarted"
+    query = query.where.not(started_at: nil).where(ended_at: nil) if params["status"] == "Started"
+    query = query.where.not(started_at: nil).where.not(ended_at: nil) if params["status"] == "Ended"
     query = query.where(params["season"] == "__NONE__" ? "fights.season IS NULL" : "fights.season = ?", params["season"]) if params["season"].present?
     query = query.where(params["session"] == "__NONE__" ? "fights.session IS NULL" : "fights.session = ?", params["session"]) if params["session"].present?
     query = query.joins(:shots).where(shots: { character_id: params[:character_id] }) if params[:character_id].present?
@@ -73,7 +75,7 @@ class Api::V2::FightsController < ApplicationController
 
       # Get seasons without applying full sort_order
       seasons_query = query.select("fights.season").distinct
-      seasons = seasons_query.pluck(:season).uniq
+      seasons = seasons_query.pluck(:season).compact.uniq
 
       fights = paginate(fights, per_page: per_page, page: page)
       {

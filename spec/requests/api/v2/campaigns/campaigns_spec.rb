@@ -7,7 +7,7 @@ RSpec.describe "Api::V2::Campaigns", type: :request do
     @gamemaster = User.create!(email: "gamemaster@example.com", confirmed_at: Time.now, gamemaster: true, first_name: "Game", last_name: "Master", name: "Game Master")
     @player = User.create!(email: "player@example.com", confirmed_at: Time.now, gamemaster: false, first_name: "Player", last_name: "One", name: "Player One")
     # campaigns
-    @campaign = @gamemaster.campaigns.create!(name: "Adventure", description: "Epic adventure", active: true, player_ids: [@player.id])
+    @campaign = @gamemaster.campaigns.create!(name: "Adventure", description: "Epic adventure", active: true, user_ids: [@player.id])
     @other_campaign = @gamemaster.campaigns.create!(name: "Quest", description: "Heroic quest", active: true)
     @inactive_campaign = @gamemaster.campaigns.create!(name: "Old Campaign", description: "Retired campaign", active: false)
     # factions
@@ -49,30 +49,30 @@ RSpec.describe "Api::V2::Campaigns", type: :request do
   describe "POST /create" do
     context "when user is gamemaster" do
       it "creates a new campaign" do
-        post "/api/v2/campaigns", params: { campaign: { name: "New Campaign", description: "A new adventure", active: true, player_ids: [@player.id] } }, headers: @gamemaster_headers
+        post "/api/v2/campaigns", params: { campaign: { name: "New Campaign", description: "A new adventure", active: true, user_ids: [@player.id] } }, headers: @gamemaster_headers
         expect(response).to have_http_status(:created)
         body = JSON.parse(response.body)
         expect(body["name"]).to eq("New Campaign")
         expect(body["description"]).to eq("A new adventure")
         expect(body["active"]).to eq(true)
-        expect(body["player_ids"]).to include(@player.id)
+        expect(body["user_ids"]).to include(@player.id)
         expect(body["image_url"]).to be_nil
         expect(Campaign.order("created_at").last.name).to eq("New Campaign")
       end
 
       it "creates a new campaign with JSON string" do
-        post "/api/v2/campaigns", params: { campaign: { name: "Json Campaign", description: "A JSON adventure", active: false, player_ids: [@player.id] }.to_json }, headers: @gamemaster_headers
+        post "/api/v2/campaigns", params: { campaign: { name: "Json Campaign", description: "A JSON adventure", active: false, user_ids: [@player.id] }.to_json }, headers: @gamemaster_headers
         expect(response).to have_http_status(:created)
         body = JSON.parse(response.body)
         expect(body["name"]).to eq("Json Campaign")
         expect(body["description"]).to eq("A JSON adventure")
         expect(body["active"]).to eq(false)
-        expect(body["player_ids"]).to include(@player.id)
+        expect(body["user_ids"]).to include(@player.id)
         expect(Campaign.order("created_at").last.name).to eq("Json Campaign")
       end
 
       it "returns an error when name is missing" do
-        post "/api/v2/campaigns", params: { campaign: { description: "A new adventure", active: true, player_ids: [@player.id] } }, headers: @gamemaster_headers
+        post "/api/v2/campaigns", params: { campaign: { description: "A new adventure", active: true, user_ids: [@player.id] } }, headers: @gamemaster_headers
         expect(response).to have_http_status(:unprocessable_entity)
         body = JSON.parse(response.body)
         expect(body["errors"]).to include({ "name" => ["can't be blank"] })
@@ -98,11 +98,11 @@ RSpec.describe "Api::V2::Campaigns", type: :request do
 
     context "when user is admin" do
       it "creates a new campaign" do
-        post "/api/v2/campaigns", params: { campaign: { name: "Admin Campaign", description: "Admin adventure", active: true, player_ids: [@player.id] } }, headers: @admin_headers
+        post "/api/v2/campaigns", params: { campaign: { name: "Admin Campaign", description: "Admin adventure", active: true, user_ids: [@player.id] } }, headers: @admin_headers
         expect(response).to have_http_status(:created)
         body = JSON.parse(response.body)
         expect(body["name"]).to eq("Admin Campaign")
-        expect(body["player_ids"]).to include(@player.id)
+        expect(body["user_ids"]).to include(@player.id)
         expect(Campaign.order("created_at").last.name).to eq("Admin Campaign")
       end
     end
@@ -126,9 +126,9 @@ RSpec.describe "Api::V2::Campaigns", type: :request do
         expect(body["name"]).to eq("Adventure")
         expect(body["description"]).to eq("Epic adventure")
         expect(body["active"]).to eq(true)
-        expect(body["player_ids"]).to include(@player.id)
+        expect(body["user_ids"]).to include(@player.id)
         expect(body["image_url"]).to be_nil
-        expect(body.keys).to include("id", "name", "description", "active", "player_ids", "image_url", "created_at", "updated_at")
+        expect(body.keys).to include("id", "name", "description", "active", "user_ids", "image_url", "created_at", "updated_at")
       end
 
       it "retrieves the current campaign" do
@@ -136,7 +136,7 @@ RSpec.describe "Api::V2::Campaigns", type: :request do
         expect(response).to have_http_status(:ok)
         body = JSON.parse(response.body)
         expect(body["name"]).to eq("Adventure")
-        expect(body["player_ids"]).to include(@player.id)
+        expect(body["user_ids"]).to include(@player.id)
       end
     end
 
@@ -146,7 +146,7 @@ RSpec.describe "Api::V2::Campaigns", type: :request do
         expect(response).to have_http_status(:ok)
         body = JSON.parse(response.body)
         expect(body["name"]).to eq("Adventure")
-        expect(body["player_ids"]).to include(@player.id)
+        expect(body["user_ids"]).to include(@player.id)
       end
     end
 
@@ -172,23 +172,23 @@ RSpec.describe "Api::V2::Campaigns", type: :request do
   describe "PATCH /update" do
     context "when user is gamemaster" do
       it "updates a campaign" do
-        patch "/api/v2/campaigns/#{@campaign.id}", params: { campaign: { name: "Updated Adventure", description: "Updated epic adventure", active: false, player_ids: [] } }, headers: @gamemaster_headers
+        patch "/api/v2/campaigns/#{@campaign.id}", params: { campaign: { name: "Updated Adventure", description: "Updated epic adventure", active: false, user_ids: [] } }, headers: @gamemaster_headers
         expect(response).to have_http_status(:success)
         body = JSON.parse(response.body)
         expect(body["name"]).to eq("Updated Adventure")
         expect(body["description"]).to eq("Updated epic adventure")
         expect(body["active"]).to eq(false)
-        expect(body["player_ids"]).to eq([])
+        expect(body["user_ids"]).to eq([])
         @campaign.reload
         expect(@campaign.name).to eq("Updated Adventure")
       end
 
       it "updates a campaign with JSON string" do
-        patch "/api/v2/campaigns/#{@campaign.id}", params: { campaign: { name: "Json Adventure", description: "JSON epic adventure", active: true, player_ids: [@gamemaster.id] }.to_json }, headers: @gamemaster_headers
+        patch "/api/v2/campaigns/#{@campaign.id}", params: { campaign: { name: "Json Adventure", description: "JSON epic adventure", active: true, user_ids: [@gamemaster.id] }.to_json }, headers: @gamemaster_headers
         expect(response).to have_http_status(:success)
         body = JSON.parse(response.body)
         expect(body["name"]).to eq("Json Adventure")
-        expect(body["player_ids"]).to include(@gamemaster.id)
+        expect(body["user_ids"]).to include(@gamemaster.id)
         @campaign.reload
         expect(@campaign.name).to eq("Json Adventure")
       end

@@ -3,7 +3,7 @@ class AiCharacterCreationJob < ApplicationJob
 
   def perform(description, campaign_id)
     campaign = Campaign.find(campaign_id)
-    json = AiCharacterService.generate_character(description, campaign)
+    json = AiService.generate_character(description, campaign)
 
     Rails.logger.info("Generated AI character JSON: #{json}")
 

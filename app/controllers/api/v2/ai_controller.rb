@@ -7,6 +7,11 @@ class Api::V2::AiController < ApplicationController
     render json: { message: 'Character generation in progress' }, status: :accepted
   end
 
+  def extend
+    @character = current_campaign.characters.find(params[:id])
+    AiCharacterUpdateJob.perform_later(@character.id)
+  end
+
   private
 
   def ai_params

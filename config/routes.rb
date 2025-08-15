@@ -10,7 +10,11 @@ Rails.application.routes.draw do
       resources :encounters, only: [:show] do
         patch :act, on: :member, to: "encounters#act"
       end
-      resources :ai, only: [:create]
+      resources :ai, only: [:create] do
+        member do
+          patch :extend
+        end
+      end
       resources :ai_images, only: [:create] do
         collection do
           post "attach", to: "ai_images#attach"
