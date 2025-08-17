@@ -79,7 +79,7 @@ RSpec.describe "Api::V2::Junctures", type: :request do
       post "/api/v2/junctures", params: { juncture: { description: "A new era", faction_id: @dragons.id, active: true, character_ids: [@brick.id] } }, headers: @headers
       expect(response).to have_http_status(:unprocessable_entity)
       body = JSON.parse(response.body)
-      expect(body["errors"]).to include("Name can't be blank")
+      expect(body["errors"]).to include("name" => ["can't be blank"])
     end
 
     it "returns an error for invalid JSON string" do
@@ -135,7 +135,7 @@ RSpec.describe "Api::V2::Junctures", type: :request do
       patch "/api/v2/junctures/#{@modern.id}", params: { juncture: { name: "", description: "Updated modern world", faction_id: @ascended.id, active: true } }, headers: @headers
       expect(response).to have_http_status(:unprocessable_entity)
       body = JSON.parse(response.body)
-      expect(body["errors"]).to include("Name can't be blank")
+      expect(body["errors"]).to include("name" => ["can't be blank"])
       @modern.reload
       expect(@modern.name).to eq("Modern")
     end

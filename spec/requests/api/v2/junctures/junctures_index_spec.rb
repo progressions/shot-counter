@@ -56,7 +56,7 @@ RSpec.describe "Api::V2::Junctures", type: :request do
       body = JSON.parse(response.body)
       expect(body["junctures"].length).to eq(1)
       expect(body["junctures"][0]).to include("name" => "Modern", "description" => "The modern world.", "faction_id" => @dragons.id)
-      expect(body["junctures"][0].keys).to eq( ["id", "name", "description", "created_at", "updated_at", "faction_id", "campaign_id", "image_url", "faction", "image_positions"])
+      expect(body["junctures"][0].keys).to eq( ["id", "name", "description", "created_at", "updated_at", "faction_id", "campaign_id", "image_url", "entity_class", "faction", "image_positions"])
     end
 
     it "returns an empty array when no junctures exist" do
@@ -176,6 +176,23 @@ RSpec.describe "Api::V2::Junctures", type: :request do
       body = JSON.parse(response.body)
       expect(body["junctures"].map { |j| j["name"] }).to eq(["Inactive Juncture", "Future", "Ancient", "Modern"])
     end
+
+    it "filters by faction_id __NONE__ for junctures with no faction" do
+      @no_faction_juncture = @campaign.junctures.create!(name: "Neutral Juncture", description: "A neutral time period.", faction_id: nil, active: true)
+      get "/api/v2/junctures", params: { faction_id: "__NONE__" }, headers: @headers
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["junctures"].map { |j| j["name"] }).to eq(["Neutral Juncture"])
+      expect(body["factions"]).to eq([])
+    end
+
+    it "returns empty array when ids is explicitly empty" do
+      get "/api/v2/junctures", params: { ids: "" }, headers: @headers
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["junctures"]).to eq([])
+      expect(body["factions"]).to eq([])
+    end
   end
 
   describe "GET /autocomplete" do
@@ -192,7 +209,7 @@ RSpec.describe "Api::V2::Junctures", type: :request do
       body = JSON.parse(response.body)
       expect(body["junctures"].length).to eq(1)
       expect(body["junctures"][0]).to include("name" => "Modern")
-      expect(body["junctures"][0].keys).to eq(["id", "name"])
+      expect(body["junctures"][0].keys).to eq(["id", "name", "entity_class"])
     end
 
     it "returns an empty array when no junctures exist" do
@@ -310,6 +327,38 @@ RSpec.describe "Api::V2::Junctures", type: :request do
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
       expect(body["junctures"].map { |j| j["name"] }).to eq(["Ancient"])
+    end
+
+    it "gets only active junctures when show_all is false" do
+      get "/api/v2/junctures", params: { autocomplete: true, show_all: "false" }, headers: @headers
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["junctures"].map { |j| j["name"] }).to eq(["Future", "Ancient", "Modern"])
+      expect(body["junctures"].map { |j| j["name"] }).not_to include("Inactive Juncture")
+    end
+
+    it "gets all junctures when show_all is true" do
+      get "/api/v2/junctures", params: { autocomplete: true, show_all: "true" }, headers: @headers
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["junctures"].map { |j| j["name"] }).to eq(["Inactive Juncture", "Future", "Ancient", "Modern"])
+    end
+
+    it "filters by faction_id __NONE__ for junctures with no faction" do
+      @no_faction_juncture = @campaign.junctures.create!(name: "Neutral Juncture", description: "A neutral time period.", faction_id: nil, active: true)
+      get "/api/v2/junctures", params: { autocomplete: true, faction_id: "__NONE__" }, headers: @headers
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["junctures"].map { |j| j["name"] }).to eq(["Neutral Juncture"])
+      expect(body["factions"]).to eq([])
+    end
+
+    it "returns empty array when ids is explicitly empty" do
+      get "/api/v2/junctures", params: { autocomplete: true, ids: "" }, headers: @headers
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["junctures"]).to eq([])
+      expect(body["factions"]).to eq([])
     end
   end
 end
