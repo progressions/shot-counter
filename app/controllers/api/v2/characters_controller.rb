@@ -103,7 +103,7 @@ end
       character_data = character_params.to_h.symbolize_keys
     end
 
-    character_data = character_data.slice(:name, :description, :active, :juncture_id, :character_ids, :party_ids, :site_ids, :juncture_ids, :schtick_ids, :weapon_ids, :faction_id, :skills)
+    character_data = character_data.slice(:name, :description, :active, :juncture_id, :character_ids, :party_ids, :site_ids, :juncture_ids, :schtick_ids, :weapon_ids, :faction_id, :skills, :wealth)
 
     @character = current_campaign.characters.new(character_data)
 
@@ -133,7 +133,7 @@ end
     else
       character_data = character_params.to_h.symbolize_keys
     end
-    character_data = character_data.slice(:name, :description, :active, :character_ids, :party_ids, :site_ids, :juncture_ids, :schtick_ids, :action_values, :skills, :weapon_ids, :juncture_id, :faction_id)
+    character_data = character_data.slice(:name, :description, :active, :character_ids, :party_ids, :site_ids, :juncture_ids, :schtick_ids, :action_values, :skills, :weapon_ids, :juncture_id, :faction_id, :wealth)
 
     # Handle image attachment if present
     if params[:image].present?

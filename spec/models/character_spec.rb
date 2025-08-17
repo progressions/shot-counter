@@ -111,6 +111,16 @@ RSpec.describe Character, type: :model do
       expect(brick).to_not be_valid
       expect(brick.errors[:schticks]).to include("is invalid")
     end
+
+    it "allows updating the wealth attribute" do
+      expect(brick.wealth).to be_nil
+      brick.update!(wealth: "Poor")
+      expect(brick.wealth).to eq("Poor")
+      brick.update!(wealth: "Working Stiff")
+      expect(brick.wealth).to eq("Working Stiff")
+      brick.update!(wealth: "Rich")
+      expect(brick.wealth).to eq("Rich")
+    end
   end
 
   describe "instance methods" do

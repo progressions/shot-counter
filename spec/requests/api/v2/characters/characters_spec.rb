@@ -134,6 +134,17 @@ RSpec.describe "Api::V2::Characters", type: :request do
       expect(@brick.juncture_id).to eq(@ancient.id)
     end
 
+    it "updates the wealth" do
+      patch "/api/v2/characters/#{@brick.id}", params: { character: { wealth: "Rich" } }, headers: @headers
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["name"]).to eq("Brick Manly")
+      expect(body["wealth"]).to eq("Rich")
+      @brick.reload
+      expect(@brick.name).to eq("Brick Manly")
+      expect(@brick.wealth).to eq("Rich")
+    end
+
     it "adds a schtick" do
       schtick = @campaign.schticks.create!(name: "Super Strength", description: "Gives super strength.", category: "Everyday Hero", path: "Core")
       patch "/api/v2/characters/#{@brick.id}", params: { character: { schtick_ids: [schtick.id] } }, headers: @headers
