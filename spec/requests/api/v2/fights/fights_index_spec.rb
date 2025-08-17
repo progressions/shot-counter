@@ -172,6 +172,38 @@ RSpec.describe "Api::V2::Fights", type: :request do
       body = JSON.parse(response.body)
       expect(body["fights"].map { |f| f["name"] }).to eq(["Airport Battle", "Small Skirmish", "Big Brawl"])
     end
+    it "sorts by started_at ascending" do
+      @skirmish.update(started_at: 2.hours.ago)
+      @airport_battle.update(started_at: 1.hour.ago)
+      get "/api/v2/fights", params: { sort: "started_at", order: "asc" }, headers: @headers
+      expect(response).to have_http_status(200)
+      body = JSON.parse(response.body)
+      expect(body["fights"].map { |f| f["name"] }).to eq(["Small Skirmish", "Big Brawl", "Airport Battle"])
+    end
+    it "sorts by started_at descending" do
+      @skirmish.update(started_at: 2.hours.ago)
+      @airport_battle.update(started_at: 1.hour.ago)
+      get "/api/v2/fights", params: { sort: "started_at", order: "desc" }, headers: @headers
+      expect(response).to have_http_status(200)
+      body = JSON.parse(response.body)
+      expect(body["fights"].map { |f| f["name"] }).to eq(["Airport Battle", "Big Brawl", "Small Skirmish"])
+    end
+    it "sorts by ended_at ascending" do
+      @brawl.update(ended_at: 2.hours.ago)
+      @skirmish.update(ended_at: 1.hour.ago)
+      get "/api/v2/fights", params: { sort: "ended_at", order: "asc" }, headers: @headers
+      expect(response).to have_http_status(200)
+      body = JSON.parse(response.body)
+      expect(body["fights"].map { |f| f["name"] }).to eq(["Big Brawl", "Small Skirmish", "Airport Battle"])
+    end
+    it "sorts by ended_at descending" do
+      @brawl.update(ended_at: 2.hours.ago)
+      @skirmish.update(ended_at: 1.hour.ago)
+      get "/api/v2/fights", params: { sort: "ended_at", order: "desc" }, headers: @headers
+      expect(response).to have_http_status(200)
+      body = JSON.parse(response.body)
+      expect(body["fights"].map { |f| f["name"] }).to eq(["Airport Battle", "Small Skirmish", "Big Brawl"])
+    end
     it "filters by season" do
       get "/api/v2/fights", params: { season: 1 }, headers: @headers
       expect(response).to have_http_status(200)
@@ -183,6 +215,20 @@ RSpec.describe "Api::V2::Fights", type: :request do
       expect(response).to have_http_status(200)
       body = JSON.parse(response.body)
       expect(body["fights"].map { |f| f["name"] }).to eq(["Small Skirmish"])
+    end
+    it "filters by __NONE__ season" do
+      @no_season_fight = @campaign.fights.create!(name: "No Season Fight", description: "A fight without season.", season: nil, session: 1)
+      get "/api/v2/fights", params: { season: "__NONE__" }, headers: @headers
+      expect(response).to have_http_status(200)
+      body = JSON.parse(response.body)
+      expect(body["fights"].map { |f| f["name"] }).to eq(["No Season Fight"])
+    end
+    it "filters by __NONE__ session" do
+      @no_session_fight = @campaign.fights.create!(name: "No Session Fight", description: "A fight without session.", season: 1, session: nil)
+      get "/api/v2/fights", params: { session: "__NONE__" }, headers: @headers
+      expect(response).to have_http_status(200)
+      body = JSON.parse(response.body)
+      expect(body["fights"].map { |f| f["name"] }).to eq(["No Session Fight"])
     end
     it "gets only active fights when show_all is false" do
       get "/api/v2/fights", params: { show_all: false }, headers: @headers

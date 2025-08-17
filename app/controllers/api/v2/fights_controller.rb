@@ -71,7 +71,7 @@ class Api::V2::FightsController < ApplicationController
   ].join("/")
   cached_result = Rails.cache.fetch(cache_key, expires_in: 5.minutes) do
     fights = query.order(Arel.sql(sort_order)).distinct
-    seasons = current_campaign.fights.where(active: true).select("fights.season").distinct.pluck(:season).compact.uniq
+    seasons = query.select("fights.season").distinct.pluck(:season).compact.uniq
     fights = paginate(fights, per_page: per_page, page: page)
     {
       "fights" => ActiveModelSerializers::SerializableResource.new(
