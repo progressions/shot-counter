@@ -62,7 +62,7 @@ RSpec.describe "Api::V2::Sites", type: :request do
       body = JSON.parse(response.body)
       expect(body["sites"].length).to eq(1)
       expect(body["sites"][0]).to include("name" => "Dragons HQ", "faction_id" => @dragons.id, "juncture_id" => @modern.id)
-      expect(body["sites"][0].keys).to eq(["id", "name", "description", "active", "created_at", "updated_at", "faction_id", "campaign_id", "image_url", "juncture_id", "entity_class", "characters", "faction", "image_positions"])
+      expect(body["sites"][0].keys).to eq(["id", "name", "description", "active", "created_at", "updated_at", "faction_id", "faction", "campaign_id", "image_url", "juncture_id", "entity_class", "characters", "image_positions"])
       expect(body["factions"].map { |f| f["name"] }).to eq(["The Dragons"])
     end
 
@@ -214,6 +214,31 @@ RSpec.describe "Api::V2::Sites", type: :request do
       expect(body["sites"].map { |s| s["name"] }).to eq(["Stone Circle", "Bandit Hideout", "Ascended HQ", "Dragons HQ"])
       expect(body["factions"].map { |f| f["name"] }).to eq(["The Ascended", "The Dragons"])
     end
+
+    it "filters by faction_id __NONE__ for sites with no faction" do
+      get "/api/v2/sites", params: { faction_id: "__NONE__" }, headers: @headers
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["sites"].map { |s| s["name"] }).to eq(["Bandit Hideout"])
+      expect(body["factions"]).to eq([])
+    end
+
+    it "filters by juncture_id __NONE__ for sites with no juncture" do
+      @mystic_site = @campaign.sites.create!(name: "Mystic Site", description: "A mysterious site.", faction_id: @dragons.id, juncture_id: nil)
+      get "/api/v2/sites", params: { juncture_id: "__NONE__" }, headers: @headers
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["sites"].map { |s| s["name"] }).to eq(["Mystic Site"])
+      expect(body["factions"].map { |f| f["name"] }).to eq(["The Dragons"])
+    end
+
+    it "returns empty array when ids is explicitly empty" do
+      get "/api/v2/sites", params: { ids: "" }, headers: @headers
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["sites"]).to eq([])
+      expect(body["factions"]).to eq([])
+    end
   end
 
   describe "GET /autocomplete" do
@@ -231,7 +256,7 @@ RSpec.describe "Api::V2::Sites", type: :request do
       body = JSON.parse(response.body)
       expect(body["sites"].length).to eq(1)
       expect(body["sites"][0]).to include("name" => "Dragons HQ")
-      expect(body["sites"][0].keys).to eq(["id", "name"])
+      expect(body["sites"][0].keys).to eq(["id", "name", "entity_class"])
       expect(body["factions"].map { |f| f["name"] }).to eq(["The Dragons"])
     end
 
