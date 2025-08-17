@@ -127,6 +127,13 @@ RSpec.describe "Api::V2::Campaigns", type: :request do
         body = JSON.parse(response.body)
         expect(body["campaigns"].map { |c| c["name"] }).to eq(["Old Campaign", "Quest", "Adventure"])
       end
+
+      it "returns empty array when ids is explicitly empty" do
+        get "/api/v2/campaigns", params: { ids: "" }, headers: @gamemaster_headers
+        expect(response).to have_http_status(:success)
+        body = JSON.parse(response.body)
+        expect(body["campaigns"]).to eq([])
+      end
     end
 
     context "when user is admin" do

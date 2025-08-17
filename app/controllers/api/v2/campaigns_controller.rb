@@ -4,12 +4,18 @@ class Api::V2::CampaignsController < ApplicationController
   before_action :set_campaign, only: [:show, :set, :update, :remove_image]
 
   def show
-    cache_key = "campaign/#{current_campaign.id}/current"
+    unless @campaign
+      render json: { error: "Record not found or unauthorized" }, status: :not_found
+      return
+    end
+    
+    campaign_to_show = params[:id] == "current" ? current_campaign : @campaign
+    cache_key = "campaign/#{campaign_to_show.id}/#{params[:id] == 'current' ? 'current' : 'show'}"
     Rails.logger.info("Checking cache for key: #{cache_key}")
     campaign_data = Rails.cache.fetch(cache_key, expires_in: 5.minutes) do
       Rails.logger.info("Cache miss for #{cache_key}, generating data")
       ActiveModelSerializers::SerializableResource.new(
-        current_campaign,
+        campaign_to_show,
         serializer: CampaignSerializer,
         adapter: :attributes
       ).serializable_hash
