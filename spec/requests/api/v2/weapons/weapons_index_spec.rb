@@ -270,5 +270,15 @@ RSpec.describe "Api::V2::Weapons", type: :request do
       expect(body["categories"]).to eq(["Melee", "Ranged"])
       expect(body["junctures"]).to eq(["Ancient"])
     end
+
+    it "filters juncture by __NONE__" do
+      @magic_sword = @campaign.weapons.create!(name: "Magic Sword", description: "A mystical blade.", juncture: nil, category: "Melee", damage: 10, concealment: nil, reload_value: 0, mook_bonus: 0, kachunk: false)
+      get "/api/v2/weapons", params: { juncture: "__NONE__" }, headers: @headers
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["weapons"].map { |w| w["name"] }).to eq(["Magic Sword"])
+      expect(body["categories"]).to eq(["Melee"])
+      expect(body["junctures"]).to eq([])
+    end
   end
 end

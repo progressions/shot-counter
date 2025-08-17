@@ -58,7 +58,7 @@ RSpec.describe "Api::V2::Weapons", type: :request do
       body = JSON.parse(response.body)
       expect(body["weapons"].length).to eq(1)
       expect(body["weapons"][0]).to include("name" => "Beretta 92FS")
-      expect(body["weapons"][0].keys).to eq(["id", "name"])
+      expect(body["weapons"][0].keys).to eq(["id", "name", "entity_class"])
       expect(body["categories"]).to eq(["Ranged"])
       expect(body["junctures"]).to eq(["Modern"])
     end
