@@ -5,10 +5,23 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Development Commands
 
 ### Testing
-- `bundle exec rspec` - Run the full test suite
-- `bundle exec rspec spec/models/` - Run model tests only
-- `bundle exec rspec spec/controllers/` - Run controller tests only
-- `bundle exec rspec spec/path/to/specific_spec.rb` - Run a specific test file
+
+**IMPORTANT: RVM/Ruby Environment Setup**
+This project uses RVM with Ruby 3.2.2. To run specs successfully, you MUST use this exact command format:
+
+```bash
+source ~/.rvm/scripts/rvm && rvm use 3.2.2 && bundle exec rspec [spec_path]
+```
+
+**Working Commands:**
+- `source ~/.rvm/scripts/rvm && rvm use 3.2.2 && bundle exec rspec` - Run the full test suite
+- `source ~/.rvm/scripts/rvm && rvm use 3.2.2 && bundle exec rspec spec/models/` - Run model tests only
+- `source ~/.rvm/scripts/rvm && rvm use 3.2.2 && bundle exec rspec spec/controllers/` - Run controller tests only
+- `source ~/.rvm/scripts/rvm && rvm use 3.2.2 && bundle exec rspec spec/path/to/specific_spec.rb` - Run a specific test file
+
+**Note:** Just running `bundle exec rspec` without the RVM setup will fail with LoadError: cannot load such file -- rubygems/uri
+
+**Ruby Version:** 3.2.2 (specified in .ruby-version file)
 
 ### Database
 - `rails db:migrate` - Run pending migrations

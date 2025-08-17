@@ -51,7 +51,7 @@ RSpec.describe "Api::V2::Vehicles", type: :request do
       body = JSON.parse(response.body)
       expect(body["vehicles"].length).to eq(1)
       expect(body["vehicles"][0]).to include("name" => "Car")
-      expect(body["vehicles"][0].keys).to eq(["id", "name"])
+      expect(body["vehicles"][0].keys).to eq(["id", "name", "entity_class"])
     end
 
     it "returns an empty array when no vehicles exist" do
@@ -118,7 +118,7 @@ RSpec.describe "Api::V2::Vehicles", type: :request do
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
       expect(body["vehicles"].map { |c| c["name"] }).to eq( ["Plane", "Tank", "Van", "Bike", "Car"])
-      expect(body["vehicles"].map { |c| c["action_values"] }.compact).to eq([])
+      expect(body["vehicles"].map { |c| c["action_values"] }.compact).to eq([])  # action_values not included in lite serializer
       expect(body["factions"].map { |f| f["name"] }).to eq(["The Ascended", "The Dragons"])
     end
 

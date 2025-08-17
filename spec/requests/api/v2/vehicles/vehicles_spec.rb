@@ -130,9 +130,9 @@ RSpec.describe "Api::V2::Vehicles", type: :request do
       expect(body["user_id"]).to eq(@player.id)
       expect(body["image_url"]).to be_nil
       expect(body.keys).to include("id", "name", "action_values", "description", "faction_id", "user_id", "image_url", "active", "user", "faction", "juncture", "image_positions", "created_at", "updated_at", "entity_class")
-      expect(body["user"]).to eq({ "id" => @player.id, "name" => "Player One", "email" => @player.email })
-      expect(body["faction"]).to eq({ "id" => @dragons.id, "name" => "The Dragons" })
-      expect(body["juncture"]).to eq({ "id" => @modern.id, "name" => "Modern" })
+      expect(body["user"]).to eq({ "id" => @player.id, "name" => "Player One", "email" => @player.email, "entity_class" => "User" })
+      expect(body["faction"]).to eq({ "id" => @dragons.id, "name" => "The Dragons", "entity_class" => "Faction" })
+      expect(body["juncture"]).to eq({ "id" => @modern.id, "name" => "Modern", "entity_class" => "Juncture" })
     end
 
     it "returns a 404 for a non-existent vehicle" do

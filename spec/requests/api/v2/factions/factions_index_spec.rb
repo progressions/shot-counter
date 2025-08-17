@@ -191,6 +191,13 @@ RSpec.describe "Api::V2::Factions", type: :request do
       body = JSON.parse(response.body)
       expect(body["factions"].map { |f| f["name"] }).to eq(["Inactive Faction", "The Outlaws", "The Ascended", "The Dragons"])
     end
+
+    it "returns empty array when ids is explicitly empty" do
+      get "/api/v2/factions", params: { ids: "" }, headers: @headers
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["factions"]).to eq([])
+    end
   end
 
   describe "GET /autocomplete" do
@@ -207,7 +214,7 @@ RSpec.describe "Api::V2::Factions", type: :request do
       body = JSON.parse(response.body)
       expect(body["factions"].length).to eq(1)
       expect(body["factions"][0]).to include("name" => "The Dragons")
-      expect(body["factions"][0].keys).to eq(["id", "name"])
+      expect(body["factions"][0].keys).to eq(["id", "name", "entity_class"])
     end
 
     it "returns an empty array when no factions exist" do
@@ -326,6 +333,28 @@ RSpec.describe "Api::V2::Factions", type: :request do
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
       expect(body["factions"].map { |f| f["name"] }).to eq(["The Ascended"])
+    end
+
+    it "gets only active factions when show_all is false" do
+      get "/api/v2/factions", params: { autocomplete: true, show_all: "false" }, headers: @headers
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["factions"].map { |f| f["name"] }).to eq(["The Outlaws", "The Ascended", "The Dragons"])
+      expect(body["factions"].map { |f| f["name"] }).not_to include("Inactive Faction")
+    end
+
+    it "gets all factions when show_all is true" do
+      get "/api/v2/factions", params: { autocomplete: true, show_all: "true" }, headers: @headers
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["factions"].map { |f| f["name"] }).to eq(["Inactive Faction", "The Outlaws", "The Ascended", "The Dragons"])
+    end
+
+    it "returns empty array when ids is explicitly empty" do
+      get "/api/v2/factions", params: { autocomplete: true, ids: "" }, headers: @headers
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["factions"]).to eq([])
     end
   end
 end
