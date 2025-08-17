@@ -265,7 +265,7 @@ end
               schtick_ids: [], weapon_ids: [], site_ids: [], party_ids: [],
               action_values: {},
               description: Character::DEFAULT_DESCRIPTION.keys,
-              schticks: [], skills: params.fetch(:character, {}).fetch(:skills, {}).keys || {})
+              schticks: [], skills: {})
   end
 
   def sort_order
