@@ -211,6 +211,31 @@ RSpec.describe "Api::V2::Parties", type: :request do
       expect(body["parties"].map { |p| p["name"] }).to eq(["Inactive Team", "Rogue Team", "Ascended Party", "Dragons Party"])
       expect(body["factions"].map { |f| f["name"] }).to eq(["The Ascended", "The Dragons"])
     end
+
+    it "filters by faction_id __NONE__ for parties with no faction" do
+      get "/api/v2/parties", params: { faction_id: "__NONE__" }, headers: @headers
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["parties"].map { |p| p["name"] }).to eq(["Rogue Team"])
+      expect(body["factions"]).to eq([])
+    end
+
+    it "filters by juncture_id __NONE__ for parties with no juncture" do
+      @wandering_group = @campaign.parties.create!(name: "Wandering Group", description: "A group between junctures.", faction_id: @dragons.id, juncture_id: nil)
+      get "/api/v2/parties", params: { juncture_id: "__NONE__" }, headers: @headers
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["parties"].map { |p| p["name"] }).to eq(["Wandering Group"])
+      expect(body["factions"].map { |f| f["name"] }).to eq(["The Dragons"])
+    end
+
+    it "returns empty array when ids is explicitly empty" do
+      get "/api/v2/parties", params: { ids: "" }, headers: @headers
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["parties"]).to eq([])
+      expect(body["factions"]).to eq([])
+    end
   end
 
   describe "GET /autocomplete" do
@@ -228,7 +253,7 @@ RSpec.describe "Api::V2::Parties", type: :request do
       body = JSON.parse(response.body)
       expect(body["parties"].length).to eq(1)
       expect(body["parties"][0]).to include("name" => "Dragons Party")
-      expect(body["parties"][0].keys).to eq(["id", "name"])
+      expect(body["parties"][0].keys).to eq(["id", "name", "entity_class"])
       expect(body["factions"].map { |f| f["name"] }).to eq(["The Dragons"])
     end
 

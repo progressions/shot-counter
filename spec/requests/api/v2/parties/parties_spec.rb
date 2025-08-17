@@ -79,7 +79,7 @@ RSpec.describe "Api::V2::Parties", type: :request do
       post "/api/v2/parties", params: { party: { description: "A new party", faction_id: @dragons.id, active: true } }, headers: @headers
       expect(response).to have_http_status(:unprocessable_entity)
       body = JSON.parse(response.body)
-      expect(body["errors"]).to include("Name can't be blank")
+      expect(body["errors"]).to include("name" => ["can't be blank"])
     end
 
     it "returns an error for invalid JSON string" do
@@ -139,7 +139,7 @@ RSpec.describe "Api::V2::Parties", type: :request do
       patch "/api/v2/parties/#{@dragons_party.id}", params: { party: { name: "", description: "Updated group", faction_id: @ascended.id, active: true } }, headers: @headers
       expect(response).to have_http_status(:unprocessable_entity)
       body = JSON.parse(response.body)
-      expect(body["errors"]).to include("Name can't be blank")
+      expect(body["errors"]).to include("name" => ["can't be blank"])
       @dragons_party.reload
       expect(@dragons_party.name).to eq("Dragons Party")
     end
