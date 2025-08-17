@@ -142,7 +142,7 @@ class Api::V2::JuncturesController < ApplicationController
     end
 
     if @juncture.update(juncture_data)
-      render json: @juncture
+      render json: @juncture.reload
     else
       render json: { errors: @juncture.errors }, status: :unprocessable_entity
     end

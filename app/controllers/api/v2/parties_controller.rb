@@ -147,7 +147,7 @@ class Api::V2::PartiesController < ApplicationController
     end
 
     if @party.update(party_data)
-      render json: @party
+      render json: @party.reload
     else
       render json: { errors: @party.errors }, status: :unprocessable_entity
     end

@@ -136,7 +136,7 @@ class Api::V2::FactionsController < ApplicationController
     end
 
     if @faction.update(faction_data)
-      render json: @faction
+      render json: @faction.reload
     else
       render json: { errors: @faction.errors }, status: :unprocessable_entity
     end

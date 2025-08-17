@@ -193,7 +193,7 @@ class Api::V2::WeaponsController < ApplicationController
     end
 
     if @weapon.update(weapon_data)
-      render json: @weapon, serializer: WeaponSerializer, status: :ok
+      render json: @weapon.reload, serializer: WeaponSerializer, status: :ok
     else
       render json: { errors: @weapon.errors }, status: :unprocessable_entity
     end

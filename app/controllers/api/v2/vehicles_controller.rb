@@ -158,7 +158,7 @@ class Api::V2::VehiclesController < ApplicationController
     if @vehicle.update(vehicle_data)
       Rails.cache.delete_matched("vehicles/#{current_campaign.id}/*")
 
-      render json: @vehicle
+      render json: @vehicle.reload
     else
       render json: { errors: @vehicle.errors }, status: :unprocessable_entity
     end

@@ -136,41 +136,19 @@ end
     character_data = character_data.slice(:name, :description, :active, :character_ids, :party_ids, :site_ids, :juncture_ids, :schtick_ids, :action_values, :skills, :weapon_ids, :juncture_id, :faction_id, :wealth)
 
     # Handle image attachment if present
-    image_was_attached = false
     if params[:image].present?
       begin
         @character.image.purge if @character.image.attached? # Remove existing image
         @character.image.attach(params[:image])
-        image_was_attached = true
-        # Reload to ensure attachment is properly loaded
-        @character.reload
-        # Clear the image URL cache so the new URL is generated immediately
-        @character.send(:clear_image_url_cache)
       rescue StandardError => e
         Rails.logger.error("Error uploading to ImageKit: #{e.message}")
       end
     end
 
-    # Update character data if present, or manually broadcast if only image was attached
-    if character_data.present?
-      update_successful = @character.update(character_data)
-    elsif image_was_attached
-      # For image-only updates, manually update timestamp without triggering callbacks
-      @character.update_column(:updated_at, Time.current)
-      # Manually broadcast the same character instance that we'll return in the response
-      channel = "campaign_#{@character.campaign_id}"
-      payload = { "character" => CharacterSerializer.new(@character).serializable_hash }
-      ActionCable.server.broadcast(channel, payload)
-      update_successful = true
-    else
-      update_successful = true
-    end
-
-    if update_successful
+    if @character.update(character_data)
       Rails.cache.delete_matched("characters/#{current_campaign.id}/*")
       SyncCharacterToNotionJob.perform_later(@character.id)
-
-      render json: @character, serializer: CharacterSerializer, status: :ok
+      render json: @character.reload, serializer: CharacterSerializer, status: :ok
     else
       render json: { errors: @character.errors }, status: :unprocessable_entity
     end

@@ -147,7 +147,7 @@ class Api::V2::SitesController < ApplicationController
     end
 
     if @site.update(site_data)
-      render json: @site
+      render json: @site.reload
     else
       render json: { errors: @site.errors }, status: :unprocessable_entity
     end

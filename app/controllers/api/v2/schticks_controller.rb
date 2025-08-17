@@ -208,7 +208,7 @@ class Api::V2::SchticksController < ApplicationController
     end
 
     if @schtick.update(schtick_data)
-      render json: @schtick
+      render json: @schtick.reload
     else
       render json: { errors: @schtick.errors}, status: :unprocessable_entity
     end
