@@ -5,107 +5,90 @@ class Api::V2::CharactersController < ApplicationController
   before_action :set_character, only: [:update, :destroy, :remove_image, :sync, :pdf, :duplicate]
 
   def index
-    per_page = (params["per_page"] || 15).to_i
-    page = (params["page"] || 1).to_i
-    selects = [
-      "characters.id",
-      "characters.user_id",
-      "characters.task",
-      "characters.name",
-      "characters.faction_id",
-      "characters.action_values",
-      "characters.description",
-      "characters.created_at",
-      "characters.updated_at",
-      "characters.skills",
-      "characters.active",
-    ]
-    includes = [
-      :image_positions,
-      image_attachment: :blob,
-      schticks: { image_attachment: :blob },
-      attunements: { site: { image_attachment: :blob } },
-      memberships: { party: { image_attachment: :blob } },
-    ]
-    query = @scoped_characters
-      .select(selects)
-      .includes(includes)
+  per_page = (params["per_page"] || 15).to_i
+  page = (params["page"] || 1).to_i
+  selects = [
+    "characters.id",
+    "characters.user_id",
+    "characters.task",
+    "characters.name",
+    "characters.faction_id",
+    "characters.juncture_id",
+    "characters.action_values",
+    "characters.description",
+    "characters.created_at",
+    "characters.updated_at",
+    "characters.skills",
+    "characters.active"
+  ]
+  includes = [
+    :image_positions,
+    image_attachment: :blob,
+    faction: { image_attachment: :blob },
+    juncture: { image_attachment: :blob },
+  ]
+  query = @scoped_characters
+    .select(selects)
+    .includes(includes)
+    .where(active: params["show_all"] == "true" ? [true, false, nil] : true)
+    .where(is_template: params["is_template"] == "true" ? true : [false, nil])
 
-    # Apply filters
-    query = query.where(id: params["id"]) if params["id"].present?
-    if params.key?("ids")
-      query = params["ids"].blank? ? query.where(id: nil) : query.where(id: params["ids"].split(","))
-    end
-    query = query.where(params["faction_id"] == "__NONE__" ? "characters.faction_id IS NULL" : "characters.faction_id = ?", params["faction_id"]) if params["faction_id"].present?
-    query = query.where(params["juncture_id"] == "__NONE__" ? "characters.juncture_id IS NULL" : "characters.juncture_id = ?", params["juncture_id"]) if params["juncture_id"].present?
-    query = query.where(user_id: params["user_id"]) if params["user_id"].present?
-    query = query.where("characters.name ILIKE ?", "%#{params['search']}%") if params["search"].present?
-    # Type can't be nil
-    query = query.where("action_values->>'Type' = ?", params["character_type"]) if params["character_type"].present?
-    query = query.where("action_values->>'Archetype' = ?", params["archetype"] == "__NONE__" ? "" : params["archetype"]) if params["archetype"].present?
-    if params["show_all"] == "true"
-      query = query.where(active: [true, false, nil])
-    else
-      query = query.where(active: true)
-    end
-    # Join associations
-    query = query.joins(:memberships).where(memberships: { party_id: params[:party_id] }) if params[:party_id].present?
-    query = query.joins(:shots).where(shots: { fight_id: params[:fight_id] }) if params[:fight_id].present?
-    query = query.joins(:attunements).where(attunements: { site_id: params[:site_id] }) if params[:site_id].present?
+  # Apply filters
+  query = query.where(id: params["id"]) if params["id"].present?
+  query = params["ids"].blank? ? query.where(id: nil) : query.where(id: params["ids"].split(",")) if params["ids"]
+  query = query.where(params["faction_id"] == "__NONE__" ? "characters.faction_id IS NULL" : { faction_id: params["faction_id"] }) if params["faction_id"].present?
+  query = query.where(params["juncture_id"] == "__NONE__" ? "characters.juncture_id IS NULL" : { juncture_id: params["juncture_id"] }) if params["juncture_id"].present?
+  query = query.where(user_id: params["user_id"]) if params["user_id"].present?
+  query = query.where("characters.name ILIKE ?", "%#{params['search']}%") if params["search"].present?
+  query = query.where("action_values->>'Type' = ?", params["character_type"]) if params["character_type"].present?
+  query = query.where("action_values->>'Archetype' = ?", params["archetype"] == "__NONE__" ? "" : params["archetype"]) if params["archetype"].present?
+  query = query.joins(:memberships).where(memberships: { party_id: params[:party_id] }) if params[:party_id].present?
+  query = query.joins(:shots).where(shots: { fight_id: params[:fight_id] }) if params[:fight_id].present?
+  query = query.joins(:attunements).where(attunements: { site_id: params[:site_id] }) if params[:site_id].present?
 
-    if params[:is_template] == "true"
-      query = query.where(is_template: true)
-    else
-      query = query.where(is_template: [false, nil])
-    end
+  cache_key = [
+    "characters/index",
+    current_campaign.id,
+    sort_order,
+    page,
+    per_page,
+    params["site_id"],
+    params["fight_id"],
+    params["party_id"],
+    params["search"],
+    params["user_id"],
+    params["faction_id"],
+    params["type"],
+    params["archetype"],
+    params["is_template"],
+    params["autocomplete"]
+  ].join("/")
 
-    # Cache key
-    cache_key = [
-      "characters/index",
-      current_campaign.id,
-      sort_order,
-      page,
-      per_page,
-      params["site_id"],
-      params["fight_id"],
-      params["party_id"],
-      params["search"],
-      params["user_id"],
-      params["faction_id"],
-      params["type"],
-      params["archetype"],
-      params["is_template"],
-      params["autocomplete"],
-    ].join("/")
-
-    cached_result = Rails.cache.fetch(cache_key, expires_in: 5.minutes) do
-      characters = query.order(Arel.sql(sort_order))
-      # Fetch factions
-      faction_ids = characters.pluck(:faction_id).uniq.compact
-      factions = Faction.where(id: faction_ids)
-                        .select("factions.id", "factions.name")
-                        .order("LOWER(factions.name) ASC")
-      # Archetypes
-      archetypes = characters.map { |c| c.action_values["Archetype"] }.compact.uniq.reject(&:blank?).sort
-
-      characters = paginate(characters, per_page: per_page, page: page)
-      {
-        "characters" => ActiveModelSerializers::SerializableResource.new(
-          characters,
-          each_serializer: params[:autocomplete] ? CharacterAutocompleteSerializer : CharacterIndexSerializer,
-          adapter: :attributes
-        ).serializable_hash,
-        "factions" => ActiveModelSerializers::SerializableResource.new(
-          factions,
-          each_serializer: FactionLiteSerializer,
-          adapter: :attributes
-        ).serializable_hash,
-        "archetypes" => archetypes,
-        "meta" => pagination_meta(characters)
-      }
-    end
-    render json: cached_result
+  cached_result = Rails.cache.fetch(cache_key, expires_in: 5.minutes) do
+    characters = query.order(Arel.sql(sort_order))
+    characters = paginate(characters, per_page: per_page, page: page)
+    factions = Faction.where(id: characters.map(&:faction_id).uniq.compact)
+                      .select("factions.id", "factions.name")
+                      .order("LOWER(factions.name) ASC")
+    archetypes = characters.map { |c| c.action_values["Archetype"] }.compact.uniq.reject(&:blank?).sort
+    {
+      "characters" => ActiveModelSerializers::SerializableResource.new(
+        characters,
+        each_serializer: params[:autocomplete] ? CharacterAutocompleteSerializer : CharacterIndexLiteSerializer,
+        adapter: :attributes
+      ).serializable_hash,
+      "factions" => ActiveModelSerializers::SerializableResource.new(
+        factions,
+        each_serializer: FactionLiteSerializer,
+        adapter: :attributes
+      ).serializable_hash,
+      "archetypes" => archetypes,
+      "meta" => pagination_meta(characters)
+    }
   end
+
+  render json: cached_result
+end
 
   def create
     # Check if request is multipart/form-data with a JSON string
@@ -205,7 +188,7 @@ class Api::V2::CharactersController < ApplicationController
       SyncCharacterToNotionJob.perform_later(@new_character.id)
       render json: @new_character, status: :created
     else
-      Rails.logger.error("Character duplication failed: #{@new_character.errors.full_messages.join(', ')}")
+      Rails.logger.error("Character duplication failed: #{@new_character.errors.join(', ')}")
       render json: @new_character.errors, status: :unprocessable_entity
     end
   end
@@ -224,7 +207,7 @@ class Api::V2::CharactersController < ApplicationController
         Rails.cache.delete_matched("characters/#{current_campaign.id}/*")
         render json: @character, status: :created
       else
-        Rails.logger.error("Character import failed: #{@character.errors.full_messages.join(', ')}")
+        Rails.logger.error("Character import failed: #{@character.errors.join(', ')}")
         render json: @character.errors, status: :unprocessable_entity
       end
     else

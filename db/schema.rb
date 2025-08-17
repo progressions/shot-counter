@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_08_10_033245) do
+ActiveRecord::Schema[8.0].define(version: 2025_08_16_155319) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -22,6 +22,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_10_033245) do
     t.datetime "created_at", null: false
     t.uuid "record_id"
     t.index ["blob_id"], name: "index_active_storage_attachments_on_blob_id"
+    t.index ["record_type", "name", "record_id"], name: "index_active_storage_attachments_on_record_type_name_id"
   end
 
   create_table "active_storage_blobs", force: :cascade do |t|
@@ -64,6 +65,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_10_033245) do
     t.uuid "campaign_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["campaign_id", "user_id"], name: "index_campaign_memberships_on_campaign_id_and_user_id"
     t.index ["campaign_id"], name: "index_campaign_memberships_on_campaign_id"
     t.index ["user_id"], name: "index_campaign_memberships_on_user_id"
   end
@@ -200,6 +202,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_10_033245) do
     t.integer "session"
     t.uuid "action_id"
     t.index "lower((name)::text)", name: "index_fights_on_lower_name"
+    t.index ["campaign_id", "active"], name: "index_fights_on_campaign_id_and_active"
     t.index ["campaign_id"], name: "index_fights_on_campaign_id"
   end
 

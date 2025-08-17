@@ -182,6 +182,11 @@ class Api::V2::VehiclesController < ApplicationController
     end
   end
 
+  def archetypes
+    @archetypes = VehicleService.archetypes["vehicles"]
+    render json: @archetypes
+  end
+
   def remove_image
     @vehicle.image.purge
 

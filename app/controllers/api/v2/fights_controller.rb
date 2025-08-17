@@ -4,92 +4,87 @@ class Api::V2::FightsController < ApplicationController
   before_action :set_fight, only: [:show, :update, :destroy, :touch]
 
   def index
-    per_page = (params["per_page"] || 15).to_i
-    page = (params["page"] || 1).to_i
-    selects = [
-      "fights.id",
-      "fights.name",
-      "fights.description",
-      "fights.campaign_id",
-      "fights.started_at",
-      "fights.ended_at",
-      "fights.created_at",
-      "fights.updated_at",
-      "fights.active",
-      "fights.season",
-      "fights.session",
-      "LOWER(fights.name) AS name_lower",
-    ]
-    includes = [
-      :image_positions,
-      image_attachment: :blob,
-      shots: { character: { image_attachment: :blob } },
-      shots: { vehicle: { image_attachment: :blob } },
-    ]
-    query = current_campaign
-      .fights
-      .select(selects)
-      .includes(includes)
-    # Apply filters
-    query = query.where("fights.name ILIKE ?", "%#{params['search']}%") if params["search"].present?
-    if params["show_all"] == "true"
-      query = query.where(active: [true, false, nil])
-    else
-      query = query.where(active: true)
-    end
-    query = query.where(id: params["id"]) if params["id"].present?
-    if params.key?("ids")
-      query = params["ids"].blank? ? query.where(id: nil) : query.where(id: params["ids"].split(","))
-    end
-    query = query.where(started_at: nil) if params["status"] == "Unstarted"
-    query = query.where.not(started_at: nil).where(ended_at: nil) if params["status"] == "Started"
-    query = query.where.not(started_at: nil).where.not(ended_at: nil) if params["status"] == "Ended"
-    query = query.where(params["season"] == "__NONE__" ? "fights.season IS NULL" : "fights.season = ?", params["season"]) if params["season"].present?
-    query = query.where(params["session"] == "__NONE__" ? "fights.session IS NULL" : "fights.session = ?", params["session"]) if params["session"].present?
-    query = query.joins(:shots).where(shots: { character_id: params[:character_id] }) if params[:character_id].present?
-    query = query.joins(:shots).where(shots: { vehicle_id: params[:vehicle_id] }) if params[:vehicle_id].present?
-    query = query.joins(:shots).joins("INNER JOIN characters ON shots.character_id = characters.id").where(characters: { user_id: params[:user_id] }) if params[:user_id].present?
-    # Cache key
-    cache_key = [
-      "fights/index",
-      current_campaign.id,
-      sort_order,
-      page,
-      per_page,
-      params["search"],
-      params["active"],
-      params["character_id"],
-      params["vehicle_id"],
-      params["user_id"],
-      params["unstarted"],
-      params["unended"],
-      params["ended"],
-      params["season"],
-      params["session"],
-      params["autocomplete"],
-    ].join("/")
-    cached_result = Rails.cache.fetch(cache_key, expires_in: 5.minutes) do
-      fights = query
-        .distinct(sort_order)
-        .order(Arel.sql(sort_order))
+  per_page = (params["per_page"] || 15).to_i
+  page = (params["page"] || 1).to_i
+  selects = [
+    "fights.id",
+    "fights.name",
+    "fights.description",
+    "fights.campaign_id",
+    "fights.started_at",
+    "fights.ended_at",
+    "fights.created_at",
+    "fights.updated_at",
+    "fights.active",
+    "fights.season",
+    "fights.session",
+    "LOWER(fights.name) AS name_lower",
+  ]
+  query = current_campaign
+    .fights
+    .select(selects)
+    .eager_load(
+      :image_positions, # Needed for FightIndexLiteSerializer
+      image_attachment: :blob, # Needed for image_url
+      shots: [:character, :vehicle] # No image_attachment
+    )
 
-      # Get seasons without applying full sort_order
-      seasons_query = query.select("fights.season").distinct
-      seasons = seasons_query.pluck(:season).compact.uniq
-
-      fights = paginate(fights, per_page: per_page, page: page)
-      {
-        "fights" => ActiveModelSerializers::SerializableResource.new(
-          fights,
-          each_serializer: params[:autocomplete] ? FightLiteSerializer : FightIndexLiteSerializer,
-          adapter: :attributes
-        ).serializable_hash,
-        "seasons" => seasons,
-        "meta" => pagination_meta(fights)
-      }
-    end
-    render json: cached_result
+  # Apply filters
+  search_param = params["search"].presence
+  query = query.where("fights.name ILIKE ?", "%#{search_param}%") if search_param
+  if params["show_all"] == "true"
+    query = query.where(active: [true, false, nil])
+  else
+    query = query.where(active: true)
   end
+  query = query.where(id: params["id"]) if params["id"].present?
+  if params.key?("ids")
+    query = params["ids"].blank? ? query.where(id: nil) : query.where(id: params["ids"].split(","))
+  end
+  query = query.where(started_at: nil) if params["status"] == "Unstarted"
+  query = query.where.not(started_at: nil).where(ended_at: nil) if params["status"] == "Started"
+  query = query.where.not(started_at: nil).where.not(ended_at: nil) if params["status"] == "Ended"
+  query = query.where(params["season"] == "__NONE__" ? "fights.season IS NULL" : "fights.season = ?", params["season"]) if params["season"].present?
+  query = query.where(params["session"] == "__NONE__" ? "fights.session IS NULL" : "fights.session = ?", params["session"]) if params["session"].present?
+  query = query.joins(:shots).where(shots: { character_id: params[:character_id] }) if params[:character_id].present?
+  query = query.joins(:shots).where(shots: { vehicle_id: params[:vehicle_id] }) if params[:vehicle_id].present?
+  query = query.joins(:shots).joins("INNER JOIN characters ON shots.character_id = characters.id").where(characters: { user_id: params[:user_id] }) if params[:user_id].present?
+
+  # Cache key
+  cache_key = [
+    "fights/index",
+    current_campaign.id,
+    sort_order,
+    page,
+    per_page,
+    search_param,
+    params["active"],
+    params["character_id"],
+    params["vehicle_id"],
+    params["user_id"],
+    params["unstarted"],
+    params["unended"],
+    params["ended"],
+    params["season"],
+    params["session"],
+    params["autocomplete"],
+  ].join("/")
+  cached_result = Rails.cache.fetch(cache_key, expires_in: 5.minutes) do
+    fights = query.order(Arel.sql(sort_order)).distinct
+    seasons = current_campaign.fights.where(active: true).select("fights.season").distinct.pluck(:season).compact.uniq
+    fights = paginate(fights, per_page: per_page, page: page)
+    {
+      "fights" => ActiveModelSerializers::SerializableResource.new(
+        fights,
+        each_serializer: params[:autocomplete] ? FightLiteSerializer : FightIndexLiteSerializer,
+        adapter: :attributes
+      ).serializable_hash,
+      "seasons" => seasons,
+      "meta" => pagination_meta(fights)
+    }
+  end
+  render json: cached_result
+end
 
   def show
     render json: @fight, serializer: FightSerializer, status: :ok

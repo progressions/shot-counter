@@ -4,6 +4,14 @@ class FightIndexLiteSerializer < ActiveModel::Serializer
   has_many :characters, serializer: CharacterAutocompleteSerializer
   has_many :vehicles, serializer: VehicleLiteSerializer
 
+  def characters
+    object.shots.map { |shot| shot.character }.compact.uniq
+  end
+
+  def vehicles
+    object.shots.map { |shot| shot.vehicle }.compact.uniq
+  end
+
   def entity_class
     object.class.name
   end

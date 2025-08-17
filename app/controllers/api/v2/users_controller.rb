@@ -148,7 +148,7 @@ class Api::V2::UsersController < ApplicationController
       response.set_header("Authorization", "Bearer #{token}")
       render json: @user, serializer: UserSerializer
     else
-      render json: { errors: @user.errors.full_messages }, status: :unprocessable_entity
+      render json: { errors: @user.errors }, status: :unprocessable_entity
     end
   end
 

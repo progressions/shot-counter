@@ -105,7 +105,7 @@ class Api::V2::FactionsController < ApplicationController
     if @faction.save
       render json: @faction, status: :created
     else
-      render json: { errors: @faction.errors.full_messages }, status: :unprocessable_entity
+      render json: { errors: @faction.errors }, status: :unprocessable_entity
     end
   end
 
@@ -138,7 +138,7 @@ class Api::V2::FactionsController < ApplicationController
     if @faction.update(faction_data)
       render json: @faction
     else
-      render json: { errors: @faction.errors.full_messages }, status: :unprocessable_entity
+      render json: { errors: @faction.errors }, status: :unprocessable_entity
     end
   end
 

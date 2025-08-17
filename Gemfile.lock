@@ -120,6 +120,9 @@ GEM
     bootsnap (1.18.6)
       msgpack (~> 1.2)
     builder (3.3.0)
+    bullet (8.0.8)
+      activesupport (>= 3.0.0)
+      uniform_notifier (~> 1.11)
     case_transform (0.2)
       activesupport
     childprocess (5.1.0)
@@ -289,6 +292,8 @@ GEM
     rack-cors (3.0.0)
       logger
       rack (>= 3.0.14)
+    rack-mini-profiler (2.3.4)
+      rack (>= 1.2.0)
     rack-session (2.1.1)
       base64 (>= 0.1.0)
       rack (>= 3.0.0)
@@ -378,6 +383,7 @@ GEM
     timeout (0.4.3)
     tzinfo (2.0.6)
       concurrent-ruby (~> 1.0)
+    uniform_notifier (1.17.0)
     uri (1.0.3)
     useragent (0.16.11)
     warden (1.2.9)
@@ -408,6 +414,7 @@ DEPENDENCIES
   aws-sdk-s3
   bcrypt (~> 3.1.7)
   bootsnap
+  bullet
   debug
   devise (~> 4.9.4)
   devise-jwt (~> 0.11.0)
@@ -424,6 +431,7 @@ DEPENDENCIES
   psych
   puma (~> 6.4.2)
   rack-cors
+  rack-mini-profiler (~> 2.3)
   rails (~> 8.0.1)
   redis (~> 4.0)
   reverse_markdown

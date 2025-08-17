@@ -17,7 +17,7 @@ class ApplicationController < ActionController::API
   def set_current_campaign
     return unless current_user
 
-    @current_campaign = CurrentCampaign.get(user: current_user)
+    @current_campaign ||= CurrentCampaign.get(user: current_user)
   end
 
   def current_campaign

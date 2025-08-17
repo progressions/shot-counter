@@ -18,7 +18,7 @@ class Campaign < ApplicationRecord
   has_one_attached :image
   has_many :image_positions, as: :positionable, dependent: :destroy
 
-  validates :name, presence: true, allow_blank: false
+  validates :name, presence: true, allow_blank: false, uniqueness: { scope: :user_id }
 
   def as_v1_json(args={})
     {

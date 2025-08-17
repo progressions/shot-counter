@@ -47,6 +47,7 @@ Rails.application.routes.draw do
         end
       end
       resources :vehicles do
+        get :archetypes, on: :collection, to: "vehicles#archetypes"
         member do
           delete :image, to: "vehicles#remove_image"
         end

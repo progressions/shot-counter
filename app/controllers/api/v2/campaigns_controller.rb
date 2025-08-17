@@ -3,6 +3,20 @@ class Api::V2::CampaignsController < ApplicationController
   before_action :require_gamemaster_or_admin, only: [:create, :update, :destroy, :remove_image]
   before_action :set_campaign, only: [:show, :set, :update, :remove_image]
 
+  def show
+    cache_key = "campaign/#{current_campaign.id}/current"
+    Rails.logger.info("Checking cache for key: #{cache_key}")
+    campaign_data = Rails.cache.fetch(cache_key, expires_in: 5.minutes) do
+      Rails.logger.info("Cache miss for #{cache_key}, generating data")
+      ActiveModelSerializers::SerializableResource.new(
+        current_campaign,
+        serializer: CampaignSerializer,
+        adapter: :attributes
+      ).serializable_hash
+    end
+    render json: campaign_data
+  end
+
   def index
     per_page = (params["per_page"] || 15).to_i
     page = (params["page"] || 1).to_i
@@ -17,16 +31,16 @@ class Api::V2::CampaignsController < ApplicationController
     ]
     includes = [
       :image_positions,
+      :characters,
+      :vehicles,
       image_attachment: :blob,
-      characters: { image_attachment: :blob },
-      vehicles: { image_attachment: :blob },
     ]
     query = if current_user.gamemaster? || current_user.admin?
               current_user.campaigns
             else
               current_user.player_campaigns
             end
-    query = query.select(selects).includes(includes)
+    query = query.select(selects).eager_load(includes)
     # Apply filters
     query = query.where(id: params["id"]) if params["id"].present?
     if params.key?("ids")
@@ -115,14 +129,6 @@ class Api::V2::CampaignsController < ApplicationController
       render json: @campaign
     else
       render json: { errors: @campaign.errors }, status: :unprocessable_entity
-    end
-  end
-
-  def show
-    if @campaign
-      render json: @campaign, serializer: CampaignSerializer, status: :ok
-    else
-      render json: { error: "Record not found or unauthorized" }, status: :not_found
     end
   end
 

@@ -17,7 +17,7 @@ class Fight < ApplicationRecord
 
   has_many :image_positions, as: :positionable, dependent: :destroy
 
-  validates :name, presence: true
+  validates :name, presence: true, uniqueness: { scope: :campaign_id }
 
   scope :active, -> { where(active: true) }
 
