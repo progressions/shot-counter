@@ -17,4 +17,9 @@ class CharacterSerializer < ActiveModel::Serializer
   def entity_class
     object.class.name
   end
+
+  def image_url
+    return nil unless object.image.attached?
+    object.image_url
+  end
 end

@@ -13,8 +13,9 @@ module WithImagekit
     Rails.cache.fetch(cache_key, expires_in: 1.hour) do
       metadata_name = image.blob.metadata["name"]
       if metadata_name.blank?
-        Rails.logger.warn("ImageKit metadata 'name' missing for #{self.class.name}##{id}")
-        image.blob.filename.to_s
+        Rails.logger.warn("ImageKit metadata 'name' missing for #{self.class.name}##{id}, using filename")
+        # Use the blob filename as fallback but construct proper ImageKit URL
+        "https://ik.imagekit.io/#{Rails.application.credentials.imagekit.id}/chi-war-#{Rails.env}/#{image.blob.filename}"
       else
         "https://ik.imagekit.io/#{Rails.application.credentials.imagekit.id}/chi-war-#{Rails.env}/#{metadata_name}"
       end
