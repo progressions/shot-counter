@@ -54,7 +54,7 @@ RSpec.describe "Api::V2::Characters", type: :request do
       body = JSON.parse(response.body)
       expect(body["characters"].length).to eq(1)
       expect(body["characters"][0]).to include("name" => "Brick Manly")
-      expect(body["characters"][0].keys).to eq(["id", "name"])
+      expect(body["characters"][0].keys).to eq(["id", "name", "image_url", "entity_class"])
       expect(body["factions"].map { |f| f["name"] }).to eq(["The Dragons"])
     end
     it "returns an empty array when no characters exist" do
@@ -278,6 +278,43 @@ RSpec.describe "Api::V2::Characters", type: :request do
       body = JSON.parse(response.body)
       expect(body["characters"].map { |c| c["name"] }).to eq(["Bandit"])
       expect(body["factions"].map { |f| f["name"] }).to eq([])
+    end
+    it "filters by juncture_id" do
+      get "/api/v2/characters", params: { autocomplete: true, juncture_id: @modern.id }, headers: @headers
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["characters"].map { |c| c["name"] }).to eq(["Brick Manly"])
+      expect(body["factions"].map { |f| f["name"] }).to eq(["The Dragons"])
+    end
+    it "filters by __NONE__ faction" do
+      @no_faction_char = Character.create!(name: "No Faction Character", action_values: { "Type" => "PC" }, campaign_id: @campaign.id, faction_id: nil, user_id: @gamemaster.id)
+      get "/api/v2/characters", params: { autocomplete: true, faction_id: "__NONE__" }, headers: @headers
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["characters"].map { |c| c["name"] }).to eq(["No Faction Character"])
+      expect(body["factions"].map { |f| f["name"] }).to eq([])
+    end
+    it "filters by __NONE__ juncture" do
+      # First assign junctures to all existing characters
+      @boss.update!(juncture: @modern)
+      @featured_foe.update!(juncture: @modern)
+      @mook.update!(juncture: @modern)  
+      @ally.update!(juncture: @modern)
+      @no_juncture_char = Character.create!(name: "No Juncture Character", action_values: { "Type" => "PC" }, campaign_id: @campaign.id, juncture_id: nil, user_id: @gamemaster.id)
+      get "/api/v2/characters", params: { autocomplete: true, juncture_id: "__NONE__" }, headers: @headers
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["characters"].map { |c| c["name"] }).to eq(["No Juncture Character"])
+      expect(body["factions"].map { |f| f["name"] }).to eq([])
+    end
+    it "filters by __NONE__ archetype" do
+      # Most characters have empty archetypes by default, so let's focus on one specific test
+      @no_archetype_char = Character.create!(name: "No Archetype Character", action_values: { "Type" => "PC", "Archetype" => "" }, campaign_id: @campaign.id, user_id: @gamemaster.id)
+      get "/api/v2/characters", params: { autocomplete: true, archetype: "__NONE__" }, headers: @headers
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["characters"].map { |c| c["name"] }).to include("No Archetype Character")
+      expect(body["characters"].length).to be > 1  # Multiple characters may have empty archetypes
     end
     it "gets only active characters when show_all is false" do
       get "/api/v2/characters", params: { show_all: false }, headers: @headers
