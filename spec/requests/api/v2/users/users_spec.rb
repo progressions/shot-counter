@@ -148,6 +148,24 @@ RSpec.describe "Api::V2::Users", type: :request do
     end
   end
 
+  describe "GET /current" do
+    it "retrieves the current user" do
+      get "/api/v2/users/current", headers: @admin_headers
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["name"]).to eq("Admin User")
+      expect(body["email"]).to eq("admin@example.com")
+      expect(body["admin"]).to eq(true)
+      expect(body["gamemaster"]).to be_falsey
+      expect(body["id"]).to eq(@admin.id)
+    end
+
+    it "requires authentication" do
+      get "/api/v2/users/current"
+      expect(response).to have_http_status(:unauthorized)
+    end
+  end
+
   describe "PATCH /update" do
     context "when user is admin" do
       it "updates another user’s attributes" do

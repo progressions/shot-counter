@@ -330,4 +330,81 @@ RSpec.describe "Api::V2::Characters", type: :request do
       expect(body["characters"].map { |f| f["name"] }).to eq(["Dead Guy", "Angie Lo", "Thug", "Amanda Yin", "Ugly Shing", "Serena", "Brick Manly"])
     end
   end
+
+  describe "Pagination parameters" do
+    it "respects per_page parameter" do
+      get "/api/v2/characters", params: { per_page: 3 }, headers: @headers
+      expect(response).to have_http_status(200)
+      body = JSON.parse(response.body)
+      expect(body["characters"].length).to eq(3)
+      expect(body["meta"]["total_count"]).to eq(6) # Only active characters (excluding Dead Guy and Bandit template)
+      expect(body["meta"]["total_pages"]).to eq(2)
+    end
+
+    it "respects page parameter" do
+      get "/api/v2/characters", params: { per_page: 3, page: 2 }, headers: @headers
+      expect(response).to have_http_status(200)
+      body = JSON.parse(response.body)
+      expect(body["characters"].length).to eq(3)
+      expect(body["meta"]["current_page"]).to eq(2)
+      expect(body["meta"]["total_pages"]).to eq(2)
+    end
+
+    it "handles page beyond total pages" do
+      get "/api/v2/characters", params: { per_page: 5, page: 10 }, headers: @headers
+      expect(response).to have_http_status(200)
+      body = JSON.parse(response.body)
+      expect(body["characters"]).to eq([])
+      expect(body["meta"]["current_page"]).to eq(10)
+    end
+  end
+
+  describe "Single ID filtering" do
+    it "filters by single character id" do
+      get "/api/v2/characters", params: { id: @brick.id }, headers: @headers
+      expect(response).to have_http_status(200)
+      body = JSON.parse(response.body)
+      expect(body["characters"].length).to eq(1)
+      expect(body["characters"].first["name"]).to eq("Brick Manly")
+    end
+
+    it "returns empty when id does not exist" do
+      get "/api/v2/characters", params: { id: 999999 }, headers: @headers
+      expect(response).to have_http_status(200)
+      body = JSON.parse(response.body)
+      expect(body["characters"]).to eq([])
+    end
+  end
+
+  describe "Invalid parameters" do
+    it "falls back to default sort when sort parameter is invalid" do
+      get "/api/v2/characters", params: { sort: "invalid_field" }, headers: @headers
+      expect(response).to have_http_status(200)
+      body = JSON.parse(response.body)
+      # Should fall back to default created_at DESC order
+      expect(body["characters"].map { |c| c["name"] }).to eq(["Angie Lo", "Thug", "Amanda Yin", "Ugly Shing", "Serena", "Brick Manly"])
+    end
+
+    it "falls back to default order when order parameter is invalid" do
+      get "/api/v2/characters", params: { sort: "name", order: "invalid_direction" }, headers: @headers
+      expect(response).to have_http_status(200)
+      body = JSON.parse(response.body)
+      # Should fall back to default DESC order for name sort
+      expect(body["characters"].map { |c| c["name"] }).to eq(["Ugly Shing", "Thug", "Serena", "Brick Manly", "Angie Lo", "Amanda Yin"])
+    end
+
+    it "returns empty when filtering by non-existent faction_id" do
+      get "/api/v2/characters", params: { faction_id: 999999 }, headers: @headers
+      expect(response).to have_http_status(200)
+      body = JSON.parse(response.body)
+      expect(body["characters"]).to eq([])
+    end
+
+    it "returns empty when filtering by non-existent user_id" do
+      get "/api/v2/characters", params: { user_id: 999999 }, headers: @headers
+      expect(response).to have_http_status(200)
+      body = JSON.parse(response.body)
+      expect(body["characters"]).to eq([])
+    end
+  end
 end

@@ -220,9 +220,29 @@ RSpec.describe "Api::V2::Fights", type: :request do
     end
   end
 
+  describe "PATCH /touch" do
+    context "when user is authenticated" do
+      it "touches a fight and triggers broadcast update" do
+        # Mock the broadcast_update method to verify it's called
+        expect_any_instance_of(Fight).to receive(:broadcast_update)
+        
+        patch "/api/v2/fights/#{@brawl.id}/touch", headers: @gamemaster_headers
+        expect(response).to have_http_status(:ok)
+        body = JSON.parse(response.body)
+        expect(body["name"]).to eq("Big Brawl")
+        expect(body["id"]).to eq(@brawl.id)
+      end
+
+      it "returns a 404 for a non-existent fight" do
+        patch "/api/v2/fights/999999/touch", headers: @gamemaster_headers
+        expect(response).to have_http_status(:not_found)
+      end
+    end
+  end
+
   describe "DELETE /remove_image" do
     context "when user is authenticated" do
-      it "removes a fight’s image" do
+      it "removes a fight's image" do
         allow_any_instance_of(ActiveStorage::Blob).to receive(:purge).and_return(true)
         image = fixture_file_upload("spec/fixtures/files/image.jpg", "image/jpg")
         @brawl.image.attach(image)
