@@ -175,6 +175,13 @@ RSpec.describe "Api::V2::Users", type: :request do
         body = JSON.parse(response.body)
         expect(body["users"].map { |u| u["email"] }).to eq(["inactive@example.com", "player@example.com", "gamemaster@example.com", "admin@example.com"])
       end
+
+      it "returns empty array when ids is explicitly empty" do
+        get "/api/v2/users", params: { ids: "" }, headers: @admin_headers
+        expect(response).to have_http_status(:success)
+        body = JSON.parse(response.body)
+        expect(body["users"]).to eq([])
+      end
     end
 
     context "when user is not admin" do
@@ -202,7 +209,7 @@ RSpec.describe "Api::V2::Users", type: :request do
         body = JSON.parse(response.body)
         expect(body["users"].length).to eq(1)
         expect(body["users"][0]).to include("email" => "player@example.com")
-        expect(body["users"][0].keys).to eq(["id", "name", "email"])
+        expect(body["users"][0].keys).to eq(["id", "name", "email", "entity_class"])
       end
 
       it "sorts by created_at ascending" do
@@ -318,6 +325,13 @@ RSpec.describe "Api::V2::Users", type: :request do
         expect(response).to have_http_status(:success)
         body = JSON.parse(response.body)
         expect(body["users"].map { |u| u["email"] }).to eq(["inactive@example.com", "player@example.com", "gamemaster@example.com", "admin@example.com"])
+      end
+
+      it "returns empty array when ids is explicitly empty" do
+        get "/api/v2/users", params: { autocomplete: true, ids: "" }, headers: @admin_headers
+        expect(response).to have_http_status(:success)
+        body = JSON.parse(response.body)
+        expect(body["users"]).to eq([])
       end
     end
 
