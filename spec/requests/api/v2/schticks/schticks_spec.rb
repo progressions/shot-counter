@@ -51,7 +51,7 @@ RSpec.describe "Api::V2::Schticks", type: :request do
       expect(body["path"]).to eq("Fire")
       expect(body["color"]).to eq("#FF0000")
       expect(body["image_url"]).to be_nil
-      expect(body["prerequisite"]).to eq({ "id" => @fireball.id, "name" => @fireball.name, "image_url" => nil, "category" => @fireball.category, "path" => @fireball.path })
+      expect(body["prerequisite"]).to eq({ "id" => @fireball.id, "name" => @fireball.name, "image_url" => nil, "category" => @fireball.category, "path" => @fireball.path, "entity_class" => "Schtick" })
       expect(Schtick.order("created_at").last.name).to eq("New Schtick")
     end
 

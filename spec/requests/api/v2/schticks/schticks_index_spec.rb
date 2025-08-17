@@ -251,5 +251,23 @@ RSpec.describe "Api::V2::Schticks", type: :request do
       expect(body["categories"]).to eq(["Martial Arts"])
       expect(body["paths"]).to eq(["Path of the Tiger"])
     end
+
+    it "filters by category __NONE__ for schticks with no category" do
+      get "/api/v2/schticks", params: { category: "__NONE__" }, headers: @headers
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["schticks"]).to eq([])
+      expect(body["categories"]).to eq([])
+      expect(body["paths"]).to eq([])
+    end
+
+    it "filters by path __NONE__ for schticks with no path" do
+      get "/api/v2/schticks", params: { path: "__NONE__" }, headers: @headers
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["schticks"]).to eq([])
+      expect(body["categories"]).to eq([])
+      expect(body["paths"]).to eq([])
+    end
   end
 end
