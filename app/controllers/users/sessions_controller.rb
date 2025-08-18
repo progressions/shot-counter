@@ -11,6 +11,16 @@ class Users::SessionsController < Devise::SessionsController
     @user = User.find_by(email: sign_in_params[:email])
     if @user.password == sign_in_params[:password]
       sign_in(:user, @user)
+      
+      # Generate JWT token for the response header
+      jwt_token = JWT.encode(
+        @user.jwt_payload,
+        Rails.application.credentials.devise_jwt_secret_key!,
+        'HS256'
+      )
+      
+      # Set Authorization header for frontend
+      response.headers['Authorization'] = "Bearer #{jwt_token}"
 
       render json: {
         code: 200,
@@ -29,6 +39,16 @@ class Users::SessionsController < Devise::SessionsController
   private
 
   def respond_with(resource, options={})
+    # Generate JWT token for the response header
+    jwt_token = JWT.encode(
+      current_user.jwt_payload,
+      Rails.application.credentials.devise_jwt_secret_key!,
+      'HS256'
+    )
+    
+    # Set Authorization header for frontend
+    response.headers['Authorization'] = "Bearer #{jwt_token}"
+    
     render json: {
       code: 200,
       message: 'User signed in successfully',
