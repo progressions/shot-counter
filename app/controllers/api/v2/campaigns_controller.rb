@@ -1,7 +1,8 @@
 class Api::V2::CampaignsController < ApplicationController
   before_action :authenticate_user!
   before_action :require_gamemaster_or_admin, only: [:create, :update, :destroy, :remove_image]
-  before_action :set_campaign, only: [:show, :set, :update, :remove_image]
+  before_action :set_campaign, only: [:show, :update, :remove_image]
+  before_action :set_campaign_for_set, only: [:set]
 
   def show
     unless @campaign
@@ -166,9 +167,24 @@ class Api::V2::CampaignsController < ApplicationController
     end
   end
 
+  def current
+    campaign = current_campaign
+    if campaign
+      render json: campaign
+    else
+      render json: nil
+    end
+  end
+
   def set
-    save_current_campaign(@campaign)
-    render json: @campaign
+    if params[:id].nil?
+      # Clear current campaign
+      save_current_campaign(nil)
+      render json: nil
+    else
+      save_current_campaign(@campaign)
+      render json: @campaign
+    end
   end
 
   def remove_image
@@ -198,6 +214,15 @@ class Api::V2::CampaignsController < ApplicationController
       @campaign = current_campaign
     else
       @campaign = (current_user.campaigns.find_by(id: params[:id]) if current_user.gamemaster?) || (Campaign.find_by(id: params[:id]) if current_user.admin?) || current_user.player_campaigns.find_by(id: params[:id])
+    end
+  end
+
+  def set_campaign_for_set
+    # For the set method, allow nil id to clear current campaign
+    if params[:id].nil?
+      @campaign = nil
+    else
+      set_campaign
     end
   end
 
