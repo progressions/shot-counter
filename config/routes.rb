@@ -86,9 +86,11 @@ Rails.application.routes.draw do
           patch :touch
         end
       end
+      post "campaigns/current", to: "campaigns#set"
       resources :campaigns do
         member do
           delete :image, to: "campaigns#remove_image"
+          patch :set
         end
       end
       resources :users do
