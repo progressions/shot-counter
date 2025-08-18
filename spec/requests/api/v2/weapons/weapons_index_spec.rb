@@ -281,4 +281,37 @@ RSpec.describe "Api::V2::Weapons", type: :request do
       expect(body["junctures"]).to eq([])
     end
   end
+
+  describe "Pagination and order parameters" do
+    it "respects per_page parameter" do
+      get "/api/v2/weapons", params: { per_page: 2 }, headers: @headers
+      expect(response).to have_http_status(200)
+      body = JSON.parse(response.body)
+      expect(body["weapons"].length).to eq(2)
+      expect(body["meta"]["total_count"]).to eq(3)
+      expect(body["meta"]["total_pages"]).to eq(2)
+    end
+
+    it "respects page parameter" do
+      get "/api/v2/weapons", params: { per_page: 2, page: 2 }, headers: @headers
+      expect(response).to have_http_status(200)
+      body = JSON.parse(response.body)
+      expect(body["weapons"].length).to eq(1)
+      expect(body["meta"]["current_page"]).to eq(2)
+    end
+
+    it "sorts by name with order parameter" do
+      get "/api/v2/weapons", params: { sort: "name", order: "asc" }, headers: @headers
+      expect(response).to have_http_status(200)
+      body = JSON.parse(response.body)
+      expect(body["weapons"].map { |w| w["name"] }).to eq(["Beretta 92FS", "Shuriken", "Sword"])
+    end
+
+    it "sorts by name with desc order" do
+      get "/api/v2/weapons", params: { sort: "name", order: "desc" }, headers: @headers
+      expect(response).to have_http_status(200)
+      body = JSON.parse(response.body)
+      expect(body["weapons"].map { |w| w["name"] }).to eq(["Sword", "Shuriken", "Beretta 92FS"])
+    end
+  end
 end

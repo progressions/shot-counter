@@ -259,6 +259,64 @@ RSpec.describe "Api::V2::Weapons", type: :request do
     end
   end
 
+  describe "POST /batch" do
+    it "retrieves multiple weapons by IDs" do
+      post "/api/v2/weapons/batch", params: { ids: [@sword.id, @beretta.id].join(",") }, headers: @headers
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["weapons"].length).to eq(2)
+      expect(body["weapons"].map { |w| w["id"] }).to contain_exactly(@sword.id, @beretta.id)
+    end
+
+    it "returns empty array when ids is empty" do
+      post "/api/v2/weapons/batch", params: { ids: "" }, headers: @headers
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["weapons"]).to eq([])
+    end
+
+    it "returns error when ids parameter is missing" do
+      post "/api/v2/weapons/batch", headers: @headers
+      expect(response).to have_http_status(:bad_request)
+      body = JSON.parse(response.body)
+      expect(body["error"]).to eq("ids parameter is required")
+    end
+  end
+
+  describe "GET /categories" do
+    it "returns weapon categories" do
+      get "/api/v2/weapons/categories", headers: @headers
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["categories"]).to be_an(Array)
+      expect(body["categories"]).to include("Melee", "Ranged")
+    end
+
+    it "filters categories by search term" do
+      get "/api/v2/weapons/categories", params: { search: "melee" }, headers: @headers
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["categories"]).to include("Melee")
+    end
+  end
+
+  describe "GET /junctures" do
+    it "returns weapon junctures" do
+      get "/api/v2/weapons/junctures", headers: @headers
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["junctures"]).to be_an(Array)
+      expect(body["junctures"]).to include("Ancient", "Modern")
+    end
+
+    it "filters junctures by search term" do
+      get "/api/v2/weapons/junctures", params: { search: "modern" }, headers: @headers
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["junctures"]).to include("Modern")
+    end
+  end
+
   describe "DELETE /remove_image" do
     it "removes an image from a weapon" do
       allow_any_instance_of(ActiveStorage::Blob).to receive(:purge).and_return(true)

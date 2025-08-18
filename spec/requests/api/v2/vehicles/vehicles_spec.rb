@@ -221,6 +221,43 @@ RSpec.describe "Api::V2::Vehicles", type: :request do
     end
   end
 
+  describe "GET /archetypes" do
+    it "returns vehicle archetypes" do
+      # Mock the VehicleService.archetypes to return expected data structure
+      archetypes_data = {
+        "vehicles" => [
+          {
+            "name" => "Motorcycle",
+            "Acceleration" => 8,
+            "Handling" => 8,
+            "Squeal" => 10,
+            "Frame" => 0,
+            "Crunch" => 0
+          },
+          {
+            "name" => "Tank",
+            "Acceleration" => 3,
+            "Handling" => 3,
+            "Squeal" => 5,
+            "Frame" => 12,
+            "Crunch" => 14
+          }
+        ]
+      }
+      allow(VehicleService).to receive(:archetypes).and_return(archetypes_data)
+      
+      get "/api/v2/vehicles/archetypes", headers: @headers
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body).to be_an(Array)
+      expect(body.length).to eq(2)
+      expect(body.first["name"]).to eq("Motorcycle")
+      expect(body.first["Acceleration"]).to eq(8)
+      expect(body.last["name"]).to eq("Tank")
+      expect(body.last["Frame"]).to eq(12)
+    end
+  end
+
   describe "DELETE /remove_image" do
     it "removes an image from a vehicle" do
       allow_any_instance_of(ActiveStorage::Blob).to receive(:purge).and_return(true)

@@ -378,6 +378,58 @@ RSpec.describe "Api::V2::Characters", type: :request do
     end
   end
 
+  describe "POST /sync" do
+    it "syncs character from Notion successfully" do
+      # Mock the NotionService.update_character_from_notion to return true
+      allow(NotionService).to receive(:update_character_from_notion).with(@brick).and_return(true)
+      
+      post "/api/v2/characters/#{@brick.id}/sync", headers: @headers
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["name"]).to eq("Brick Manly")
+      expect(body["id"]).to eq(@brick.id)
+    end
+
+    it "returns error when Notion sync fails" do
+      # Mock the NotionService.update_character_from_notion to return false
+      allow(NotionService).to receive(:update_character_from_notion).with(@brick).and_return(false)
+      
+      post "/api/v2/characters/#{@brick.id}/sync", headers: @headers
+      expect(response).to have_http_status(:unprocessable_entity)
+      body = JSON.parse(response.body)
+      expect(body["error"]).to eq("Notion sync failed")
+    end
+
+    it "returns a 404 for a non-existent character" do
+      post "/api/v2/characters/999999/sync", headers: @headers
+      expect(response).to have_http_status(:not_found)
+    end
+  end
+
+  describe "GET /pdf" do
+    it "generates and sends a PDF for a character" do
+      # Mock the PdfService.character_to_pdf to return a temp file path
+      temp_path = "/tmp/test_character.pdf"
+      allow(PdfService).to receive(:character_to_pdf).with(@brick).and_return(temp_path)
+      
+      # Mock send_file since we can't test actual file sending in request specs
+      allow_any_instance_of(Api::V2::CharactersController).to receive(:send_file).with(
+        temp_path, 
+        type: "application/pdf", 
+        disposition: "attachment", 
+        filename: "brick_manly_character_sheet.pdf"
+      ).and_return(true)
+      
+      get "/api/v2/characters/#{@brick.id}/pdf", headers: @headers
+      expect(response).to have_http_status(:success)
+    end
+
+    it "returns a 404 for a non-existent character" do
+      get "/api/v2/characters/999999/pdf", headers: @headers
+      expect(response).to have_http_status(:not_found)
+    end
+  end
+
   describe "DELETE /remove_image" do
     it "removes an image from a character" do
       allow_any_instance_of(ActiveStorage::Blob).to receive(:purge).and_return(true)

@@ -270,4 +270,37 @@ RSpec.describe "Api::V2::Schticks", type: :request do
       expect(body["paths"]).to eq([])
     end
   end
+
+  describe "Pagination and order parameters" do
+    it "respects per_page parameter" do
+      get "/api/v2/schticks", params: { per_page: 2 }, headers: @headers
+      expect(response).to have_http_status(200)
+      body = JSON.parse(response.body)
+      expect(body["schticks"].length).to eq(2)
+      expect(body["meta"]["total_count"]).to eq(4)
+      expect(body["meta"]["total_pages"]).to eq(2)
+    end
+
+    it "respects page parameter" do
+      get "/api/v2/schticks", params: { per_page: 2, page: 2 }, headers: @headers
+      expect(response).to have_http_status(200)
+      body = JSON.parse(response.body)
+      expect(body["schticks"].length).to eq(2)
+      expect(body["meta"]["current_page"]).to eq(2)
+    end
+
+    it "sorts by name with order parameter" do
+      get "/api/v2/schticks", params: { sort: "name", order: "asc" }, headers: @headers
+      expect(response).to have_http_status(200)
+      body = JSON.parse(response.body)
+      expect(body["schticks"].map { |s| s["name"] }).to eq(["Blast", "Fireball", "Kick", "Punch"])
+    end
+
+    it "sorts by name with desc order" do
+      get "/api/v2/schticks", params: { sort: "name", order: "desc" }, headers: @headers
+      expect(response).to have_http_status(200)
+      body = JSON.parse(response.body)
+      expect(body["schticks"].map { |s| s["name"] }).to eq(["Punch", "Kick", "Fireball", "Blast"])
+    end
+  end
 end

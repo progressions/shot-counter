@@ -272,4 +272,5 @@ RSpec.describe "Api::V2::Schticks", type: :request do
       expect(body["paths"]).to contain_exactly("Fire")
     end
   end
+
 end
