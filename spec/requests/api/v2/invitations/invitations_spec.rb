@@ -332,9 +332,123 @@ RSpec.describe "Api::V2::Invitations", type: :request do
     end
   end
 
+  describe "GET /api/v2/invitations/:id" do
+    before do
+      @invitation = @campaign.invitations.create!(
+        user: @gamemaster,
+        email: "player@example.com",
+        pending_user: @player
+      )
+    end
+
+    context "without authentication (public endpoint)" do
+      it "returns invitation details" do
+        get "/api/v2/invitations/#{@invitation.id}"
+        
+        expect(response).to have_http_status(:ok)
+        body = JSON.parse(response.body)
+        expect(body["email"]).to eq("player@example.com")
+        expect(body["gamemaster"]["email"]).to eq(@gamemaster.email)
+        expect(body["campaign"]["id"]).to eq(@campaign.id)
+        expect(body["pending_user"]["email"]).to eq(@player.email)
+      end
+
+      it "returns not found for invalid invitation" do
+        get "/api/v2/invitations/invalid-id"
+        
+        expect(response).to have_http_status(:not_found)
+        body = JSON.parse(response.body)
+        expect(body["error"]).to eq("Invitation not found")
+      end
+
+      # Note: "Campaign no longer exists" scenario is not possible due to 
+      # foreign key constraints - if a campaign is deleted, its invitations
+      # are automatically deleted as well
+    end
+  end
+
+  describe "POST /api/v2/invitations/:id/redeem" do
+    before do
+      @invitation = @campaign.invitations.create!(
+        user: @gamemaster,
+        email: @player.email,
+        pending_user: @player
+      )
+    end
+
+    context "as authenticated user" do
+      it "successfully redeems invitation and adds user to campaign" do
+        expect {
+          post "/api/v2/invitations/#{@invitation.id}/redeem",
+               headers: @player_headers
+        }.to change { @campaign.users.count }.by(1)
+          .and change { Invitation.count }.by(-1)
+          .and have_enqueued_job(BroadcastCampaignUpdateJob).with("Campaign", @campaign.id)
+        
+        expect(response).to have_http_status(:created)
+        body = JSON.parse(response.body)
+        expect(body["message"]).to eq("Successfully joined #{@campaign.name}!")
+        expect(body["campaign"]["id"]).to eq(@campaign.id)
+        
+        # Verify user is now a member
+        expect(@campaign.users.reload).to include(@player)
+      end
+
+      it "returns conflict if user already in campaign" do
+        @campaign.campaign_memberships.create!(user: @player)
+        
+        post "/api/v2/invitations/#{@invitation.id}/redeem",
+             headers: @player_headers
+        
+        expect(response).to have_http_status(:conflict)
+        body = JSON.parse(response.body)
+        expect(body["error"]).to eq("Already a member of this campaign")
+      end
+
+      it "returns not found for invalid invitation" do
+        post "/api/v2/invitations/invalid-id/redeem",
+             headers: @player_headers
+        
+        expect(response).to have_http_status(:not_found)
+        body = JSON.parse(response.body)
+        expect(body["error"]).to eq("Invitation not found")
+      end
+
+      # Note: "Campaign no longer exists" scenario is not possible due to 
+      # foreign key constraints - if a campaign is deleted, its invitations
+      # are automatically deleted as well
+
+      it "handles membership creation failure gracefully" do
+        # Mock membership save failure
+        allow_any_instance_of(CampaignMembership).to receive(:save).and_return(false)
+        allow_any_instance_of(CampaignMembership).to receive(:errors).and_return(
+          double(as_json: { "user" => ["has already been taken"] })
+        )
+        
+        post "/api/v2/invitations/#{@invitation.id}/redeem",
+             headers: @player_headers
+        
+        expect(response).to have_http_status(:unprocessable_entity)
+        body = JSON.parse(response.body)
+        expect(body["errors"]["user"]).to include("has already been taken")
+        
+        # Invitation should not be deleted on failure
+        expect(Invitation.find(@invitation.id)).to be_present
+      end
+    end
+
+    context "without authentication" do
+      it "requires authentication" do
+        post "/api/v2/invitations/#{@invitation.id}/redeem"
+        
+        expect(response).to have_http_status(:unauthorized)
+      end
+    end
+  end
+
   describe "authorization" do
     context "without authentication" do
-      it "requires authentication for all endpoints" do
+      it "requires authentication for most endpoints" do
         post "/api/v2/invitations", params: { invitation: { email: "test@example.com" } }
         expect(response).to have_http_status(:unauthorized)
         
@@ -346,6 +460,19 @@ RSpec.describe "Api::V2::Invitations", type: :request do
         
         delete "/api/v2/invitations/123"
         expect(response).to have_http_status(:unauthorized)
+        
+        post "/api/v2/invitations/123/redeem"
+        expect(response).to have_http_status(:unauthorized)
+      end
+
+      it "allows public access to show endpoint" do
+        invitation = @campaign.invitations.create!(
+          user: @gamemaster,
+          email: "public@example.com"
+        )
+        
+        get "/api/v2/invitations/#{invitation.id}"
+        expect(response).to have_http_status(:ok)
       end
     end
   end

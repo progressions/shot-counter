@@ -101,8 +101,9 @@ Rails.application.routes.draw do
           delete :image, to: "users#remove_image"
         end
       end
-      resources :invitations, only: [:index, :create, :destroy] do
+      resources :invitations, only: [:index, :show, :create, :destroy] do
         member do
+          post :redeem
           post :resend
         end
       end

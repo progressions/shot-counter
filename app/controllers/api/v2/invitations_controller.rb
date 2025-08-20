@@ -1,8 +1,8 @@
 class Api::V2::InvitationsController < ApplicationController
-  before_action :authenticate_user!
-  before_action :require_current_campaign
+  before_action :authenticate_user!, except: [:show]
+  before_action :require_current_campaign, except: [:show, :redeem]
   before_action :require_gamemaster, only: [:index, :create, :destroy, :resend]
-  before_action :set_invitation, only: [:destroy, :resend]
+  before_action :set_invitation, only: [:show, :destroy, :resend, :redeem]
   
   # GET /api/v2/invitations
   # Returns pending invitations for current campaign
@@ -52,6 +52,52 @@ class Api::V2::InvitationsController < ApplicationController
     render json: invitation_data
   end
   
+  # GET /api/v2/invitations/:id
+  # Returns invitation details (public endpoint for redemption page)
+  def show
+    invitation_data = ActiveModelSerializers::SerializableResource.new(
+      @invitation,
+      serializer: InvitationSerializer,
+      adapter: :attributes
+    ).serializable_hash
+    
+    render json: invitation_data
+  end
+  
+  # POST /api/v2/invitations/:id/redeem
+  # Redeems invitation and adds user to campaign
+  def redeem
+    # Check if user already in campaign
+    if @invitation.campaign.users.include?(current_user)
+      return render json: { error: "Already a member of this campaign" }, status: :conflict
+    end
+    
+    # Add user to campaign
+    membership = @invitation.campaign.campaign_memberships.build(user: current_user)
+    
+    if membership.save
+      # Clean up invitation
+      @invitation.destroy!
+      
+      # Broadcast update for real-time UI updates
+      BroadcastCampaignUpdateJob.perform_later("Campaign", @invitation.campaign.id)
+      
+      # Return campaign data
+      campaign_data = ActiveModelSerializers::SerializableResource.new(
+        @invitation.campaign,
+        serializer: CampaignSerializer,
+        adapter: :attributes
+      ).serializable_hash
+      
+      render json: { 
+        campaign: campaign_data,
+        message: "Successfully joined #{@invitation.campaign.name}!"
+      }, status: :created
+    else
+      render json: { errors: membership.errors.as_json }, status: :unprocessable_entity
+    end
+  end
+  
   # DELETE /api/v2/invitations/:id
   # Cancels pending invitation
   def destroy
@@ -62,7 +108,13 @@ class Api::V2::InvitationsController < ApplicationController
   private
   
   def set_invitation
-    @invitation = current_campaign.invitations.find(params[:id])
+    if action_name.in?(['show', 'redeem'])
+      # For show and redeem actions, find invitation directly (don't scope to current campaign)
+      @invitation = Invitation.find(params[:id])
+    else
+      # For other actions, scope to current campaign
+      @invitation = current_campaign.invitations.find(params[:id])
+    end
   rescue ActiveRecord::RecordNotFound
     render json: { error: "Invitation not found" }, status: :not_found
   end
