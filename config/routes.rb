@@ -101,6 +101,11 @@ Rails.application.routes.draw do
           delete :image, to: "users#remove_image"
         end
       end
+      resources :invitations, only: [:index, :create, :destroy] do
+        member do
+          post :resend
+        end
+      end
     end
     namespace :v1 do
       resources :ai, only: [:create]

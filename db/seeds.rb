@@ -3,14 +3,17 @@
 
 # Create test users for automation (using known working credentials)
 # Gamemaster user
-test_user = User.find_or_create_by!(email: 'progressions@gmail.com') do |user|
-  user.password = 'password'
-  user.password_confirmation = 'password'
-  user.first_name = 'Isaac'
-  user.last_name = 'Priestley'
-  user.gamemaster = true
-  user.confirmed_at = Time.current  # Confirm email for test user
-end
+test_user = User.find_or_initialize_by(email: 'progressions@gmail.com')
+test_user.assign_attributes(
+  password: 'password',
+  password_confirmation: 'password',
+  first_name: 'Isaac',
+  last_name: 'Priestley',
+  gamemaster: true,
+  admin: true,  # Required for API v2 users endpoint access
+  confirmed_at: Time.current  # Confirm email for test user
+)
+test_user.save!
 
 # Player user
 player_user = User.find_or_create_by!(email: 'player@example.com') do |user|
