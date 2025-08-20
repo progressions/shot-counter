@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_08_16_155319) do
+ActiveRecord::Schema[8.0].define(version: 2025_08_20_132404) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -67,6 +67,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_16_155319) do
     t.datetime "updated_at", null: false
     t.index ["campaign_id", "user_id"], name: "index_campaign_memberships_on_campaign_id_and_user_id"
     t.index ["campaign_id"], name: "index_campaign_memberships_on_campaign_id"
+    t.index ["user_id", "created_at"], name: "index_campaign_memberships_on_user_and_created"
     t.index ["user_id"], name: "index_campaign_memberships_on_user_id"
   end
 
@@ -78,6 +79,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_16_155319) do
     t.string "name"
     t.boolean "active", default: true, null: false
     t.index "lower((name)::text)", name: "index_campaigns_on_lower_name"
+    t.index ["active", "created_at"], name: "index_campaigns_on_active_and_created_at"
     t.index ["user_id"], name: "index_campaigns_on_user_id"
   end
 
@@ -140,6 +142,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_16_155319) do
     t.boolean "is_template"
     t.index "lower((name)::text)", name: "index_characters_on_lower_name"
     t.index ["action_values"], name: "index_characters_on_action_values", using: :gin
+    t.index ["campaign_id", "active", "created_at"], name: "index_characters_on_campaign_active_created"
+    t.index ["campaign_id", "active"], name: "index_characters_on_campaign_id_and_active"
     t.index ["campaign_id"], name: "index_characters_on_campaign_id"
     t.index ["created_at"], name: "index_characters_on_created_at"
     t.index ["faction_id"], name: "index_characters_on_faction_id"
@@ -384,6 +388,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_16_155319) do
     t.uuid "juncture_id"
     t.jsonb "description"
     t.index "lower((name)::text)", name: "index_vehicles_on_lower_name"
+    t.index ["campaign_id", "active", "created_at"], name: "index_vehicles_on_campaign_active_created"
+    t.index ["campaign_id", "active"], name: "index_vehicles_on_campaign_id_and_active"
     t.index ["campaign_id"], name: "index_vehicles_on_campaign_id"
     t.index ["faction_id"], name: "index_vehicles_on_faction_id"
     t.index ["juncture_id"], name: "index_vehicles_on_juncture_id"
