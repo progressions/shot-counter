@@ -62,7 +62,7 @@ class Invitation < ApplicationRecord
   end
 
   def ensure_new_player
-    if (campaign&.players&.find_by(email: email))
+    if (campaign&.users&.find_by(email: email))
       errors.add(:email, "is already a player")
     end
 

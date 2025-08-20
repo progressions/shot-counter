@@ -9,7 +9,7 @@ class Users::SessionsController < Devise::SessionsController
   def create
     Rails.logger.info(sign_in_params)
     @user = User.find_by(email: sign_in_params[:email])
-    if @user.password == sign_in_params[:password]
+    if @user && @user.password == sign_in_params[:password]
       sign_in(:user, @user)
       
       # Generate JWT token for the response header
