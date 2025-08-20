@@ -75,7 +75,7 @@ class Api::V2::UsersController < ApplicationController
   end
 
   def profile
-    render json: current_user, serializer: UserProfileSerializer, status: :ok
+    render json: current_user, serializer: UserSerializer, status: :ok
   end
 
   def update_profile
@@ -98,7 +98,7 @@ class Api::V2::UsersController < ApplicationController
     if current_user.update(user_data)
       token = encode_jwt(current_user)
       response.set_header("Authorization", "Bearer #{token}")
-      render json: current_user, serializer: UserProfileSerializer
+      render json: current_user, serializer: UserSerializer
     else
       render json: { errors: current_user.errors }, status: :unprocessable_entity
     end
