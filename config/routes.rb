@@ -95,6 +95,8 @@ Rails.application.routes.draw do
       end
       resources :users do
         get :current, on: :collection
+        get :profile, on: :collection
+        patch :profile, on: :collection, to: "users#update_profile"
         member do
           delete :image, to: "users#remove_image"
         end

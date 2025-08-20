@@ -22,6 +22,8 @@ class User < ApplicationRecord
   has_one_attached :image
   has_many :image_positions, as: :positionable, dependent: :destroy
   before_validation :set_name, if: -> { first_name_changed? || last_name_changed? }
+  
+  validate :acceptable_image
   validates :email,
     uniqueness: true,
     allow_nil: true,
@@ -79,6 +81,22 @@ class User < ApplicationRecord
       channel = "campaign_#{campaign.id}"
       ActionCable.server.broadcast(channel, payload)
       ActionCable.server.broadcast(channel, { users: "reload" })
+    end
+  end
+
+  private
+
+  def acceptable_image
+    return unless image.attached?
+
+    acceptable_types = ["image/jpeg", "image/jpg", "image/png"]
+    unless acceptable_types.include?(image.blob.content_type)
+      errors.add(:image, "must be a JPEG or PNG")
+    end
+
+    max_size = 5.megabytes
+    if image.blob.byte_size > max_size
+      errors.add(:image, "is too large (should be at most 5MB)")
     end
   end
 end
