@@ -74,6 +74,36 @@ class Api::V2::UsersController < ApplicationController
     render json: current_user, serializer: UserSerializer, status: :ok
   end
 
+  def profile
+    render json: current_user, serializer: UserSerializer, status: :ok
+  end
+
+  def update_profile
+    if params[:user].present? && params[:user].is_a?(String)
+      begin
+        user_data = JSON.parse(params[:user]).symbolize_keys
+      rescue JSON::ParserError
+        render json: { error: "Invalid user data format" }, status: :bad_request
+        return
+      end
+    else
+      user_data = profile_params.to_h.symbolize_keys
+    end
+    
+    if params[:image].present?
+      current_user.image.purge if current_user.image.attached?
+      current_user.image.attach(params[:image])
+    end
+    
+    if current_user.update(user_data)
+      token = encode_jwt(current_user)
+      response.set_header("Authorization", "Bearer #{token}")
+      render json: current_user, serializer: UserSerializer
+    else
+      render json: { errors: current_user.errors }, status: :unprocessable_entity
+    end
+  end
+
   def create
     if params[:user].present? && params[:user].is_a?(String)
       begin
@@ -195,6 +225,10 @@ class Api::V2::UsersController < ApplicationController
 
   def user_params
     params.require(:user).permit(:email, :first_name, :last_name, :admin, :gamemaster, :image)
+  end
+
+  def profile_params
+    params.require(:user).permit(:email, :first_name, :last_name, :image)
   end
 
   def sort_order
