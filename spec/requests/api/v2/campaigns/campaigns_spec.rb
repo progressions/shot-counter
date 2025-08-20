@@ -2,6 +2,9 @@ require "rails_helper"
 RSpec.describe "Api::V2::Campaigns", type: :request do
   before(:each) do
     allow_any_instance_of(ActiveStorage::Blob).to receive(:purge).and_return(true)
+    User.destroy_all
+    Campaign.destroy_all
+    Character.destroy_all
     # users
     @admin = User.create!(email: "admin@example.com", confirmed_at: Time.now, admin: true, first_name: "Admin", last_name: "User", name: "Admin User")
     @gamemaster = User.create!(email: "gamemaster@example.com", confirmed_at: Time.now, gamemaster: true, first_name: "Game", last_name: "Master", name: "Game Master")
@@ -383,6 +386,165 @@ RSpec.describe "Api::V2::Campaigns", type: :request do
       expect(response).to have_http_status(:not_found)
       body = JSON.parse(response.body)
       expect(body["error"]).to eq("Record not found or unauthorized")
+    end
+  end
+
+  describe "GET /index" do
+    context "when user is gamemaster" do
+      it "retrieves campaigns list" do
+        get "/api/v2/campaigns", headers: @gamemaster_headers
+        expect(response).to have_http_status(:ok)
+        body = JSON.parse(response.body)
+        expect(body["campaigns"]).to be_an(Array)
+        expect(body["campaigns"].length).to be >= 2
+        expect(body["campaigns"].any? { |c| c["name"] == "Adventure" }).to be_truthy
+        expect(body["campaigns"].any? { |c| c["name"] == "Quest" }).to be_truthy
+        expect(body).to have_key("meta")
+      end
+
+      it "supports pagination" do
+        get "/api/v2/campaigns?page=1&per_page=1", headers: @gamemaster_headers
+        expect(response).to have_http_status(:ok)
+        body = JSON.parse(response.body)
+        expect(body["campaigns"]).to be_an(Array)
+        expect(body["campaigns"].length).to eq(1)
+        expect(body["meta"]).to have_key("total_pages")
+        expect(body["meta"]).to have_key("current_page")
+      end
+
+      it "supports sorting" do
+        get "/api/v2/campaigns?sort=name&order=asc", headers: @gamemaster_headers
+        expect(response).to have_http_status(:ok)
+        body = JSON.parse(response.body)
+        campaign_names = body["campaigns"].map { |c| c["name"] }
+        expect(campaign_names).to eq(campaign_names.sort)
+      end
+
+      it "supports search" do
+        get "/api/v2/campaigns?search=Adventure", headers: @gamemaster_headers
+        expect(response).to have_http_status(:ok)
+        body = JSON.parse(response.body)
+        expect(body["campaigns"]).to be_an(Array)
+        expect(body["campaigns"].all? { |c| c["name"].include?("Adventure") }).to be_truthy
+      end
+
+      context "performance requirements" do
+        before do
+          # Create additional campaigns for performance testing
+          5.times do |i|
+            campaign = @gamemaster.campaigns.create!(
+              name: "Performance Test Campaign #{i}",
+              description: "Campaign for performance testing",
+              active: true,
+              user_ids: [@player.id]
+            )
+            # Add related data to test JOIN performance
+            2.times do |j|
+              Character.create!(
+                name: "Character #{i}-#{j}",
+                action_values: { "Type" => "PC", "Archetype" => "Hero" },
+                campaign_id: campaign.id,
+                user_id: @gamemaster.id
+              )
+              campaign.vehicles.create!(
+                name: "Vehicle #{i}-#{j}",
+                action_values: { "Type" => "Vehicle", "Speed" => 10 }
+              )
+            end
+          end
+        end
+
+        it "responds within performance targets" do
+          start_time = Time.current
+          get "/api/v2/campaigns", headers: @gamemaster_headers
+          end_time = Time.current
+          response_time = ((end_time - start_time) * 1000).round(2)
+
+          expect(response).to have_http_status(:ok)
+          expect(response_time).to be < 500.0, "Response time was #{response_time}ms, should be < 500ms"
+        end
+
+        it "performs efficiently with pagination" do
+          start_time = Time.current
+          get "/api/v2/campaigns?page=1&per_page=15", headers: @gamemaster_headers
+          end_time = Time.current
+          response_time = ((end_time - start_time) * 1000).round(2)
+
+          expect(response).to have_http_status(:ok)
+          expect(response_time).to be < 500.0, "Paginated response time was #{response_time}ms, should be < 500ms"
+        end
+
+        it "performs efficiently with search" do
+          start_time = Time.current
+          get "/api/v2/campaigns?search=Test", headers: @gamemaster_headers
+          end_time = Time.current
+          response_time = ((end_time - start_time) * 1000).round(2)
+
+          expect(response).to have_http_status(:ok)
+          expect(response_time).to be < 500.0, "Search response time was #{response_time}ms, should be < 500ms"
+        end
+
+        it "executes reasonable number of database queries" do
+          # Test for query efficiency (basic count without specific gem)
+          query_count = 0
+          callback = ->(name, started, finished, unique_id, payload) {
+            query_count += 1 if payload[:name] == "SQL" && !payload[:sql].include?("SCHEMA")
+          }
+          
+          ActiveSupport::Notifications.subscribed(callback, "sql.active_record") do
+            get "/api/v2/campaigns", headers: @gamemaster_headers
+          end
+          
+          expect(response).to have_http_status(:ok)
+          expect(query_count).to be < 50, "Executed #{query_count} queries, should be < 50"
+        end
+
+        it "includes essential data without over-fetching" do
+          get "/api/v2/campaigns", headers: @gamemaster_headers
+          expect(response).to have_http_status(:ok)
+          body = JSON.parse(response.body)
+          
+          campaign = body["campaigns"].first
+          essential_keys = ["id", "name", "description", "active", "created_at", "updated_at"]
+          essential_keys.each do |key|
+            expect(campaign).to have_key(key), "Missing essential key: #{key}"
+          end
+
+          # Should not include expensive association data in index view
+          expect(campaign).to_not have_key("characters")
+          expect(campaign).to_not have_key("vehicles")
+          expect(campaign).to_not have_key("fights")
+        end
+      end
+    end
+
+    context "when user is admin" do
+      it "retrieves all campaigns" do
+        get "/api/v2/campaigns", headers: @admin_headers
+        expect(response).to have_http_status(:ok)
+        body = JSON.parse(response.body)
+        expect(body["campaigns"]).to be_an(Array)
+        expect(body["campaigns"].length).to be >= 3
+      end
+    end
+
+    context "when user is player" do
+      it "retrieves only campaigns they are members of" do
+        get "/api/v2/campaigns", headers: @player_headers
+        expect(response).to have_http_status(:ok)
+        body = JSON.parse(response.body)
+        expect(body["campaigns"]).to be_an(Array)
+        campaign_names = body["campaigns"].map { |c| c["name"] }
+        expect(campaign_names).to include("Adventure")
+        expect(campaign_names).to_not include("Quest")
+      end
+    end
+
+    context "when user is unauthenticated" do
+      it "returns unauthorized" do
+        get "/api/v2/campaigns"
+        expect(response).to have_http_status(:unauthorized)
+      end
     end
   end
 end

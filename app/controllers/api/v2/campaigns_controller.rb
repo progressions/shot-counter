@@ -36,10 +36,9 @@ class Api::V2::CampaignsController < ApplicationController
       "campaigns.updated_at",
       "campaigns.active",
     ]
+    # For index view, we only need lightweight data - no eager loading
+    # Characters and vehicles counts will be calculated in the serializer
     includes = [
-      :image_positions,
-      :characters,
-      :vehicles,
       image_attachment: :blob,
     ]
     query = if current_user.gamemaster? || current_user.admin?
@@ -47,7 +46,7 @@ class Api::V2::CampaignsController < ApplicationController
             else
               current_user.player_campaigns
             end
-    query = query.select(selects).eager_load(includes)
+    query = query.select(selects).includes(includes)
     # Apply filters
     query = query.where(id: params["id"]) if params["id"].present?
     if params.key?("ids")
@@ -80,7 +79,7 @@ class Api::V2::CampaignsController < ApplicationController
       {
         "campaigns" => ActiveModelSerializers::SerializableResource.new(
           campaigns,
-          each_serializer: params[:autocomplete] ? CampaignAutocompleteSerializer : CampaignIndexSerializer,
+          each_serializer: params[:autocomplete] ? CampaignAutocompleteSerializer : CampaignIndexLiteSerializer,
           adapter: :attributes
         ).serializable_hash,
         "meta" => pagination_meta(campaigns)
