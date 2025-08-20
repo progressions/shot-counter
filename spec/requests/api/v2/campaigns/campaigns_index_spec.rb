@@ -54,7 +54,7 @@ RSpec.describe "Api::V2::Campaigns", type: :request do
         body = JSON.parse(response.body)
         expect(body["campaigns"].length).to eq(1)
         expect(body["campaigns"][0]).to include("name" => "Adventure", "description" => "Epic adventure", "user_ids" => [@player.id])
-        expect(body["campaigns"][0].keys).to contain_exactly("id", "name", "description", "created_at", "updated_at", "active", "user_ids", "entity_class", "image_positions", "characters", "image_url", "gamemaster", "gamemaster_id")
+        expect(body["campaigns"][0].keys).to contain_exactly("id", "name", "description", "created_at", "updated_at", "active", "user_ids", "entity_class", "characters_count", "vehicles_count", "image_url", "gamemaster_id")
       end
 
       it "sorts by created_at ascending" do
