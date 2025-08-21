@@ -78,4 +78,36 @@ class UserMailer < Devise::Mailer
     mail(to: @user.email, subject: subject)
   end
 
+  def reset_password_instructions(record, token, opts={})
+    @user = record
+    @token = token
+    
+    # Set up the frontend URL for password reset
+    if Rails.application.config.action_mailer.default_url_options
+      host = Rails.application.config.action_mailer.default_url_options[:host]
+      protocol = Rails.application.config.action_mailer.default_url_options[:protocol]
+      port = Rails.application.config.action_mailer.default_url_options[:port]
+      port = ":#{port}" if port
+      @root_url = "#{protocol}://#{host}#{port}"
+      
+      # Use frontend URL for password reset (port 3001)
+      frontend_host = host
+      frontend_port = Rails.env.development? ? ":3001" : port
+      @frontend_reset_url = "#{protocol}://#{frontend_host}#{frontend_port}/reset-password/#{@token}"
+    else
+      # Fallback for development
+      @frontend_reset_url = "http://localhost:3001/reset-password/#{@token}"
+    end
+    
+    # Add security headers
+    headers['X-Auto-Response-Suppress'] = 'OOF, AutoReply'
+    headers['X-Mailer'] = 'Chi War Password Reset System'
+    
+    mail(
+      to: @user.email,
+      subject: "Reset your Chi War password",
+      template_name: 'reset_password_instructions'
+    )
+  end
+
 end

@@ -8,6 +8,14 @@ Rails.application.routes.draw do
   
   # Public confirmation endpoint for frontend
   get '/users/confirmation', to: 'users/confirmations#show'
+  
+  # Test helper endpoints (only available in test environment)
+  if Rails.env.test?
+    scope :test do
+      post 'get_reset_token', to: 'test#get_reset_token'
+      post 'clear_reset_token', to: 'test#clear_reset_token'
+    end
+  end
   namespace :api do
     namespace :v2 do
       resources :encounters, only: [:show] do

@@ -1,6 +1,40 @@
 # This file should contain all the record creation needed to seed the database with its default values.
 # The data can then be loaded with the bin/rails db:seed command (or created alongside the database with db:setup).
 
+# SAFEGUARD: Prevent accidental seeding in development with existing data
+if Rails.env.development?
+  puts "🚨 DEVELOPMENT ENVIRONMENT DETECTED"
+  puts "Database: #{ActiveRecord::Base.connection.current_database}"
+  
+  # Check if development database already has users (indicating it's not a fresh setup)
+  if User.exists?
+    existing_user_count = User.count
+    existing_campaign_count = Campaign.count
+    
+    puts "⚠️  WARNING: Development database contains existing data:"
+    puts "   - Users: #{existing_user_count}"
+    puts "   - Campaigns: #{existing_campaign_count}"
+    puts ""
+    puts "🛡️  SAFETY CHECK: Seeding will only ADD test data, not destroy existing data."
+    puts "   This seed file uses find_or_create_by which is safe for existing data."
+    puts ""
+    print "Continue seeding development database? (y/N): "
+    
+    response = STDIN.gets.chomp.downcase
+    unless response == 'y' || response == 'yes'
+      puts "❌ Seeding cancelled by user"
+      exit 0
+    end
+    
+    puts "✅ User confirmed - proceeding with safe seeding..."
+  else
+    puts "✅ Fresh development database detected - proceeding with seeding..."
+  end
+end
+
+puts "🌱 Seeding database in #{Rails.env} environment..."
+puts "📍 Database: #{ActiveRecord::Base.connection.current_database}"
+
 # Create test users for automation (using known working credentials)
 # Gamemaster user
 test_user = User.find_or_initialize_by(email: 'progressions@gmail.com')
