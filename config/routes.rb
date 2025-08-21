@@ -5,6 +5,9 @@ Rails.application.routes.draw do
     confirmations: "users/confirmations",
     passwords: "users/passwords",
   }
+  
+  # Public confirmation endpoint for frontend
+  get '/users/confirmation', to: 'users/confirmations#show'
   namespace :api do
     namespace :v2 do
       resources :encounters, only: [:show] do
@@ -101,8 +104,10 @@ Rails.application.routes.draw do
           delete :image, to: "users#remove_image"
         end
       end
-      resources :invitations, only: [:index, :create, :destroy] do
+      resources :invitations, only: [:index, :show, :create, :destroy] do
         member do
+          post :redeem
+          post :register
           post :resend
         end
       end

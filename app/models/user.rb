@@ -21,6 +21,7 @@ class User < ApplicationRecord
   has_many :invitations
   has_one_attached :image
   has_many :image_positions, as: :positionable, dependent: :destroy
+  belongs_to :pending_invitation, class_name: "Invitation", optional: true
   before_validation :set_name, if: -> { first_name_changed? || last_name_changed? }
   
   validate :acceptable_image

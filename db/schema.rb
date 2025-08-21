@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_08_20_132404) do
+ActiveRecord::Schema[8.0].define(version: 2025_08_21_001644) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -361,10 +361,12 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_20_132404) do
     t.uuid "current_campaign_id"
     t.string "name"
     t.boolean "active", default: true, null: false
+    t.uuid "pending_invitation_id"
     t.index "lower((name)::text)", name: "index_users_on_lower_name"
     t.index ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["jti"], name: "index_users_on_jti", unique: true
+    t.index ["pending_invitation_id"], name: "index_users_on_pending_invitation_id"
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
     t.index ["unlock_token"], name: "index_users_on_unlock_token", unique: true
   end

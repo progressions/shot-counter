@@ -40,6 +40,80 @@ source ~/.rvm/scripts/rvm && rvm use 3.2.2 && bundle exec rspec [spec_path]
 - `rails console` or `rails c` - Start Rails console for debugging and data exploration
 - `rails routes` - View all available routes
 
+### API Testing with curl
+
+**Authentication:**
+The API uses Devise JWT authentication. To test API endpoints with curl, you need to obtain a JWT token first.
+
+**Step 1: Get JWT Token**
+```bash
+# Login to get JWT token (replace with actual user credentials)
+curl -s -X POST http://localhost:3000/users/sign_in \
+  -H "Content-Type: application/json" \
+  -d '{"user":{"email":"progressions@gmail.com","password":"password"}}' \
+  -i | grep -i authorization | cut -d' ' -f2
+```
+
+**Step 2: Use Token for API Calls**
+```bash
+# Set token variable
+TOKEN="your-jwt-token-here"
+
+# Create an invitation
+curl -s -X POST http://localhost:3000/api/v2/invitations \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer $TOKEN" \
+  -d '{"invitation":{"email":"newuser@example.com"}}'
+
+# List invitations
+curl -s -X GET http://localhost:3000/api/v2/invitations \
+  -H "Authorization: Bearer $TOKEN"
+
+# Get specific invitation (public endpoint, no auth needed)
+curl -s -X GET http://localhost:3000/api/v2/invitations/INVITATION_ID
+```
+
+**Common Test Data:**
+- **Gamemaster**: `progressions@gmail.com` (password: `password`)
+- **Player**: `player@example.com` (password: `password`)
+
+**Testing Invitation System:**
+```bash
+# Complete flow to create and test invitation
+# 1. Get auth token (extract just the token part)
+TOKEN=$(curl -s -X POST http://localhost:3000/users/sign_in \
+  -H "Content-Type: application/json" \
+  -d '{"user":{"email":"progressions@gmail.com","password":"password"}}' \
+  -i | grep -i '^authorization:' | cut -d' ' -f2-)
+
+# 2. Create invitation
+INVITATION=$(curl -s -X POST http://localhost:3000/api/v2/invitations \
+  -H "Content-Type: application/json" \
+  -H "Authorization: $TOKEN" \
+  -d '{"invitation":{"email":"test@example.com"}}')
+
+# 3. Extract invitation ID and create test URL
+INVITATION_ID=$(echo $INVITATION | jq -r '.id')
+echo "Test URL: http://localhost:3001/redeem/$INVITATION_ID"
+```
+
+**One-Liner for Quick Testing:**
+```bash
+# Single command to create invitation and get URL
+TOKEN=$(curl -s -X POST http://localhost:3000/users/sign_in -H "Content-Type: application/json" -d '{"user":{"email":"progressions@gmail.com","password":"password"}}' -i | grep -i '^authorization:' | cut -d' ' -f2-) && INVITATION=$(curl -s -X POST http://localhost:3000/api/v2/invitations -H "Content-Type: application/json" -H "Authorization: $TOKEN" -d '{"invitation":{"email":"newuser@example.com"}}') && INVITATION_ID=$(echo $INVITATION | jq -r '.id') && echo "🎯 Invitation URL: http://localhost:3001/redeem/$INVITATION_ID"
+```
+
+**Working Example (Manual Token):**
+```bash
+# If the above fails, you can manually copy the token from a login response:
+curl -s -X POST http://localhost:3000/api/v2/invitations \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer YOUR_TOKEN_HERE" \
+  -d '{"invitation":{"email":"newuser@example.com"}}'
+```
+
+**Note:** If authentication endpoints return 404, check the routes with `rails routes | grep auth` to verify the correct endpoint paths.
+
 ## Architecture Overview
 
 This is a Ruby on Rails 8.0 API-only application serving as the backend for Chi War, a character and campaign manager for the Feng Shui 2 tabletop RPG. The app uses PostgreSQL as the primary database and Redis for caching and background jobs.
