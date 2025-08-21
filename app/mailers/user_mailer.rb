@@ -40,4 +40,42 @@ class UserMailer < Devise::Mailer
     mail(to: @user.email, subject: "You have been removed from the campaign: #{Wcampaign.name}")
   end
 
+  def confirmation_instructions(record, token, opts={})
+    @user = record
+    @token = token
+    
+    # Check if this user has a pending invitation
+    if @user.pending_invitation_id
+      @invitation = Invitation.find_by(id: @user.pending_invitation_id)
+      @campaign = @invitation&.campaign
+      
+      subject = if @campaign
+        "Confirm your account to join #{@campaign.name} in the Chi War!"
+      else
+        "Confirm your account - Welcome to the Chi War!"
+      end
+    else
+      subject = "Confirm your account - Welcome to the Chi War!"
+    end
+    
+    # Set up the frontend URL for confirmation
+    if Rails.application.config.action_mailer.default_url_options
+      host = Rails.application.config.action_mailer.default_url_options[:host]
+      protocol = Rails.application.config.action_mailer.default_url_options[:protocol]
+      port = Rails.application.config.action_mailer.default_url_options[:port]
+      port = ":#{port}" if port
+      @root_url = "#{protocol}://#{host}#{port}"
+      
+      # Use frontend URL for confirmation (port 3001)
+      frontend_host = host
+      frontend_port = Rails.env.development? ? ":3001" : port
+      @frontend_confirmation_url = "#{protocol}://#{frontend_host}#{frontend_port}/confirm?confirmation_token=#{@token}"
+    else
+      # Fallback for development
+      @frontend_confirmation_url = "http://localhost:3001/confirm?confirmation_token=#{@token}"
+    end
+    
+    mail(to: @user.email, subject: subject)
+  end
+
 end

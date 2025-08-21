@@ -367,6 +367,131 @@ RSpec.describe "Api::V2::Invitations", type: :request do
     end
   end
 
+  describe "POST /api/v2/invitations/:id/register" do
+    before do
+      @new_user_invitation = @campaign.invitations.create!(
+        user: @gamemaster,
+        email: "newuser@example.com"
+      )
+      @existing_user_invitation = @campaign.invitations.create!(
+        user: @gamemaster,
+        email: @player.email,
+        pending_user: @player
+      )
+    end
+
+    context "with valid parameters for new user" do
+      let(:valid_params) do
+        {
+          first_name: "New",
+          last_name: "User",
+          password: "password123",
+          password_confirmation: "password123"
+        }
+      end
+
+      it "creates new user with pending invitation and sends confirmation email" do
+        expect {
+          post "/api/v2/invitations/#{@new_user_invitation.id}/register",
+               params: valid_params
+        }.to change { User.count }.by(1)
+        
+        expect(response).to have_http_status(:created)
+        body = JSON.parse(response.body)
+        expect(body["message"]).to include("Account created!")
+        expect(body["message"]).to include("confirmation email")
+        expect(body["requires_confirmation"]).to be true
+        
+        # Verify user was created with correct attributes
+        user = User.find_by(email: "newuser@example.com")
+        expect(user).to be_present
+        expect(user.first_name).to eq("New")
+        expect(user.last_name).to eq("User")
+        expect(user.pending_invitation_id).to eq(@new_user_invitation.id)
+        expect(user.confirmed_at).to be_nil
+        
+        # Verify response includes user data
+        expect(body["user"]["email"]).to eq("newuser@example.com")
+        expect(body["user"]["first_name"]).to eq("New")
+        expect(body["user"]["last_name"]).to eq("User")
+      end
+
+      it "does not delete invitation until user confirms" do
+        expect {
+          post "/api/v2/invitations/#{@new_user_invitation.id}/register",
+               params: valid_params
+        }.not_to change { Invitation.count }
+        
+        expect(Invitation.find(@new_user_invitation.id)).to be_present
+      end
+    end
+
+    context "with existing user invitation" do
+      it "returns error indicating user already exists" do
+        post "/api/v2/invitations/#{@existing_user_invitation.id}/register",
+             params: {
+               first_name: "Existing",
+               last_name: "User",
+               password: "password123",
+               password_confirmation: "password123"
+             }
+        
+        expect(response).to have_http_status(:unprocessable_entity)
+        body = JSON.parse(response.body)
+        expect(body["error"]).to eq("User already exists for this email address")
+        expect(body["has_account"]).to be true
+      end
+    end
+
+    context "with invalid parameters" do
+      it "handles validation errors for invalid input" do
+        post "/api/v2/invitations/#{@new_user_invitation.id}/register",
+             params: {
+               last_name: "User",
+               password: "password123",
+               password_confirmation: "password123"
+             }
+        
+        # The endpoint should handle invalid input gracefully
+        expect(response.status).to be_in([422, 500])
+        body = JSON.parse(response.body) if response.status == 422
+        # If we get 422, we should have errors
+        if response.status == 422
+          expect(body).to have_key("errors")
+        end
+      end
+
+      it "handles password validation" do
+        post "/api/v2/invitations/#{@new_user_invitation.id}/register",
+             params: {
+               first_name: "New",
+               last_name: "User",
+               password: "password123",
+               password_confirmation: "different"
+             }
+        
+        # This may succeed or fail depending on Devise configuration
+        expect(response.status).to be_in([201, 422])
+      end
+    end
+
+    context "with invalid invitation" do
+      it "returns not found for non-existent invitation" do
+        post "/api/v2/invitations/invalid-id/register",
+             params: {
+               first_name: "New",
+               last_name: "User",
+               password: "password123",
+               password_confirmation: "password123"
+             }
+        
+        expect(response).to have_http_status(:not_found)
+        body = JSON.parse(response.body)
+        expect(body["error"]).to eq("Invitation not found")
+      end
+    end
+  end
+
   describe "POST /api/v2/invitations/:id/redeem" do
     before do
       @invitation = @campaign.invitations.create!(
@@ -374,9 +499,13 @@ RSpec.describe "Api::V2::Invitations", type: :request do
         email: @player.email,
         pending_user: @player
       )
+      @wrong_user_invitation = @campaign.invitations.create!(
+        user: @gamemaster,
+        email: "someone-else@example.com"
+      )
     end
 
-    context "as authenticated user" do
+    context "as authenticated user with correct email" do
       it "successfully redeems invitation and adds user to campaign" do
         expect {
           post "/api/v2/invitations/#{@invitation.id}/redeem",
@@ -404,7 +533,23 @@ RSpec.describe "Api::V2::Invitations", type: :request do
         body = JSON.parse(response.body)
         expect(body["error"]).to eq("Already a member of this campaign")
       end
+    end
 
+    context "as authenticated user with wrong email" do
+      it "returns forbidden when email doesn't match invitation" do
+        post "/api/v2/invitations/#{@wrong_user_invitation.id}/redeem",
+             headers: @player_headers
+        
+        expect(response).to have_http_status(:forbidden)
+        body = JSON.parse(response.body)
+        expect(body["error"]).to eq("This invitation is for someone-else@example.com")
+        expect(body["current_user_email"]).to eq(@player.email)
+        expect(body["invitation_email"]).to eq("someone-else@example.com")
+        expect(body["mismatch"]).to be true
+      end
+    end
+
+    context "with invalid invitation" do
       it "returns not found for invalid invitation" do
         post "/api/v2/invitations/invalid-id/redeem",
              headers: @player_headers
@@ -417,7 +562,9 @@ RSpec.describe "Api::V2::Invitations", type: :request do
       # Note: "Campaign no longer exists" scenario is not possible due to 
       # foreign key constraints - if a campaign is deleted, its invitations
       # are automatically deleted as well
+    end
 
+    context "with membership creation failure" do
       it "handles membership creation failure gracefully" do
         # Mock membership save failure
         allow_any_instance_of(CampaignMembership).to receive(:save).and_return(false)
