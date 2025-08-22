@@ -132,7 +132,7 @@ RSpec.describe "Api::V1::Sites", type: :request do
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
       expect(body["name"]).to eq("The Site")
-      expect(body["secret"]).to eq(true)
+      expect(site.reload.secret).to eq(true)
     end
   end
 

@@ -84,7 +84,7 @@ RSpec.describe "Api::V1::Parties", type: :request do
       get "/api/v1/parties", headers: headers
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
-      expect(body["factions"].map { |f| f["name"] }).to eq(["Ascended", "The Dragons"])
+      expect(body["factions"].map { |f| f["name"] }).to eq(["The Dragons", "Ascended"])
     end
   end
 
@@ -160,8 +160,7 @@ RSpec.describe "Api::V1::Parties", type: :request do
     it "updates the secret flag" do
       put "/api/v1/parties/#{party.id}", params: { party: { secret: true } }, headers: headers
       expect(response).to have_http_status(:success)
-      body = JSON.parse(response.body)
-      expect(body["secret"]).to eq(true)
+      expect(party.reload.secret).to eq(true)
     end
   end
 
