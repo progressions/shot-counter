@@ -1,0 +1,32 @@
+rspec ./spec/requests/api/v1/invitations_spec.rb:108 # Invitations POST /api/v1/invitations can't create a new invitation for an existing member
+rspec ./spec/requests/api/v1/invitations_spec.rb:139 # Invitations GET /api/v1/invitations/:id/redeem redeems an invitation and creates a new user
+rspec ./spec/requests/api/v1/invitations_spec.rb:157 # Invitations GET /api/v1/invitations/:id/redeem redeems for an existing user and reduces the count
+rspec ./spec/requests/api/v1/invitations_spec.rb:166 # Invitations GET /api/v1/invitations/:id/redeem redeems, creates a new user, and reduces the count
+rspec ./spec/requests/api/v1/invitations_spec.rb:189 # Invitations GET /api/v1/invitations/:id/redeem redeems an invitation for an existing user
+rspec ./spec/requests/api/v1/junctures_spec.rb:18 # Api::V1::Junctures GET /index returns http success
+rspec ./spec/requests/api/v1/junctures_spec.rb:25 # Api::V1::Junctures GET /index doesn't return inactive junctures by default
+rspec ./spec/requests/api/v1/junctures_spec.rb:34 # Api::V1::Junctures GET /index doesn't return inactive junctures for a player
+rspec ./spec/requests/api/v1/junctures_spec.rb:43 # Api::V1::Junctures GET /index returns inactive junctures for a gamemaster
+rspec ./spec/requests/api/v1/junctures_spec.rb:54 # Api::V1::Junctures GET /index returns all junctures that are not the current character's juncture
+rspec ./spec/requests/api/v1/junctures_spec.rb:64 # Api::V1::Junctures GET /index returns junctures matching a search string
+rspec ./spec/requests/api/v1/junctures_spec.rb:71 # Api::V1::Junctures GET /index returns junctures by faction_id
+rspec ./spec/requests/api/v1/parties_spec.rb:79 # Api::V1::Parties GET /index returns factions for parties
+rspec ./spec/requests/api/v1/parties_spec.rb:160 # Api::V1::Parties PUT /update updates the secret flag
+rspec ./spec/requests/api/v1/schticks_spec.rb:15 # Schticks GET /api/v1/schticks gets all the schticks
+rspec ./spec/requests/api/v1/schticks_spec.rb:23 # Schticks GET /api/v1/schticks gets schticks for a Foe, excluding schticks they already know
+rspec ./spec/requests/api/v1/schticks_spec.rb:36 # Schticks GET /api/v1/schtick/:id gets a schtick
+rspec ./spec/requests/api/v1/schticks_spec.rb:46 # Schticks POST /api/v1/schticks creates a schtick
+rspec ./spec/requests/api/v1/schticks_spec.rb:60 # Schticks PATCH /api/v1/schticks updates a schtick
+rspec ./spec/requests/api/v1/schticks_spec.rb:74 # Schticks DELETE /api/v1/schticks/:id deletes a schtick
+rspec ./spec/requests/api/v1/sites_spec.rb:130 # Api::V1::Sites PUT /update updates secret flag
+rspec ./spec/requests/api/v2/campaigns/campaigns_spec.rb:522 # Api::V2::Campaigns GET /index when user is admin retrieves all campaigns
+rspec ./spec/requests/api/v2/characters/characters_index_spec.rb:388 # Api::V2::Characters Invalid parameters falls back to default order when order parameter is invalid
+rspec ./spec/requests/api/v2/characters/characters_spec.rb:431 # Api::V2::Characters POST /pdf uploads a pdf
+rspec ./spec/requests/api/v2/characters/characters_spec.rb:449 # Api::V2::Characters POST /pdf returns an error for an invalid pdf
+rspec ./spec/requests/api/v2/users/users_profile_spec.rb:22 # Api::V2::Users Profile GET /api/v2/users/profile returns campaign counts
+rspec ./spec/requests/api/v2/users/users_profile_spec.rb:68 # Api::V2::Users Profile PATCH /api/v2/users/profile updates user email separately
+rspec ./spec/requests/api/v2/weapons/weapons_index_spec.rb:286 # Api::V2::Weapons Pagination and order parameters respects per_page parameter
+rspec ./spec/requests/api/v2/weapons/weapons_index_spec.rb:295 # Api::V2::Weapons Pagination and order parameters respects page parameter
+rspec ./spec/requests/api/v2/weapons/weapons_index_spec.rb:303 # Api::V2::Weapons Pagination and order parameters sorts by name with order parameter
+rspec ./spec/requests/api/v2/weapons/weapons_index_spec.rb:310 # Api::V2::Weapons Pagination and order parameters sorts by name with desc order
+rspec ./spec/requests/api/v2/weapons/weapons_spec.rb:278 # Api::V2::Weapons POST /batch returns error when ids parameter is missing
