@@ -265,6 +265,83 @@ RSpec.describe "Api::V2::Characters", type: :request do
       expect(@brick.parties).to include(party)
       expect(@brick.parties).not_to include(party2)
     end
+
+    context "ownership reassignment" do
+      before(:each) do
+        @new_owner = User.create!(email: "newowner@example.com", confirmed_at: Time.now)
+        @campaign.users << @new_owner
+        @non_member = User.create!(email: "nonmember@example.com", confirmed_at: Time.now)
+      end
+
+      context "as gamemaster" do
+        it "allows reassigning character ownership to another campaign member" do
+          patch "/api/v2/characters/#{@brick.id}", 
+            params: { character: { user_id: @new_owner.id } }, 
+            headers: @headers
+          
+          expect(response).to have_http_status(:success)
+          body = JSON.parse(response.body)
+          expect(body["user"]["id"]).to eq(@new_owner.id)
+          
+          @brick.reload
+          expect(@brick.user_id).to eq(@new_owner.id)
+        end
+
+        it "prevents reassigning ownership to non-campaign member" do
+          patch "/api/v2/characters/#{@brick.id}", 
+            params: { character: { user_id: @non_member.id } }, 
+            headers: @headers
+          
+          expect(response).to have_http_status(:unprocessable_entity)
+          body = JSON.parse(response.body)
+          expect(body["errors"]["user_id"]).to include("must be a member of the campaign")
+          
+          @brick.reload
+          expect(@brick.user_id).to eq(@player.id)
+        end
+      end
+
+      context "as regular player" do
+        before(:each) do
+          @player_headers = Devise::JWT::TestHelpers.auth_headers({}, @player)
+          set_current_campaign(@player, @campaign)
+        end
+
+        it "prevents reassigning character ownership" do
+          patch "/api/v2/characters/#{@brick.id}", 
+            params: { character: { user_id: @new_owner.id } }, 
+            headers: @player_headers
+          
+          expect(response).to have_http_status(:forbidden)
+          body = JSON.parse(response.body)
+          expect(body["error"]).to eq("Not authorized to reassign character ownership")
+          
+          @brick.reload
+          expect(@brick.user_id).to eq(@player.id)
+        end
+      end
+
+      context "as admin" do
+        before(:each) do
+          @admin = User.create!(email: "admin@example.com", confirmed_at: Time.now, admin: true)
+          @admin_headers = Devise::JWT::TestHelpers.auth_headers({}, @admin)
+          set_current_campaign(@admin, @campaign)
+        end
+
+        it "allows reassigning character ownership" do
+          patch "/api/v2/characters/#{@brick.id}", 
+            params: { character: { user_id: @new_owner.id } }, 
+            headers: @admin_headers
+          
+          expect(response).to have_http_status(:success)
+          body = JSON.parse(response.body)
+          expect(body["user"]["id"]).to eq(@new_owner.id)
+          
+          @brick.reload
+          expect(@brick.user_id).to eq(@new_owner.id)
+        end
+      end
+    end
   end
 
   describe "GET /show" do
