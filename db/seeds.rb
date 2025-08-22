@@ -39,8 +39,8 @@ puts "📍 Database: #{ActiveRecord::Base.connection.current_database}"
 # Gamemaster user
 test_user = User.find_or_initialize_by(email: 'progressions@gmail.com')
 test_user.assign_attributes(
-  password: 'password',
-  password_confirmation: 'password',
+  password: 'TestPass123!',
+  password_confirmation: 'TestPass123!',
   first_name: 'Isaac',
   last_name: 'Priestley',
   gamemaster: true,
@@ -51,8 +51,8 @@ test_user.save!
 
 # Player user
 player_user = User.find_or_create_by!(email: 'player@example.com') do |user|
-  user.password = 'password'
-  user.password_confirmation = 'password'
+  user.password = 'TestPass123!'
+  user.password_confirmation = 'TestPass123!'
   user.first_name = 'Player'
   user.last_name = 'Test'
   user.gamemaster = false
@@ -60,9 +60,9 @@ player_user = User.find_or_create_by!(email: 'player@example.com') do |user|
 end
 
 puts "Created gamemaster: #{test_user.email}, ID: #{test_user.id}"
-puts "Gamemaster password valid: #{test_user.valid_password?('password')}"
+puts "Gamemaster password valid: #{test_user.valid_password?('TestPass123!')}"
 puts "Created player: #{player_user.email}, ID: #{player_user.id}"
-puts "Player password valid: #{player_user.valid_password?('password')}"
+puts "Player password valid: #{player_user.valid_password?('TestPass123!')}"
 
 # Create multiple test campaigns for activation testing
 test_campaigns = [
