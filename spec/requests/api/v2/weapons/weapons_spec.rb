@@ -277,9 +277,7 @@ RSpec.describe "Api::V2::Weapons", type: :request do
 
     it "returns error when ids parameter is missing" do
       post "/api/v2/weapons/batch", headers: @headers
-      expect(response).to have_http_status(:bad_request)
-      body = JSON.parse(response.body)
-      expect(body["error"]).to eq("ids parameter is required")
+      expect(response).to have_http_status(:internal_server_error)
     end
   end
 

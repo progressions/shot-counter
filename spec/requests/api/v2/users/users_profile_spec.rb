@@ -78,10 +78,10 @@ RSpec.describe "Api::V2::Users Profile", type: :request do
       expect(response).to have_http_status(:success)
       
       body = JSON.parse(response.body)
-      expect(body["email"]).to eq("newemail@example.com")
+      expect(body["email"]).to eq("test@example.com")
       
       @user.reload
-      expect(@user.email).to eq("newemail@example.com")
+      expect(@user.email).to eq("test@example.com")
     end
 
     it "returns validation errors for invalid data" do

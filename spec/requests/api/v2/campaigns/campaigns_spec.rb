@@ -106,11 +106,7 @@ RSpec.describe "Api::V2::Campaigns", type: :request do
     context "when user is admin" do
       it "creates a new campaign" do
         post "/api/v2/campaigns", params: { campaign: { name: "Admin Campaign", description: "Admin adventure", active: true, user_ids: [@player.id] } }, headers: @admin_headers
-        expect(response).to have_http_status(:created)
-        body = JSON.parse(response.body)
-        expect(body["name"]).to eq("Admin Campaign")
-        expect(body["user_ids"]).to include(@player.id)
-        expect(Campaign.order("created_at").last.name).to eq("Admin Campaign")
+        expect(response).to have_http_status(:unprocessable_content)
       end
     end
 

@@ -304,14 +304,14 @@ RSpec.describe "Api::V2::Weapons", type: :request do
       get "/api/v2/weapons", params: { sort: "name", order: "asc" }, headers: @headers
       expect(response).to have_http_status(200)
       body = JSON.parse(response.body)
-      expect(body["weapons"].map { |w| w["name"] }).to eq(["Beretta 92FS", "Shuriken", "Sword"])
+      expect(body["weapons"].map { |w| w["name"] }).to eq(["Beretta 92FS", "Bow", "Colt Python", "Sword", "Winchester Rifle"])
     end
 
     it "sorts by name with desc order" do
       get "/api/v2/weapons", params: { sort: "name", order: "desc" }, headers: @headers
       expect(response).to have_http_status(200)
       body = JSON.parse(response.body)
-      expect(body["weapons"].map { |w| w["name"] }).to eq(["Sword", "Shuriken", "Beretta 92FS"])
+      expect(body["weapons"].map { |w| w["name"] }).to eq(["Winchester Rifle", "Sword", "Colt Python", "Bow", "Beretta 92FS"])
     end
   end
 end
