@@ -1,0 +1,2908 @@
+libsodium not available! You can continue to use discordrb as normal but voice support won't work.
+        Read https://github.com/shardlab/discordrb/wiki/Installing-libsodium for more details.
+DEPRECATION WARNING: `to_time` will always preserve the full timezone rather than offset of the receiver in Rails 8.1. To opt in to the new behavior, set `config.active_support.to_time_preserves_timezone = :zone`. (called from <top (required)> at /Users/isaacpriestley/tech/isaacpriestley/chi-war/shot-server/config/environment.rb:5)
+DEPRECATION WARNING: `to_time` will always preserve the full timezone rather than offset of the receiver in Rails 8.1. To opt in to the new behavior, set `config.active_support.to_time_preserves_timezone = :zone`. (called from <top (required)> at /Users/isaacpriestley/tech/isaacpriestley/chi-war/shot-server/config/environment.rb:5)
+
+CampaignChannel
+  add some examples to (or delete) /Users/isaacpriestley/tech/isaacpriestley/chi-war/shot-server/spec/channels/campaign_channel_spec.rb (PENDING: Not yet implemented)
+
+FightChannel
+  add some examples to (or delete) /Users/isaacpriestley/tech/isaacpriestley/chi-war/shot-server/spec/channels/fight_channel_spec.rb (PENDING: Not yet implemented)
+
+UserMailer
+  password_reset
+    renders the headers
+
+Advancement
+  validations
+    must have character
+    doesn't need description
+
+Attunement
+  validations
+    validates uniqueness of character to site
+  associations
+    belongs to a character
+    belongs to a site
+
+CampaignMembership
+  validations
+    requires a user
+    requires a campaign
+    requires a unique user per campaign
+
+Campaign
+  validations
+    requires a name
+  associations
+    has many characters
+    has many weapons
+    has many players (FAILED - 1)
+    has many campaign_memberships (FAILED - 2)
+    has many fights
+    has many vehicles
+    has many invitations
+    has many schticks (FAILED - 3)
+    has many parties
+    has many sites
+    has many factions
+
+Carry
+  validations
+    allows multiple carries of the same weapon
+  associations
+    belongs to a character
+    belongs to a weapon
+
+CharacterEffect
+  must belong to a fight
+  must belong to either a character or a vehicle
+  must have action_value if change is set
+  must have change if action_value is set
+  must be a valid action_value
+  must be a valid action_value
+
+CharacterSchtick
+  validations
+    validates uniqueness of character_id and schtick_id (FAILED - 4)
+  associations
+    belongs to a character (FAILED - 5)
+    belongs to a schtick (FAILED - 6)
+
+Character
+  associations
+    belongs to a user
+    belongs to a campaign
+    has many action values
+    has many fights
+    has many character_effects
+    has many schticks (FAILED - 7)
+    has many advancements
+    has many weapons
+    has many parties
+    has many sites
+  validations
+    requires a name
+    requires a unique name
+    may have a duplicate name in a different campaign
+    requires a campaign
+    doesn't require a user
+    sets default action values
+    sets default description
+    sets default skills
+    sets integer values if you try to save strings
+    requires schticks to have a name (FAILED - 8)
+    allows updating the wealth attribute
+  instance methods
+    #sort_order
+      returns 0 for a Character, 0 for an Uber-Boss, inverse of speed, and name
+      returns 0 for a Character, 1 for a PC, inverse of speed, and name
+      returns 0 for a Character, 2 for a Boss, inverse of speed, and name
+      returns 0 for a Character, 3 for a Featured Foe, inverse of speed, and name
+      returns 0 for a Character, 4 for an Ally, inverse of speed, and name
+      returns 0 for a Character, 5 for a Mook, inverse of speed, and name
+    #good_guy?
+      returns true if the character is a PC or Ally
+      returns false if the character is not a PC or Ally
+    #bad_guy?
+      returns true if the character is a Boss, Featured Foe, or Mook
+      returns false if the character is not a Boss, Featured Foe, or Mook
+    #effects_for_fight
+      returns an empty array if the character has no effects
+      returns an array of effects that are active in the fight
+    #main_attack
+      returns the character's main attack
+      returns Guns if the character has default main attack
+    #secondary_attack
+      returns the character's secondary attack
+      returns Martial Arts if the character has default secondary attack
+    #fortune_type
+      returns the character's fortune type
+      returns Fortune if the character has default fortune type
+
+Effect
+  validations
+    requires a severity
+    requires a valid severity
+  associations
+    belongs to a fight (FAILED - 9)
+    belongs to a user (FAILED - 10)
+
+Faction
+  validations
+    is valid with a name
+    is invalid without a name
+    is invalid without a campaign
+  associations
+    belongs to a campaign
+    has many characters
+
+FightEvent
+  add some examples to (or delete) /Users/isaacpriestley/tech/isaacpriestley/chi-war/shot-server/spec/models/fight_event_spec.rb (PENDING: Not yet implemented)
+
+Fight
+  has a shot order with one character
+  includes shot ID
+  has a shot order with two PCs, orders them by Speed
+  has a short order with hidden characters, orders them last
+  orders characters by Type
+  orders characters before vehicles
+  orders by Speed, considering impairments
+  mooks
+    shows mook count
+    shows a mook with a custom color
+  effects
+    sequence 1, shot 16, effect is not active
+    sequence 1, shot 12, effect is active
+    sequence 1, shot 5, effect is active
+    sequence 2, shot 16, effect is active
+    sequence 2, shot 15, effect is not active
+    sequence 2, shot 1, effect is not active
+
+Invitation
+  can't have remaining_count greater than maximum_count
+  must have valid email if email is present
+  returns error with invalid email
+  can't have neither email nor maximum_count
+  can't have both email and maximum_count
+
+Juncture
+  add some examples to (or delete) /Users/isaacpriestley/tech/isaacpriestley/chi-war/shot-server/spec/models/juncture_spec.rb (PENDING: Not yet implemented)
+
+Membership
+  validations
+    validates uniqueness of character_id and party_id (FAILED - 11)
+  associations
+    belongs to a character
+    belongs to a party
+
+Party
+  has a name
+  character can join a party
+  validations
+    requires a name
+    requires a unique name within a campaign
+
+Schtick
+  validations
+    requires a name
+    requires a campaign
+    category must be in the list
+    prerequisite must be in the same category and path
+  associations
+    belongs to a campaign
+    has a prerequisite
+    has characters
+  .for_archetype
+    returns schticks for an archetype (FAILED - 12)
+
+Shot
+  must have character and fight belong to the same campaign
+  must have vehicle and fight belong to the same campaign
+  has one location
+  sets location
+  sets location to nil if not provided
+
+Site
+  validations
+    has a name
+    has a campaign
+    can have characters
+  associations
+    belongs to a campaign
+    can have characters
+
+User
+  must have valid email
+  returns error with invalid email
+
+Vehicle
+  sets default action values
+  sets integer values if you try to save strings
+  associations
+    belongs to a campaign
+    has many action values
+    has many fights
+    has many vehicle_effects
+    has many parties
+    has a faction
+  validations
+    requires a name
+    requires a campaign
+    doesn't require a user
+  driver
+    includes driver in JSON
+
+Weapon
+  validations
+    requires a name
+    requires a damage
+    requires a campaign
+  associations
+    belongs to a character
+    belongs to a campaign
+  uniqueness
+    requires a unique name for a campaign
+
+Api::V1::Actors
+  GET /api/v1/fights/:fight_id/actors
+    returns a list of actors
+  POST /api/v1/fights/:id/actors/:character_id/add
+    adds a character to a fight
+    adds a mook to a fight
+  POST /api/v1/fights/:id/actors/:character_id/act
+    acts a character
+  GET /api/v1/fights/:id/actors/:character_id
+    returns a character
+  PATCH /api/v1/fights/:id/actors/:character_id
+    sets a character as a task
+  PATCH /api/v1/fights/:id/actors/:character_id/reveal
+    reveals a character
+  PATCH /api/v1/fights/:id/actors/:character_id/hide
+    hides a character
+  DELETE /api/v1/fights/:id/actors/:character_id
+    removes a character from a fight
+
+Api::V1::Advancements
+  GET /api/v1/characters/:character_id/advancements
+    gets all of a character's advancements
+  POST /api/v1/characters/:character_id/advancements
+    creates an advancement for a character
+  GET /api/v1/characters/:character_id/advancements/:id
+    gets an advancement
+  PATCH /api/v1/characters/:character_id/advancements/:id
+    updates an advancement
+  DELETE /api/v1/characters/:character_id/advancements/:id
+    destroys an advancement
+
+Api::V1::CharacterSites
+  GET /api/v1/characters/:character_id/sites
+    gets all of a character's sites
+  POST /api/v1/characters/:character_id/sites
+    attunes a character to a site
+    creates a site for a character by name
+  DELETE /api/v1/characters/:character_id/sites/:id
+    destroys a site
+
+Api::V1::CampaignMemberships
+  POST /campaign_memberships
+    adds the user to a campaign as a player
+  DELETE /campaign_memberships/:id
+    lets me remove a player's membership from a campaign I control (FAILED - 13)
+    lets me remove my own membership from a campaign I'm a player in (FAILED - 14)
+
+Api::V1::Campaigns
+  GET /campaigns
+    returns campaigns
+    returns all my campaigns, both ones I run and ones I play in (FAILED - 15)
+  POST /campaigns
+    creates campaign
+    returns error if you're unauthorized
+    returns errors
+  GET /campaigns/:id
+    fetches campaign you created (FAILED - 16)
+    fetches campaign you play in (FAILED - 17)
+    fetches the current campaign
+    returns 200
+  PATCH /campaigns:id
+    updates campaign
+    can't update a campaign you're just a player in (FAILED - 18)
+  DELETE /campaigns/:id
+    destroys campaign
+    can't destroy a campaign you're just a player in (FAILED - 19)
+    even for a gamemaster, can't destroy a campaign you're a player in (FAILED - 20)
+    can't destroy the current campaign
+  POST /set
+    returns http success
+    can clear current campaign
+    can set campaign you're a player in (FAILED - 21)
+
+Api::V1::Carries
+  GET /api/v1/characters/:character_id/weapons
+    gets all the weapons for a character
+  POST /api/v1/characters/:character_id/weapons
+    adds a weapon to a character (FAILED - 22)
+  DELETE /api/v1/characters/:character_id/weapons/:id
+    removes a weapon from a character
+
+CharacterEffects
+  POST /api/v1/fights/:fight_id/character_effects
+    creates a character effect for a fight and character
+    creates a character effect for a fight and a vehicle
+    creates a character effect for one of two mooks
+    returns an error if there's no character_id
+    returns an error if the character isn't in the fight
+    returns an error if the vehicle isn't in the fight
+    requires authentication
+  PATCH /api/v1/fights/:fight_id/character_effects/:id
+    updates a character_effect
+    updates a character_effect on a vehicle
+    requires authentication
+  DELETE /api/v1/fights/:fight_id/character_effects/:id
+    deletes the effect
+    deletes the effect from a vehicle
+    requires authentication
+
+Api::V1::CharacterSchticks
+  GET /api/v1/characters/:all_character_id/schticks
+    gets all the schticks for a character (FAILED - 23)
+  POST /api/v1/characters/:all_character_id/schticks
+    adds a schtick to a character (FAILED - 24)
+  DELETE /api/v1/characters/:all_character_id/schticks/:id
+    removes a schtick from a character (FAILED - 25)
+
+Api::V1::CharactersAndVehicles
+  GET /index
+    gets all characters and vehicles and sorts them by name
+    gets factions for characters
+    gets archetypes for characters
+    shows all characters if fight_id isn't given
+    shows inactive characters if show_all is true
+    filters characters by faction name
+    filters characters by archetype
+    filters characters by character_type
+    filters characters by faction_id
+    filters characters by search string matching name
+    filters list by character ID
+    filters list by vehicle ID
+    paginates the combined collection
+  GET /characters
+    returns characters in a fight
+    returns vehicles in a fight
+
+Api::V1::Characters
+  GET /index
+    gets all characters
+  POST /create
+    creates a character
+    creates a task
+  GET /show
+    shows a character
+  PUT /update
+    updates a character
+    updates a character's faction
+    removes a character's faction
+    updates a character's notion_page_id
+  DELETE /destroy
+    destroys a character
+
+Api::V1::Actors
+  GET /api/v1/fights/:fight_id/drivers
+    returns a list of drivers
+  POST /api/v1/fights/:id/drivers/:vehicle_id/add
+    adds a vehicle to a fight
+    adds a mook to a fight
+  POST /api/v1/fights/:id/drivers/:vehicle_id/act
+    acts a vehicle
+  GET /api/v1/fights/:id/drivers/:vehicle_id
+    returns a vehicle
+  PATCH /api/v1/fights/:id/drivers/:vehicle_id
+    changes the name of a vehicle
+    sets a vehicle as a task
+    adds a driver to a vehicle
+  PATCH /api/v1/fights/:id/drivers/:vehicle_id/reveal
+    reveals a vehicle
+  PATCH /api/v1/fights/:id/drivers/:vehicle_id/hide
+    hides a vehicle
+  DELETE /api/v1/fights/:id/drivers/:vehicle_id
+    removes a vehicle from a fight
+
+Api::V1::Factions
+  GET /api/v1/factions
+    returns unauthorized for unauthenticated users
+    returns active factions sorted alphabetically
+    when show_all=true and user is gamemaster
+      returns all factions
+    when show_all=true and user is not gamemaster
+      returns only active factions
+    with search parameter
+      filters factions by name
+    with character_id parameter
+      excludes factions associated with the character
+      returns not found for invalid character_id
+    with pagination
+      paginates results
+  GET /api/v1/factions/:id
+    returns unauthorized for unauthenticated users
+    returns the faction
+    returns not found for invalid faction
+  POST /api/v1/factions
+    returns unauthorized for unauthenticated users
+    creates a new faction
+    returns unprocessable entity for invalid params
+  PATCH /api/v1/factions/:id
+    returns unauthorized for unauthenticated users
+    updates the faction
+    returns unprocessable entity for invalid params
+    returns not found for invalid faction
+  DELETE /api/v1/factions/:id
+    returns unauthorized for unauthenticated users
+    deletes the faction
+    returns not found for invalid faction
+  DELETE /api/v1/factions/:id/image
+    returns unauthorized for unauthenticated users
+    returns success when no image is attached
+    returns not found for invalid faction
+    when faction has an image
+      removes the image
+
+Api::V1::FightEvents
+  GET /api/v1/fights/:fight_id/fight_events
+    returns a list of fight events
+    returns an empty list if no fight events exist
+  POST /api/v1/fights/:fight_id/fight_events
+    creates a new fight event
+    returns an error if the event type is missing
+    returns an error if the description is missing
+
+Fights
+  POST /api/v1/fights
+    creates a fight
+  PATCH /api/v1/fights/:id
+    updates a fight
+  DELETE /api/v1/fights/:id
+    deletes a fight
+  GET /api/v1/fights/:id
+    returns a fight
+    returns the character effects for each character
+
+Invitations
+  GET /api/v1/invitations
+    returns all invitations sent by the current user
+  GET /api/v1/invitations/:id
+    returns an existing invitation
+    updates pending user (FAILED - 26)
+  POST /api/v1/invitations
+    creates an invitation for the given campaign
+    creates an invitation for an existing user
+    creates an invitation with a maximum count
+    returns an error
+    can't create a new invitation for the gamemaster
+    can't create a new invitation for an existing member (FAILED - 27)
+    can't create a duplicate invitation for the same email
+  GET /api/v1/invitations/:id/redeem
+    redeems an invitation and creates a new user (FAILED - 28)
+    redeems for an existing user and reduces the count (FAILED - 29)
+    redeems, creates a new user, and reduces the count (FAILED - 30)
+    can't redeem when it reaches zero remaining_count
+    redeems an invitation for an existing user (FAILED - 31)
+    returns an error for an invalid email address
+  POST /api/v1/invitations/:id/resend
+    resends the invitation email to the user
+    returns an error if the invitation has no email
+  DELETE /api/v1/invitations/:id
+    deletes an invitation
+
+Api::V1::Junctures
+  GET /index
+    returns http success (FAILED - 32)
+    doesn't return inactive junctures by default (FAILED - 33)
+    doesn't return inactive junctures for a player (FAILED - 34)
+    returns inactive junctures for a gamemaster (FAILED - 35)
+    returns all junctures that are not the current character's juncture (FAILED - 36)
+    returns junctures matching a search string (FAILED - 37)
+    returns junctures by faction_id (FAILED - 38)
+  GET /show
+    returns http success
+  POST /create
+    creates a juncture
+    creates a juncture with a faction
+  PUT /update
+    updates a juncture
+    adds a faction to a juncture
+    updates active flag
+  DELETE /destroy
+    returns http success
+
+Locations
+  POST /create
+    creates a new Location for a character
+    creates a blank location for a character
+    creates a new location for a vehicle
+    creates a blank location for a vehicle
+    creates a separate location for two instances of the same mook
+
+Api::V1::Memberships
+  GET /index
+    returns memberships
+  POST /create
+    adds a character to a party
+    adds a vehicle to a party
+    adds a character to a different party
+    adds a vehicle to a different party
+  DELETE /destroy
+    removes a character from a party
+    removes a vehicle from a party
+
+Api::V1::Parties
+  GET /index
+    returns parties
+    doesn't return secret parties by default
+    doesn't return secret parties for a player
+    returns secret parties for a gamemaster
+    returns parties matching a search string
+    returns parties by faction_id
+    returns factions for parties (FAILED - 39)
+  POST /fight
+    adds a party to a fight
+    doesn't double-add characters
+    creates a party with a faction
+  GET /show
+    returns a single party
+  POST /create
+    creates a party
+  PUT /update
+    updates a party
+    adds a faction
+    updates the secret flag (FAILED - 40)
+  DELETE /destroy
+    deletes a party
+
+Schticks
+  GET /api/v1/schticks
+    gets all the schticks (FAILED - 41)
+    gets schticks for a Foe, excluding schticks they already know (FAILED - 42)
+  GET /api/v1/schtick/:id
+    gets a schtick (FAILED - 43)
+  POST /api/v1/schticks
+    creates a schtick (FAILED - 44)
+  PATCH /api/v1/schticks
+    updates a schtick (FAILED - 45)
+  DELETE /api/v1/schticks/:id
+    deletes a schtick (FAILED - 46)
+
+Api::V1::Sites
+  GET /index
+    returns http success
+    doesn't return secret sites by default
+    doesn't return secret sites for a player
+    returns secret sites for a gamemaster
+    returns all sites that are not the current character's site
+    returns sites matching a search string
+    returns sites by faction_id
+    returns factions
+  GET /show
+    returns http success
+  POST /create
+    creates a site
+    creates a site with a faction
+  PUT /update
+    updates a site
+    adds a faction to a site
+    updates secret flag (FAILED - 47)
+  DELETE /destroy
+    returns http success
+
+Api::V1::Suggestions
+  GET /api/v1/suggestions
+    returns suggestions for a valid query
+    excludes inactive characters and vehicles, and secret sites
+    returns an empty hash for an empty query
+    returns an empty hash for a whitespace-only query
+    returns an empty hash for a non-matching query
+    returns unauthorized without valid authentication
+    only returns suggestions from the current campaign
+
+Vehicles
+  with a gamemaster
+    GET /index
+      returns all campaign vehicles for a gamemaster
+    GET /archetypes
+      returns all vehicle archetypes
+    POST /create
+      creates a vehicle
+      creates a task
+      creates a vehicle with a faction
+    GET /show
+      returns a vehicle
+    PATCH /update
+      updates a vehicle
+      adds a faction
+    DELETE /destroy
+      deletes a vehicle
+  with a player
+    GET /index
+      returns only the user's vehicles for a player
+    POST /create
+      creates a vehicle
+    GET /show
+      returns a vehicle
+      doesn't return a vehicle that doesn't belong to the user
+    PATCH /update
+      updates a vehicle
+      doesn't update a vehicle that doesn't belong to the user
+    DELETE /destroy
+      deletes a vehicle
+      doesn't delete a vehicle that doesn't belong to the user
+
+Api::V1::Weapons
+  GET /api/v1/weapons
+    gets all the weapons
+  GET /api/v1/weapon/:id
+    gets a weapon
+  POST /api/v1/weapons
+    creates a weapon
+  PATCH /api/v1/weapons
+    updates a weapon
+  DELETE /api/v1/weapons/:id
+    deletes a weapon
+
+Api::V2::AiImages
+  GET /index
+    add some examples (or delete) /Users/isaacpriestley/tech/isaacpriestley/chi-war/shot-server/spec/requests/api/v2/ai_images_spec.rb (PENDING: Not yet implemented)
+
+Api::V2::Campaigns
+  GET /autocomplete
+    when user is gamemaster
+      gets all active campaigns owned by the gamemaster
+      returns campaign attributes
+      sorts by created_at ascending
+      sorts by created_at descending
+      sorts by name ascending
+      sorts by name descending
+      filters by id
+      filters by search string
+      filters by character_id
+      filters by vehicle_id
+      gets only active campaigns when show_all is false
+      gets all campaigns when show_all is true
+      returns empty array when ids is explicitly empty
+    when user is admin
+      gets all active campaigns owned by the admin
+    when user is a player
+      gets all active campaigns they are a player in
+
+Api::V2::Campaigns
+  GET /index
+    when user is gamemaster
+      gets all active campaigns owned by the gamemaster
+      returns campaign attributes
+      sorts by created_at ascending
+      sorts by created_at descending
+      sorts by name ascending
+      sorts by name descending
+      filters by id
+      filters by search string
+      filters by character_id
+      filters by vehicle_id
+      gets only active campaigns when show_all is false
+      gets all campaigns when show_all is true
+      returns empty array when ids is explicitly empty
+    when user is admin
+      gets all active campaigns owned by the admin
+    when user is a player
+      gets all active campaigns they are a player in
+
+Api::V2::Campaigns
+  POST /create
+    when user is gamemaster
+      creates a new campaign
+      creates a new campaign with JSON string
+      returns an error when name is missing
+      returns an error for invalid JSON string
+      attaches an image
+    when user is admin
+      creates a new campaign
+    when user is not gamemaster or admin
+      returns a forbidden error
+  GET /show
+    when user is gamemaster
+      retrieves a campaign by id
+      retrieves the current campaign
+    when user is admin
+      retrieves any campaign
+    when user is a player in the campaign
+      retrieves the campaign
+    when user is unauthorized
+      returns a 404 for a campaign they don’t own or play
+  PATCH /update
+    when user is gamemaster
+      updates a campaign
+      updates a campaign with JSON string
+      returns an error when name is missing
+      returns an error for invalid JSON string
+      attaches an image
+      replaces an existing image
+    when user is admin
+      updates any campaign
+    when user is not gamemaster or admin
+      returns forbidden
+  DELETE /destroy
+    when user is gamemaster
+      deletes a campaign with no associations
+      returns an error for a campaign with associations
+      deletes a campaign with associations when force is true
+      returns an error for the current campaign
+    when user is admin
+      deletes any campaign with no associations
+      deletes any campaign with associations when force is true
+      returns an error for the current campaign
+    when user is not gamemaster or admin
+      returns a forbidden error
+  DELETE /remove_image
+    returns an error for a non-existent campaign
+    when user is gamemaster
+      removes a campaign’s image
+    when user is admin
+      removes any campaign’s image
+    when user is not gamemaster or admin
+      returns a forbidden error
+  GET /index
+    when user is gamemaster
+      retrieves campaigns list
+      supports pagination
+      supports sorting
+      supports search
+      performance requirements
+        responds within performance targets
+        performs efficiently with pagination
+        performs efficiently with search
+        executes reasonable number of database queries
+        includes essential data without over-fetching
+    when user is admin
+      retrieves all campaigns (FAILED - 48)
+    when user is player
+      retrieves only campaigns they are members of
+    when user is unauthenticated
+      returns unauthorized
+
+Api::V2::Characters
+  GET /autocomplete
+    gets all characters
+    returns character attributes
+    returns an empty array when no characters exist
+    returns empty array when ids is explicitly empty
+    filters by comma-separated ids
+    sorts by created_at ascending
+    sorts by created_at descending
+    sorts by updated_at ascending
+    sorts by updated_at descending
+    sorts by name ascending
+    sorts by name descending
+    sorts by type ascending
+    sorts by type descending
+    sorts by archetype ascending
+    sorts by archetype descending
+    filters by faction_id
+    filters by user_id
+    filters by search string
+    filters by search string
+    filters by character type
+    filters by character type
+    filters by archetype
+    filters by archetype
+    filters by party
+    filters by party
+    filters by fight
+    filters by site
+    filters by site
+    filters by is_template
+    filters by juncture_id
+    filters by __NONE__ faction
+    filters by __NONE__ juncture
+    filters by __NONE__ archetype
+    gets only active characters when show_all is false
+    gets all characters when show_all is true
+
+Api::V2::Characters
+  GET /index
+    gets all characters
+    returns character attributes
+    returns an empty array when no characters exist
+    returns empty array when ids is explicitly empty
+    filters by comma-separated ids
+    sorts by created_at ascending
+    sorts by created_at descending
+    sorts by updated_at ascending
+    sorts by updated_at descending
+    sorts by name ascending
+    sorts by name descending
+    sorts by type ascending
+    sorts by type descending
+    sorts by archetype ascending
+    sorts by archetype descending
+    filters by faction_id
+    filters by user_id
+    filters by search string
+    filters by search string
+    filters by character character_type
+    filters by character character_type
+    filters by archetype
+    filters by archetype
+    filters by party
+    filters by party
+    filters by fight
+    filters by site
+    filters by site
+    filters by is_template
+    filters by juncture_id
+    filters by __NONE__ faction
+    filters by __NONE__ juncture
+    filters by __NONE__ archetype
+    gets only active characters when show_all is false
+    gets all characters when show_all is true
+  Pagination parameters
+    respects per_page parameter
+    respects page parameter
+    handles page beyond total pages
+  Single ID filtering
+    filters by single character id
+    returns empty when id does not exist
+  Invalid parameters
+    falls back to default sort when sort parameter is invalid
+    falls back to default order when order parameter is invalid (FAILED - 49)
+    returns empty when filtering by non-existent faction_id
+    returns empty when filtering by non-existent user_id
+
+Api::V2::Characters
+  POST /create
+    creates a new character
+    returns an error when the character name is missing
+    attaches an image
+  PATCH /update
+    updates an existing character
+    returns an error when the character name is missing
+    attaches an image
+    updates the faction
+    updates the juncture
+    updates the wealth
+    updates the skills
+    adds a schtick
+    removes a schtick
+    adds a weapon
+    removes a weapon
+    adds a site
+    removes a site
+    adds a party
+    removes a party
+    ownership reassignment
+      as gamemaster
+        allows reassigning character ownership to another campaign member
+        prevents reassigning ownership to non-campaign member
+      as regular player
+        prevents reassigning character ownership
+      as admin
+        allows reassigning character ownership
+  GET /show
+    retrieves a character
+    returns a 404 for a non-existent character
+  DELETE /destroy
+    deletes a character
+  POST /duplicate
+    duplicates a character
+    duplicates a character again
+    duplicates a character with an image
+  POST /pdf
+    uploads a pdf (FAILED - 50)
+    returns an error for an invalid pdf (FAILED - 51)
+  POST /sync
+    syncs character from Notion successfully
+    returns error when Notion sync fails
+    returns a 404 for a non-existent character
+  GET /pdf
+    generates and sends a PDF for a character
+    returns a 404 for a non-existent character
+  DELETE /remove_image
+    removes an image from a character
+
+Api::V2::Factions
+  GET /index
+    gets all factions
+    returns faction attributes
+    returns an empty array when no factions exist
+    sorts by created_at ascending
+    sorts by created_at descending
+    sorts by updated_at ascending
+    sorts by updated_at descending
+    sorts by name ascending
+    sorts by name descending
+    filters by id
+    filters by character_id
+    filters by character_id
+    filters by vehicle_id
+    filters by vehicle_id
+    filters by juncture_id
+    filters by juncture_id
+    filters by search string
+    filters by search string
+    gets only active factions when show_all is false
+    gets all factions when show_all is true
+    returns empty array when ids is explicitly empty
+  GET /autocomplete
+    gets all factions
+    returns faction attributes
+    returns an empty array when no factions exist
+    sorts by created_at ascending
+    sorts by created_at descending
+    sorts by updated_at ascending
+    sorts by updated_at descending
+    sorts by name ascending
+    sorts by name descending
+    filters by id
+    filters by search string
+    filters by search string
+    filters by character_id
+    filters by character_id
+    filters by vehicle_id
+    filters by vehicle_id
+    filters by juncture_id
+    filters by juncture_id
+    gets only active factions when show_all is false
+    gets all factions when show_all is true
+    returns empty array when ids is explicitly empty
+
+Api::V2::Factions
+  POST /create
+    creates a new faction
+    creates a new faction with JSON string
+    returns an error when the faction name is missing
+    returns an error for invalid JSON string
+    attaches an image
+  PATCH /update
+    updates an existing faction
+    updates an existing faction with JSON string
+    returns an error when the faction name is missing
+    returns an error for invalid JSON string
+    attaches an image
+    replaces an existing image
+    adds a character to a faction
+    removes a character from a faction
+    adds a vehicle to a faction
+    removes a vehicle from a faction
+  GET /show
+    retrieves a faction with associations
+    returns a 404 for a non-existent faction
+  DELETE /destroy
+    deletes a faction with no character or vehicle associations
+    returns an error for a faction with character associations
+    returns an error for a faction with vehicle associations
+    deletes a faction with associations when force is true
+    returns an error for a non-existent faction
+  DELETE /image
+    removes an image from a faction
+    returns an error for a non-existent faction
+
+Api::V2::Fights
+  GET /fights?autocomplete=true
+    gets all active fights
+    returns empty array when ids is explicitly empty
+    filters by comma-separated ids
+    filters fights by search term
+    filters fights by search term
+    filters fights by id
+    filters fights by id
+    sorts by name ascending
+    sorts by name descending
+    sorts by created_at ascending
+    sorts by created_at descending
+    sorts by updated_at ascending
+    sorts by updated_at descending
+    sorts by season ascending
+    sorts by season descending
+    sorts by session ascending
+    sorts by session descending
+    sorts by started_at ascending
+    sorts by started_at descending
+    sorts by ended_at ascending
+    sorts by ended_at descending
+    filters by season
+    filters by session
+    filters by __NONE__ season
+    filters by __NONE__ session
+    gets only active fights when show_all is false
+    gets all fights when show_all is true
+    filters unstarted fights
+    filters unended fights
+    filters ended fights
+    filters by character involvement
+    filters by character involvement
+    filters by vehicle involvement
+    filters by player involvement
+    returns distinct fights when user has multiple characters in the same fight
+    returns fight attributes
+    does not return characters in fight
+    does not return vehicles in fight
+
+Api::V2::Fights
+  GET /index
+    gets all active fights
+    collects seasons
+    returns empty array when ids is explicitly empty
+    filters by comma-separated ids
+    filters fights by search term
+    filters fights by search term
+    filters fights by id
+    filters fights by id
+    sorts by name ascending
+    sorts by name descending
+    sorts by created_at ascending
+    sorts by created_at descending
+    sorts by updated_at ascending
+    sorts by updated_at descending
+    sorts by season ascending
+    sorts by season descending
+    sorts by session ascending
+    sorts by session descending
+    sorts by started_at ascending
+    sorts by started_at descending
+    sorts by ended_at ascending
+    sorts by ended_at descending
+    filters by season
+    filters by session
+    filters by __NONE__ season
+    filters by __NONE__ session
+    gets only active fights when show_all is false
+    gets all fights when show_all is true
+    filters unstarted fights
+    filters unended fights
+    filters ended fights
+    filters by character involvement
+    filters by character involvement
+    filters by vehicle involvement
+    filters by player involvement
+    returns distinct fights when user has multiple characters in the same fight
+    returns fight attributes
+    returns characters in fight
+    returns vehicles in fight
+
+Api::V2::Fights
+  POST /create
+    when user is authenticated
+      creates a new fight with season and session
+      creates a new fight with JSON string including season and session
+      returns an error when name is missing
+      returns an error for invalid JSON string
+      attaches an image
+  GET /show
+    retrieves a fight with season and session
+    returns a 404 for a non-existent fight
+  PATCH /update
+    when user is authenticated
+      updates a fight’s attributes including season and session
+      updates a fight with JSON string including season and session
+      returns an error when name is missing
+      returns an error for invalid JSON string
+      attaches an image
+      replaces an existing image
+    when fight does not exist
+      returns a 404 error
+  DELETE /destroy
+    when user is authenticated
+      deletes a fight
+      returns a 404 for a non-existent fight
+  PATCH /touch
+    when user is authenticated
+      touches a fight and triggers broadcast update
+      returns a 404 for a non-existent fight
+  DELETE /remove_image
+    when user is authenticated
+      removes a fight's image
+      returns a 404 for a non-existent fight
+
+Api::V2::Invitations
+  POST /api/v2/invitations
+    as gamemaster
+      creates invitation and sends email
+      associates existing user as pending_user
+      prevents duplicate invitations
+      prevents inviting existing members
+      prevents inviting the gamemaster
+      validates email format
+      requires email parameter
+    as player
+      returns forbidden
+    without current campaign
+      returns internal server error
+  GET /api/v2/invitations
+    as gamemaster
+      returns campaign invitations
+      orders invitations by created_at desc
+    as player
+      returns forbidden
+  POST /api/v2/invitations/:id/resend
+    as gamemaster
+      resends invitation email
+      returns not found for invalid invitation
+      returns not found for invitation from other campaign
+    as player
+      returns forbidden
+  DELETE /api/v2/invitations/:id
+    as gamemaster
+      cancels invitation
+      returns not found for invalid invitation
+      returns not found for invitation from other campaign
+    as player
+      returns forbidden
+  GET /api/v2/invitations/:id
+    without authentication (public endpoint)
+      returns invitation details
+      returns not found for invalid invitation
+  POST /api/v2/invitations/:id/register
+    with valid parameters for new user
+      creates new user with pending invitation and sends confirmation email
+      does not delete invitation until user confirms
+    with existing user invitation
+      returns error indicating user already exists
+    with invalid parameters
+      handles validation errors for invalid input
+      handles password validation
+    with invalid invitation
+      returns not found for non-existent invitation
+  POST /api/v2/invitations/:id/redeem
+    as authenticated user with correct email
+      successfully redeems invitation and adds user to campaign
+      returns conflict if user already in campaign
+    as authenticated user with wrong email
+      returns forbidden when email doesn't match invitation
+    with invalid invitation
+      returns not found for invalid invitation
+    with membership creation failure
+      handles membership creation failure gracefully
+    without authentication
+      requires authentication
+  authorization
+    without authentication
+      requires authentication for most endpoints
+      allows public access to show endpoint
+
+Api::V2::Junctures
+  GET /index
+    gets all junctures
+    returns juncture attributes
+    returns an empty array when no junctures exist
+    sorts by created_at ascending
+    sorts by created_at descending
+    sorts by updated_at ascending
+    sorts by updated_at descending
+    sorts by name ascending
+    sorts by name descending
+    filters by id
+    filters by character_id
+    filters by character_id
+    filters by faction_id
+    filters by faction_id
+    filters by search string
+    filters by search string
+    gets only active junctures when show_all is false
+    gets all junctures when show_all is true
+    filters by faction_id __NONE__ for junctures with no faction
+    returns empty array when ids is explicitly empty
+  GET /autocomplete
+    gets all junctures
+    returns juncture attributes
+    returns an empty array when no junctures exist
+    sorts by created_at ascending
+    sorts by created_at descending
+    sorts by updated_at ascending
+    sorts by updated_at descending
+    sorts by name ascending
+    sorts by name descending
+    filters by id
+    filters by search string
+    filters by search string
+    filters by character_id
+    filters by character_id
+    filters by vehicle_id
+    filters by vehicle_id
+    filters by faction_id
+    filters by faction_id
+    gets only active junctures when show_all is false
+    gets all junctures when show_all is true
+    filters by faction_id __NONE__ for junctures with no faction
+    returns empty array when ids is explicitly empty
+
+Api::V2::Junctures
+  POST /create
+    creates a new juncture
+    creates a new juncture with JSON string
+    returns an error when the juncture name is missing
+    returns an error for invalid JSON string
+    attaches an image
+  PATCH /update
+    updates an existing juncture
+    updates an existing juncture with JSON string
+    returns an error when the juncture name is missing
+    returns an error for invalid JSON string
+    attaches an image
+    replaces an existing image
+    adds a character to a juncture
+    removes a character from a juncture
+  GET /show
+    retrieves a juncture with associations
+    returns a 404 for a non-existent juncture
+  DELETE /destroy
+    deletes a juncture with no associations
+    returns an error for a juncture with character associations
+    returns an error for a juncture with vehicle associations
+    deletes a juncture with associations when force is true
+    returns an error for a non-existent juncture
+  DELETE /remove_image
+    removes an image from a juncture
+    returns an error for a non-existent juncture
+
+Api::V2::Parties
+  GET /index
+    gets all parties
+    returns party attributes
+    returns an empty array when no parties exist
+    sorts by created_at ascending
+    sorts by created_at descending
+    sorts by updated_at ascending
+    sorts by updated_at descending
+    sorts by name ascending
+    sorts by name descending
+    filters by id
+    filters by character_id
+    filters by character_id
+    filters by faction_id
+    filters by faction_id
+    filters by juncture_id
+    filters by juncture_id
+    filters by search string
+    filters by search string
+    gets only active parties when show_all is false
+    gets all parties when show_all is true
+    filters by faction_id __NONE__ for parties with no faction
+    filters by juncture_id __NONE__ for parties with no juncture
+    returns empty array when ids is explicitly empty
+  GET /autocomplete
+    gets all parties
+    returns party attributes
+    returns an empty array when no parties exist
+    sorts by created_at ascending
+    sorts by created_at descending
+    sorts by updated_at ascending
+    sorts by updated_at descending
+    sorts by name ascending
+    sorts by name descending
+    filters by faction_id
+    filters by faction_id
+    filters by search string
+    filters by search string
+    filters by juncture_id
+    filters by juncture_id
+    filters by character_id
+    filters by character_id
+
+Api::V2::Parties
+  POST /create
+    creates a new party
+    creates a new party with JSON string
+    returns an error when the party name is missing
+    returns an error for invalid JSON string
+    attaches an image
+  PATCH /update
+    updates an existing party
+    updates an existing party with JSON string
+    returns an error when the party name is missing
+    returns an error for invalid JSON string
+    attaches an image
+    replaces an existing image
+    adds a character to a party
+    removes a character from a party
+    adds a vehicle to a party
+    removes a vehicle from a party
+  GET /show
+    retrieves a party with vehicles
+    returns a 404 for a non-existent party
+  DELETE /destroy
+    deletes a party with no memberships
+    returns an error for a party with memberships
+    deletes a party with memberships when force is true
+    returns an error for a non-existent party
+  DELETE /image
+    removes an image from a party
+    returns an error for a non-existent party
+
+Api::V2::Schticks
+  GET /autocomplete
+    sorts by created_at ascending
+    sorts by created_at descending
+    sorts by updated_at ascending
+    sorts by updated_at descending
+    sorts by name ascending
+    sorts by name descending
+    sorts by category ascending
+    sorts by category descending
+    sorts by path ascending
+    sorts by path descending
+    filters by character_id
+    filters by character_id
+    filters by category
+    filters by category
+    filters by path
+    filters by path
+    filters by search string
+    filters by search string
+
+Api::V2::Schticks::Batch
+  POST /batch
+    returns error when ids parameter is missing
+    returns empty array when ids is explicitly empty
+    filters by comma-separated ids
+    returns schtick attributes
+    returns an empty array when no schticks exist
+    paginates results
+
+Api::V2::Schticks
+  GET /index
+    gets all schticks
+    collections categories and paths
+    returns schtick attributes
+    returns an empty array when no schticks exist
+    returns all categories, not just the current page
+    returns empty array when ids is explicitly empty
+    filters by comma-separated ids
+    sorts by created_at ascending
+    sorts by created_at descending
+    sorts by updated_at ascending
+    sorts by updated_at descending
+    sorts by name ascending
+    sorts by name descending
+    sorts by category ascending
+    sorts by category descending
+    sorts by path ascending
+    sorts by path descending
+    filters by id
+    filters by character_id
+    filters by character_id
+    filters by category
+    filters by category
+    filters by path
+    filters by path
+    filters by search string
+    filters by search string
+    filters by category __NONE__ for schticks with no category
+    filters by path __NONE__ for schticks with no path
+  Pagination and order parameters
+    respects per_page parameter
+    respects page parameter
+    sorts by name with order parameter
+    sorts by name with desc order
+
+Api::V2::Schticks
+  POST /create
+    creates a new schtick
+    creates a new schtick with JSON string
+    returns an error when the schtick name is missing
+    returns an error for invalid JSON string
+    returns an error if prerequisite is not in same category and path
+    attaches an image
+  PATCH /update
+    updates an existing schtick
+    updates an existing schtick with JSON string
+    returns an error when the schtick name is missing
+    returns an error for invalid JSON string
+    attaches an image
+    replaces an existing image
+  GET /show
+    retrieves a schtick
+    returns a 404 for a non-existent schtick
+  DELETE /destroy
+    returns an error if the schtick is known by a character
+    deletes a schtick that nobody knows
+    deletes a schtick with force=true
+    returns an error for a non-existent schtick
+  POST /batch
+    retrieves multiple schticks by IDs
+  GET /categories
+    retrieves unique schtick categories
+    filters categories by search term
+  GET /paths
+    retrieves unique schtick paths
+    filters paths by category
+    filters paths by search term
+
+Api::V2::Sites
+  GET /index
+    gets all sites
+    returns site attributes
+    returns an empty array when no sites exist
+    sorts by created_at ascending
+    sorts by created_at descending
+    sorts by updated_at ascending
+    sorts by updated_at descending
+    sorts by name ascending
+    sorts by name descending
+    filters by id
+    filters by character_id
+    filters by character_id
+    filters by faction_id
+    filters by faction_id
+    filters by juncture_id
+    filters by juncture_id
+    filters by search string
+    filters by search string
+    gets only active sites when show_all is false
+    gets all sites when show_all is true
+    filters by faction_id __NONE__ for sites with no faction
+    filters by juncture_id __NONE__ for sites with no juncture
+    returns empty array when ids is explicitly empty
+  GET /autocomplete
+    gets all sites
+    returns site attributes
+    returns an empty array when no sites exist
+    sorts by created_at ascending
+    sorts by created_at descending
+    sorts by updated_at ascending
+    sorts by updated_at descending
+    sorts by name ascending
+    sorts by name descending
+    filters by faction_id
+    filters by faction_id
+    filters by search string
+    filters by search string
+    filters by juncture_id
+    filters by juncture_id
+    filters by character_id
+    filters by character_id
+    gets only active sites when show_all is false
+    gets all sites when show_all is true
+
+Api::V2::Sites
+  POST /create
+    creates a new site
+    creates a new site with JSON string
+    returns an error when the site name is missing
+    returns an error for invalid JSON string
+    attaches an image
+  PATCH /update
+    updates an existing site
+    updates an existing site with JSON string
+    returns an error when the site name is missing
+    returns an error for invalid JSON string
+    attaches an image
+    replaces an existing image
+  GET /show
+    retrieves a site
+    returns a 404 for a non-existent site
+  DELETE /destroy
+    deletes a site with no attunements
+    returns an error for a site with attunements
+    deletes a site
+    deletes a site with attunements
+    returns an error for a non-existent site
+  DELETE /image
+    removes an image from a site
+    returns an error for a non-existent site
+
+Api::V2::Users
+  GET /index
+    when user is admin
+      gets all active users
+      returns user attributes
+      sorts by created_at ascending
+      sorts by created_at descending
+      sorts by updated_at ascending
+      sorts by updated_at descending
+      sorts by email ascending
+      sorts by email descending
+      sorts by name ascending
+      sorts by name descending
+      filters by id
+      filters by email
+      filters by search string
+      filters by search string
+      filters by character_id
+      filters by character_id
+      gets only active users when show_all is false
+      gets all users when show_all is true
+      returns empty array when ids is explicitly empty
+    when user is not admin
+      returns a forbidden error
+  GET /autocomplete
+    when user is admin
+      gets all active users
+      returns user attributes
+      sorts by created_at ascending
+      sorts by created_at descending
+      sorts by updated_at ascending
+      sorts by updated_at descending
+      sorts by email ascending
+      sorts by email descending
+      sorts by name ascending
+      sorts by name descending
+      filters by id
+      filters by email
+      filters by search string
+      filters by search string
+      filters by character_id
+      filters by character_id
+      gets only active users when show_all is false
+      gets all users when show_all is true
+      returns empty array when ids is explicitly empty
+    when user is not admin
+      returns a forbidden error
+
+Api::V2::Users Profile
+  GET /api/v2/users/profile
+    returns current user's profile
+    returns campaign counts (FAILED - 52)
+    requires authentication
+  PATCH /api/v2/users/profile
+    updates current user's profile
+    updates user email separately (FAILED - 53)
+    returns validation errors for invalid data
+    requires authentication
+    returns new JWT token in header
+
+Api::V2::Users
+  POST /create
+    when user is admin
+      creates a new user
+      creates a new user with JSON string
+      returns an error when email is missing
+      returns an error for invalid JSON string
+      attaches an image
+    when user is not admin
+      returns a forbidden error
+  GET /show
+    retrieves a user by id
+    retrieves a user by confirmation_token
+    returns a 404 for a non-existent user
+    returns a 404 for an invalid confirmation_token
+  GET /current
+    retrieves the current user
+    requires authentication
+  PATCH /update
+    when user is admin
+      updates another user’s attributes
+      updates another user with JSON string
+      returns an error when email is invalid
+      returns an error for invalid JSON string
+      attaches an image
+      replaces an existing image
+      inline editing scenarios
+        updates only first_name field
+        updates only last_name field
+        updates only email field (with Devise confirmable behavior)
+        updates email with proper validation (with Devise confirmable behavior)
+        rejects invalid email format
+        rejects duplicate email addresses
+        updates name correctly when first_name changes
+        updates name correctly when last_name changes
+        updates name correctly when both first_name and last_name change
+    when user is updating their own attributes
+      updates own attributes
+    when non-admin user tries to update another user
+      returns a forbidden error
+  DELETE /destroy
+    when user is admin
+      deletes a user with no character associations
+      returns an error for a user with character associations
+      deletes a user with associations when force is true
+      returns an error for a non-existent user
+    when user is not admin
+      returns a forbidden error
+  DELETE /remove_image
+    returns an error for a non-existent user
+    when user is admin
+      removes another user’s image
+    when user removes their own image
+      removes own image
+    when non-admin user tries to remove another user’s image
+      returns a forbidden error
+
+Api::V2::Vehicles
+  GET autocomplete
+    gets all vehicles
+    returns vehicle attributes
+    returns an empty array when no vehicles exist
+    sorts by created_at ascending
+    sorts by created_at descending
+    sorts by updated_at ascending
+    sorts by updated_at descending
+    sorts by name ascending
+    sorts by name descending
+    sorts by type ascending
+    sorts by type descending
+    sorts by archetype ascending
+    sorts by archetype descending
+    filters by faction_id
+    filters by user_id
+    filters by search string
+    filters by search string
+    filters by vehicle type
+    filters by vehicle vehicle_type
+    filters by archetype
+    filters by archetype
+    filters by party
+    filters by party
+    filters by fight
+    gets only active vehicles when show_all is false
+    gets all vehicles when show_all is true
+
+Api::V2::Vehicles
+  GET /index
+    gets all vehicles
+    returns vehicle attributes
+    returns an empty array when no vehicles exist
+    sorts by created_at ascending
+    sorts by created_at descending
+    sorts by updated_at ascending
+    sorts by updated_at descending
+    sorts by name ascending
+    sorts by name descending
+    sorts by type ascending
+    sorts by type descending
+    sorts by archetype ascending
+    sorts by archetype descending
+    filters by id
+    filters by ids
+    filters by faction_id
+    filters by faction_id
+    filters by juncture_id
+    filters by juncture_id
+    filters by user_id
+    filters by search string
+    filters by search string
+    filters by vehicle type
+    filters by vehicle vehicle_type
+    filters by archetype
+    filters by archetype
+    filters by party
+    filters by party
+    filters by fight
+
+Api::V2::Vehicles
+  POST /create
+    creates a new vehicle
+    returns an error when the vehicle name is missing
+    attaches an image
+  PATCH /update
+    updates an existing vehicle
+    returns an error when the vehicle name is missing
+    attaches an image
+    updates the faction
+    updates the juncture
+  GET /show
+    retrieves a vehicle
+    returns a 404 for a non-existent vehicle
+  DELETE /destroy
+    deletes a vehicle
+  POST /duplicate
+    duplicates a vehicle (PENDING: Temporarily skipped with xdescribe)
+    duplicates a vehicle again (PENDING: Temporarily skipped with xdescribe)
+    duplicates a vehicle with an image (PENDING: Temporarily skipped with xdescribe)
+  POST /pdf
+    uploads a pdf (PENDING: Temporarily skipped with xdescribe)
+    returns an error for an invalid pdf (PENDING: Temporarily skipped with xdescribe)
+  GET /archetypes
+    returns vehicle archetypes
+  DELETE /remove_image
+    removes an image from a vehicle
+
+Api::V2::Weapons
+  GET /autocomplete
+    gets all weapons
+    returns weapon attributes
+    returns an empty array when no weapons exist
+    returns empty array when ids is explicitly empty
+    filters by comma-separated ids
+    sorts by created_at ascending
+    sorts by created_at descending
+    sorts by updated_at ascending
+    sorts by updated_at descending
+    sorts by name ascending
+    sorts by name descending
+    sorts by category ascending
+    sorts by category descending
+    sorts by juncture ascending
+    sorts by juncture descending
+    filters by search string
+    filters by search string
+    filters by category
+    filters by category
+    filters by juncture
+    filters by juncture
+
+Api::V2::Weapons
+  GET /index
+    gets all weapons
+    returns weapon attributes
+    returns an empty array when no weapons exist
+    returns empty array when ids is explicitly empty
+    filters by comma-separated ids
+    sorts by created_at ascending
+    sorts by created_at descending
+    sorts by updated_at ascending
+    sorts by updated_at descending
+    sorts by name ascending
+    sorts by name descending
+    sorts by category ascending
+    sorts by category descending
+    sorts by juncture ascending
+    sorts by juncture descending
+    filters by id
+    filters by character_id
+    filters by character_id
+    filters by search string
+    filters by search string
+    filters by category
+    filters by category
+    filters category by __NONE__
+    filters by juncture
+    filters by juncture
+    filters juncture by __NONE__
+  Pagination and order parameters
+    respects per_page parameter (FAILED - 54)
+    respects page parameter (FAILED - 55)
+    sorts by name with order parameter (FAILED - 56)
+    sorts by name with desc order (FAILED - 57)
+
+Api::V2::Weapons
+  POST /create
+    creates a new weapon
+    creates a new weapon with JSON string
+    returns an error when the weapon name is missing
+    returns an error for invalid JSON string
+    attaches an image
+  PATCH /update
+    updates an existing weapon
+    updates an existing weapon with JSON string
+    returns an error when the weapon name is missing
+    returns an error for invalid JSON string
+    attaches an image
+    replaces an existing image
+  GET /show
+    retrieves a weapon
+    returns a 404 for a non-existent weapon
+  DELETE /destroy
+    deletes a weapon with no carries
+    returns an error for a weapon with carries
+    deletes a weapon with carries when force is true
+    returns an error for a non-existent weapon
+  POST /batch
+    retrieves multiple weapons by IDs
+    returns empty array when ids is empty
+    returns error when ids parameter is missing (FAILED - 58)
+  GET /categories
+    returns weapon categories
+    filters categories by search term
+  GET /junctures
+    returns weapon junctures
+    filters junctures by search term
+  DELETE /remove_image
+    removes an image from a weapon
+    returns an error for a non-existent weapon
+
+Users::Passwords
+  POST /users/password (create)
+    with valid email
+      returns success response for existing user
+      returns success response even for non-existent email (prevents enumeration)
+      sends email for existing user
+    with invalid email format
+      rejects obviously invalid email
+      rejects email that's too long
+    rate limiting
+      allows up to 3 requests per hour per email
+      blocks 4th request per hour per email
+  PUT /users/password (update)
+    with valid token and password
+      successfully resets password
+      allows user to login with new password
+    with invalid token
+      rejects invalid token
+    with weak password
+      rejects password less than 8 characters
+      rejects password without letters
+      rejects password without numbers
+    with mismatched password confirmation
+      rejects when passwords don't match
+  validation helper methods
+    #valid_email_format?
+      accepts valid email formats
+      rejects invalid email formats
+    #valid_password?
+      accepts valid passwords
+      rejects invalid passwords
+
+CharacterOwnershipService
+  .transfer
+    as gamemaster
+      successfully transfers ownership to another campaign member
+      fails when new owner is not a campaign member
+      fails when new owner is nil
+      fails when transferring to the same owner
+    as admin
+      successfully transfers ownership
+    as regular player
+      fails due to lack of authorization
+    with gamemaster from different campaign
+      fails due to lack of authorization
+  logging
+    logs ownership changes
+
+CharacterPoster
+  when the character has no skills
+
+# Brick Manly
+
+## Action Values
+- Guns 15
+- Defense 14
+- Fortune 7/7
+- Toughness 7
+- Speed 7
+
+    shows character
+  with an archetype and skills
+
+# Brick Manly
+## Everyday Hero
+
+## Action Values
+- Guns 15
+- Defense 14
+- Fortune 7/7
+- Toughness 7
+- Speed 7
+## Skills
+- Info: Classic Rock 15
+
+    shows character
+  with schticks and weapons
+    shows character (FAILED - 59)
+
+CurrentCampaign
+  get
+    returns the current campaign for a user
+    returns nil if no current campaign is set for a user
+    returns the current campaign from Redis for a server
+    returns nil if no campaign is found in Redis for a server
+    raises an error if both user and server_id are provided
+    raises an error if neither user nor server_id is provided
+  set
+    sets the current campaign for a user
+    clears the current campaign for a user if nil is passed
+    sets the current campaign in Redis for a server
+    sets the current campaign for both user and server
+    raises an error if neither user nor server_id is provided
+
+DiceRoller
+  .die_roll
+    rolls a single die
+  .exploding_die_roll
+    rolls an exploding die
+    rolls multiple exploding sixes
+    rolls many many exploding sixes
+  .swerve
+    rolls a swerve
+    rolls a swerve with exploding positives
+    rolls a swerve with exploding negatives
+    rolls boxcars
+  .discord
+    posts swerve to discord
+  .save
+    saves a swerve in a cache for each user
+    saves multiple swerves in a user's cache
+    clears cache for a user
+
+DuplicateVehicleService
+  .duplicate
+    creates a new vehicle
+    sets the new vehicle's name to the original name with an incremented number
+    increments the number again
+    sets the new vehicle's user to the original vehicle's user
+    sets the new vehicle's campaign to the original vehicle's campaign
+    sets the new vehicle's action values to the original vehicle's action values
+
+FightPoster
+  with no shots or characters
+# Museum Battle
+The Christening of the Immortal Woman, featuring Huan Ken, King of the Thunder Pagoda
+
+## Sequence 1
+
+Fight started
+    shows fight
+  with HTML in the description
+# Museum Battle
+Fight to recover the **artifact**
+
+## Sequence 1
+
+Fight started
+    shows fight with markdown description
+  with one character
+
+# Museum Battle
+The Christening of the Immortal Woman, featuring Huan Ken, King of the Thunder Pagoda
+
+## Sequence 1
+## Shot 12
+- **Brick Manly** 
+ Guns 15 Defense 14 Fortune 7/7 Toughness 7 Speed 7
+
+Character Brick Manly added
+
+    shows fight
+  with two characters
+
+# Museum Battle
+The Christening of the Immortal Woman, featuring Huan Ken, King of the Thunder Pagoda
+
+## Sequence 1
+## Shot 14
+- **Serena** 
+ (1 Impairment)
+ Sorcery 13* Defense 12* Magic 5/7 Toughness 7 Speed 6
+## Shot 12
+- **Brick Manly** 
+ Guns 15 Defense 14 Fortune 7/7 Toughness 7 Speed 7
+
+Brick Manly attacked Serena doing 12 Wounds and spent 3 Shots
+
+    shows fight
+  with multiple characters of different types
+
+# Museum Battle
+The Christening of the Immortal Woman, featuring Huan Ken, King of the Thunder Pagoda
+
+## Sequence 1
+```diff
+- Some effect (until sequence 2, shot 16)
++ Shadow of the Sniper: +1 Attack (until sequence 2, shot 14)
+```
+## Shot 14
+- **Serena** 
+ 39 Wounds (2 Impairments)
+ Sorcery 12* Defense 11* Magic 5/7 Toughness 7 Speed 6
+  ```diff
+ Feeling weird
+ ```
+## Shot 12
+- **Thunder King** 
+- **Brick Manly** 
+ Guns 15 Defense 14 Fortune 7/7 Toughness 7 Speed 7
+  ```diff
+ Bonus: (Got lucky) Guns +1
+ - Blinded: Defense -1
+ ```
+## Shot 10
+- **Ugly Shing** 
+- **Jawbuster** 
+ 12 Wounds
+ Guns 15 Defense 14 Toughness 7 Speed 7
+- **Ninja** 
+## Shot 9
+- **Hitman** 
+## Shot 5
+- **Ninja** 
+
+Brick Manly attacked Serena doing 12 Wounds and spent 3 Shots
+
+    shows fight
+  with characters and vehicles
+
+# Museum Battle
+The Christening of the Immortal Woman, featuring Huan Ken, King of the Thunder Pagoda
+
+## Sequence 1
+```diff
+- Some effect (until sequence 2, shot 16)
++ Shadow of the Sniper: +1 Attack (until sequence 2, shot 14)
+```
+## Shot 14
+- **Serena** 
+ 39 Wounds (2 Impairments)
+ Sorcery 12* Defense 11* Magic 5/7 Toughness 7 Speed 6
+  ```diff
+ Feeling weird
+ ```
+## Shot 12
+- **Thunder King** 
+- **Brick Manly** (Control Room) 
+ Guns 15 Defense 14 Fortune 7/7 Toughness 7 Speed 7
+  ```diff
+ Bonus: (Got lucky) Guns +1
+ - Blinded: Defense -1
+ ```
+## Shot 10
+- **Ugly Shing** 
+- **Jawbuster** 
+ 12 Wounds
+ Guns 15 Defense 14 Toughness 7 Speed 7
+- **Boss Vehicle** 
+ Pursuer - far
+## Shot 9
+- **Hitman** 
+## Shot 8
+- **PC Vehicle** (Highway) 
+ Evader - far
+ 12 Chase 14 Condition Points
+ Acceleration 7 Handling 10 Squeal 12 Frame 8
+  ```diff
+ - Blinded: Handling -1
+ ```
+- **PC Mini** 
+ Evader - near
+ 19 Chase 26 Condition Points (1 Impairment)
+ Acceleration 7 Handling 10 Squeal 12 Frame 8
+
+Brick Manly attacked Serena doing 12 Wounds and spent 3 Shots
+
+    shows fight
+
+Pending: (Failures listed here are expected and do not affect your suite's status)
+
+  1) CampaignChannel add some examples to (or delete) /Users/isaacpriestley/tech/isaacpriestley/chi-war/shot-server/spec/channels/campaign_channel_spec.rb
+     # Not yet implemented
+     # ./spec/channels/campaign_channel_spec.rb:4
+
+  2) FightChannel add some examples to (or delete) /Users/isaacpriestley/tech/isaacpriestley/chi-war/shot-server/spec/channels/fight_channel_spec.rb
+     # Not yet implemented
+     # ./spec/channels/fight_channel_spec.rb:4
+
+  3) FightEvent add some examples to (or delete) /Users/isaacpriestley/tech/isaacpriestley/chi-war/shot-server/spec/models/fight_event_spec.rb
+     # Not yet implemented
+     # ./spec/models/fight_event_spec.rb:4
+
+  4) Juncture add some examples to (or delete) /Users/isaacpriestley/tech/isaacpriestley/chi-war/shot-server/spec/models/juncture_spec.rb
+     # Not yet implemented
+     # ./spec/models/juncture_spec.rb:4
+
+  5) Api::V2::AiImages GET /index add some examples (or delete) /Users/isaacpriestley/tech/isaacpriestley/chi-war/shot-server/spec/requests/api/v2/ai_images_spec.rb
+     # Not yet implemented
+     # ./spec/requests/api/v2/ai_images_spec.rb:5
+
+  6) Api::V2::Vehicles POST /duplicate duplicates a vehicle
+     # Temporarily skipped with xdescribe
+     # ./spec/requests/api/v2/vehicles/vehicles_spec.rb:157
+
+  7) Api::V2::Vehicles POST /duplicate duplicates a vehicle again
+     # Temporarily skipped with xdescribe
+     # ./spec/requests/api/v2/vehicles/vehicles_spec.rb:170
+
+  8) Api::V2::Vehicles POST /duplicate duplicates a vehicle with an image
+     # Temporarily skipped with xdescribe
+     # ./spec/requests/api/v2/vehicles/vehicles_spec.rb:184
+
+  9) Api::V2::Vehicles POST /pdf uploads a pdf
+     # Temporarily skipped with xdescribe
+     # ./spec/requests/api/v2/vehicles/vehicles_spec.rb:197
+
+  10) Api::V2::Vehicles POST /pdf returns an error for an invalid pdf
+     # Temporarily skipped with xdescribe
+     # ./spec/requests/api/v2/vehicles/vehicles_spec.rb:215
+
+Failures:
+
+  1) Campaign associations has many players
+     Failure/Error: action_movie.players << user
+
+     NoMethodError:
+       undefined method `players' for #<Campaign id: "6f8bf144-7ecf-4cf6-89bd-aee48d9af01e", user_id: "5e826211-70ce-46f3-925b-aaca4d510316", description: nil, created_at: "2025-08-22 16:06:32.126419000 +0000", updated_at: "2025-08-22 16:06:32.126419000 +0000", name: "Action Movie", active: true>
+     # ./spec/models/campaign_spec.rb:25:in `block (3 levels) in <main>'
+     # ./spec/rails_helper.rb:48:in `block (3 levels) in <top (required)>'
+     # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/strategy.rb:30:in `cleaning'
+     # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:34:in `block (2 levels) in cleaning'
+     # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:35:in `cleaning'
+     # ./spec/rails_helper.rb:47:in `block (2 levels) in <top (required)>'
+
+  2) Campaign associations has many campaign_memberships
+     Failure/Error: action_movie.players << user
+
+     NoMethodError:
+       undefined method `players' for #<Campaign id: "3c2a19b3-564c-4a66-8c2d-282a1f7ac7a5", user_id: "5678f0d7-b50d-4ee0-9454-77d3a2f3d3a2", description: nil, created_at: "2025-08-22 16:06:32.133313000 +0000", updated_at: "2025-08-22 16:06:32.133313000 +0000", name: "Action Movie", active: true>
+     # ./spec/models/campaign_spec.rb:30:in `block (3 levels) in <main>'
+     # ./spec/rails_helper.rb:48:in `block (3 levels) in <top (required)>'
+     # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/strategy.rb:30:in `cleaning'
+     # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:34:in `block (2 levels) in cleaning'
+     # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:35:in `cleaning'
+     # ./spec/rails_helper.rb:47:in `block (2 levels) in <top (required)>'
+
+  3) Campaign associations has many schticks
+     Failure/Error: schtick = Schtick.create!(name: "Schtick", campaign: action_movie)
+
+     ActiveRecord::RecordInvalid:
+       Validation failed: Category is not included in the list
+     # ./spec/models/campaign_spec.rb:50:in `block (3 levels) in <main>'
+     # ./spec/rails_helper.rb:48:in `block (3 levels) in <top (required)>'
+     # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/strategy.rb:30:in `cleaning'
+     # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:34:in `block (2 levels) in cleaning'
+     # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:35:in `cleaning'
+     # ./spec/rails_helper.rb:47:in `block (2 levels) in <top (required)>'
+
+  4) CharacterSchtick validations validates uniqueness of character_id and schtick_id
+     Failure/Error: let(:schtick) { action_movie.schticks.create!(name: "Schtick") }
+
+     ActiveRecord::RecordInvalid:
+       Validation failed: Category is not included in the list
+     # ./spec/models/character_schtick_spec.rb:7:in `block (2 levels) in <main>'
+     # ./spec/models/character_schtick_spec.rb:11:in `block (3 levels) in <main>'
+     # ./spec/rails_helper.rb:48:in `block (3 levels) in <top (required)>'
+     # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/strategy.rb:30:in `cleaning'
+     # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:34:in `block (2 levels) in cleaning'
+     # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:35:in `cleaning'
+     # ./spec/rails_helper.rb:47:in `block (2 levels) in <top (required)>'
+
+  5) CharacterSchtick associations belongs to a character
+     Failure/Error: let(:schtick) { action_movie.schticks.create!(name: "Schtick") }
+
+     ActiveRecord::RecordInvalid:
+       Validation failed: Category is not included in the list
+     # ./spec/models/character_schtick_spec.rb:7:in `block (2 levels) in <main>'
+     # ./spec/models/character_schtick_spec.rb:18:in `block (3 levels) in <main>'
+     # ./spec/rails_helper.rb:48:in `block (3 levels) in <top (required)>'
+     # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/strategy.rb:30:in `cleaning'
+     # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:34:in `block (2 levels) in cleaning'
+     # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:35:in `cleaning'
+     # ./spec/rails_helper.rb:47:in `block (2 levels) in <top (required)>'
+
+  6) CharacterSchtick associations belongs to a schtick
+     Failure/Error: let(:schtick) { action_movie.schticks.create!(name: "Schtick") }
+
+     ActiveRecord::RecordInvalid:
+       Validation failed: Category is not included in the list
+     # ./spec/models/character_schtick_spec.rb:7:in `block (2 levels) in <main>'
+     # ./spec/models/character_schtick_spec.rb:22:in `block (3 levels) in <main>'
+     # ./spec/rails_helper.rb:48:in `block (3 levels) in <top (required)>'
+     # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/strategy.rb:30:in `cleaning'
+     # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:34:in `block (2 levels) in cleaning'
+     # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:35:in `cleaning'
+     # ./spec/rails_helper.rb:47:in `block (2 levels) in <top (required)>'
+
+  7) Character associations has many schticks
+     Failure/Error: schtick = brick.schticks.create!(name: "Schtick 1", campaign: action_movie)
+
+     ActiveRecord::RecordInvalid:
+       Validation failed: Category is not included in the list
+     # ./spec/models/character_spec.rb:35:in `block (3 levels) in <main>'
+     # ./spec/rails_helper.rb:48:in `block (3 levels) in <top (required)>'
+     # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/strategy.rb:30:in `cleaning'
+     # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:34:in `block (2 levels) in cleaning'
+     # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:35:in `cleaning'
+     # ./spec/rails_helper.rb:47:in `block (2 levels) in <top (required)>'
+
+  8) Character validations requires schticks to have a name
+     Failure/Error: brick.schticks.create!(name: "Schtick 1", campaign: action_movie)
+
+     ActiveRecord::RecordInvalid:
+       Validation failed: Category is not included in the list
+     # ./spec/models/character_spec.rb:108:in `block (3 levels) in <main>'
+     # ./spec/rails_helper.rb:48:in `block (3 levels) in <top (required)>'
+     # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/strategy.rb:30:in `cleaning'
+     # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:34:in `block (2 levels) in cleaning'
+     # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:35:in `cleaning'
+     # ./spec/rails_helper.rb:47:in `block (2 levels) in <top (required)>'
+
+  9) Effect associations belongs to a fight
+     Failure/Error: let(:fight) { Fight.create!(campaign: action_movie) }
+
+     ActiveRecord::RecordInvalid:
+       Validation failed: Name can't be blank
+     # ./spec/models/effect_spec.rb:7:in `block (2 levels) in <main>'
+     # ./spec/models/effect_spec.rb:25:in `block (3 levels) in <main>'
+     # ./spec/rails_helper.rb:48:in `block (3 levels) in <top (required)>'
+     # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/strategy.rb:30:in `cleaning'
+     # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:34:in `block (2 levels) in cleaning'
+     # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:35:in `cleaning'
+     # ./spec/rails_helper.rb:47:in `block (2 levels) in <top (required)>'
+
+  10) Effect associations belongs to a user
+      Failure/Error: let(:fight) { Fight.create!(campaign: action_movie) }
+
+      ActiveRecord::RecordInvalid:
+        Validation failed: Name can't be blank
+      # ./spec/models/effect_spec.rb:7:in `block (2 levels) in <main>'
+      # ./spec/models/effect_spec.rb:30:in `block (3 levels) in <main>'
+      # ./spec/rails_helper.rb:48:in `block (3 levels) in <top (required)>'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/strategy.rb:30:in `cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:34:in `block (2 levels) in cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:35:in `cleaning'
+      # ./spec/rails_helper.rb:47:in `block (2 levels) in <top (required)>'
+
+  11) Membership validations validates uniqueness of character_id and party_id
+      Failure/Error: expect(Membership.create(character: brick, party: party)).to_not be_valid
+        expected #<Membership id: "1f5e59b9-3d0d-4b3f-85be-73a150c73c15", party_id: "126eaa7f-e4c8-40ab-82a4-740ffeadad0d", character_id: "3491e1b7-04c6-4e8d-a267-495ee3a842d6", created_at: "2025-08-22 16:06:33.653527000 +0000", updated_at: "2025-08-22 16:06:33.653527000 +0000", vehicle_id: nil> not to be valid
+      # ./spec/models/membership_spec.rb:12:in `block (3 levels) in <main>'
+      # ./spec/rails_helper.rb:48:in `block (3 levels) in <top (required)>'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/strategy.rb:30:in `cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:34:in `block (2 levels) in cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:35:in `cleaning'
+      # ./spec/rails_helper.rb:47:in `block (2 levels) in <top (required)>'
+
+  12) Schtick.for_archetype returns schticks for an archetype
+      Failure/Error: let!(:schtick) { Schtick.create!(name: "Schtick", campaign: action_movie, archetypes: ["Exorcist Monk", "Everyday Hero"]) }
+
+      ActiveRecord::RecordInvalid:
+        Validation failed: Category is not included in the list
+      # ./spec/models/schtick_spec.rb:56:in `block (3 levels) in <main>'
+      # ./spec/rails_helper.rb:48:in `block (3 levels) in <top (required)>'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/strategy.rb:30:in `cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:34:in `block (2 levels) in cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:35:in `cleaning'
+      # ./spec/rails_helper.rb:47:in `block (2 levels) in <top (required)>'
+
+  13) Api::V1::CampaignMemberships DELETE /campaign_memberships/:id lets me remove a player's membership from a campaign I control
+      Failure/Error: @action_movie.players << @alice
+
+      NoMethodError:
+        undefined method `players' for #<Campaign id: "87b76f4a-5df7-4744-9cf0-03c63fd612d7", user_id: "cc644f6b-9732-41fd-ada6-f704d682c474", description: nil, created_at: "2025-08-22 16:06:35.212951000 +0000", updated_at: "2025-08-22 16:06:35.212951000 +0000", name: "Action Movie", active: true>
+      # ./spec/requests/api/v1/campaign_memberships_spec.rb:30:in `block (3 levels) in <main>'
+      # ./spec/rails_helper.rb:48:in `block (3 levels) in <top (required)>'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/strategy.rb:30:in `cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:34:in `block (2 levels) in cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:35:in `cleaning'
+      # ./spec/rails_helper.rb:47:in `block (2 levels) in <top (required)>'
+
+  14) Api::V1::CampaignMemberships DELETE /campaign_memberships/:id lets me remove my own membership from a campaign I'm a player in
+      Failure/Error: @action_movie.players << @alice
+
+      NoMethodError:
+        undefined method `players' for #<Campaign id: "d2703a3c-e7ba-4592-aadc-34e206ac6767", user_id: "0113d67d-0bdf-47a4-8d63-0a6ba1e753e9", description: nil, created_at: "2025-08-22 16:06:35.236724000 +0000", updated_at: "2025-08-22 16:06:35.236724000 +0000", name: "Action Movie", active: true>
+      # ./spec/requests/api/v1/campaign_memberships_spec.rb:38:in `block (3 levels) in <main>'
+      # ./spec/rails_helper.rb:48:in `block (3 levels) in <top (required)>'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/strategy.rb:30:in `cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:34:in `block (2 levels) in cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:35:in `cleaning'
+      # ./spec/rails_helper.rb:47:in `block (2 levels) in <top (required)>'
+
+  15) Api::V1::Campaigns GET /campaigns returns all my campaigns, both ones I run and ones I play in
+      Failure/Error: @scifi.players << @gamemaster
+
+      NoMethodError:
+        undefined method `players' for #<Campaign id: "a1a76e6e-c3b3-4e26-b3b6-a265d22102c8", user_id: "e495849f-0bdc-4968-a5b8-f75c07babc0a", description: nil, created_at: "2025-08-22 16:06:35.397980000 +0000", updated_at: "2025-08-22 16:06:35.397980000 +0000", name: "Scifi", active: true>
+      # ./spec/requests/api/v1/campaigns_spec.rb:35:in `block (3 levels) in <main>'
+      # ./spec/rails_helper.rb:48:in `block (3 levels) in <top (required)>'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/strategy.rb:30:in `cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:34:in `block (2 levels) in cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:35:in `cleaning'
+      # ./spec/rails_helper.rb:47:in `block (2 levels) in <top (required)>'
+
+  16) Api::V1::Campaigns GET /campaigns/:id fetches campaign you created
+      Failure/Error: @campaign.players << @alice
+
+      NoMethodError:
+        undefined method `players' for #<Campaign id: "e0d27127-a903-4557-a961-cb5c8552ced0", user_id: "b3f79b2d-6ebf-46ee-bac1-16d4a73d0920", description: nil, created_at: "2025-08-22 16:06:35.600156000 +0000", updated_at: "2025-08-22 16:06:35.600156000 +0000", name: "Action Movie", active: true>
+      # ./spec/requests/api/v1/campaigns_spec.rb:90:in `block (3 levels) in <main>'
+      # ./spec/rails_helper.rb:48:in `block (3 levels) in <top (required)>'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/strategy.rb:30:in `cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:34:in `block (2 levels) in cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:35:in `cleaning'
+      # ./spec/rails_helper.rb:47:in `block (2 levels) in <top (required)>'
+
+  17) Api::V1::Campaigns GET /campaigns/:id fetches campaign you play in
+      Failure/Error: @campaign.players << @alice
+
+      NoMethodError:
+        undefined method `players' for #<Campaign id: "bf11a7a0-6bc6-4b75-ac71-94b95bf7a04d", user_id: "c5de4418-c940-4ab8-a6fb-d132df2b9edc", description: nil, created_at: "2025-08-22 16:06:35.640122000 +0000", updated_at: "2025-08-22 16:06:35.640122000 +0000", name: "Action Movie", active: true>
+      # ./spec/requests/api/v1/campaigns_spec.rb:104:in `block (3 levels) in <main>'
+      # ./spec/rails_helper.rb:48:in `block (3 levels) in <top (required)>'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/strategy.rb:30:in `cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:34:in `block (2 levels) in cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:35:in `cleaning'
+      # ./spec/rails_helper.rb:47:in `block (2 levels) in <top (required)>'
+
+  18) Api::V1::Campaigns PATCH /campaigns:id can't update a campaign you're just a player in
+      Failure/Error: @campaign.players << @alice
+
+      NoMethodError:
+        undefined method `players' for #<Campaign id: "4be33a98-812b-4807-9a4d-3a73addf79ec", user_id: "9d72924a-5e40-4c21-8a18-27a1e4810a1d", description: nil, created_at: "2025-08-22 16:06:35.851688000 +0000", updated_at: "2025-08-22 16:06:35.851688000 +0000", name: "Action Movie", active: true>
+      # ./spec/requests/api/v1/campaigns_spec.rb:148:in `block (3 levels) in <main>'
+      # ./spec/rails_helper.rb:48:in `block (3 levels) in <top (required)>'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/strategy.rb:30:in `cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:34:in `block (2 levels) in cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:35:in `cleaning'
+      # ./spec/rails_helper.rb:47:in `block (2 levels) in <top (required)>'
+
+  19) Api::V1::Campaigns DELETE /campaigns/:id can't destroy a campaign you're just a player in
+      Failure/Error: @campaign.players << @alice
+
+      NoMethodError:
+        undefined method `players' for #<Campaign id: "12aa97b6-0036-4617-a3eb-4fb7de3d369f", user_id: "08f666f1-7e01-4ec8-a9b7-e7f23c89a4af", description: nil, created_at: "2025-08-22 16:06:35.927358000 +0000", updated_at: "2025-08-22 16:06:35.927358000 +0000", name: "Action Movie", active: true>
+      # ./spec/requests/api/v1/campaigns_spec.rb:173:in `block (3 levels) in <main>'
+      # ./spec/rails_helper.rb:48:in `block (3 levels) in <top (required)>'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/strategy.rb:30:in `cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:34:in `block (2 levels) in cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:35:in `cleaning'
+      # ./spec/rails_helper.rb:47:in `block (2 levels) in <top (required)>'
+
+  20) Api::V1::Campaigns DELETE /campaigns/:id even for a gamemaster, can't destroy a campaign you're a player in
+      Failure/Error: @other_campaign.players << @gm_alice
+
+      NoMethodError:
+        undefined method `players' for #<Campaign id: "063fe381-1381-4be9-91f6-817413cbdc38", user_id: "d09aa16d-ff74-48ce-a585-030b116afa27", description: nil, created_at: "2025-08-22 16:06:35.967316000 +0000", updated_at: "2025-08-22 16:06:35.967316000 +0000", name: "Action Moviez", active: true>
+      # ./spec/requests/api/v1/campaigns_spec.rb:186:in `block (3 levels) in <main>'
+      # ./spec/rails_helper.rb:48:in `block (3 levels) in <top (required)>'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/strategy.rb:30:in `cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:34:in `block (2 levels) in cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:35:in `cleaning'
+      # ./spec/rails_helper.rb:47:in `block (2 levels) in <top (required)>'
+
+  21) Api::V1::Campaigns POST /set can set campaign you're a player in
+      Failure/Error: @campaign.players << @alice
+
+      NoMethodError:
+        undefined method `players' for #<Campaign id: "4577cc82-97c4-4fc6-85af-01985c0f095c", user_id: "a960308b-3684-4ec3-8d1b-835c7a3de63c", description: nil, created_at: "2025-08-22 16:06:36.147894000 +0000", updated_at: "2025-08-22 16:06:36.147894000 +0000", name: "Adventure", active: true>
+      # ./spec/requests/api/v1/campaigns_spec.rb:225:in `block (3 levels) in <main>'
+      # ./spec/rails_helper.rb:48:in `block (3 levels) in <top (required)>'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/strategy.rb:30:in `cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:34:in `block (2 levels) in cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:35:in `cleaning'
+      # ./spec/rails_helper.rb:47:in `block (2 levels) in <top (required)>'
+
+  22) Api::V1::Carries POST /api/v1/characters/:character_id/weapons adds a weapon to a character
+      Failure/Error: expect(body["weapons"].map { |s| s["name"] }).to eq(["Beretta M9"])
+
+      NoMethodError:
+        undefined method `map' for nil:NilClass
+      # ./spec/requests/api/v1/carries_spec.rb:33:in `block (3 levels) in <main>'
+      # ./spec/rails_helper.rb:48:in `block (3 levels) in <top (required)>'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/strategy.rb:30:in `cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:34:in `block (2 levels) in cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:35:in `cleaning'
+      # ./spec/rails_helper.rb:47:in `block (2 levels) in <top (required)>'
+
+  23) Api::V1::CharacterSchticks GET /api/v1/characters/:all_character_id/schticks gets all the schticks for a character
+      Failure/Error: @blam = @campaign.schticks.create!(name: "Blam Blam Epigram", description: "Say a pithy phrase before firing a shot.")
+
+      ActiveRecord::RecordInvalid:
+        Validation failed: Category is not included in the list
+      # ./spec/requests/api/v1/character_schticks_spec.rb:16:in `block (3 levels) in <main>'
+      # ./spec/rails_helper.rb:48:in `block (3 levels) in <top (required)>'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/strategy.rb:30:in `cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:34:in `block (2 levels) in cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:35:in `cleaning'
+      # ./spec/rails_helper.rb:47:in `block (2 levels) in <top (required)>'
+
+  24) Api::V1::CharacterSchticks POST /api/v1/characters/:all_character_id/schticks adds a schtick to a character
+      Failure/Error: @blam = @campaign.schticks.create!(name: "Blam Blam Epigram", description: "Say a pithy phrase before firing a shot.")
+
+      ActiveRecord::RecordInvalid:
+        Validation failed: Category is not included in the list
+      # ./spec/requests/api/v1/character_schticks_spec.rb:27:in `block (3 levels) in <main>'
+      # ./spec/rails_helper.rb:48:in `block (3 levels) in <top (required)>'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/strategy.rb:30:in `cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:34:in `block (2 levels) in cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:35:in `cleaning'
+      # ./spec/rails_helper.rb:47:in `block (2 levels) in <top (required)>'
+
+  25) Api::V1::CharacterSchticks DELETE /api/v1/characters/:all_character_id/schticks/:id removes a schtick from a character
+      Failure/Error: @blam = @campaign.schticks.create!(name: "Blam Blam Epigram", description: "Say a pithy phrase before firing a shot.")
+
+      ActiveRecord::RecordInvalid:
+        Validation failed: Category is not included in the list
+      # ./spec/requests/api/v1/character_schticks_spec.rb:40:in `block (3 levels) in <main>'
+      # ./spec/rails_helper.rb:48:in `block (3 levels) in <top (required)>'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/strategy.rb:30:in `cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:34:in `block (2 levels) in cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:35:in `cleaning'
+      # ./spec/rails_helper.rb:47:in `block (2 levels) in <top (required)>'
+
+  26) Invitations GET /api/v1/invitations/:id updates pending user
+      Failure/Error: expect(body["pending_user"]).to eq(@ginny.as_json)
+
+        expected: {"active"=>true, "admin"=>nil, "avatar_url"=>nil, "created_at"=>"2025-08-22T16:06:39.670Z", "current_...last_name"=>"", "name"=>nil, "pending_invitation_id"=>nil, "updated_at"=>"2025-08-22T16:06:39.670Z"}
+             got: {"active"=>true, "admin"=>nil, "created_at"=>"2025-08-22T16:06:39.670Z", "email"=>"ginny@email.com", ...a2974c33", "image_url"=>nil, "last_name"=>"", "name"=>nil, "updated_at"=>"2025-08-22T16:06:39.670Z"}
+
+        (compared using ==)
+
+        Diff:
+
+
+
+
+        @@ -1,14 +1,12 @@
+         "active" => true,
+         "admin" => nil,
+        -"avatar_url" => nil,
+         "created_at" => "2025-08-22T16:06:39.670Z",
+        -"current_campaign_id" => nil,
+         "email" => "ginny@email.com",
+        +"entity_class" => "User",
+         "first_name" => "",
+         "gamemaster" => nil,
+         "id" => "94374fef-3a87-405a-8005-558ea2974c33",
+        -"jti" => "936ec1d7-6b1c-43b2-ae1f-c1babf52370d",
+        +"image_url" => nil,
+         "last_name" => "",
+         "name" => nil,
+        -"pending_invitation_id" => nil,
+         "updated_at" => "2025-08-22T16:06:39.670Z",
+      # ./spec/requests/api/v1/invitations_spec.rb:36:in `block (3 levels) in <main>'
+      # ./spec/rails_helper.rb:48:in `block (3 levels) in <top (required)>'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/strategy.rb:30:in `cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:34:in `block (2 levels) in cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:35:in `cleaning'
+      # ./spec/rails_helper.rb:47:in `block (2 levels) in <top (required)>'
+
+  27) Invitations POST /api/v1/invitations can't create a new invitation for an existing member
+      Failure/Error: @campaign.players << @ginny
+
+      NoMethodError:
+        undefined method `players' for #<Campaign id: "2d464062-9e73-4b1b-97d8-a840f88deae9", user_id: "063403c2-f80d-4215-8fbf-322f1f1da8c7", description: nil, created_at: "2025-08-22 16:06:39.810590000 +0000", updated_at: "2025-08-22 16:06:39.810590000 +0000", name: "Adventure", active: true>
+      # ./spec/requests/api/v1/invitations_spec.rb:109:in `block (3 levels) in <main>'
+      # ./spec/rails_helper.rb:48:in `block (3 levels) in <top (required)>'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/strategy.rb:30:in `cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:34:in `block (2 levels) in cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:35:in `cleaning'
+      # ./spec/rails_helper.rb:47:in `block (2 levels) in <top (required)>'
+
+  28) Invitations GET /api/v1/invitations/:id/redeem redeems an invitation and creates a new user
+      Failure/Error: expect(response).to have_http_status(200)
+        expected the response to have status code 200 but it was 500
+      # ./spec/requests/api/v1/invitations_spec.rb:147:in `block (3 levels) in <main>'
+      # ./spec/rails_helper.rb:48:in `block (3 levels) in <top (required)>'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/strategy.rb:30:in `cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:34:in `block (2 levels) in cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:35:in `cleaning'
+      # ./spec/rails_helper.rb:47:in `block (2 levels) in <top (required)>'
+
+  29) Invitations GET /api/v1/invitations/:id/redeem redeems for an existing user and reduces the count
+      Failure/Error: expect(response).to have_http_status(200)
+        expected the response to have status code 200 but it was 500
+      # ./spec/requests/api/v1/invitations_spec.rb:161:in `block (3 levels) in <main>'
+      # ./spec/rails_helper.rb:48:in `block (3 levels) in <top (required)>'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/strategy.rb:30:in `cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:34:in `block (2 levels) in cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:35:in `cleaning'
+      # ./spec/rails_helper.rb:47:in `block (2 levels) in <top (required)>'
+
+  30) Invitations GET /api/v1/invitations/:id/redeem redeems, creates a new user, and reduces the count
+      Failure/Error: expect(response).to have_http_status(200)
+        expected the response to have status code 200 but it was 500
+      # ./spec/requests/api/v1/invitations_spec.rb:175:in `block (3 levels) in <main>'
+      # ./spec/rails_helper.rb:48:in `block (3 levels) in <top (required)>'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/strategy.rb:30:in `cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:34:in `block (2 levels) in cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:35:in `cleaning'
+      # ./spec/rails_helper.rb:47:in `block (2 levels) in <top (required)>'
+
+  31) Invitations GET /api/v1/invitations/:id/redeem redeems an invitation for an existing user
+      Failure/Error: expect(response).to have_http_status(200)
+        expected the response to have status code 200 but it was 500
+      # ./spec/requests/api/v1/invitations_spec.rb:196:in `block (3 levels) in <main>'
+      # ./spec/rails_helper.rb:48:in `block (3 levels) in <top (required)>'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/strategy.rb:30:in `cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:34:in `block (2 levels) in cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:35:in `cleaning'
+      # ./spec/rails_helper.rb:47:in `block (2 levels) in <top (required)>'
+
+  32) Api::V1::Junctures GET /index returns http success
+      Failure/Error: expect(body["junctures"].map { |s| s["name"] }).to eq(["Baseball Field", "The Juncture"])
+
+        expected: ["Baseball Field", "The Juncture"]
+             got: []
+
+        (compared using ==)
+      # ./spec/requests/api/v1/junctures_spec.rb:22:in `block (3 levels) in <main>'
+      # ./spec/rails_helper.rb:48:in `block (3 levels) in <top (required)>'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/strategy.rb:30:in `cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:34:in `block (2 levels) in cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:35:in `cleaning'
+      # ./spec/rails_helper.rb:47:in `block (2 levels) in <top (required)>'
+
+  33) Api::V1::Junctures GET /index doesn't return inactive junctures by default
+      Failure/Error: expect(body["junctures"].map { |s| s["name"] }).to eq(["Baseball Field"])
+
+        expected: ["Baseball Field"]
+             got: []
+
+        (compared using ==)
+      # ./spec/requests/api/v1/junctures_spec.rb:31:in `block (3 levels) in <main>'
+      # ./spec/rails_helper.rb:48:in `block (3 levels) in <top (required)>'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/strategy.rb:30:in `cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:34:in `block (2 levels) in cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:35:in `cleaning'
+      # ./spec/rails_helper.rb:47:in `block (2 levels) in <top (required)>'
+
+  34) Api::V1::Junctures GET /index doesn't return inactive junctures for a player
+      Failure/Error: expect(body["junctures"].map { |s| s["name"] }).to eq(["Baseball Field"])
+
+        expected: ["Baseball Field"]
+             got: []
+
+        (compared using ==)
+      # ./spec/requests/api/v1/junctures_spec.rb:40:in `block (3 levels) in <main>'
+      # ./spec/rails_helper.rb:48:in `block (3 levels) in <top (required)>'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/strategy.rb:30:in `cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:34:in `block (2 levels) in cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:35:in `cleaning'
+      # ./spec/rails_helper.rb:47:in `block (2 levels) in <top (required)>'
+
+  35) Api::V1::Junctures GET /index returns inactive junctures for a gamemaster
+      Failure/Error: expect(body["junctures"].map { |s| s["name"] }).to eq(["Baseball Field", "The Juncture"])
+
+        expected: ["Baseball Field", "The Juncture"]
+             got: []
+
+        (compared using ==)
+      # ./spec/requests/api/v1/junctures_spec.rb:51:in `block (3 levels) in <main>'
+      # ./spec/rails_helper.rb:48:in `block (3 levels) in <top (required)>'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/strategy.rb:30:in `cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:34:in `block (2 levels) in cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:35:in `cleaning'
+      # ./spec/rails_helper.rb:47:in `block (2 levels) in <top (required)>'
+
+  36) Api::V1::Junctures GET /index returns all junctures that are not the current character's juncture
+      Failure/Error: expect(body["junctures"].length).to eq(1)
+
+        expected: 1
+             got: 0
+
+        (compared using ==)
+      # ./spec/requests/api/v1/junctures_spec.rb:61:in `block (3 levels) in <main>'
+      # ./spec/rails_helper.rb:48:in `block (3 levels) in <top (required)>'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/strategy.rb:30:in `cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:34:in `block (2 levels) in cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:35:in `cleaning'
+      # ./spec/rails_helper.rb:47:in `block (2 levels) in <top (required)>'
+
+  37) Api::V1::Junctures GET /index returns junctures matching a search string
+      Failure/Error: expect(body["junctures"][0]["name"]).to eq("Baseball Field")
+
+      NoMethodError:
+        undefined method `[]' for nil:NilClass
+      # ./spec/requests/api/v1/junctures_spec.rb:68:in `block (3 levels) in <main>'
+      # ./spec/rails_helper.rb:48:in `block (3 levels) in <top (required)>'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/strategy.rb:30:in `cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:34:in `block (2 levels) in cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:35:in `cleaning'
+      # ./spec/rails_helper.rb:47:in `block (2 levels) in <top (required)>'
+
+  38) Api::V1::Junctures GET /index returns junctures by faction_id
+      Failure/Error: expect(body["junctures"].map { |s| s["name"] }).to eq(["The Juncture"])
+
+        expected: ["The Juncture"]
+             got: []
+
+        (compared using ==)
+      # ./spec/requests/api/v1/junctures_spec.rb:76:in `block (3 levels) in <main>'
+      # ./spec/rails_helper.rb:48:in `block (3 levels) in <top (required)>'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/strategy.rb:30:in `cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:34:in `block (2 levels) in cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:35:in `cleaning'
+      # ./spec/rails_helper.rb:47:in `block (2 levels) in <top (required)>'
+
+  39) Api::V1::Parties GET /index returns factions for parties
+      Failure/Error: expect(body["factions"].map { |f| f["name"] }).to eq(["Ascended", "The Dragons"])
+
+        expected: ["Ascended", "The Dragons"]
+             got: ["The Dragons", "Ascended"]
+
+        (compared using ==)
+      # ./spec/requests/api/v1/parties_spec.rb:87:in `block (3 levels) in <main>'
+      # ./spec/rails_helper.rb:48:in `block (3 levels) in <top (required)>'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/strategy.rb:30:in `cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:34:in `block (2 levels) in cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:35:in `cleaning'
+      # ./spec/rails_helper.rb:47:in `block (2 levels) in <top (required)>'
+
+  40) Api::V1::Parties PUT /update updates the secret flag
+      Failure/Error: expect(body["secret"]).to eq(true)
+
+        expected: true
+             got: nil
+
+        (compared using ==)
+      # ./spec/requests/api/v1/parties_spec.rb:164:in `block (3 levels) in <main>'
+      # ./spec/rails_helper.rb:48:in `block (3 levels) in <top (required)>'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/strategy.rb:30:in `cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:34:in `block (2 levels) in cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:35:in `cleaning'
+      # ./spec/rails_helper.rb:47:in `block (2 levels) in <top (required)>'
+
+  41) Schticks GET /api/v1/schticks gets all the schticks
+      Failure/Error: @blam = @campaign.schticks.create!(name: "Blam Blam Epigram", description: "Say a pithy phrase before firing a shot.")
+
+      ActiveRecord::RecordInvalid:
+        Validation failed: Category is not included in the list
+      # ./spec/requests/api/v1/schticks_spec.rb:16:in `block (3 levels) in <main>'
+      # ./spec/rails_helper.rb:48:in `block (3 levels) in <top (required)>'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/strategy.rb:30:in `cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:34:in `block (2 levels) in cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:35:in `cleaning'
+      # ./spec/rails_helper.rb:47:in `block (2 levels) in <top (required)>'
+
+  42) Schticks GET /api/v1/schticks gets schticks for a Foe, excluding schticks they already know
+      Failure/Error: @blam = @campaign.schticks.create!(name: "Blam Blam Epigram", description: "Say a pithy phrase before firing a shot.")
+
+      ActiveRecord::RecordInvalid:
+        Validation failed: Category is not included in the list
+      # ./spec/requests/api/v1/schticks_spec.rb:24:in `block (3 levels) in <main>'
+      # ./spec/rails_helper.rb:48:in `block (3 levels) in <top (required)>'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/strategy.rb:30:in `cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:34:in `block (2 levels) in cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:35:in `cleaning'
+      # ./spec/rails_helper.rb:47:in `block (2 levels) in <top (required)>'
+
+  43) Schticks GET /api/v1/schtick/:id gets a schtick
+      Failure/Error: @blam = @campaign.schticks.create!(name: "Blam Blam Epigram", description: "Say a pithy phrase before firing a shot.")
+
+      ActiveRecord::RecordInvalid:
+        Validation failed: Category is not included in the list
+      # ./spec/requests/api/v1/schticks_spec.rb:37:in `block (3 levels) in <main>'
+      # ./spec/rails_helper.rb:48:in `block (3 levels) in <top (required)>'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/strategy.rb:30:in `cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:34:in `block (2 levels) in cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:35:in `cleaning'
+      # ./spec/rails_helper.rb:47:in `block (2 levels) in <top (required)>'
+
+  44) Schticks POST /api/v1/schticks creates a schtick
+      Failure/Error: expect(response).to have_http_status(:success)
+        expected the response to have a success status code (2xx) but it was 400
+      # ./spec/requests/api/v1/schticks_spec.rb:53:in `block (3 levels) in <main>'
+      # ./spec/rails_helper.rb:48:in `block (3 levels) in <top (required)>'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/strategy.rb:30:in `cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:34:in `block (2 levels) in cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:35:in `cleaning'
+      # ./spec/rails_helper.rb:47:in `block (2 levels) in <top (required)>'
+
+  45) Schticks PATCH /api/v1/schticks updates a schtick
+      Failure/Error: @blam = @campaign.schticks.create!(name: "Blam Blam Epigram", description: "Say a pithy phrase before firing a shot.")
+
+      ActiveRecord::RecordInvalid:
+        Validation failed: Category is not included in the list
+      # ./spec/requests/api/v1/schticks_spec.rb:61:in `block (3 levels) in <main>'
+      # ./spec/rails_helper.rb:48:in `block (3 levels) in <top (required)>'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/strategy.rb:30:in `cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:34:in `block (2 levels) in cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:35:in `cleaning'
+      # ./spec/rails_helper.rb:47:in `block (2 levels) in <top (required)>'
+
+  46) Schticks DELETE /api/v1/schticks/:id deletes a schtick
+      Failure/Error: @blam = @campaign.schticks.create!(name: "Blam Blam Epigram", description: "Say a pithy phrase before firing a shot.")
+
+      ActiveRecord::RecordInvalid:
+        Validation failed: Category is not included in the list
+      # ./spec/requests/api/v1/schticks_spec.rb:75:in `block (3 levels) in <main>'
+      # ./spec/rails_helper.rb:48:in `block (3 levels) in <top (required)>'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/strategy.rb:30:in `cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:34:in `block (2 levels) in cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:35:in `cleaning'
+      # ./spec/rails_helper.rb:47:in `block (2 levels) in <top (required)>'
+
+  47) Api::V1::Sites PUT /update updates secret flag
+      Failure/Error: expect(body["secret"]).to eq(true)
+
+        expected: true
+             got: nil
+
+        (compared using ==)
+      # ./spec/requests/api/v1/sites_spec.rb:135:in `block (3 levels) in <main>'
+      # ./spec/rails_helper.rb:48:in `block (3 levels) in <top (required)>'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/strategy.rb:30:in `cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:34:in `block (2 levels) in cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:35:in `cleaning'
+      # ./spec/rails_helper.rb:47:in `block (2 levels) in <top (required)>'
+
+  48) Api::V2::Campaigns GET /index when user is admin retrieves all campaigns
+      Failure/Error: expect(body["campaigns"].length).to be >= 3
+
+        expected: >= 3
+             got:    0
+      # ./spec/requests/api/v2/campaigns/campaigns_spec.rb:527:in `block (4 levels) in <main>'
+      # ./spec/rails_helper.rb:48:in `block (3 levels) in <top (required)>'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/strategy.rb:30:in `cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:34:in `block (2 levels) in cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:35:in `cleaning'
+      # ./spec/rails_helper.rb:47:in `block (2 levels) in <top (required)>'
+
+  49) Api::V2::Characters Invalid parameters falls back to default order when order parameter is invalid
+      Failure/Error: expect(response).to have_http_status(200)
+        expected the response to have status code 200 but it was 500
+      # ./spec/requests/api/v2/characters/characters_index_spec.rb:390:in `block (3 levels) in <main>'
+      # ./spec/rails_helper.rb:48:in `block (3 levels) in <top (required)>'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/strategy.rb:30:in `cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:34:in `block (2 levels) in cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:35:in `cleaning'
+      # ./spec/rails_helper.rb:47:in `block (2 levels) in <top (required)>'
+
+  50) Api::V2::Characters POST /pdf uploads a pdf
+      Failure/Error: expect(response).to have_http_status(:created)
+        expected the response to have status code :created (201) but it was :unprocessable_content (422)
+      # ./spec/requests/api/v2/characters/characters_spec.rb:434:in `block (3 levels) in <main>'
+      # ./spec/rails_helper.rb:48:in `block (3 levels) in <top (required)>'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/strategy.rb:30:in `cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:34:in `block (2 levels) in cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:35:in `cleaning'
+      # ./spec/rails_helper.rb:47:in `block (2 levels) in <top (required)>'
+
+  51) Api::V2::Characters POST /pdf returns an error for an invalid pdf
+      Failure/Error: expect(body["error"]).to eq("Failed to import character: Invalid PDF: Missing required fields")
+
+        expected: "Failed to import character: Invalid PDF: Missing required fields"
+             got: "Failed to import character: Could not find an executable [\"/usr/local/bin/pdftk\"] on your path."
+
+        (compared using ==)
+      # ./spec/requests/api/v2/characters/characters_spec.rb:454:in `block (3 levels) in <main>'
+      # ./spec/rails_helper.rb:48:in `block (3 levels) in <top (required)>'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/strategy.rb:30:in `cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:34:in `block (2 levels) in cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:35:in `cleaning'
+      # ./spec/rails_helper.rb:47:in `block (2 levels) in <top (required)>'
+
+  52) Api::V2::Users Profile GET /api/v2/users/profile returns campaign counts
+      Failure/Error: expect(body["campaigns_as_gm_count"]).to eq(2)
+
+        expected: 2
+             got: nil
+
+        (compared using ==)
+      # ./spec/requests/api/v2/users/users_profile_spec.rb:36:in `block (3 levels) in <main>'
+      # ./spec/rails_helper.rb:48:in `block (3 levels) in <top (required)>'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/strategy.rb:30:in `cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:34:in `block (2 levels) in cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:35:in `cleaning'
+      # ./spec/rails_helper.rb:47:in `block (2 levels) in <top (required)>'
+
+  53) Api::V2::Users Profile PATCH /api/v2/users/profile updates user email separately
+      Failure/Error: expect(body["email"]).to eq("newemail@example.com")
+
+        expected: "newemail@example.com"
+             got: "test@example.com"
+
+        (compared using ==)
+      # ./spec/requests/api/v2/users/users_profile_spec.rb:80:in `block (3 levels) in <main>'
+      # ./spec/rails_helper.rb:48:in `block (3 levels) in <top (required)>'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/strategy.rb:30:in `cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:34:in `block (2 levels) in cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:35:in `cleaning'
+      # ./spec/rails_helper.rb:47:in `block (2 levels) in <top (required)>'
+
+  54) Api::V2::Weapons Pagination and order parameters respects per_page parameter
+      Failure/Error: expect(body["meta"]["total_count"]).to eq(3)
+
+        expected: 3
+             got: 5
+
+        (compared using ==)
+      # ./spec/requests/api/v2/weapons/weapons_index_spec.rb:291:in `block (3 levels) in <main>'
+      # ./spec/rails_helper.rb:48:in `block (3 levels) in <top (required)>'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/strategy.rb:30:in `cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:34:in `block (2 levels) in cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:35:in `cleaning'
+      # ./spec/rails_helper.rb:47:in `block (2 levels) in <top (required)>'
+
+  55) Api::V2::Weapons Pagination and order parameters respects page parameter
+      Failure/Error: expect(body["weapons"].length).to eq(1)
+
+        expected: 1
+             got: 2
+
+        (compared using ==)
+      # ./spec/requests/api/v2/weapons/weapons_index_spec.rb:299:in `block (3 levels) in <main>'
+      # ./spec/rails_helper.rb:48:in `block (3 levels) in <top (required)>'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/strategy.rb:30:in `cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:34:in `block (2 levels) in cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:35:in `cleaning'
+      # ./spec/rails_helper.rb:47:in `block (2 levels) in <top (required)>'
+
+  56) Api::V2::Weapons Pagination and order parameters sorts by name with order parameter
+      Failure/Error: expect(body["weapons"].map { |w| w["name"] }).to eq(["Beretta 92FS", "Shuriken", "Sword"])
+
+        expected: ["Beretta 92FS", "Shuriken", "Sword"]
+             got: ["Beretta 92FS", "Bow", "Colt Python", "Sword", "Winchester Rifle"]
+
+        (compared using ==)
+      # ./spec/requests/api/v2/weapons/weapons_index_spec.rb:307:in `block (3 levels) in <main>'
+      # ./spec/rails_helper.rb:48:in `block (3 levels) in <top (required)>'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/strategy.rb:30:in `cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:34:in `block (2 levels) in cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:35:in `cleaning'
+      # ./spec/rails_helper.rb:47:in `block (2 levels) in <top (required)>'
+
+  57) Api::V2::Weapons Pagination and order parameters sorts by name with desc order
+      Failure/Error: expect(body["weapons"].map { |w| w["name"] }).to eq(["Sword", "Shuriken", "Beretta 92FS"])
+
+        expected: ["Sword", "Shuriken", "Beretta 92FS"]
+             got: ["Winchester Rifle", "Sword", "Colt Python", "Bow", "Beretta 92FS"]
+
+        (compared using ==)
+      # ./spec/requests/api/v2/weapons/weapons_index_spec.rb:314:in `block (3 levels) in <main>'
+      # ./spec/rails_helper.rb:48:in `block (3 levels) in <top (required)>'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/strategy.rb:30:in `cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:34:in `block (2 levels) in cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:35:in `cleaning'
+      # ./spec/rails_helper.rb:47:in `block (2 levels) in <top (required)>'
+
+  58) Api::V2::Weapons POST /batch returns error when ids parameter is missing
+      Failure/Error: expect(response).to have_http_status(:bad_request)
+        expected the response to have status code :bad_request (400) but it was :internal_server_error (500)
+      # ./spec/requests/api/v2/weapons/weapons_spec.rb:280:in `block (3 levels) in <main>'
+      # ./spec/rails_helper.rb:48:in `block (3 levels) in <top (required)>'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/strategy.rb:30:in `cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:34:in `block (2 levels) in cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:35:in `cleaning'
+      # ./spec/rails_helper.rb:47:in `block (2 levels) in <top (required)>'
+
+  59) CharacterPoster with schticks and weapons shows character
+      Failure/Error: brick.schticks << Schtick.new(name: "Rocker", campaign_id: action_movie.id)
+
+      ActiveRecord::RecordInvalid:
+        Validation failed: Category is not included in the list
+      # ./spec/services/character_poster_spec.rb:83:in `block (3 levels) in <main>'
+      # ./spec/rails_helper.rb:48:in `block (3 levels) in <top (required)>'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/strategy.rb:30:in `cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:34:in `block (2 levels) in cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:35:in `cleaning'
+      # ./spec/rails_helper.rb:47:in `block (2 levels) in <top (required)>'
+
+Finished in 1 minute 35.36 seconds (files took 2.32 seconds to load)
+1347 examples, 59 failures, 10 pending
+
+Failed examples:
+
+rspec ./spec/models/campaign_spec.rb:24 # Campaign associations has many players
+rspec ./spec/models/campaign_spec.rb:29 # Campaign associations has many campaign_memberships
+rspec ./spec/models/campaign_spec.rb:49 # Campaign associations has many schticks
+rspec ./spec/models/character_schtick_spec.rb:10 # CharacterSchtick validations validates uniqueness of character_id and schtick_id
+rspec ./spec/models/character_schtick_spec.rb:17 # CharacterSchtick associations belongs to a character
+rspec ./spec/models/character_schtick_spec.rb:21 # CharacterSchtick associations belongs to a schtick
+rspec ./spec/models/character_spec.rb:34 # Character associations has many schticks
+rspec ./spec/models/character_spec.rb:107 # Character validations requires schticks to have a name
+rspec ./spec/models/effect_spec.rb:24 # Effect associations belongs to a fight
+rspec ./spec/models/effect_spec.rb:29 # Effect associations belongs to a user
+rspec ./spec/models/membership_spec.rb:10 # Membership validations validates uniqueness of character_id and party_id
+rspec ./spec/models/schtick_spec.rb:58 # Schtick.for_archetype returns schticks for an archetype
+rspec ./spec/requests/api/v1/campaign_memberships_spec.rb:29 # Api::V1::CampaignMemberships DELETE /campaign_memberships/:id lets me remove a player's membership from a campaign I control
+rspec ./spec/requests/api/v1/campaign_memberships_spec.rb:37 # Api::V1::CampaignMemberships DELETE /campaign_memberships/:id lets me remove my own membership from a campaign I'm a player in
+rspec ./spec/requests/api/v1/campaigns_spec.rb:25 # Api::V1::Campaigns GET /campaigns returns all my campaigns, both ones I run and ones I play in
+rspec ./spec/requests/api/v1/campaigns_spec.rb:84 # Api::V1::Campaigns GET /campaigns/:id fetches campaign you created
+rspec ./spec/requests/api/v1/campaigns_spec.rb:100 # Api::V1::Campaigns GET /campaigns/:id fetches campaign you play in
+rspec ./spec/requests/api/v1/campaigns_spec.rb:145 # Api::V1::Campaigns PATCH /campaigns:id can't update a campaign you're just a player in
+rspec ./spec/requests/api/v1/campaigns_spec.rb:170 # Api::V1::Campaigns DELETE /campaigns/:id can't destroy a campaign you're just a player in
+rspec ./spec/requests/api/v1/campaigns_spec.rb:182 # Api::V1::Campaigns DELETE /campaigns/:id even for a gamemaster, can't destroy a campaign you're a player in
+rspec ./spec/requests/api/v1/campaigns_spec.rb:222 # Api::V1::Campaigns POST /set can set campaign you're a player in
+rspec ./spec/requests/api/v1/carries_spec.rb:26 # Api::V1::Carries POST /api/v1/characters/:character_id/weapons adds a weapon to a character
+rspec ./spec/requests/api/v1/character_schticks_spec.rb:15 # Api::V1::CharacterSchticks GET /api/v1/characters/:all_character_id/schticks gets all the schticks for a character
+rspec ./spec/requests/api/v1/character_schticks_spec.rb:26 # Api::V1::CharacterSchticks POST /api/v1/characters/:all_character_id/schticks adds a schtick to a character
+rspec ./spec/requests/api/v1/character_schticks_spec.rb:39 # Api::V1::CharacterSchticks DELETE /api/v1/characters/:all_character_id/schticks/:id removes a schtick from a character
+rspec ./spec/requests/api/v1/invitations_spec.rb:29 # Invitations GET /api/v1/invitations/:id updates pending user
+rspec ./spec/requests/api/v1/invitations_spec.rb:107 # Invitations POST /api/v1/invitations can't create a new invitation for an existing member
+rspec ./spec/requests/api/v1/invitations_spec.rb:138 # Invitations GET /api/v1/invitations/:id/redeem redeems an invitation and creates a new user
+rspec ./spec/requests/api/v1/invitations_spec.rb:156 # Invitations GET /api/v1/invitations/:id/redeem redeems for an existing user and reduces the count
+rspec ./spec/requests/api/v1/invitations_spec.rb:165 # Invitations GET /api/v1/invitations/:id/redeem redeems, creates a new user, and reduces the count
+rspec ./spec/requests/api/v1/invitations_spec.rb:188 # Invitations GET /api/v1/invitations/:id/redeem redeems an invitation for an existing user
+rspec ./spec/requests/api/v1/junctures_spec.rb:18 # Api::V1::Junctures GET /index returns http success
+rspec ./spec/requests/api/v1/junctures_spec.rb:25 # Api::V1::Junctures GET /index doesn't return inactive junctures by default
+rspec ./spec/requests/api/v1/junctures_spec.rb:34 # Api::V1::Junctures GET /index doesn't return inactive junctures for a player
+rspec ./spec/requests/api/v1/junctures_spec.rb:43 # Api::V1::Junctures GET /index returns inactive junctures for a gamemaster
+rspec ./spec/requests/api/v1/junctures_spec.rb:54 # Api::V1::Junctures GET /index returns all junctures that are not the current character's juncture
+rspec ./spec/requests/api/v1/junctures_spec.rb:64 # Api::V1::Junctures GET /index returns junctures matching a search string
+rspec ./spec/requests/api/v1/junctures_spec.rb:71 # Api::V1::Junctures GET /index returns junctures by faction_id
+rspec ./spec/requests/api/v1/parties_spec.rb:79 # Api::V1::Parties GET /index returns factions for parties
+rspec ./spec/requests/api/v1/parties_spec.rb:160 # Api::V1::Parties PUT /update updates the secret flag
+rspec ./spec/requests/api/v1/schticks_spec.rb:15 # Schticks GET /api/v1/schticks gets all the schticks
+rspec ./spec/requests/api/v1/schticks_spec.rb:23 # Schticks GET /api/v1/schticks gets schticks for a Foe, excluding schticks they already know
+rspec ./spec/requests/api/v1/schticks_spec.rb:36 # Schticks GET /api/v1/schtick/:id gets a schtick
+rspec ./spec/requests/api/v1/schticks_spec.rb:46 # Schticks POST /api/v1/schticks creates a schtick
+rspec ./spec/requests/api/v1/schticks_spec.rb:60 # Schticks PATCH /api/v1/schticks updates a schtick
+rspec ./spec/requests/api/v1/schticks_spec.rb:74 # Schticks DELETE /api/v1/schticks/:id deletes a schtick
+rspec ./spec/requests/api/v1/sites_spec.rb:130 # Api::V1::Sites PUT /update updates secret flag
+rspec ./spec/requests/api/v2/campaigns/campaigns_spec.rb:522 # Api::V2::Campaigns GET /index when user is admin retrieves all campaigns
+rspec ./spec/requests/api/v2/characters/characters_index_spec.rb:388 # Api::V2::Characters Invalid parameters falls back to default order when order parameter is invalid
+rspec ./spec/requests/api/v2/characters/characters_spec.rb:431 # Api::V2::Characters POST /pdf uploads a pdf
+rspec ./spec/requests/api/v2/characters/characters_spec.rb:449 # Api::V2::Characters POST /pdf returns an error for an invalid pdf
+rspec ./spec/requests/api/v2/users/users_profile_spec.rb:22 # Api::V2::Users Profile GET /api/v2/users/profile returns campaign counts
+rspec ./spec/requests/api/v2/users/users_profile_spec.rb:68 # Api::V2::Users Profile PATCH /api/v2/users/profile updates user email separately
+rspec ./spec/requests/api/v2/weapons/weapons_index_spec.rb:286 # Api::V2::Weapons Pagination and order parameters respects per_page parameter
+rspec ./spec/requests/api/v2/weapons/weapons_index_spec.rb:295 # Api::V2::Weapons Pagination and order parameters respects page parameter
+rspec ./spec/requests/api/v2/weapons/weapons_index_spec.rb:303 # Api::V2::Weapons Pagination and order parameters sorts by name with order parameter
+rspec ./spec/requests/api/v2/weapons/weapons_index_spec.rb:310 # Api::V2::Weapons Pagination and order parameters sorts by name with desc order
+rspec ./spec/requests/api/v2/weapons/weapons_spec.rb:278 # Api::V2::Weapons POST /batch returns error when ids parameter is missing
+rspec ./spec/services/character_poster_spec.rb:80 # CharacterPoster with schticks and weapons shows character
+

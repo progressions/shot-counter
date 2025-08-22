@@ -1,0 +1,863 @@
+**............FF...F............FFF.....F.............F.....................FF.....*....................*F.............F.................................................FF.F...FF...F.FF...F.F..............FFF........................................................................F.....F.FFF.F....FFFFFFF.........................F.......F.FFFFFF.............F..............................*.......................................................................F..............................................................................F..............................FF...................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................................F..F...........................................................................................................*****.................................................FFFF...................F..................................F...................................
+
+Pending: (Failures listed here are expected and do not affect your suite's status)
+
+  1) CampaignChannel add some examples to (or delete) /Users/isaacpriestley/tech/isaacpriestley/chi-war/shot-server/spec/channels/campaign_channel_spec.rb
+     # Not yet implemented
+     # ./spec/channels/campaign_channel_spec.rb:4
+
+  2) FightChannel add some examples to (or delete) /Users/isaacpriestley/tech/isaacpriestley/chi-war/shot-server/spec/channels/fight_channel_spec.rb
+     # Not yet implemented
+     # ./spec/channels/fight_channel_spec.rb:4
+
+  3) FightEvent add some examples to (or delete) /Users/isaacpriestley/tech/isaacpriestley/chi-war/shot-server/spec/models/fight_event_spec.rb
+     # Not yet implemented
+     # ./spec/models/fight_event_spec.rb:4
+
+  4) Juncture add some examples to (or delete) /Users/isaacpriestley/tech/isaacpriestley/chi-war/shot-server/spec/models/juncture_spec.rb
+     # Not yet implemented
+     # ./spec/models/juncture_spec.rb:4
+
+  5) Api::V2::AiImages GET /index add some examples (or delete) /Users/isaacpriestley/tech/isaacpriestley/chi-war/shot-server/spec/requests/api/v2/ai_images_spec.rb
+     # Not yet implemented
+     # ./spec/requests/api/v2/ai_images_spec.rb:5
+
+  6) Api::V2::Vehicles POST /duplicate duplicates a vehicle
+     # Temporarily skipped with xdescribe
+     # ./spec/requests/api/v2/vehicles/vehicles_spec.rb:157
+
+  7) Api::V2::Vehicles POST /duplicate duplicates a vehicle again
+     # Temporarily skipped with xdescribe
+     # ./spec/requests/api/v2/vehicles/vehicles_spec.rb:170
+
+  8) Api::V2::Vehicles POST /duplicate duplicates a vehicle with an image
+     # Temporarily skipped with xdescribe
+     # ./spec/requests/api/v2/vehicles/vehicles_spec.rb:184
+
+  9) Api::V2::Vehicles POST /pdf uploads a pdf
+     # Temporarily skipped with xdescribe
+     # ./spec/requests/api/v2/vehicles/vehicles_spec.rb:197
+
+  10) Api::V2::Vehicles POST /pdf returns an error for an invalid pdf
+     # Temporarily skipped with xdescribe
+     # ./spec/requests/api/v2/vehicles/vehicles_spec.rb:215
+
+Failures:
+
+  1) Campaign associations has many players
+     Failure/Error: action_movie.players << user
+
+     NoMethodError:
+       undefined method `players' for #<Campaign id: "398830d2-2926-46e8-959f-0b2d6d4491c5", user_id: "2e0c266f-257c-4f50-8202-0134d6365818", description: nil, created_at: "2025-08-22 16:04:53.155250000 +0000", updated_at: "2025-08-22 16:04:53.155250000 +0000", name: "Action Movie", active: true>
+     # ./spec/models/campaign_spec.rb:25:in `block (3 levels) in <main>'
+     # ./spec/rails_helper.rb:48:in `block (3 levels) in <top (required)>'
+     # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/strategy.rb:30:in `cleaning'
+     # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:34:in `block (2 levels) in cleaning'
+     # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:35:in `cleaning'
+     # ./spec/rails_helper.rb:47:in `block (2 levels) in <top (required)>'
+
+  2) Campaign associations has many campaign_memberships
+     Failure/Error: action_movie.players << user
+
+     NoMethodError:
+       undefined method `players' for #<Campaign id: "d0e14cb3-5f1c-4229-8a2a-d77c8150f441", user_id: "26864691-e60c-46f3-bf70-f2666f792594", description: nil, created_at: "2025-08-22 16:04:53.162509000 +0000", updated_at: "2025-08-22 16:04:53.162509000 +0000", name: "Action Movie", active: true>
+     # ./spec/models/campaign_spec.rb:30:in `block (3 levels) in <main>'
+     # ./spec/rails_helper.rb:48:in `block (3 levels) in <top (required)>'
+     # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/strategy.rb:30:in `cleaning'
+     # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:34:in `block (2 levels) in cleaning'
+     # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:35:in `cleaning'
+     # ./spec/rails_helper.rb:47:in `block (2 levels) in <top (required)>'
+
+  3) Campaign associations has many schticks
+     Failure/Error: schtick = Schtick.create!(name: "Schtick", campaign: action_movie)
+
+     ActiveRecord::RecordInvalid:
+       Validation failed: Category is not included in the list
+     # ./spec/models/campaign_spec.rb:50:in `block (3 levels) in <main>'
+     # ./spec/rails_helper.rb:48:in `block (3 levels) in <top (required)>'
+     # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/strategy.rb:30:in `cleaning'
+     # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:34:in `block (2 levels) in cleaning'
+     # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:35:in `cleaning'
+     # ./spec/rails_helper.rb:47:in `block (2 levels) in <top (required)>'
+
+  4) CharacterSchtick validations validates uniqueness of character_id and schtick_id
+     Failure/Error: let(:schtick) { action_movie.schticks.create!(name: "Schtick") }
+
+     ActiveRecord::RecordInvalid:
+       Validation failed: Category is not included in the list
+     # ./spec/models/character_schtick_spec.rb:7:in `block (2 levels) in <main>'
+     # ./spec/models/character_schtick_spec.rb:11:in `block (3 levels) in <main>'
+     # ./spec/rails_helper.rb:48:in `block (3 levels) in <top (required)>'
+     # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/strategy.rb:30:in `cleaning'
+     # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:34:in `block (2 levels) in cleaning'
+     # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:35:in `cleaning'
+     # ./spec/rails_helper.rb:47:in `block (2 levels) in <top (required)>'
+
+  5) CharacterSchtick associations belongs to a character
+     Failure/Error: let(:schtick) { action_movie.schticks.create!(name: "Schtick") }
+
+     ActiveRecord::RecordInvalid:
+       Validation failed: Category is not included in the list
+     # ./spec/models/character_schtick_spec.rb:7:in `block (2 levels) in <main>'
+     # ./spec/models/character_schtick_spec.rb:18:in `block (3 levels) in <main>'
+     # ./spec/rails_helper.rb:48:in `block (3 levels) in <top (required)>'
+     # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/strategy.rb:30:in `cleaning'
+     # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:34:in `block (2 levels) in cleaning'
+     # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:35:in `cleaning'
+     # ./spec/rails_helper.rb:47:in `block (2 levels) in <top (required)>'
+
+  6) CharacterSchtick associations belongs to a schtick
+     Failure/Error: let(:schtick) { action_movie.schticks.create!(name: "Schtick") }
+
+     ActiveRecord::RecordInvalid:
+       Validation failed: Category is not included in the list
+     # ./spec/models/character_schtick_spec.rb:7:in `block (2 levels) in <main>'
+     # ./spec/models/character_schtick_spec.rb:22:in `block (3 levels) in <main>'
+     # ./spec/rails_helper.rb:48:in `block (3 levels) in <top (required)>'
+     # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/strategy.rb:30:in `cleaning'
+     # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:34:in `block (2 levels) in cleaning'
+     # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:35:in `cleaning'
+     # ./spec/rails_helper.rb:47:in `block (2 levels) in <top (required)>'
+
+  7) Character associations has many schticks
+     Failure/Error: schtick = brick.schticks.create!(name: "Schtick 1", campaign: action_movie)
+
+     ActiveRecord::RecordInvalid:
+       Validation failed: Category is not included in the list
+     # ./spec/models/character_spec.rb:35:in `block (3 levels) in <main>'
+     # ./spec/rails_helper.rb:48:in `block (3 levels) in <top (required)>'
+     # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/strategy.rb:30:in `cleaning'
+     # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:34:in `block (2 levels) in cleaning'
+     # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:35:in `cleaning'
+     # ./spec/rails_helper.rb:47:in `block (2 levels) in <top (required)>'
+
+  8) Character validations requires schticks to have a name
+     Failure/Error: brick.schticks.create!(name: "Schtick 1", campaign: action_movie)
+
+     ActiveRecord::RecordInvalid:
+       Validation failed: Category is not included in the list
+     # ./spec/models/character_spec.rb:108:in `block (3 levels) in <main>'
+     # ./spec/rails_helper.rb:48:in `block (3 levels) in <top (required)>'
+     # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/strategy.rb:30:in `cleaning'
+     # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:34:in `block (2 levels) in cleaning'
+     # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:35:in `cleaning'
+     # ./spec/rails_helper.rb:47:in `block (2 levels) in <top (required)>'
+
+  9) Effect associations belongs to a fight
+     Failure/Error: let(:fight) { Fight.create!(campaign: action_movie) }
+
+     ActiveRecord::RecordInvalid:
+       Validation failed: Name can't be blank
+     # ./spec/models/effect_spec.rb:7:in `block (2 levels) in <main>'
+     # ./spec/models/effect_spec.rb:25:in `block (3 levels) in <main>'
+     # ./spec/rails_helper.rb:48:in `block (3 levels) in <top (required)>'
+     # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/strategy.rb:30:in `cleaning'
+     # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:34:in `block (2 levels) in cleaning'
+     # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:35:in `cleaning'
+     # ./spec/rails_helper.rb:47:in `block (2 levels) in <top (required)>'
+
+  10) Effect associations belongs to a user
+      Failure/Error: let(:fight) { Fight.create!(campaign: action_movie) }
+
+      ActiveRecord::RecordInvalid:
+        Validation failed: Name can't be blank
+      # ./spec/models/effect_spec.rb:7:in `block (2 levels) in <main>'
+      # ./spec/models/effect_spec.rb:30:in `block (3 levels) in <main>'
+      # ./spec/rails_helper.rb:48:in `block (3 levels) in <top (required)>'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/strategy.rb:30:in `cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:34:in `block (2 levels) in cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:35:in `cleaning'
+      # ./spec/rails_helper.rb:47:in `block (2 levels) in <top (required)>'
+
+  11) Membership validations validates uniqueness of character_id and party_id
+      Failure/Error: expect(Membership.create(character: brick, party: party)).to_not be_valid
+        expected #<Membership id: "cd3cd29e-0d32-41a7-be72-a76a77385cca", party_id: "f3746749-8ff3-4484-a7ec-f71fc0dc2db2", character_id: "387090c9-0a19-4b40-9060-d0a33dd58485", created_at: "2025-08-22 16:04:54.826370000 +0000", updated_at: "2025-08-22 16:04:54.826370000 +0000", vehicle_id: nil> not to be valid
+      # ./spec/models/membership_spec.rb:12:in `block (3 levels) in <main>'
+      # ./spec/rails_helper.rb:48:in `block (3 levels) in <top (required)>'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/strategy.rb:30:in `cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:34:in `block (2 levels) in cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:35:in `cleaning'
+      # ./spec/rails_helper.rb:47:in `block (2 levels) in <top (required)>'
+
+  12) Schtick.for_archetype returns schticks for an archetype
+      Failure/Error: let!(:schtick) { Schtick.create!(name: "Schtick", campaign: action_movie, archetypes: ["Exorcist Monk", "Everyday Hero"]) }
+
+      ActiveRecord::RecordInvalid:
+        Validation failed: Category is not included in the list
+      # ./spec/models/schtick_spec.rb:56:in `block (3 levels) in <main>'
+      # ./spec/rails_helper.rb:48:in `block (3 levels) in <top (required)>'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/strategy.rb:30:in `cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:34:in `block (2 levels) in cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:35:in `cleaning'
+      # ./spec/rails_helper.rb:47:in `block (2 levels) in <top (required)>'
+
+  13) Api::V1::CampaignMemberships DELETE /campaign_memberships/:id lets me remove a player's membership from a campaign I control
+      Failure/Error: @action_movie.players << @alice
+
+      NoMethodError:
+        undefined method `players' for #<Campaign id: "f4502486-0a2a-45a9-953a-266a1daaa68d", user_id: "958d59c5-f055-4eea-9ae5-a6d3b69fffb9", description: nil, created_at: "2025-08-22 16:04:56.333983000 +0000", updated_at: "2025-08-22 16:04:56.333983000 +0000", name: "Action Movie", active: true>
+      # ./spec/requests/api/v1/campaign_memberships_spec.rb:30:in `block (3 levels) in <main>'
+      # ./spec/rails_helper.rb:48:in `block (3 levels) in <top (required)>'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/strategy.rb:30:in `cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:34:in `block (2 levels) in cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:35:in `cleaning'
+      # ./spec/rails_helper.rb:47:in `block (2 levels) in <top (required)>'
+
+  14) Api::V1::CampaignMemberships DELETE /campaign_memberships/:id lets me remove my own membership from a campaign I'm a player in
+      Failure/Error: @action_movie.players << @alice
+
+      NoMethodError:
+        undefined method `players' for #<Campaign id: "0db0d0fc-1738-48f1-9972-8d6f30bb4cc8", user_id: "7dd9ac8e-c3c1-4eff-9935-c8b1d7fb83a0", description: nil, created_at: "2025-08-22 16:04:56.350902000 +0000", updated_at: "2025-08-22 16:04:56.350902000 +0000", name: "Action Movie", active: true>
+      # ./spec/requests/api/v1/campaign_memberships_spec.rb:38:in `block (3 levels) in <main>'
+      # ./spec/rails_helper.rb:48:in `block (3 levels) in <top (required)>'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/strategy.rb:30:in `cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:34:in `block (2 levels) in cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:35:in `cleaning'
+      # ./spec/rails_helper.rb:47:in `block (2 levels) in <top (required)>'
+
+  15) Api::V1::Campaigns GET /campaigns returns all my campaigns, both ones I run and ones I play in
+      Failure/Error: @scifi.players << @gamemaster
+
+      NoMethodError:
+        undefined method `players' for #<Campaign id: "1bc64f8b-0855-4b14-9874-d14c607e1461", user_id: "addfcbce-c674-415e-9e1a-08b347a63506", description: nil, created_at: "2025-08-22 16:04:56.455500000 +0000", updated_at: "2025-08-22 16:04:56.455500000 +0000", name: "Scifi", active: true>
+      # ./spec/requests/api/v1/campaigns_spec.rb:35:in `block (3 levels) in <main>'
+      # ./spec/rails_helper.rb:48:in `block (3 levels) in <top (required)>'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/strategy.rb:30:in `cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:34:in `block (2 levels) in cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:35:in `cleaning'
+      # ./spec/rails_helper.rb:47:in `block (2 levels) in <top (required)>'
+
+  16) Api::V1::Campaigns GET /campaigns/:id fetches campaign you created
+      Failure/Error: @campaign.players << @alice
+
+      NoMethodError:
+        undefined method `players' for #<Campaign id: "04b80b4d-00ab-4507-8429-afe052793f5c", user_id: "a92ab941-5ad8-4b56-aadc-a5222af681e0", description: nil, created_at: "2025-08-22 16:04:56.616593000 +0000", updated_at: "2025-08-22 16:04:56.616593000 +0000", name: "Action Movie", active: true>
+      # ./spec/requests/api/v1/campaigns_spec.rb:90:in `block (3 levels) in <main>'
+      # ./spec/rails_helper.rb:48:in `block (3 levels) in <top (required)>'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/strategy.rb:30:in `cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:34:in `block (2 levels) in cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:35:in `cleaning'
+      # ./spec/rails_helper.rb:47:in `block (2 levels) in <top (required)>'
+
+  17) Api::V1::Campaigns GET /campaigns/:id fetches campaign you play in
+      Failure/Error: @campaign.players << @alice
+
+      NoMethodError:
+        undefined method `players' for #<Campaign id: "dc2faf24-7e61-4fd9-b146-96a664f5f821", user_id: "eaa49d91-5faa-4335-bc35-2d049537b564", description: nil, created_at: "2025-08-22 16:04:56.652330000 +0000", updated_at: "2025-08-22 16:04:56.652330000 +0000", name: "Action Movie", active: true>
+      # ./spec/requests/api/v1/campaigns_spec.rb:104:in `block (3 levels) in <main>'
+      # ./spec/rails_helper.rb:48:in `block (3 levels) in <top (required)>'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/strategy.rb:30:in `cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:34:in `block (2 levels) in cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:35:in `cleaning'
+      # ./spec/rails_helper.rb:47:in `block (2 levels) in <top (required)>'
+
+  18) Api::V1::Campaigns PATCH /campaigns:id can't update a campaign you're just a player in
+      Failure/Error: @campaign.players << @alice
+
+      NoMethodError:
+        undefined method `players' for #<Campaign id: "603c0ee9-f370-4c62-88e3-f0bf793c8118", user_id: "19e07cb5-5c77-436a-9e03-bc58e85a543b", description: nil, created_at: "2025-08-22 16:04:56.838338000 +0000", updated_at: "2025-08-22 16:04:56.838338000 +0000", name: "Action Movie", active: true>
+      # ./spec/requests/api/v1/campaigns_spec.rb:148:in `block (3 levels) in <main>'
+      # ./spec/rails_helper.rb:48:in `block (3 levels) in <top (required)>'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/strategy.rb:30:in `cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:34:in `block (2 levels) in cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:35:in `cleaning'
+      # ./spec/rails_helper.rb:47:in `block (2 levels) in <top (required)>'
+
+  19) Api::V1::Campaigns DELETE /campaigns/:id can't destroy a campaign you're just a player in
+      Failure/Error: @campaign.players << @alice
+
+      NoMethodError:
+        undefined method `players' for #<Campaign id: "fad3aea4-5479-4f72-a997-545307890e50", user_id: "6b813bee-de9b-410c-bd5b-829c3cdb41ab", description: nil, created_at: "2025-08-22 16:04:56.918381000 +0000", updated_at: "2025-08-22 16:04:56.918381000 +0000", name: "Action Movie", active: true>
+      # ./spec/requests/api/v1/campaigns_spec.rb:173:in `block (3 levels) in <main>'
+      # ./spec/rails_helper.rb:48:in `block (3 levels) in <top (required)>'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/strategy.rb:30:in `cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:34:in `block (2 levels) in cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:35:in `cleaning'
+      # ./spec/rails_helper.rb:47:in `block (2 levels) in <top (required)>'
+
+  20) Api::V1::Campaigns DELETE /campaigns/:id even for a gamemaster, can't destroy a campaign you're a player in
+      Failure/Error: @other_campaign.players << @gm_alice
+
+      NoMethodError:
+        undefined method `players' for #<Campaign id: "19d7be8f-e1e5-42b6-9e12-350b23b68edd", user_id: "c4c61030-0c80-49a9-b6e6-0130111e03d2", description: nil, created_at: "2025-08-22 16:04:56.951535000 +0000", updated_at: "2025-08-22 16:04:56.951535000 +0000", name: "Action Moviez", active: true>
+      # ./spec/requests/api/v1/campaigns_spec.rb:186:in `block (3 levels) in <main>'
+      # ./spec/rails_helper.rb:48:in `block (3 levels) in <top (required)>'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/strategy.rb:30:in `cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:34:in `block (2 levels) in cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:35:in `cleaning'
+      # ./spec/rails_helper.rb:47:in `block (2 levels) in <top (required)>'
+
+  21) Api::V1::Campaigns POST /set can set campaign you're a player in
+      Failure/Error: @campaign.players << @alice
+
+      NoMethodError:
+        undefined method `players' for #<Campaign id: "42f425aa-4bbc-469b-89bf-ef402c1f11ea", user_id: "1e06a223-3ffe-4c68-99a4-74aae57c7c13", description: nil, created_at: "2025-08-22 16:04:57.133093000 +0000", updated_at: "2025-08-22 16:04:57.133093000 +0000", name: "Adventure", active: true>
+      # ./spec/requests/api/v1/campaigns_spec.rb:225:in `block (3 levels) in <main>'
+      # ./spec/rails_helper.rb:48:in `block (3 levels) in <top (required)>'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/strategy.rb:30:in `cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:34:in `block (2 levels) in cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:35:in `cleaning'
+      # ./spec/rails_helper.rb:47:in `block (2 levels) in <top (required)>'
+
+  22) Api::V1::Carries POST /api/v1/characters/:character_id/weapons adds a weapon to a character
+      Failure/Error: expect(body["weapons"].map { |s| s["name"] }).to eq(["Beretta M9"])
+
+      NoMethodError:
+        undefined method `map' for nil:NilClass
+      # ./spec/requests/api/v1/carries_spec.rb:33:in `block (3 levels) in <main>'
+      # ./spec/rails_helper.rb:48:in `block (3 levels) in <top (required)>'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/strategy.rb:30:in `cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:34:in `block (2 levels) in cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:35:in `cleaning'
+      # ./spec/rails_helper.rb:47:in `block (2 levels) in <top (required)>'
+
+  23) Api::V1::CharacterSchticks GET /api/v1/characters/:all_character_id/schticks gets all the schticks for a character
+      Failure/Error: @blam = @campaign.schticks.create!(name: "Blam Blam Epigram", description: "Say a pithy phrase before firing a shot.")
+
+      ActiveRecord::RecordInvalid:
+        Validation failed: Category is not included in the list
+      # ./spec/requests/api/v1/character_schticks_spec.rb:16:in `block (3 levels) in <main>'
+      # ./spec/rails_helper.rb:48:in `block (3 levels) in <top (required)>'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/strategy.rb:30:in `cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:34:in `block (2 levels) in cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:35:in `cleaning'
+      # ./spec/rails_helper.rb:47:in `block (2 levels) in <top (required)>'
+
+  24) Api::V1::CharacterSchticks POST /api/v1/characters/:all_character_id/schticks adds a schtick to a character
+      Failure/Error: @blam = @campaign.schticks.create!(name: "Blam Blam Epigram", description: "Say a pithy phrase before firing a shot.")
+
+      ActiveRecord::RecordInvalid:
+        Validation failed: Category is not included in the list
+      # ./spec/requests/api/v1/character_schticks_spec.rb:27:in `block (3 levels) in <main>'
+      # ./spec/rails_helper.rb:48:in `block (3 levels) in <top (required)>'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/strategy.rb:30:in `cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:34:in `block (2 levels) in cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:35:in `cleaning'
+      # ./spec/rails_helper.rb:47:in `block (2 levels) in <top (required)>'
+
+  25) Api::V1::CharacterSchticks DELETE /api/v1/characters/:all_character_id/schticks/:id removes a schtick from a character
+      Failure/Error: @blam = @campaign.schticks.create!(name: "Blam Blam Epigram", description: "Say a pithy phrase before firing a shot.")
+
+      ActiveRecord::RecordInvalid:
+        Validation failed: Category is not included in the list
+      # ./spec/requests/api/v1/character_schticks_spec.rb:40:in `block (3 levels) in <main>'
+      # ./spec/rails_helper.rb:48:in `block (3 levels) in <top (required)>'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/strategy.rb:30:in `cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:34:in `block (2 levels) in cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:35:in `cleaning'
+      # ./spec/rails_helper.rb:47:in `block (2 levels) in <top (required)>'
+
+  26) Invitations GET /api/v1/invitations/:id updates pending user
+      Failure/Error: expect(body["pending_user"]).to eq(@ginny.as_json)
+
+        expected: {"active"=>true, "admin"=>nil, "avatar_url"=>nil, "created_at"=>"2025-08-22T16:05:00.689Z", "current_...last_name"=>"", "name"=>nil, "pending_invitation_id"=>nil, "updated_at"=>"2025-08-22T16:05:00.689Z"}
+             got: {"active"=>true, "admin"=>nil, "created_at"=>"2025-08-22T16:05:00.689Z", "email"=>"ginny@email.com", ...d0d157de", "image_url"=>nil, "last_name"=>"", "name"=>nil, "updated_at"=>"2025-08-22T16:05:00.689Z"}
+
+        (compared using ==)
+
+        Diff:
+
+
+
+
+        @@ -1,14 +1,12 @@
+         "active" => true,
+         "admin" => nil,
+        -"avatar_url" => nil,
+         "created_at" => "2025-08-22T16:05:00.689Z",
+        -"current_campaign_id" => nil,
+         "email" => "ginny@email.com",
+        +"entity_class" => "User",
+         "first_name" => "",
+         "gamemaster" => nil,
+         "id" => "dac16c46-11f1-43b0-9824-f3f6d0d157de",
+        -"jti" => "dd5f2059-2ae0-41e2-92df-26b08f978949",
+        +"image_url" => nil,
+         "last_name" => "",
+         "name" => nil,
+        -"pending_invitation_id" => nil,
+         "updated_at" => "2025-08-22T16:05:00.689Z",
+      # ./spec/requests/api/v1/invitations_spec.rb:36:in `block (3 levels) in <main>'
+      # ./spec/rails_helper.rb:48:in `block (3 levels) in <top (required)>'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/strategy.rb:30:in `cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:34:in `block (2 levels) in cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:35:in `cleaning'
+      # ./spec/rails_helper.rb:47:in `block (2 levels) in <top (required)>'
+
+  27) Invitations POST /api/v1/invitations can't create a new invitation for an existing member
+      Failure/Error: @campaign.players << @ginny
+
+      NoMethodError:
+        undefined method `players' for #<Campaign id: "b4007b03-8b26-4719-b617-965d2e1b288e", user_id: "ce697b46-0648-4a8e-a32d-9d93c6bbba9d", description: nil, created_at: "2025-08-22 16:05:00.839050000 +0000", updated_at: "2025-08-22 16:05:00.839050000 +0000", name: "Adventure", active: true>
+      # ./spec/requests/api/v1/invitations_spec.rb:109:in `block (3 levels) in <main>'
+      # ./spec/rails_helper.rb:48:in `block (3 levels) in <top (required)>'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/strategy.rb:30:in `cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:34:in `block (2 levels) in cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:35:in `cleaning'
+      # ./spec/rails_helper.rb:47:in `block (2 levels) in <top (required)>'
+
+  28) Invitations GET /api/v1/invitations/:id/redeem redeems an invitation and creates a new user
+      Failure/Error: expect(response).to have_http_status(200)
+        expected the response to have status code 200 but it was 500
+      # ./spec/requests/api/v1/invitations_spec.rb:147:in `block (3 levels) in <main>'
+      # ./spec/rails_helper.rb:48:in `block (3 levels) in <top (required)>'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/strategy.rb:30:in `cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:34:in `block (2 levels) in cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:35:in `cleaning'
+      # ./spec/rails_helper.rb:47:in `block (2 levels) in <top (required)>'
+
+  29) Invitations GET /api/v1/invitations/:id/redeem redeems for an existing user and reduces the count
+      Failure/Error: expect(response).to have_http_status(200)
+        expected the response to have status code 200 but it was 500
+      # ./spec/requests/api/v1/invitations_spec.rb:161:in `block (3 levels) in <main>'
+      # ./spec/rails_helper.rb:48:in `block (3 levels) in <top (required)>'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/strategy.rb:30:in `cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:34:in `block (2 levels) in cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:35:in `cleaning'
+      # ./spec/rails_helper.rb:47:in `block (2 levels) in <top (required)>'
+
+  30) Invitations GET /api/v1/invitations/:id/redeem redeems, creates a new user, and reduces the count
+      Failure/Error: expect(response).to have_http_status(200)
+        expected the response to have status code 200 but it was 500
+      # ./spec/requests/api/v1/invitations_spec.rb:175:in `block (3 levels) in <main>'
+      # ./spec/rails_helper.rb:48:in `block (3 levels) in <top (required)>'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/strategy.rb:30:in `cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:34:in `block (2 levels) in cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:35:in `cleaning'
+      # ./spec/rails_helper.rb:47:in `block (2 levels) in <top (required)>'
+
+  31) Invitations GET /api/v1/invitations/:id/redeem redeems an invitation for an existing user
+      Failure/Error: expect(response).to have_http_status(200)
+        expected the response to have status code 200 but it was 500
+      # ./spec/requests/api/v1/invitations_spec.rb:196:in `block (3 levels) in <main>'
+      # ./spec/rails_helper.rb:48:in `block (3 levels) in <top (required)>'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/strategy.rb:30:in `cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:34:in `block (2 levels) in cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:35:in `cleaning'
+      # ./spec/rails_helper.rb:47:in `block (2 levels) in <top (required)>'
+
+  32) Api::V1::Junctures GET /index returns http success
+      Failure/Error: expect(body["junctures"].map { |s| s["name"] }).to eq(["Baseball Field", "The Juncture"])
+
+        expected: ["Baseball Field", "The Juncture"]
+             got: []
+
+        (compared using ==)
+      # ./spec/requests/api/v1/junctures_spec.rb:22:in `block (3 levels) in <main>'
+      # ./spec/rails_helper.rb:48:in `block (3 levels) in <top (required)>'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/strategy.rb:30:in `cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:34:in `block (2 levels) in cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:35:in `cleaning'
+      # ./spec/rails_helper.rb:47:in `block (2 levels) in <top (required)>'
+
+  33) Api::V1::Junctures GET /index doesn't return inactive junctures by default
+      Failure/Error: expect(body["junctures"].map { |s| s["name"] }).to eq(["Baseball Field"])
+
+        expected: ["Baseball Field"]
+             got: []
+
+        (compared using ==)
+      # ./spec/requests/api/v1/junctures_spec.rb:31:in `block (3 levels) in <main>'
+      # ./spec/rails_helper.rb:48:in `block (3 levels) in <top (required)>'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/strategy.rb:30:in `cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:34:in `block (2 levels) in cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:35:in `cleaning'
+      # ./spec/rails_helper.rb:47:in `block (2 levels) in <top (required)>'
+
+  34) Api::V1::Junctures GET /index doesn't return inactive junctures for a player
+      Failure/Error: expect(body["junctures"].map { |s| s["name"] }).to eq(["Baseball Field"])
+
+        expected: ["Baseball Field"]
+             got: []
+
+        (compared using ==)
+      # ./spec/requests/api/v1/junctures_spec.rb:40:in `block (3 levels) in <main>'
+      # ./spec/rails_helper.rb:48:in `block (3 levels) in <top (required)>'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/strategy.rb:30:in `cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:34:in `block (2 levels) in cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:35:in `cleaning'
+      # ./spec/rails_helper.rb:47:in `block (2 levels) in <top (required)>'
+
+  35) Api::V1::Junctures GET /index returns inactive junctures for a gamemaster
+      Failure/Error: expect(body["junctures"].map { |s| s["name"] }).to eq(["Baseball Field", "The Juncture"])
+
+        expected: ["Baseball Field", "The Juncture"]
+             got: []
+
+        (compared using ==)
+      # ./spec/requests/api/v1/junctures_spec.rb:51:in `block (3 levels) in <main>'
+      # ./spec/rails_helper.rb:48:in `block (3 levels) in <top (required)>'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/strategy.rb:30:in `cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:34:in `block (2 levels) in cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:35:in `cleaning'
+      # ./spec/rails_helper.rb:47:in `block (2 levels) in <top (required)>'
+
+  36) Api::V1::Junctures GET /index returns all junctures that are not the current character's juncture
+      Failure/Error: expect(body["junctures"].length).to eq(1)
+
+        expected: 1
+             got: 0
+
+        (compared using ==)
+      # ./spec/requests/api/v1/junctures_spec.rb:61:in `block (3 levels) in <main>'
+      # ./spec/rails_helper.rb:48:in `block (3 levels) in <top (required)>'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/strategy.rb:30:in `cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:34:in `block (2 levels) in cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:35:in `cleaning'
+      # ./spec/rails_helper.rb:47:in `block (2 levels) in <top (required)>'
+
+  37) Api::V1::Junctures GET /index returns junctures matching a search string
+      Failure/Error: expect(body["junctures"][0]["name"]).to eq("Baseball Field")
+
+      NoMethodError:
+        undefined method `[]' for nil:NilClass
+      # ./spec/requests/api/v1/junctures_spec.rb:68:in `block (3 levels) in <main>'
+      # ./spec/rails_helper.rb:48:in `block (3 levels) in <top (required)>'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/strategy.rb:30:in `cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:34:in `block (2 levels) in cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:35:in `cleaning'
+      # ./spec/rails_helper.rb:47:in `block (2 levels) in <top (required)>'
+
+  38) Api::V1::Junctures GET /index returns junctures by faction_id
+      Failure/Error: expect(body["junctures"].map { |s| s["name"] }).to eq(["The Juncture"])
+
+        expected: ["The Juncture"]
+             got: []
+
+        (compared using ==)
+      # ./spec/requests/api/v1/junctures_spec.rb:76:in `block (3 levels) in <main>'
+      # ./spec/rails_helper.rb:48:in `block (3 levels) in <top (required)>'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/strategy.rb:30:in `cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:34:in `block (2 levels) in cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:35:in `cleaning'
+      # ./spec/rails_helper.rb:47:in `block (2 levels) in <top (required)>'
+
+  39) Api::V1::Parties GET /index returns factions for parties
+      Failure/Error: expect(body["factions"].map { |f| f["name"] }).to eq(["Ascended", "The Dragons"])
+
+        expected: ["Ascended", "The Dragons"]
+             got: ["The Dragons", "Ascended"]
+
+        (compared using ==)
+      # ./spec/requests/api/v1/parties_spec.rb:87:in `block (3 levels) in <main>'
+      # ./spec/rails_helper.rb:48:in `block (3 levels) in <top (required)>'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/strategy.rb:30:in `cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:34:in `block (2 levels) in cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:35:in `cleaning'
+      # ./spec/rails_helper.rb:47:in `block (2 levels) in <top (required)>'
+
+  40) Api::V1::Parties PUT /update updates the secret flag
+      Failure/Error: expect(body["secret"]).to eq(true)
+
+        expected: true
+             got: nil
+
+        (compared using ==)
+      # ./spec/requests/api/v1/parties_spec.rb:164:in `block (3 levels) in <main>'
+      # ./spec/rails_helper.rb:48:in `block (3 levels) in <top (required)>'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/strategy.rb:30:in `cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:34:in `block (2 levels) in cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:35:in `cleaning'
+      # ./spec/rails_helper.rb:47:in `block (2 levels) in <top (required)>'
+
+  41) Schticks GET /api/v1/schticks gets all the schticks
+      Failure/Error: @blam = @campaign.schticks.create!(name: "Blam Blam Epigram", description: "Say a pithy phrase before firing a shot.")
+
+      ActiveRecord::RecordInvalid:
+        Validation failed: Category is not included in the list
+      # ./spec/requests/api/v1/schticks_spec.rb:16:in `block (3 levels) in <main>'
+      # ./spec/rails_helper.rb:48:in `block (3 levels) in <top (required)>'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/strategy.rb:30:in `cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:34:in `block (2 levels) in cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:35:in `cleaning'
+      # ./spec/rails_helper.rb:47:in `block (2 levels) in <top (required)>'
+
+  42) Schticks GET /api/v1/schticks gets schticks for a Foe, excluding schticks they already know
+      Failure/Error: @blam = @campaign.schticks.create!(name: "Blam Blam Epigram", description: "Say a pithy phrase before firing a shot.")
+
+      ActiveRecord::RecordInvalid:
+        Validation failed: Category is not included in the list
+      # ./spec/requests/api/v1/schticks_spec.rb:24:in `block (3 levels) in <main>'
+      # ./spec/rails_helper.rb:48:in `block (3 levels) in <top (required)>'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/strategy.rb:30:in `cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:34:in `block (2 levels) in cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:35:in `cleaning'
+      # ./spec/rails_helper.rb:47:in `block (2 levels) in <top (required)>'
+
+  43) Schticks GET /api/v1/schtick/:id gets a schtick
+      Failure/Error: @blam = @campaign.schticks.create!(name: "Blam Blam Epigram", description: "Say a pithy phrase before firing a shot.")
+
+      ActiveRecord::RecordInvalid:
+        Validation failed: Category is not included in the list
+      # ./spec/requests/api/v1/schticks_spec.rb:37:in `block (3 levels) in <main>'
+      # ./spec/rails_helper.rb:48:in `block (3 levels) in <top (required)>'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/strategy.rb:30:in `cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:34:in `block (2 levels) in cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:35:in `cleaning'
+      # ./spec/rails_helper.rb:47:in `block (2 levels) in <top (required)>'
+
+  44) Schticks POST /api/v1/schticks creates a schtick
+      Failure/Error: expect(response).to have_http_status(:success)
+        expected the response to have a success status code (2xx) but it was 400
+      # ./spec/requests/api/v1/schticks_spec.rb:53:in `block (3 levels) in <main>'
+      # ./spec/rails_helper.rb:48:in `block (3 levels) in <top (required)>'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/strategy.rb:30:in `cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:34:in `block (2 levels) in cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:35:in `cleaning'
+      # ./spec/rails_helper.rb:47:in `block (2 levels) in <top (required)>'
+
+  45) Schticks PATCH /api/v1/schticks updates a schtick
+      Failure/Error: @blam = @campaign.schticks.create!(name: "Blam Blam Epigram", description: "Say a pithy phrase before firing a shot.")
+
+      ActiveRecord::RecordInvalid:
+        Validation failed: Category is not included in the list
+      # ./spec/requests/api/v1/schticks_spec.rb:61:in `block (3 levels) in <main>'
+      # ./spec/rails_helper.rb:48:in `block (3 levels) in <top (required)>'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/strategy.rb:30:in `cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:34:in `block (2 levels) in cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:35:in `cleaning'
+      # ./spec/rails_helper.rb:47:in `block (2 levels) in <top (required)>'
+
+  46) Schticks DELETE /api/v1/schticks/:id deletes a schtick
+      Failure/Error: @blam = @campaign.schticks.create!(name: "Blam Blam Epigram", description: "Say a pithy phrase before firing a shot.")
+
+      ActiveRecord::RecordInvalid:
+        Validation failed: Category is not included in the list
+      # ./spec/requests/api/v1/schticks_spec.rb:75:in `block (3 levels) in <main>'
+      # ./spec/rails_helper.rb:48:in `block (3 levels) in <top (required)>'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/strategy.rb:30:in `cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:34:in `block (2 levels) in cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:35:in `cleaning'
+      # ./spec/rails_helper.rb:47:in `block (2 levels) in <top (required)>'
+
+  47) Api::V1::Sites PUT /update updates secret flag
+      Failure/Error: expect(body["secret"]).to eq(true)
+
+        expected: true
+             got: nil
+
+        (compared using ==)
+      # ./spec/requests/api/v1/sites_spec.rb:135:in `block (3 levels) in <main>'
+      # ./spec/rails_helper.rb:48:in `block (3 levels) in <top (required)>'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/strategy.rb:30:in `cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:34:in `block (2 levels) in cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:35:in `cleaning'
+      # ./spec/rails_helper.rb:47:in `block (2 levels) in <top (required)>'
+
+  48) Api::V2::Campaigns GET /index when user is admin retrieves all campaigns
+      Failure/Error: expect(body["campaigns"].length).to be >= 3
+
+        expected: >= 3
+             got:    0
+      # ./spec/requests/api/v2/campaigns/campaigns_spec.rb:527:in `block (4 levels) in <main>'
+      # ./spec/rails_helper.rb:48:in `block (3 levels) in <top (required)>'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/strategy.rb:30:in `cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:34:in `block (2 levels) in cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:35:in `cleaning'
+      # ./spec/rails_helper.rb:47:in `block (2 levels) in <top (required)>'
+
+  49) Api::V2::Characters Invalid parameters falls back to default order when order parameter is invalid
+      Failure/Error: expect(response).to have_http_status(200)
+        expected the response to have status code 200 but it was 500
+      # ./spec/requests/api/v2/characters/characters_index_spec.rb:390:in `block (3 levels) in <main>'
+      # ./spec/rails_helper.rb:48:in `block (3 levels) in <top (required)>'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/strategy.rb:30:in `cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:34:in `block (2 levels) in cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:35:in `cleaning'
+      # ./spec/rails_helper.rb:47:in `block (2 levels) in <top (required)>'
+
+  50) Api::V2::Characters POST /pdf uploads a pdf
+      Failure/Error: expect(response).to have_http_status(:created)
+        expected the response to have status code :created (201) but it was :unprocessable_content (422)
+      # ./spec/requests/api/v2/characters/characters_spec.rb:434:in `block (3 levels) in <main>'
+      # ./spec/rails_helper.rb:48:in `block (3 levels) in <top (required)>'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/strategy.rb:30:in `cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:34:in `block (2 levels) in cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:35:in `cleaning'
+      # ./spec/rails_helper.rb:47:in `block (2 levels) in <top (required)>'
+
+  51) Api::V2::Characters POST /pdf returns an error for an invalid pdf
+      Failure/Error: expect(body["error"]).to eq("Failed to import character: Invalid PDF: Missing required fields")
+
+        expected: "Failed to import character: Invalid PDF: Missing required fields"
+             got: "Failed to import character: Could not find an executable [\"/usr/local/bin/pdftk\"] on your path."
+
+        (compared using ==)
+      # ./spec/requests/api/v2/characters/characters_spec.rb:454:in `block (3 levels) in <main>'
+      # ./spec/rails_helper.rb:48:in `block (3 levels) in <top (required)>'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/strategy.rb:30:in `cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:34:in `block (2 levels) in cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:35:in `cleaning'
+      # ./spec/rails_helper.rb:47:in `block (2 levels) in <top (required)>'
+
+  52) Api::V2::Users Profile GET /api/v2/users/profile returns campaign counts
+      Failure/Error: expect(body["campaigns_as_gm_count"]).to eq(2)
+
+        expected: 2
+             got: nil
+
+        (compared using ==)
+      # ./spec/requests/api/v2/users/users_profile_spec.rb:36:in `block (3 levels) in <main>'
+      # ./spec/rails_helper.rb:48:in `block (3 levels) in <top (required)>'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/strategy.rb:30:in `cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:34:in `block (2 levels) in cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:35:in `cleaning'
+      # ./spec/rails_helper.rb:47:in `block (2 levels) in <top (required)>'
+
+  53) Api::V2::Users Profile PATCH /api/v2/users/profile updates user email separately
+      Failure/Error: expect(body["email"]).to eq("newemail@example.com")
+
+        expected: "newemail@example.com"
+             got: "test@example.com"
+
+        (compared using ==)
+      # ./spec/requests/api/v2/users/users_profile_spec.rb:80:in `block (3 levels) in <main>'
+      # ./spec/rails_helper.rb:48:in `block (3 levels) in <top (required)>'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/strategy.rb:30:in `cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:34:in `block (2 levels) in cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:35:in `cleaning'
+      # ./spec/rails_helper.rb:47:in `block (2 levels) in <top (required)>'
+
+  54) Api::V2::Weapons Pagination and order parameters respects per_page parameter
+      Failure/Error: expect(body["meta"]["total_count"]).to eq(3)
+
+        expected: 3
+             got: 5
+
+        (compared using ==)
+      # ./spec/requests/api/v2/weapons/weapons_index_spec.rb:291:in `block (3 levels) in <main>'
+      # ./spec/rails_helper.rb:48:in `block (3 levels) in <top (required)>'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/strategy.rb:30:in `cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:34:in `block (2 levels) in cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:35:in `cleaning'
+      # ./spec/rails_helper.rb:47:in `block (2 levels) in <top (required)>'
+
+  55) Api::V2::Weapons Pagination and order parameters respects page parameter
+      Failure/Error: expect(body["weapons"].length).to eq(1)
+
+        expected: 1
+             got: 2
+
+        (compared using ==)
+      # ./spec/requests/api/v2/weapons/weapons_index_spec.rb:299:in `block (3 levels) in <main>'
+      # ./spec/rails_helper.rb:48:in `block (3 levels) in <top (required)>'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/strategy.rb:30:in `cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:34:in `block (2 levels) in cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:35:in `cleaning'
+      # ./spec/rails_helper.rb:47:in `block (2 levels) in <top (required)>'
+
+  56) Api::V2::Weapons Pagination and order parameters sorts by name with order parameter
+      Failure/Error: expect(body["weapons"].map { |w| w["name"] }).to eq(["Beretta 92FS", "Shuriken", "Sword"])
+
+        expected: ["Beretta 92FS", "Shuriken", "Sword"]
+             got: ["Beretta 92FS", "Bow", "Colt Python", "Sword", "Winchester Rifle"]
+
+        (compared using ==)
+      # ./spec/requests/api/v2/weapons/weapons_index_spec.rb:307:in `block (3 levels) in <main>'
+      # ./spec/rails_helper.rb:48:in `block (3 levels) in <top (required)>'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/strategy.rb:30:in `cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:34:in `block (2 levels) in cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:35:in `cleaning'
+      # ./spec/rails_helper.rb:47:in `block (2 levels) in <top (required)>'
+
+  57) Api::V2::Weapons Pagination and order parameters sorts by name with desc order
+      Failure/Error: expect(body["weapons"].map { |w| w["name"] }).to eq(["Sword", "Shuriken", "Beretta 92FS"])
+
+        expected: ["Sword", "Shuriken", "Beretta 92FS"]
+             got: ["Winchester Rifle", "Sword", "Colt Python", "Bow", "Beretta 92FS"]
+
+        (compared using ==)
+      # ./spec/requests/api/v2/weapons/weapons_index_spec.rb:314:in `block (3 levels) in <main>'
+      # ./spec/rails_helper.rb:48:in `block (3 levels) in <top (required)>'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/strategy.rb:30:in `cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:34:in `block (2 levels) in cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:35:in `cleaning'
+      # ./spec/rails_helper.rb:47:in `block (2 levels) in <top (required)>'
+
+  58) Api::V2::Weapons POST /batch returns error when ids parameter is missing
+      Failure/Error: expect(response).to have_http_status(:bad_request)
+        expected the response to have status code :bad_request (400) but it was :internal_server_error (500)
+      # ./spec/requests/api/v2/weapons/weapons_spec.rb:280:in `block (3 levels) in <main>'
+      # ./spec/rails_helper.rb:48:in `block (3 levels) in <top (required)>'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/strategy.rb:30:in `cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:34:in `block (2 levels) in cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:35:in `cleaning'
+      # ./spec/rails_helper.rb:47:in `block (2 levels) in <top (required)>'
+
+  59) CharacterPoster with schticks and weapons shows character
+      Failure/Error: brick.schticks << Schtick.new(name: "Rocker", campaign_id: action_movie.id)
+
+      ActiveRecord::RecordInvalid:
+        Validation failed: Category is not included in the list
+      # ./spec/services/character_poster_spec.rb:83:in `block (3 levels) in <main>'
+      # ./spec/rails_helper.rb:48:in `block (3 levels) in <top (required)>'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/strategy.rb:30:in `cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:34:in `block (2 levels) in cleaning'
+      # /Users/isaacpriestley/.rvm/gems/ruby-3.2.2/gems/database_cleaner-core-2.0.1/lib/database_cleaner/cleaners.rb:35:in `cleaning'
+      # ./spec/rails_helper.rb:47:in `block (2 levels) in <top (required)>'
+
+Finished in 1 minute 30.98 seconds (files took 2.36 seconds to load)
+1347 examples, 59 failures, 10 pending
+
+Failed examples:
+
+rspec ./spec/models/campaign_spec.rb:24 # Campaign associations has many players
+rspec ./spec/models/campaign_spec.rb:29 # Campaign associations has many campaign_memberships
+rspec ./spec/models/campaign_spec.rb:49 # Campaign associations has many schticks
+rspec ./spec/models/character_schtick_spec.rb:10 # CharacterSchtick validations validates uniqueness of character_id and schtick_id
+rspec ./spec/models/character_schtick_spec.rb:17 # CharacterSchtick associations belongs to a character
+rspec ./spec/models/character_schtick_spec.rb:21 # CharacterSchtick associations belongs to a schtick
+rspec ./spec/models/character_spec.rb:34 # Character associations has many schticks
+rspec ./spec/models/character_spec.rb:107 # Character validations requires schticks to have a name
+rspec ./spec/models/effect_spec.rb:24 # Effect associations belongs to a fight
+rspec ./spec/models/effect_spec.rb:29 # Effect associations belongs to a user
+rspec ./spec/models/membership_spec.rb:10 # Membership validations validates uniqueness of character_id and party_id
+rspec ./spec/models/schtick_spec.rb:58 # Schtick.for_archetype returns schticks for an archetype
+rspec ./spec/requests/api/v1/campaign_memberships_spec.rb:29 # Api::V1::CampaignMemberships DELETE /campaign_memberships/:id lets me remove a player's membership from a campaign I control
+rspec ./spec/requests/api/v1/campaign_memberships_spec.rb:37 # Api::V1::CampaignMemberships DELETE /campaign_memberships/:id lets me remove my own membership from a campaign I'm a player in
+rspec ./spec/requests/api/v1/campaigns_spec.rb:25 # Api::V1::Campaigns GET /campaigns returns all my campaigns, both ones I run and ones I play in
+rspec ./spec/requests/api/v1/campaigns_spec.rb:84 # Api::V1::Campaigns GET /campaigns/:id fetches campaign you created
+rspec ./spec/requests/api/v1/campaigns_spec.rb:100 # Api::V1::Campaigns GET /campaigns/:id fetches campaign you play in
+rspec ./spec/requests/api/v1/campaigns_spec.rb:145 # Api::V1::Campaigns PATCH /campaigns:id can't update a campaign you're just a player in
+rspec ./spec/requests/api/v1/campaigns_spec.rb:170 # Api::V1::Campaigns DELETE /campaigns/:id can't destroy a campaign you're just a player in
+rspec ./spec/requests/api/v1/campaigns_spec.rb:182 # Api::V1::Campaigns DELETE /campaigns/:id even for a gamemaster, can't destroy a campaign you're a player in
+rspec ./spec/requests/api/v1/campaigns_spec.rb:222 # Api::V1::Campaigns POST /set can set campaign you're a player in
+rspec ./spec/requests/api/v1/carries_spec.rb:26 # Api::V1::Carries POST /api/v1/characters/:character_id/weapons adds a weapon to a character
+rspec ./spec/requests/api/v1/character_schticks_spec.rb:15 # Api::V1::CharacterSchticks GET /api/v1/characters/:all_character_id/schticks gets all the schticks for a character
+rspec ./spec/requests/api/v1/character_schticks_spec.rb:26 # Api::V1::CharacterSchticks POST /api/v1/characters/:all_character_id/schticks adds a schtick to a character
+rspec ./spec/requests/api/v1/character_schticks_spec.rb:39 # Api::V1::CharacterSchticks DELETE /api/v1/characters/:all_character_id/schticks/:id removes a schtick from a character
+rspec ./spec/requests/api/v1/invitations_spec.rb:29 # Invitations GET /api/v1/invitations/:id updates pending user
+rspec ./spec/requests/api/v1/invitations_spec.rb:107 # Invitations POST /api/v1/invitations can't create a new invitation for an existing member
+rspec ./spec/requests/api/v1/invitations_spec.rb:138 # Invitations GET /api/v1/invitations/:id/redeem redeems an invitation and creates a new user
+rspec ./spec/requests/api/v1/invitations_spec.rb:156 # Invitations GET /api/v1/invitations/:id/redeem redeems for an existing user and reduces the count
+rspec ./spec/requests/api/v1/invitations_spec.rb:165 # Invitations GET /api/v1/invitations/:id/redeem redeems, creates a new user, and reduces the count
+rspec ./spec/requests/api/v1/invitations_spec.rb:188 # Invitations GET /api/v1/invitations/:id/redeem redeems an invitation for an existing user
+rspec ./spec/requests/api/v1/junctures_spec.rb:18 # Api::V1::Junctures GET /index returns http success
+rspec ./spec/requests/api/v1/junctures_spec.rb:25 # Api::V1::Junctures GET /index doesn't return inactive junctures by default
+rspec ./spec/requests/api/v1/junctures_spec.rb:34 # Api::V1::Junctures GET /index doesn't return inactive junctures for a player
+rspec ./spec/requests/api/v1/junctures_spec.rb:43 # Api::V1::Junctures GET /index returns inactive junctures for a gamemaster
+rspec ./spec/requests/api/v1/junctures_spec.rb:54 # Api::V1::Junctures GET /index returns all junctures that are not the current character's juncture
+rspec ./spec/requests/api/v1/junctures_spec.rb:64 # Api::V1::Junctures GET /index returns junctures matching a search string
+rspec ./spec/requests/api/v1/junctures_spec.rb:71 # Api::V1::Junctures GET /index returns junctures by faction_id
+rspec ./spec/requests/api/v1/parties_spec.rb:79 # Api::V1::Parties GET /index returns factions for parties
+rspec ./spec/requests/api/v1/parties_spec.rb:160 # Api::V1::Parties PUT /update updates the secret flag
+rspec ./spec/requests/api/v1/schticks_spec.rb:15 # Schticks GET /api/v1/schticks gets all the schticks
+rspec ./spec/requests/api/v1/schticks_spec.rb:23 # Schticks GET /api/v1/schticks gets schticks for a Foe, excluding schticks they already know
+rspec ./spec/requests/api/v1/schticks_spec.rb:36 # Schticks GET /api/v1/schtick/:id gets a schtick
+rspec ./spec/requests/api/v1/schticks_spec.rb:46 # Schticks POST /api/v1/schticks creates a schtick
+rspec ./spec/requests/api/v1/schticks_spec.rb:60 # Schticks PATCH /api/v1/schticks updates a schtick
+rspec ./spec/requests/api/v1/schticks_spec.rb:74 # Schticks DELETE /api/v1/schticks/:id deletes a schtick
+rspec ./spec/requests/api/v1/sites_spec.rb:130 # Api::V1::Sites PUT /update updates secret flag
+rspec ./spec/requests/api/v2/campaigns/campaigns_spec.rb:522 # Api::V2::Campaigns GET /index when user is admin retrieves all campaigns
+rspec ./spec/requests/api/v2/characters/characters_index_spec.rb:388 # Api::V2::Characters Invalid parameters falls back to default order when order parameter is invalid
+rspec ./spec/requests/api/v2/characters/characters_spec.rb:431 # Api::V2::Characters POST /pdf uploads a pdf
+rspec ./spec/requests/api/v2/characters/characters_spec.rb:449 # Api::V2::Characters POST /pdf returns an error for an invalid pdf
+rspec ./spec/requests/api/v2/users/users_profile_spec.rb:22 # Api::V2::Users Profile GET /api/v2/users/profile returns campaign counts
+rspec ./spec/requests/api/v2/users/users_profile_spec.rb:68 # Api::V2::Users Profile PATCH /api/v2/users/profile updates user email separately
+rspec ./spec/requests/api/v2/weapons/weapons_index_spec.rb:286 # Api::V2::Weapons Pagination and order parameters respects per_page parameter
+rspec ./spec/requests/api/v2/weapons/weapons_index_spec.rb:295 # Api::V2::Weapons Pagination and order parameters respects page parameter
+rspec ./spec/requests/api/v2/weapons/weapons_index_spec.rb:303 # Api::V2::Weapons Pagination and order parameters sorts by name with order parameter
+rspec ./spec/requests/api/v2/weapons/weapons_index_spec.rb:310 # Api::V2::Weapons Pagination and order parameters sorts by name with desc order
+rspec ./spec/requests/api/v2/weapons/weapons_spec.rb:278 # Api::V2::Weapons POST /batch returns error when ids parameter is missing
+rspec ./spec/services/character_poster_spec.rb:80 # CharacterPoster with schticks and weapons shows character
+

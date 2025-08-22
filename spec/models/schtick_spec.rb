@@ -53,7 +53,7 @@ RSpec.describe Schtick, type: :model do
   end
 
   describe ".for_archetype" do
-    let!(:schtick) { Schtick.create!(name: "Schtick", campaign: action_movie, archetypes: ["Exorcist Monk", "Everyday Hero"]) }
+    let!(:schtick) { Schtick.create!(name: "Schtick", campaign: action_movie, category: "Guns", archetypes: ["Exorcist Monk", "Everyday Hero"]) }
 
     it "returns schticks for an archetype" do
       expect(Schtick.for_archetype("Everyday Hero")).to include(schtick)

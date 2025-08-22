@@ -80,7 +80,7 @@ TEXT
     it "shows character" do
       brick.action_values["Archetype"] = "Everyday Hero"
       brick.skills["Info: Classic Rock"] = 15
-      brick.schticks << Schtick.new(name: "Rocker", campaign_id: action_movie.id)
+      brick.schticks << Schtick.new(name: "Rocker", campaign_id: action_movie.id, category: "Guns")
       brick.weapons << Weapon.new(name: "Guitar", campaign_id: action_movie.id, damage: 10, concealment: 4, reload_value: 2)
       response = CharacterPoster.show(brick)
       puts

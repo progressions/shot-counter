@@ -4,7 +4,7 @@ RSpec.describe Effect, type: :model do
   let!(:user) { User.create!(email: "email@example.com", confirmed_at: Time.now) }
   let!(:action_movie) { user.campaigns.create!(name: "Action Movie") }
   let(:brick) { Character.create!(name: "Brick Manly", campaign: action_movie) }
-  let(:fight) { Fight.create!(campaign: action_movie) }
+  let(:fight) { Fight.create!(campaign: action_movie, name: "Test Fight") }
 
   describe "validations" do
     it "requires a severity" do

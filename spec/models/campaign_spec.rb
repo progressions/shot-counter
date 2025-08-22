@@ -22,12 +22,12 @@ RSpec.describe Campaign, type: :model do
     end
 
     it "has many players" do
-      action_movie.players << user
-      expect(action_movie.players).to eq([user])
+      action_movie.users << user
+      expect(action_movie.users).to eq([user])
     end
 
     it "has many campaign_memberships" do
-      action_movie.players << user
+      action_movie.users << user
       expect(action_movie.campaign_memberships).to eq([user.campaign_memberships.first])
     end
 
@@ -47,7 +47,7 @@ RSpec.describe Campaign, type: :model do
     end
 
     it "has many schticks" do
-      schtick = Schtick.create!(name: "Schtick", campaign: action_movie)
+      schtick = Schtick.create!(name: "Schtick", campaign: action_movie, category: "Guns")
       expect(action_movie.schticks).to eq([schtick])
     end
 

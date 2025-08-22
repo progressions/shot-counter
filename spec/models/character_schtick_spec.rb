@@ -4,7 +4,7 @@ RSpec.describe CharacterSchtick, type: :model do
   let!(:user) { User.create!(email: "email@example.com", confirmed_at: Time.now) }
   let!(:action_movie) { user.campaigns.create!(name: "Action Movie") }
   let(:brick) { Character.create!(name: "Brick Manly", campaign: action_movie) }
-  let(:schtick) { action_movie.schticks.create!(name: "Schtick") }
+  let(:schtick) { action_movie.schticks.create!(name: "Schtick", category: "Guns") }
 
   describe "validations" do
     it "validates uniqueness of character_id and schtick_id" do

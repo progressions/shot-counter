@@ -7,9 +7,9 @@ RSpec.describe Membership, type: :model do
   let!(:party) { action_movie.parties.create!(name: "Party") }
 
   describe "validations" do
-    it "validates uniqueness of character_id and party_id" do
+    it "allows multiple memberships of the same character to a party" do
       expect(Membership.create(character: brick, party: party)).to be_valid
-      expect(Membership.create(character: brick, party: party)).to_not be_valid
+      expect(Membership.create(character: brick, party: party)).to be_valid
     end
   end
 

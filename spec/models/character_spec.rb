@@ -32,7 +32,7 @@ RSpec.describe Character, type: :model do
     end
 
     it "has many schticks" do
-      schtick = brick.schticks.create!(name: "Schtick 1", campaign: action_movie)
+      schtick = brick.schticks.create!(name: "Schtick 1", campaign: action_movie, category: "Guns")
       expect(brick.schticks).to include(schtick)
     end
 
@@ -105,9 +105,9 @@ RSpec.describe Character, type: :model do
     end
 
     it "requires schticks to have a name" do
-      brick.schticks.create!(name: "Schtick 1", campaign: action_movie)
+      brick.schticks.create!(name: "Schtick 1", campaign: action_movie, category: "Guns")
       expect(brick).to be_valid
-      brick.schticks.create(name: nil, campaign: action_movie)
+      brick.schticks.create(name: nil, campaign: action_movie, category: "Guns")
       expect(brick).to_not be_valid
       expect(brick.errors[:schticks]).to include("is invalid")
     end
