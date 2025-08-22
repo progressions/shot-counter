@@ -30,7 +30,7 @@ RSpec.describe "Api::V1::Carries", type: :request do
       }
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
-      expect(body["weapons"].map { |s| s["name"] }).to eq(["Beretta M9"])
+      expect(body["weapon_ids"]).to include(@beretta.id)
       expect(@brick.reload.weapons).to include(@beretta)
     end
   end

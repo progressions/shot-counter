@@ -13,7 +13,7 @@ RSpec.describe "Api::V1::CharacterSchticks", type: :request do
 
   describe "GET /api/v1/characters/:all_character_id/schticks" do
     it "gets all the schticks for a character" do
-      @blam = @campaign.schticks.create!(name: "Blam Blam Epigram", description: "Say a pithy phrase before firing a shot.")
+      @blam = @campaign.schticks.create!(name: "Blam Blam Epigram", description: "Say a pithy phrase before firing a shot.", category: "Guns")
       @brick.schticks << @blam
       get "/api/v1/characters/#{@brick.id}/schticks", headers: @headers
       expect(response).to have_http_status(:success)
@@ -24,20 +24,20 @@ RSpec.describe "Api::V1::CharacterSchticks", type: :request do
 
   describe "POST /api/v1/characters/:all_character_id/schticks" do
     it "adds a schtick to a character" do
-      @blam = @campaign.schticks.create!(name: "Blam Blam Epigram", description: "Say a pithy phrase before firing a shot.")
+      @blam = @campaign.schticks.create!(name: "Blam Blam Epigram", description: "Say a pithy phrase before firing a shot.", category: "Guns")
       post "/api/v1/characters/#{@brick.id}/schticks", headers: @headers, params: {
         schtick: { id: @blam.id }
       }
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
-      expect(body["schticks"].map { |s| s["name"] }).to eq(["Blam Blam Epigram"])
+      expect(body["schtick_ids"]).to include(@blam.id)
       expect(@brick.reload.schticks).to include(@blam)
     end
   end
 
   describe "DELETE /api/v1/characters/:all_character_id/schticks/:id" do
     it "removes a schtick from a character" do
-      @blam = @campaign.schticks.create!(name: "Blam Blam Epigram", description: "Say a pithy phrase before firing a shot.")
+      @blam = @campaign.schticks.create!(name: "Blam Blam Epigram", description: "Say a pithy phrase before firing a shot.", category: "Guns")
       @brick.schticks << @blam
       delete "/api/v1/characters/#{@brick.id}/schticks/#{@blam.id}", headers: @headers
       expect(response).to have_http_status(:success)

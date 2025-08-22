@@ -20,7 +20,7 @@ class Api::V1::CarriesController < ApplicationController
   def create
     @weapon = current_campaign.weapons.find_by(id: weapon_params[:id])
     if @character.weapons << @weapon
-      render json: @character
+      render json: @character.reload
     else
       render json: @character, status: 400
     end

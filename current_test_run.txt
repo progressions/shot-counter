@@ -1,0 +1,12 @@
+/Users/isaacpriestley/.rvm/rubies/ruby-3.2.0/lib/ruby/3.2.0/bundler/definition.rb:431:in `validate_ruby!': Your Ruby version is 3.2.0, but your Gemfile specified 3.2.2 (Bundler::RubyVersionMismatch)
+	from /Users/isaacpriestley/.rvm/rubies/ruby-3.2.0/lib/ruby/3.2.0/bundler/definition.rb:406:in `validate_runtime!'
+	from /Users/isaacpriestley/.rvm/rubies/ruby-3.2.0/lib/ruby/3.2.0/bundler.rb:164:in `setup'
+	from /Users/isaacpriestley/.rvm/rubies/ruby-3.2.0/lib/ruby/3.2.0/bundler/setup.rb:20:in `block in <top (required)>'
+	from /Users/isaacpriestley/.rvm/rubies/ruby-3.2.0/lib/ruby/3.2.0/bundler/ui/shell.rb:159:in `with_level'
+	from /Users/isaacpriestley/.rvm/rubies/ruby-3.2.0/lib/ruby/3.2.0/bundler/ui/shell.rb:111:in `silence'
+	from /Users/isaacpriestley/.rvm/rubies/ruby-3.2.0/lib/ruby/3.2.0/bundler/setup.rb:20:in `<top (required)>'
+	from <internal:/Users/isaacpriestley/.rvm/rubies/ruby-3.2.0/lib/ruby/3.2.0/rubygems/core_ext/kernel_require.rb>:85:in `require'
+	from <internal:/Users/isaacpriestley/.rvm/rubies/ruby-3.2.0/lib/ruby/3.2.0/rubygems/core_ext/kernel_require.rb>:85:in `require'
+	from /Users/isaacpriestley/.rvm/rubies/ruby-3.2.0/lib/ruby/3.2.0/rubygems.rb:1355:in `<top (required)>'
+	from <internal:gem_prelude>:2:in `require'
+	from <internal:gem_prelude>:2:in `<internal:gem_prelude>'
