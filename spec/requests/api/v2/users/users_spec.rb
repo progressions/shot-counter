@@ -240,6 +240,103 @@ RSpec.describe "Api::V2::Users", type: :request do
         @player.reload
         expect(@player.image.attached?).to be_truthy
       end
+
+      context "inline editing scenarios" do
+        it "updates only first_name field" do
+          patch "/api/v2/users/#{@player.id}", params: { user: { first_name: "NewFirst" } }, headers: @admin_headers
+          expect(response).to have_http_status(:success)
+          body = JSON.parse(response.body)
+          expect(body["first_name"]).to eq("NewFirst")
+          expect(body["last_name"]).to eq("One")  # unchanged
+          expect(body["name"]).to eq("NewFirst One")
+          expect(body["email"]).to eq("player@example.com")  # unchanged
+          @player.reload
+          expect(@player.first_name).to eq("NewFirst")
+          expect(@player.last_name).to eq("One")
+        end
+
+        it "updates only last_name field" do
+          patch "/api/v2/users/#{@player.id}", params: { user: { last_name: "NewLast" } }, headers: @admin_headers
+          expect(response).to have_http_status(:success)
+          body = JSON.parse(response.body)
+          expect(body["first_name"]).to eq("Player")  # unchanged
+          expect(body["last_name"]).to eq("NewLast")
+          expect(body["name"]).to eq("Player NewLast")
+          expect(body["email"]).to eq("player@example.com")  # unchanged
+          @player.reload
+          expect(@player.first_name).to eq("Player")
+          expect(@player.last_name).to eq("NewLast")
+        end
+
+        it "updates only email field (with Devise confirmable behavior)" do
+          patch "/api/v2/users/#{@player.id}", params: { user: { email: "newemail@example.com" } }, headers: @admin_headers
+          expect(response).to have_http_status(:success)
+          body = JSON.parse(response.body)
+          # With Devise confirmable, email might go to unconfirmed_email until confirmed
+          # But admin updates should bypass confirmation, so check what actually happens
+          expect(body["first_name"]).to eq("Player")  # unchanged
+          expect(body["last_name"]).to eq("One")  # unchanged
+          expect(body["name"]).to eq("Player One")  # unchanged
+          @player.reload
+          expect(@player.first_name).to eq("Player")
+          # Check either email was updated directly or unconfirmed_email was set
+          expect(@player.email == "newemail@example.com" || @player.unconfirmed_email == "newemail@example.com").to be_truthy
+        end
+
+        it "updates email with proper validation (with Devise confirmable behavior)" do
+          patch "/api/v2/users/#{@player.id}", params: { user: { email: "valid@test.com" } }, headers: @admin_headers
+          expect(response).to have_http_status(:success)
+          body = JSON.parse(response.body)
+          @player.reload
+          # Check either email was updated directly or unconfirmed_email was set
+          expect(@player.email == "valid@test.com" || @player.unconfirmed_email == "valid@test.com").to be_truthy
+        end
+
+        it "rejects invalid email format" do
+          original_email = @player.email
+          patch "/api/v2/users/#{@player.id}", params: { user: { email: "invalid-email" } }, headers: @admin_headers
+          expect(response).to have_http_status(:unprocessable_entity)
+          body = JSON.parse(response.body)
+          expect(body["errors"]).to include({ "email" => ["is invalid"] })
+          @player.reload
+          expect(@player.email).to eq(original_email)  # unchanged
+        end
+
+        it "rejects duplicate email addresses" do
+          # Create another user with a different email
+          other_user = User.create!(email: "other@example.com", confirmed_at: Time.now, first_name: "Other", last_name: "User", name: "Other User")
+          original_email = @player.email
+
+          # Try to update player to use the other user's email
+          patch "/api/v2/users/#{@player.id}", params: { user: { email: "other@example.com" } }, headers: @admin_headers
+          expect(response).to have_http_status(:unprocessable_entity)
+          body = JSON.parse(response.body)
+          expect(body["errors"]).to include({ "email" => ["has already been taken"] })
+          @player.reload
+          expect(@player.email).to eq(original_email)  # unchanged
+        end
+
+        it "updates name correctly when first_name changes" do
+          patch "/api/v2/users/#{@player.id}", params: { user: { first_name: "UpdatedFirst" } }, headers: @admin_headers
+          expect(response).to have_http_status(:success)
+          @player.reload
+          expect(@player.name).to eq("UpdatedFirst One")
+        end
+
+        it "updates name correctly when last_name changes" do
+          patch "/api/v2/users/#{@player.id}", params: { user: { last_name: "UpdatedLast" } }, headers: @admin_headers
+          expect(response).to have_http_status(:success)
+          @player.reload
+          expect(@player.name).to eq("Player UpdatedLast")
+        end
+
+        it "updates name correctly when both first_name and last_name change" do
+          patch "/api/v2/users/#{@player.id}", params: { user: { first_name: "NewFirst", last_name: "NewLast" } }, headers: @admin_headers
+          expect(response).to have_http_status(:success)
+          @player.reload
+          expect(@player.name).to eq("NewFirst NewLast")
+        end
+      end
     end
 
     context "when user is updating their own attributes" do
