@@ -107,7 +107,7 @@ RSpec.describe "Invitations", type: :request do
 
     it "can't create a new invitation for an existing member" do
       @ginny = User.create!(email: "ginny@email.com")
-      @campaign.players << @ginny
+      @campaign.campaign_memberships.create!(user: @ginny)
       post "/api/v1/invitations", headers: @headers, params: {
         invitation: {
           email: "ginny@email.com",
