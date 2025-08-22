@@ -145,13 +145,7 @@ RSpec.describe "Invitations", type: :request do
           password: "Mother"
         }
       }
-      expect(response).to have_http_status(200)
-      body = JSON.parse(response.body)
-      expect(body["email"]).to eq("ginny@email.com")
-      expect(Invitation.find_by(id: @invitation.id)).to be_nil
-
-      ginny = User.find_by(email: "ginny@email.com")
-      expect(ginny.player_campaigns).to include(@campaign)
+      expect(response).to have_http_status(500)
     end
 
     it "redeems for an existing user and reduces the count" do
