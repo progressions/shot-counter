@@ -74,6 +74,7 @@ Rails.application.routes.draw do
         end
       end
       resources :parties do
+        post "fight/:fight_id", to: "parties#add_to_fight"
         member do
           delete :image, to: "parties#remove_image"
         end

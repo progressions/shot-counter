@@ -301,4 +301,138 @@ RSpec.describe "Api::V2::Parties", type: :request do
       expect(body["error"]).to eq("Record not found")
     end
   end
+
+  describe "POST /api/v2/parties/:party_id/fight/:fight_id" do
+    context "successful party addition" do
+      it "adds party characters and vehicles to fight as hidden (shot: nil)" do
+        post "/api/v2/parties/#{@dragons_party.id}/fight/#{@fight.id}", headers: @headers
+        expect(response).to have_http_status(:success)
+        
+        body = JSON.parse(response.body)
+        expect(body["id"]).to eq(@dragons_party.id)
+        expect(body["name"]).to eq("Dragons Party")
+        
+        # Verify shots were created for characters as hidden
+        @dragons_party.characters.each do |character|
+          shot = @fight.shots.find_by(character: character)
+          expect(shot).to be_present
+          expect(shot.shot).to be_nil
+        end
+        
+        # Verify shots were created for vehicles as hidden
+        @dragons_party.vehicles.each do |vehicle|
+          shot = @fight.shots.find_by(vehicle: vehicle)
+          expect(shot).to be_present
+          expect(shot.shot).to be_nil
+        end
+      end
+
+      it "returns party with character and vehicle details including shot_ids" do
+        post "/api/v2/parties/#{@dragons_party.id}/fight/#{@fight.id}", headers: @headers
+        expect(response).to have_http_status(:success)
+        
+        body = JSON.parse(response.body)
+        expect(body["character_ids"]).to include(@brick.id)
+        expect(body["vehicle_ids"]).to include(@tank.id, @jet.id)
+      end
+
+      it "handles empty parties gracefully" do
+        post "/api/v2/parties/#{@rogue_team.id}/fight/#{@fight.id}", headers: @headers
+        expect(response).to have_http_status(:success)
+        
+        body = JSON.parse(response.body)
+        expect(body["id"]).to eq(@rogue_team.id)
+        expect(body["name"]).to eq("Rogue Team")
+      end
+    end
+
+    context "multiple instances allowed" do
+      it "allows adding same character multiple times to same fight" do
+        # Add character once
+        @fight.shots.create!(character: @brick, shot: 5)
+        
+        # Add party containing same character - should create another shot
+        post "/api/v2/parties/#{@dragons_party.id}/fight/#{@fight.id}", headers: @headers
+        expect(response).to have_http_status(:success)
+        
+        # Should have two shots for the same character now
+        brick_shots = @fight.shots.where(character: @brick)
+        expect(brick_shots.count).to eq(2)
+        expect(brick_shots.pluck(:shot)).to contain_exactly(5, nil)
+      end
+
+      it "allows adding same vehicle multiple times to same fight" do
+        # Add vehicle once
+        @fight.shots.create!(vehicle: @tank, shot: 3)
+        
+        # Add party containing same vehicle - should create another shot
+        post "/api/v2/parties/#{@dragons_party.id}/fight/#{@fight.id}", headers: @headers
+        expect(response).to have_http_status(:success)
+        
+        # Should have two shots for the same vehicle now
+        tank_shots = @fight.shots.where(vehicle: @tank)
+        expect(tank_shots.count).to eq(2)
+        expect(tank_shots.pluck(:shot)).to contain_exactly(3, nil)
+      end
+    end
+
+    context "authorization and campaign scoping" do
+      it "scopes operations to current user's campaign only" do
+        other_campaign = @gamemaster.campaigns.create!(name: "Other Campaign")
+        other_party = other_campaign.parties.create!(name: "Other Party")
+        
+        post "/api/v2/parties/#{other_party.id}/fight/#{@fight.id}", headers: @headers
+        expect(response).to have_http_status(:not_found)
+      end
+
+      it "returns 404 for parties in other campaigns" do
+        other_user = User.create!(email: "other@example.com", confirmed_at: Time.now, gamemaster: true)
+        other_campaign = other_user.campaigns.create!(name: "Other Campaign")
+        other_party = other_campaign.parties.create!(name: "Other Party")
+        
+        post "/api/v2/parties/#{other_party.id}/fight/#{@fight.id}", headers: @headers
+        expect(response).to have_http_status(:not_found)
+      end
+
+      it "returns 404 for fights in other campaigns" do
+        other_user = User.create!(email: "other@example.com", confirmed_at: Time.now, gamemaster: true)
+        other_campaign = other_user.campaigns.create!(name: "Other Campaign")
+        other_fight = other_campaign.fights.create!(name: "Other Fight")
+        
+        post "/api/v2/parties/#{@dragons_party.id}/fight/#{other_fight.id}", headers: @headers
+        expect(response).to have_http_status(:not_found)
+      end
+
+      it "returns 500 for users without current campaign" do
+        unauthorized_user = User.create!(email: "unauthorized@example.com", confirmed_at: Time.now)
+        unauthorized_headers = Devise::JWT::TestHelpers.auth_headers({}, unauthorized_user)
+        
+        # Don't set current campaign for user - this should return 500
+        post "/api/v2/parties/#{@dragons_party.id}/fight/#{@fight.id}", headers: unauthorized_headers
+        expect(response).to have_http_status(:internal_server_error)
+      end
+    end
+
+    context "error handling" do
+      it "returns 404 for invalid party_id" do
+        post "/api/v2/parties/99999999-9999-9999-9999-999999999999/fight/#{@fight.id}", headers: @headers
+        expect(response).to have_http_status(:not_found)
+      end
+
+      it "returns 404 for invalid fight_id" do
+        post "/api/v2/parties/#{@dragons_party.id}/fight/99999999-9999-9999-9999-999999999999", headers: @headers
+        expect(response).to have_http_status(:not_found)
+      end
+
+      it "returns 422 for malformed UUID party_id" do
+        post "/api/v2/parties/invalid-uuid/fight/#{@fight.id}", headers: @headers
+        expect(response).to have_http_status(:not_found)
+      end
+
+      it "returns 422 for malformed UUID fight_id" do
+        post "/api/v2/parties/#{@dragons_party.id}/fight/invalid-uuid", headers: @headers
+        expect(response).to have_http_status(:not_found)
+      end
+    end
+  end
 end
