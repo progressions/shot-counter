@@ -94,6 +94,7 @@ class Character < ApplicationRecord
   after_update :broadcast_encounter_update
 
   validates :name, presence: true, uniqueness: { scope: :campaign_id }
+  validate :new_owner_is_campaign_member, on: :update, if: :user_id_changed?
 
   scope :active, -> { where(active: true) }
 
@@ -411,6 +412,20 @@ class Character < ApplicationRecord
       if self.action_values[key] == 0
         self.action_values[key] = DEFAULT_ACTION_VALUES[key]
       end
+    end
+  end
+  
+  private
+  
+  def new_owner_is_campaign_member
+    # Only validate if user_id actually changed to a different value
+    return unless campaign.present? && user.present? && user_id_changed? && user_id_was != user_id
+    
+    # Allow gamemaster to own characters even if not a member
+    return if campaign.user_id == user_id
+    
+    unless campaign.users.include?(user)
+      errors.add(:user_id, "must be a member of the campaign")
     end
   end
 end

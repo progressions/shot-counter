@@ -38,6 +38,7 @@ class Api::V2::UsersController < ApplicationController
       query = query.where(active: true)
     end
     query = query.joins(:characters).where(characters: { id: params[:character_id] }) if params[:character_id].present?
+    query = query.joins(:campaign_memberships).where(campaign_memberships: { campaign_id: params[:campaign_id] }) if params[:campaign_id].present?
     # Cache key
     cache_key = [
       "users/index",
@@ -48,6 +49,7 @@ class Api::V2::UsersController < ApplicationController
       params["id"],
       params["email"],
       params["search"],
+      params["campaign_id"],
       params["character_id"],
       params["show_all"],
     ].join("/")

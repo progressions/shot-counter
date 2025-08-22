@@ -133,7 +133,16 @@ end
     else
       character_data = character_params.to_h.symbolize_keys
     end
-    character_data = character_data.slice(:name, :description, :active, :character_ids, :party_ids, :site_ids, :juncture_ids, :schtick_ids, :action_values, :skills, :weapon_ids, :juncture_id, :faction_id, :wealth)
+    
+    # Check authorization for owner reassignment
+    if character_data[:user_id].present? && character_data[:user_id].to_s != @character.user_id.to_s
+      unless can_reassign_owner?
+        render json: { error: "Not authorized to reassign character ownership" }, status: :forbidden
+        return
+      end
+    end
+    
+    character_data = character_data.slice(:name, :description, :active, :character_ids, :party_ids, :site_ids, :juncture_ids, :schtick_ids, :action_values, :skills, :weapon_ids, :juncture_id, :faction_id, :wealth, :user_id)
 
     # Handle image attachment if present
     if params[:image].present?
@@ -254,6 +263,16 @@ end
 
   def set_scoped_characters
     @scoped_characters = current_campaign.characters
+  end
+  
+  def can_reassign_owner?
+    # Admin can reassign any character
+    return true if current_user.admin?
+    
+    # Gamemaster can reassign characters in their campaign
+    return true if current_campaign.user == current_user
+    
+    false
   end
 
   def character_params
