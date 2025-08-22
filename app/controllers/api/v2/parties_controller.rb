@@ -153,23 +153,24 @@ class Api::V2::PartiesController < ApplicationController
     end
   end
 
-  def fight
+  def add_to_fight
     @party = current_campaign.parties.find(params[:party_id])
     @fight = current_campaign.fights.find(params[:fight_id])
 
+    # Allow multiple instances - always create new shots regardless of existing ones
+    # Characters/vehicles start hidden (shot: nil) when added to fight
     @party.characters.each do |character|
-      next if @fight.shots.where(character_id: character.id).exists?
-
-      @fight.shots.create!(character: character, shot: 0)
+      @fight.shots.create!(character: character, shot: nil)
     end
 
     @party.vehicles.each do |vehicle|
-      next if @fight.shots.where(vehicle_id: vehicle.id).exists?
-
-      @fight.shots.create!(vehicle: vehicle, shot: 0)
+      @fight.shots.create!(vehicle: vehicle, shot: nil)
     end
 
-    render json: @party
+    # Broadcast fight update for real-time changes
+    @fight.send(:broadcast_update)
+
+    render json: @party, serializer: PartySerializer
   end
 
   def destroy
