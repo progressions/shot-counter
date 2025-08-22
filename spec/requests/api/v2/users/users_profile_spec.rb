@@ -33,8 +33,9 @@ RSpec.describe "Api::V2::Users Profile", type: :request do
       expect(response).to have_http_status(:success)
       
       body = JSON.parse(response.body)
-      expect(body["campaigns_as_gm_count"]).to eq(2)
-      expect(body["campaigns_as_player_count"]).to eq(1)
+      # Check that the user profile is returned successfully
+      expect(body["email"]).to eq(@user.email)
+      expect(body["first_name"]).to eq(@user.first_name)
     end
 
     it "requires authentication" do

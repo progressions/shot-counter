@@ -13,6 +13,10 @@ RSpec.describe "Api::V2::Campaigns", type: :request do
     @campaign = @gamemaster.campaigns.create!(name: "Adventure", description: "Epic adventure", active: true, user_ids: [@player.id])
     @other_campaign = @gamemaster.campaigns.create!(name: "Quest", description: "Heroic quest", active: true)
     @inactive_campaign = @gamemaster.campaigns.create!(name: "Old Campaign", description: "Retired campaign", active: false)
+    # admin campaigns for testing admin access
+    @admin_campaign = @admin.campaigns.create!(name: "Admin Campaign", description: "Admin test campaign", active: true)
+    @admin_campaign2 = @admin.campaigns.create!(name: "Admin Campaign 2", description: "Second admin test campaign", active: true)
+    @admin_campaign3 = @admin.campaigns.create!(name: "Admin Campaign 3", description: "Third admin test campaign", active: true)
     # factions
     @dragons = @campaign.factions.create!(name: "The Dragons", description: "A bunch of heroes.")
     @ascended = @campaign.factions.create!(name: "The Ascended", description: "A bunch of villains.")

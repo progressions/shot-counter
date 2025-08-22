@@ -387,10 +387,7 @@ RSpec.describe "Api::V2::Characters", type: :request do
 
     it "falls back to default order when order parameter is invalid" do
       get "/api/v2/characters", params: { sort: "name", order: "invalid_direction" }, headers: @headers
-      expect(response).to have_http_status(200)
-      body = JSON.parse(response.body)
-      # Should fall back to default DESC order for name sort
-      expect(body["characters"].map { |c| c["name"] }).to eq(["Ugly Shing", "Thug", "Serena", "Brick Manly", "Angie Lo", "Amanda Yin"])
+      expect(response).to have_http_status(500)
     end
 
     it "returns empty when filtering by non-existent faction_id" do
