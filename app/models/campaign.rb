@@ -1,6 +1,7 @@
 class Campaign < ApplicationRecord
   include Broadcastable
   include WithImagekit
+  include OnboardingTrackable
 
   belongs_to :user
   has_many :fights

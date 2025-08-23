@@ -89,6 +89,11 @@ class User < ApplicationRecord
     end
   end
 
+  def ensure_onboarding_progress!
+    return if onboarding_progress.present?
+    create_onboarding_progress
+  end
+
   private
 
   def create_onboarding_progress
