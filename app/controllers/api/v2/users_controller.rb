@@ -3,6 +3,7 @@ class Api::V2::UsersController < ApplicationController
   before_action :require_admin, only: [:index, :create, :destroy, :show]
   before_action :set_user, only: [:show, :update, :destroy, :remove_image]
   before_action :require_self_or_admin, only: :update
+  skip_before_action :authenticate_user!, only: [:register]
 
   def index
     per_page = (params["per_page"] || 15).to_i
@@ -130,6 +131,64 @@ class Api::V2::UsersController < ApplicationController
     end
   end
 
+  def register
+    # Sanitize input parameters to prevent XSS
+    user_data = registration_params.to_h.symbolize_keys
+    user_data[:first_name] = sanitize_input(user_data[:first_name]) if user_data[:first_name]
+    user_data[:last_name] = sanitize_input(user_data[:last_name]) if user_data[:last_name]
+    
+    # Collect validation errors
+    validation_errors = {}
+    
+    # Manual password confirmation validation since we're using custom password handling
+    if user_data[:password] != user_data[:password_confirmation]
+      validation_errors[:password_confirmation] = ["doesn't match Password"]
+    end
+    
+    # Manual password presence and length validation
+    if user_data[:password].blank?
+      validation_errors[:password] = ["can't be blank"]
+    elsif user_data[:password].length < 8
+      validation_errors[:password] = ["is too short (minimum is 8 characters)"]
+    end
+    
+    # Create user to trigger model validations
+    @user = User.new(user_data.except(:password_confirmation))
+    
+    # Check if user is valid (this will add model validation errors)
+    unless @user.valid?
+      @user.errors.each do |error|
+        validation_errors[error.attribute] ||= []
+        validation_errors[error.attribute] << error.message
+      end
+    end
+    
+    # Return errors if any validation failed
+    if validation_errors.any?
+      render json: { errors: validation_errors }, status: :unprocessable_entity
+      return
+    end
+    
+    if @user.save
+      # Send confirmation email if confirmable is enabled
+      @user.send_confirmation_instructions if @user.respond_to?(:send_confirmation_instructions)
+      
+      # Generate JWT token
+      token = encode_jwt(@user)
+      response.set_header("Authorization", "Bearer #{token}")
+      
+      # Return consistent response format matching existing patterns
+      render json: {
+        code: 201,
+        message: "Registration successful. Please check your email to confirm your account.",
+        data: UserSerializer.new(@user).serializable_hash,
+        payload: JWT.decode(token, Rails.application.credentials.devise_jwt_secret_key!, true, algorithm: 'HS256')[0]
+      }, status: :created
+    else
+      render json: { errors: @user.errors }, status: :unprocessable_entity
+    end
+  end
+
   def update
     if params[:user].present? && params[:user].is_a?(String)
       begin
@@ -231,6 +290,16 @@ class Api::V2::UsersController < ApplicationController
 
   def profile_params
     params.require(:user).permit(:email, :first_name, :last_name, :image)
+  end
+
+  def registration_params
+    params.require(:user).permit(:email, :password, :password_confirmation, :first_name, :last_name)
+  end
+
+  def sanitize_input(input)
+    return input unless input.is_a?(String)
+    # Remove HTML tags and potential XSS vectors
+    ActionController::Base.helpers.strip_tags(input).strip
   end
 
   def sort_order

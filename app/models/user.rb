@@ -32,6 +32,8 @@ class User < ApplicationRecord
       with: /\A[^@\s]+@[^@.\s]+(?:\.[^@.\s]+)+\z/,
       message: "is invalid"
     }
+  validates :first_name, presence: true, length: { minimum: 2 }
+  validates :last_name, presence: true, length: { minimum: 2 }
 
   def as_v1_json(options = {})
     super(options.merge(

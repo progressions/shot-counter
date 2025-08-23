@@ -106,6 +106,7 @@ Rails.application.routes.draw do
         end
       end
       resources :users do
+        post :register, on: :collection
         get :current, on: :collection
         get :profile, on: :collection
         patch :profile, on: :collection, to: "users#update_profile"
