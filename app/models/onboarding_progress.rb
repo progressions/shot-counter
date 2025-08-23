@@ -3,6 +3,7 @@ class OnboardingProgress < ApplicationRecord
 
   MILESTONE_SEQUENCE = [
     { key: 'campaign', timestamp_field: :first_campaign_created_at },
+    { key: 'activate-campaign', timestamp_field: :first_campaign_activated_at },
     { key: 'character', timestamp_field: :first_character_created_at },
     { key: 'faction', timestamp_field: :first_faction_created_at },
     { key: 'fight', timestamp_field: :first_fight_created_at },
@@ -31,6 +32,7 @@ class OnboardingProgress < ApplicationRecord
   def milestone_timestamps
     [
       first_campaign_created_at,
+      first_campaign_activated_at,
       first_character_created_at,
       first_fight_created_at,
       first_faction_created_at,

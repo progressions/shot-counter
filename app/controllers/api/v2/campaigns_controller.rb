@@ -182,6 +182,18 @@ class Api::V2::CampaignsController < ApplicationController
       render json: nil
     else
       save_current_campaign(@campaign)
+      
+      # Track onboarding milestone for first campaign activation
+      Rails.logger.info("🔍 Campaign activation debug:")
+      Rails.logger.info("  - User has onboarding_progress: #{!!current_user.onboarding_progress}")
+      Rails.logger.info("  - first_campaign_activated_at: #{current_user.onboarding_progress&.first_campaign_activated_at}")
+      if current_user.onboarding_progress && !current_user.onboarding_progress.first_campaign_activated_at
+        Rails.logger.info("  - Setting first_campaign_activated_at milestone!")
+        current_user.onboarding_progress.update!(first_campaign_activated_at: Time.current)
+      else
+        Rails.logger.info("  - Milestone already set or no onboarding progress")
+      end
+      
       render json: @campaign
     end
   end
