@@ -21,6 +21,8 @@ class Campaign < ApplicationRecord
 
   validates :name, presence: true, allow_blank: false, uniqueness: { scope: :user_id }
 
+  after_create :enqueue_seeding_job, unless: :is_master_template?
+
   def as_v1_json(args={})
     {
       id: id,
@@ -33,6 +35,10 @@ class Campaign < ApplicationRecord
   end
 
   private
+
+  def enqueue_seeding_job
+    CampaignSeederJob.perform_later(id)
+  end
 
   def broadcast_campaign_update
     user_camp_ids = user.campaigns.map { |campaign| campaign.id }
