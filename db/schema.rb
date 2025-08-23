@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_08_23_155625) do
+ActiveRecord::Schema[8.0].define(version: 2025_08_23_232549) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -78,6 +78,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_23_155625) do
     t.datetime "updated_at", null: false
     t.string "name"
     t.boolean "active", default: true, null: false
+    t.boolean "is_master_template", default: false, null: false
+    t.datetime "seeded_at"
     t.index "lower((name)::text)", name: "index_campaigns_on_lower_name"
     t.index ["active", "created_at"], name: "index_campaigns_on_active_and_created_at"
     t.index ["user_id"], name: "index_campaigns_on_user_id"

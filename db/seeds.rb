@@ -64,6 +64,17 @@ puts "Gamemaster password valid: #{test_user.valid_password?('TestPass123!')}"
 puts "Created player: #{player_user.email}, ID: #{player_user.id}"
 puts "Player password valid: #{player_user.valid_password?('TestPass123!')}"
 
+# Create master template campaign for seeding new campaigns
+master_template = Campaign.find_or_create_by(
+  name: 'Master Template Campaign',
+  is_master_template: true
+) do |campaign|
+  campaign.user = test_user
+  campaign.description = 'Master template containing schticks, weapons, and character templates for seeding new campaigns'
+end
+
+puts "Created master template campaign: #{master_template.name}, ID: #{master_template.id}"
+
 # Create multiple test campaigns for activation testing
 test_campaigns = [
   {
@@ -160,23 +171,26 @@ template_characters = [
   }
 ]
 
-template_characters.each do |template_data|
-  Character.find_or_create_by(
-    name: template_data[:name],
-    is_template: true,
-    campaign: test_campaign
-  ) do |character|
-    character.action_values = Character::DEFAULT_ACTION_VALUES.merge({
-      "Archetype" => template_data[:archetype],
-      "Type" => template_data[:type]
-    })
-    # Description should be a Hash with specific keys
-    character.description = {
-      "Backstory" => template_data[:description],
-      "Nicknames" => "",
-      "Age" => "",
-      "Height" => ""
-    }
+# Add template characters to both test campaign and master template campaign
+[test_campaign, master_template].each do |campaign|
+  template_characters.each do |template_data|
+    Character.find_or_create_by(
+      name: template_data[:name],
+      is_template: true,
+      campaign: campaign
+    ) do |character|
+      character.action_values = Character::DEFAULT_ACTION_VALUES.merge({
+        "Archetype" => template_data[:archetype],
+        "Type" => template_data[:type]
+      })
+      # Description should be a Hash with specific keys
+      character.description = {
+        "Backstory" => template_data[:description],
+        "Nicknames" => "",
+        "Age" => "",
+        "Height" => ""
+      }
+    end
   end
 end
 
