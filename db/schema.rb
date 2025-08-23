@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_08_21_001644) do
+ActiveRecord::Schema[8.0].define(version: 2025_08_23_103627) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -264,6 +264,20 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_21_001644) do
     t.index ["vehicle_id"], name: "index_memberships_on_vehicle_id"
   end
 
+  create_table "onboarding_progresses", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "user_id", null: false
+    t.datetime "first_campaign_created_at", precision: nil
+    t.datetime "first_character_created_at", precision: nil
+    t.datetime "first_fight_created_at", precision: nil
+    t.datetime "first_faction_created_at", precision: nil
+    t.datetime "first_party_created_at", precision: nil
+    t.datetime "first_site_created_at", precision: nil
+    t.datetime "congratulations_dismissed_at", precision: nil
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_onboarding_progresses_on_user_id"
+  end
+
   create_table "parties", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.string "name"
     t.string "description"
@@ -449,6 +463,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_21_001644) do
   add_foreign_key "memberships", "characters"
   add_foreign_key "memberships", "parties"
   add_foreign_key "memberships", "vehicles"
+  add_foreign_key "onboarding_progresses", "users"
   add_foreign_key "parties", "campaigns"
   add_foreign_key "parties", "factions"
   add_foreign_key "parties", "junctures"
