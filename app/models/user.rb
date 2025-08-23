@@ -22,7 +22,9 @@ class User < ApplicationRecord
   has_one_attached :image
   has_many :image_positions, as: :positionable, dependent: :destroy
   belongs_to :pending_invitation, class_name: "Invitation", optional: true
+  has_one :onboarding_progress, dependent: :destroy
   before_validation :set_name, if: -> { first_name_changed? || last_name_changed? }
+  after_create :create_onboarding_progress
   
   validate :acceptable_image
   validates :email,
@@ -88,6 +90,10 @@ class User < ApplicationRecord
   end
 
   private
+
+  def create_onboarding_progress
+    OnboardingProgress.create!(user: self)
+  end
 
   def acceptable_image
     return unless image.attached?
