@@ -137,6 +137,9 @@ class Api::V2::UsersController < ApplicationController
     user_data[:first_name] = sanitize_input(user_data[:first_name]) if user_data[:first_name]
     user_data[:last_name] = sanitize_input(user_data[:last_name]) if user_data[:last_name]
     
+    # Set gamemaster to true by default for all new registrations
+    user_data[:gamemaster] = true unless user_data.key?(:gamemaster)
+    
     # Collect validation errors
     validation_errors = {}
     
@@ -293,7 +296,7 @@ class Api::V2::UsersController < ApplicationController
   end
 
   def registration_params
-    params.require(:user).permit(:email, :password, :password_confirmation, :first_name, :last_name)
+    params.require(:user).permit(:email, :password, :password_confirmation, :first_name, :last_name, :gamemaster)
   end
 
   def sanitize_input(input)
