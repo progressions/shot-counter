@@ -253,7 +253,7 @@ RSpec.describe "Api::V2::Parties", type: :request do
       body = JSON.parse(response.body)
       expect(body["parties"].length).to eq(1)
       expect(body["parties"][0]).to include("name" => "Dragons Party")
-      expect(body["parties"][0].keys).to eq(["id", "name", "entity_class"])
+      expect(body["parties"][0].keys).to eq(["id", "name", "entity_class", "character_ids", "vehicle_ids"])
       expect(body["factions"].map { |f| f["name"] }).to eq(["The Dragons"])
     end
 

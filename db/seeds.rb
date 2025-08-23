@@ -180,6 +180,92 @@ template_characters.each do |template_data|
   end
 end
 
+# Create a test party with characters
+test_party = Party.find_or_create_by(
+  name: 'The Heroes',
+  campaign: test_campaign
+) do |party|
+  party.description = 'A band of brave heroes ready for adventure'
+end
+
+# Create party-specific characters if they don't exist
+party_characters = [
+  {
+    name: 'Captain Strongarm',
+    character_type: 'PC',
+    archetype: 'Martial Artist'
+  },
+  {
+    name: 'Shadow Ninja',
+    character_type: 'PC',
+    archetype: 'Killer'
+  },
+  {
+    name: 'Lucky Luke',
+    character_type: 'PC',
+    archetype: 'Bandit'
+  },
+  {
+    name: 'Doctor Wisdom',
+    character_type: 'Ally',
+    archetype: 'Everyday Hero'
+  }
+]
+
+party_characters.each do |char_data|
+  character = Character.find_or_create_by(
+    name: char_data[:name],
+    campaign: test_campaign
+  ) do |c|
+    c.action_values = Character::DEFAULT_ACTION_VALUES.merge({
+      "Type" => char_data[:character_type],
+      "Archetype" => char_data[:archetype]
+    })
+  end
+  
+  # Add character to party if not already a member
+  unless test_party.characters.include?(character)
+    Membership.find_or_create_by(
+      party: test_party,
+      character: character
+    )
+  end
+end
+
+# Create a test vehicle for the party
+test_vehicle = Vehicle.find_or_create_by(
+  name: 'The Hero Mobile',
+  campaign: test_campaign
+) do |vehicle|
+  vehicle.action_values = {
+    "Acceleration" => 8,
+    "Handling" => 10,
+    "Squeal" => 11,
+    "Frame" => 7,
+    "Crunch" => 10,
+    "Condition Points" => 30,
+    "Chase Points" => 0
+  }
+end
+
+# Add vehicle to party if not already a member
+unless test_party.vehicles.include?(test_vehicle)
+  Membership.find_or_create_by(
+    party: test_party,
+    vehicle: test_vehicle
+  )
+end
+
+# Create a test fight for party-to-fight testing
+test_fight = Fight.find_or_create_by(
+  name: 'Test Fight for Party Addition',
+  campaign: test_campaign
+) do |fight|
+  fight.description = 'A test fight for validating the party-to-fight feature'
+  fight.season = 1
+  fight.session = 1
+end
+
 puts "✅ Seed data created:"
 puts "   Gamemaster: #{test_user.email}"
 puts "   Player: #{player_user.email}"
@@ -187,3 +273,5 @@ puts "   Campaigns: #{created_campaigns.map(&:name).join(', ')}"
 puts "   Current Campaign: #{test_campaign.name}"
 puts "   Characters: #{test_campaign.characters.count}"
 puts "   Template Characters: #{Character.where(is_template: true).count}"
+puts "   Party: #{test_party.name} with #{test_party.characters.count} characters and #{test_party.vehicles.count} vehicles"
+puts "   Test Fight: #{test_fight.name}"
