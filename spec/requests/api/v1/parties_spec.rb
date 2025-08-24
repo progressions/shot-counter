@@ -84,7 +84,7 @@ RSpec.describe "Api::V1::Parties", type: :request do
       get "/api/v1/parties", headers: headers
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
-      expect(body["factions"].map { |f| f["name"] }).to eq(["The Dragons", "Ascended"])
+      expect(body["factions"].map { |f| f["name"] }).to eq(["Ascended", "The Dragons"])
     end
   end
 

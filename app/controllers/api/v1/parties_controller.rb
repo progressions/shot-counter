@@ -27,7 +27,7 @@ class Api::V1::PartiesController < ApplicationController
 
     render json: {
       parties: ActiveModelSerializers::SerializableResource.new(@parties, each_serializer: PartySerializer).serializable_hash,
-      factions: ActiveModelSerializers::SerializableResource.new(current_campaign.factions, each_serializer: FactionSerializer).serializable_hash,
+      factions: ActiveModelSerializers::SerializableResource.new(current_campaign.factions.order(:name), each_serializer: FactionSerializer).serializable_hash,
       meta: pagination_meta(@parties),
     }
   end
