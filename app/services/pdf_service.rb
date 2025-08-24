@@ -72,12 +72,22 @@ module PdfService
       fields = pdftk.get_fields(temp_file_path.to_s)
       if fields.find { |f| f.name == "Name" }
         character_params = params.merge(pdf_attributes_for_character(fields, campaign))
+        
+        # Extract weapons and schticks before creating character
+        weapons = character_params.delete(:weapons) || []
+        schticks = character_params.delete(:schticks) || []
+        
+        @character = campaign.characters.new(character_params)
+        @character = CharacterDuplicatorService.set_unique_name(@character)
+        
+        # Store weapons and schticks for later assignment
+        @character.instance_variable_set(:@pending_weapons, weapons)
+        @character.instance_variable_set(:@pending_schticks, schticks)
       else
         raise "Invalid PDF: Missing required fields"
       end
 
-      @character = campaign.characters.new(character_params)
-      @character = CharacterDuplicatorService.set_unique_name(@character)
+      @character
     end
 
     def character_to_pdf(character)

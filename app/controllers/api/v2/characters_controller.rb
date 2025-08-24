@@ -212,6 +212,13 @@ end
       @character = PdfService.pdf_to_character(uploaded_file, current_campaign, { user: current_user })
 
       if @character.save
+        # Now assign the pending weapons and schticks after character is saved
+        pending_weapons = @character.instance_variable_get(:@pending_weapons) || []
+        pending_schticks = @character.instance_variable_get(:@pending_schticks) || []
+        
+        @character.weapons = pending_weapons
+        @character.schticks = pending_schticks
+        
         Rails.cache.delete_matched("characters/#{current_campaign.id}/*")
         render json: @character, status: :created
       else
