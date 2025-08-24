@@ -24,6 +24,9 @@ module ShotServer
     # Skip views, helpers and assets when generating a new resource.
     config.api_only = true
 
+    # Fix Rails 8.1 timezone deprecation warning
+    config.active_support.to_time_preserves_timezone = :zone
+
     config.after_initialize do
       Rails.application.routes.default_url_options = Rails.configuration.x.active_storage_url_options
       ActiveStorage::Current.url_options = Rails.configuration.x.active_storage_url_options
