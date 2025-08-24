@@ -7,6 +7,7 @@ module CurrentCampaign
         current_campaign = Campaign.find_by(id: user.current_campaign_id)
         set(user: user, campaign: current_campaign)
       else
+        # This is for Discord integration
         json = redis.get("current_campaign:#{server_id}")
         if json.present?
           campaign_info = JSON.parse(json)
