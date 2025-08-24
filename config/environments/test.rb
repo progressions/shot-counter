@@ -70,4 +70,7 @@ Rails.application.configure do
   # ActionCable configuration for test environment
   config.action_cable.disable_request_forgery_protection = true
   config.action_cable.url = "/cable"
+
+  # Use inline adapter for background jobs in test so they process immediately
+  config.active_job.queue_adapter = :inline
 end
