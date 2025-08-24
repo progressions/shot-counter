@@ -77,6 +77,7 @@ module PdfService
       end
 
       @character = campaign.characters.new(character_params)
+      @character = CharacterDuplicatorService.set_unique_name(@character)
     end
 
     def character_to_pdf(character)

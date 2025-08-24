@@ -196,7 +196,7 @@ end
       SyncCharacterToNotionJob.perform_later(@new_character.id)
       render json: @new_character, status: :created
     else
-      Rails.logger.error("Character duplication failed: #{@new_character.errors.join(', ')}")
+      Rails.logger.error("Character duplication failed: #{@new_character.errors.full_messages.join(', ')}")
       render json: @new_character.errors, status: :unprocessable_entity
     end
   end
@@ -215,7 +215,7 @@ end
         Rails.cache.delete_matched("characters/#{current_campaign.id}/*")
         render json: @character, status: :created
       else
-        Rails.logger.error("Character import failed: #{@character.errors.join(', ')}")
+        Rails.logger.error("Character import failed: #{@character.errors.full_messages.join(', ')}")
         render json: @character.errors, status: :unprocessable_entity
       end
     else

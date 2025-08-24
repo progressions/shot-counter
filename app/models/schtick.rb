@@ -33,7 +33,7 @@ class Schtick < ApplicationRecord
   has_many :characters, through: :character_schticks
   has_many :image_positions, as: :positionable, dependent: :destroy
 
-  validates :name, presence: true, uniqueness: { scope: :category }
+  validates :name, presence: true, uniqueness: { scope: [:category, :campaign_id] }
   validates :category, inclusion: { in: CATEGORIES }, unless: -> { path == "Core" }
   validate :prerequisite_must_be_in_same_category_and_path
 

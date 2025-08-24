@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_08_23_232549) do
+ActiveRecord::Schema[8.0].define(version: 2025_08_24_014723) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -312,7 +312,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_23_232549) do
     t.string "name"
     t.index "lower((name)::text)", name: "index_schticks_on_lower_name"
     t.index ["campaign_id"], name: "index_schticks_on_campaign_id"
-    t.index ["category", "name"], name: "index_schticks_on_category_and_name", unique: true
+    t.index ["category", "name", "campaign_id"], name: "index_schticks_on_category_name_and_campaign", unique: true
     t.index ["prerequisite_id"], name: "index_schticks_on_prerequisite_id"
   end
 
