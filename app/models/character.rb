@@ -1,6 +1,7 @@
 class Character < ApplicationRecord
   include Broadcastable
   include WithImagekit
+  include OnboardingTrackable
 
   DEFAULT_ACTION_VALUES = {
     "Guns" => 0,

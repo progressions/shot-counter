@@ -1,6 +1,7 @@
 class Fight < ApplicationRecord
   include Broadcastable
   include WithImagekit
+  include OnboardingTrackable
 
   belongs_to :campaign
   has_many :shots, dependent: :destroy

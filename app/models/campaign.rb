@@ -34,35 +34,15 @@ class Campaign < ApplicationRecord
     }
   end
 
+  def campaign_id
+    # Campaign model references itself for broadcasting compatibility
+    id
+  end
+
   private
 
   def enqueue_seeding_job
     CampaignSeederJob.perform_later(id)
   end
 
-  def broadcast_campaign_update
-    user_camp_ids = user.campaigns.map { |campaign| campaign.id }
-    user_camp_ids = users.map { |user| user.current_campaign_id }
-    campaign_ids = user_camp_ids + user_camp_ids
-
-    campaign_ids.uniq.each do |campaign_id|
-      channel = "campaign_#{campaign_id}"
-      payload = {
-        campaign: CampaignSerializer.new(self).as_json,
-      }
-      ActionCable.server.broadcast(channel, payload)
-    end
-  end
-
-  def broadcast_reload
-    payload = { campaigns: "reload" }
-    
-    # Broadcast to user-specific channel for campaign list updates
-    user_channel = "user_#{user.id}"
-    ActionCable.server.broadcast(user_channel, payload)
-    
-    # Also broadcast to this campaign's channel if it exists
-    channel = "campaign_#{id}"
-    ActionCable.server.broadcast(channel, payload)
-  end
 end

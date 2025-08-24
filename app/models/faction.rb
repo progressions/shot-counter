@@ -1,6 +1,7 @@
 class Faction < ApplicationRecord
   include Broadcastable
   include WithImagekit
+  include OnboardingTrackable
 
   belongs_to :campaign
   has_many :characters
