@@ -23,6 +23,10 @@ module ShotServer
     # Middleware like session, flash, cookies can be added back manually.
     # Skip views, helpers and assets when generating a new resource.
     config.api_only = true
+    
+    # Enable ActionCable for WebSocket support
+    config.middleware.use ActionDispatch::Cookies
+    config.middleware.use ActionDispatch::Session::CookieStore
 
     # Fix Rails 8.1 timezone deprecation warning
     config.active_support.to_time_preserves_timezone = :zone

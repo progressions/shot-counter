@@ -55,16 +55,14 @@ class Campaign < ApplicationRecord
   end
 
   def broadcast_reload
-    # Broadcast to the user's current campaign channel to refresh campaigns list
-    if user.current_campaign_id
-      channel = "campaign_#{user.current_campaign_id}"
-      payload = { campaigns: "reload" }
-      ActionCable.server.broadcast(channel, payload)
-    end
+    payload = { campaigns: "reload" }
+    
+    # Broadcast to user-specific channel for campaign list updates
+    user_channel = "user_#{user.id}"
+    ActionCable.server.broadcast(user_channel, payload)
     
     # Also broadcast to this campaign's channel if it exists
     channel = "campaign_#{id}"
-    payload = { campaigns: "reload" }
     ActionCable.server.broadcast(channel, payload)
   end
 end
