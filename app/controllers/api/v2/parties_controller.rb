@@ -118,6 +118,8 @@ class Api::V2::PartiesController < ApplicationController
     end
 
     if @party.save
+      # Clear parties index cache after creating a new party
+      clear_parties_cache
       render json: @party, serializer: PartySerializer, status: :created
     else
       render json: { errors: @party.errors }, status: :unprocessable_entity
@@ -147,6 +149,8 @@ class Api::V2::PartiesController < ApplicationController
     end
 
     if @party.update(party_data)
+      # Clear parties index cache after updating a party
+      clear_parties_cache
       render json: @party.reload
     else
       render json: { errors: @party.errors }, status: :unprocessable_entity
@@ -200,6 +204,12 @@ class Api::V2::PartiesController < ApplicationController
   end
 
   private
+
+  def clear_parties_cache
+    # Clear all parties index cache entries for this campaign
+    Rails.cache.delete_matched("parties/index/#{current_campaign.id}/*")
+    Rails.logger.info "🗑️ Cleared parties cache for campaign #{current_campaign.id}"
+  end
 
   def set_party
     @party = current_campaign.parties.find(params[:id])

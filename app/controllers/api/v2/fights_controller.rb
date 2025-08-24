@@ -107,6 +107,8 @@ end
       @fight.image.attach(params[:image])
     end
     if @fight.save
+      # Clear fights index cache after creating a new fight
+      clear_fights_cache
       render json: @fight, serializer: FightSerializer, status: :created
     else
       render json: { errors: @fight.errors }, status: :unprocessable_entity
@@ -131,6 +133,8 @@ end
       @fight.image.attach(params[:image])
     end
     if @fight.update(fight_data)
+      # Clear fights index cache after updating a fight
+      clear_fights_cache
       render json: @fight.reload, serializer: FightSerializer, status: :ok
     else
       render json: { errors: @fight.errors }, status: :unprocessable_entity
@@ -154,6 +158,12 @@ end
   end
 
   private
+
+  def clear_fights_cache
+    # Clear all fights index cache entries for this campaign
+    Rails.cache.delete_matched("fights/index/#{current_campaign.id}/*")
+    Rails.logger.info "🗑️ Cleared fights cache for campaign #{current_campaign.id}"
+  end
 
   def require_current_campaign
     render status: 404 unless current_campaign

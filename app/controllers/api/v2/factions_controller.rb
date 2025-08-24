@@ -103,6 +103,8 @@ class Api::V2::FactionsController < ApplicationController
     end
 
     if @faction.save
+      # Clear factions index cache after creating a new faction
+      clear_factions_cache
       render json: @faction, status: :created
     else
       render json: { errors: @faction.errors }, status: :unprocessable_entity
@@ -136,6 +138,8 @@ class Api::V2::FactionsController < ApplicationController
     end
 
     if @faction.update(faction_data)
+      # Clear factions index cache after updating a faction
+      clear_factions_cache
       render json: @faction.reload
     else
       render json: { errors: @faction.errors }, status: :unprocessable_entity
@@ -171,6 +175,12 @@ class Api::V2::FactionsController < ApplicationController
   end
 
   private
+
+  def clear_factions_cache
+    # Clear all factions index cache entries for this campaign
+    Rails.cache.delete_matched("factions/index/#{current_campaign.id}/*")
+    Rails.logger.info "🗑️ Cleared factions cache for campaign #{current_campaign.id}"
+  end
 
   def faction_params
     params.require(:faction).permit(:name, :description, :image, character_ids: [], party_ids: [], site_ids: [], juncture_ids: [], vehicle_ids: [])
