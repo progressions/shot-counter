@@ -34,10 +34,10 @@ class OnboardingProgress < ApplicationRecord
       first_campaign_created_at,
       first_campaign_activated_at,
       first_character_created_at,
-      first_fight_created_at,
       first_faction_created_at,
       first_party_created_at,
-      first_site_created_at
+      first_site_created_at,
+      first_fight_created_at
     ]
   end
 end
