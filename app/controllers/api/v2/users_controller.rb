@@ -40,7 +40,14 @@ class Api::V2::UsersController < ApplicationController
       query = query.where(active: true)
     end
     query = query.joins(:characters).where(characters: { id: params[:character_id] }) if params[:character_id].present?
-    query = query.joins(:campaign_memberships).where(campaign_memberships: { campaign_id: params[:campaign_id] }) if params[:campaign_id].present?
+    if params[:campaign_id].present?
+      # Include both campaign members AND the campaign owner
+      campaign = Campaign.find(params[:campaign_id])
+      member_user_ids = campaign.users.pluck(:id)
+      owner_user_id = campaign.user_id
+      all_user_ids = (member_user_ids + [owner_user_id]).uniq.compact
+      query = query.where(id: all_user_ids)
+    end
     # Cache key
     cache_key = [
       "users/index",
