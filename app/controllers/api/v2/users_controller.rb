@@ -1,6 +1,7 @@
 class Api::V2::UsersController < ApplicationController
   before_action :authenticate_user!
-  before_action :require_admin, only: [:index, :create, :destroy, :show]
+  before_action :require_admin_or_gamemaster_for_campaign_users, only: [:index]
+  before_action :require_admin, only: [:create, :destroy, :show]
   before_action :set_user, only: [:show, :update, :destroy, :remove_image]
   before_action :require_self_or_admin, only: :update
   skip_before_action :authenticate_user!, only: [:register]
@@ -265,6 +266,30 @@ class Api::V2::UsersController < ApplicationController
       render json: { error: "Admin access required" }, status: :forbidden
       return
     end
+  end
+
+  def require_admin_or_gamemaster_for_campaign_users
+    # Allow admin access to all users
+    return if current_user.admin?
+    
+    # Allow gamemaster access only when filtering by their own campaign
+    if params[:campaign_id].present?
+      begin
+        campaign = Campaign.find(params[:campaign_id])
+        if campaign.user_id == current_user.id
+          return
+        else
+          render json: { error: "You can only view users from your own campaigns" }, status: :forbidden
+          return
+        end
+      rescue ActiveRecord::RecordNotFound
+        render json: { error: "Campaign not found" }, status: :not_found
+        return
+      end
+    end
+    
+    # Require admin for all other user queries
+    render json: { error: "Admin access required" }, status: :forbidden
   end
 
   def require_self_or_admin
