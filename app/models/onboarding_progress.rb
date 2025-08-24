@@ -6,9 +6,9 @@ class OnboardingProgress < ApplicationRecord
     { key: 'activate-campaign', timestamp_field: :first_campaign_activated_at },
     { key: 'character', timestamp_field: :first_character_created_at },
     { key: 'faction', timestamp_field: :first_faction_created_at },
-    { key: 'fight', timestamp_field: :first_fight_created_at },
     { key: 'party', timestamp_field: :first_party_created_at },
-    { key: 'site', timestamp_field: :first_site_created_at }
+    { key: 'site', timestamp_field: :first_site_created_at },
+    { key: 'fight', timestamp_field: :first_fight_created_at }
   ].freeze
 
   def all_milestones_complete?
