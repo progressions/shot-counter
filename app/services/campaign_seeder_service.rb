@@ -50,8 +50,8 @@ class CampaignSeederService
       Rails.logger.info "Duplicating #{characters.count} characters"
 
       characters.each do |character|
-        duplicated_character = CharacterDuplicatorService.duplicate_character(character, target_campaign.user)
-        duplicated_character.campaign = target_campaign
+        # Pass the target_campaign as the third parameter so it uses the correct campaign for name checking
+        duplicated_character = CharacterDuplicatorService.duplicate_character(character, target_campaign.user, target_campaign)
         
         if duplicated_character.save
           # Apply associations after the character is saved and has an ID
