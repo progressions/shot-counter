@@ -97,7 +97,9 @@ RSpec.describe "Campaign Seeding Integration", type: :model do
     end
 
     it "handles missing master template gracefully" do
-      # Remove master template
+      # Remove master template (destroy dependent records first)
+      master_template.characters.destroy_all
+      master_template.weapons.destroy_all
       master_template.destroy
       
       new_campaign = Campaign.create!(name: 'Test Campaign', user: gamemaster)
