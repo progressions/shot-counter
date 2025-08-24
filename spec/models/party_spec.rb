@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe Party, type: :model do
-  let!(:user) { User.create!(email: "email@example.com") }
+  let!(:user) { User.create!(email: "email@example.com", first_name: "Test", last_name: "User") }
   let!(:action_movie) { user.campaigns.create!(name: "Action Movie") }
   let(:brick) { Character.create!(name: "Brick Manly", campaign: action_movie) }
   let(:party) { Party.create!(name: "The Party", campaign: action_movie) }

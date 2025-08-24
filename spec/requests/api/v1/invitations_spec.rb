@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe "Invitations", type: :request do
   before(:each) do
-    @gamemaster = User.create!(email: "email@example.com", confirmed_at: Time.now)
+    @gamemaster = User.create!(email: "email@example.com", first_name: "Game", last_name: "Master", confirmed_at: Time.now)
     @campaign = @gamemaster.campaigns.create!(name: "Adventure")
     @headers = Devise::JWT::TestHelpers.auth_headers({}, @gamemaster)
   end
@@ -28,7 +28,7 @@ RSpec.describe "Invitations", type: :request do
 
     it "updates pending user" do
       @invitation = @gamemaster.invitations.create!(campaign_id: @campaign.id, email: "ginny@email.com")
-      @ginny = User.create!(email: "ginny@email.com")
+      @ginny = User.create!(email: "ginny@email.com", first_name: "Ginny", last_name: "User")
       get "/api/v1/invitations/#{@invitation.id}"
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
@@ -52,7 +52,7 @@ RSpec.describe "Invitations", type: :request do
     end
 
     it "creates an invitation for an existing user" do
-      @alice = User.create!(email: "alice@email.com")
+      @alice = User.create!(email: "alice@email.com", first_name: "Alice", last_name: "User")
       post "/api/v1/invitations", headers: @headers, params: {
         invitation: {
           campaign_id: @campaign.id,
@@ -106,7 +106,7 @@ RSpec.describe "Invitations", type: :request do
     end
 
     it "can't create a new invitation for an existing member" do
-      @ginny = User.create!(email: "ginny@email.com")
+      @ginny = User.create!(email: "ginny@email.com", first_name: "Ginny", last_name: "User")
       @campaign.campaign_memberships.create!(user: @ginny)
       post "/api/v1/invitations", headers: @headers, params: {
         invitation: {
@@ -149,7 +149,7 @@ RSpec.describe "Invitations", type: :request do
     end
 
     it "redeems for an existing user and reduces the count" do
-      @alice = User.create!(email: "alice@email.com", confirmed_at: Time.now)
+      @alice = User.create!(email: "alice@email.com", first_name: "Alice", last_name: "User", confirmed_at: Time.now)
       @invitation = @gamemaster.invitations.create!(campaign_id: @campaign.id, maximum_count: 10)
       @headers = Devise::JWT::TestHelpers.auth_headers({}, @alice)
       patch "/api/v1/invitations/#{@invitation.id}/redeem", headers: @headers
@@ -170,7 +170,7 @@ RSpec.describe "Invitations", type: :request do
     end
 
     it "can't redeem when it reaches zero remaining_count" do
-      @alice = User.create!(email: "alice@email.com", confirmed_at: Time.now)
+      @alice = User.create!(email: "alice@email.com", first_name: "Alice", last_name: "User", confirmed_at: Time.now)
       @invitation = @gamemaster.invitations.create!(campaign_id: @campaign.id, maximum_count: 10, remaining_count: 0)
       @headers = Devise::JWT::TestHelpers.auth_headers({}, @alice)
       patch "/api/v1/invitations/#{@invitation.id}/redeem", headers: @headers
@@ -179,7 +179,7 @@ RSpec.describe "Invitations", type: :request do
     end
 
     it "redeems an invitation for an existing user" do
-      @ginny = User.create!(email: "ginny@email.com")
+      @ginny = User.create!(email: "ginny@email.com", first_name: "Ginny", last_name: "User")
       @headers = Devise::JWT::TestHelpers.auth_headers({}, @ginny)
       @invitation = @gamemaster.invitations.create!(campaign_id: @campaign.id, email: @ginny.email)
 

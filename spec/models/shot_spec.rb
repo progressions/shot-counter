@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe Shot, type: :model do
   before(:each) do
-    @gamemaster = User.create!(email: "email@example.com")
+    @gamemaster = User.create!(email: "email@example.com", first_name: "Game", last_name: "Master")
     @campaign = @gamemaster.campaigns.create!(name: "Adventure")
     @space = @gamemaster.campaigns.create!(name: "Space")
     @fight = @campaign.fights.create!(name: "Battle")

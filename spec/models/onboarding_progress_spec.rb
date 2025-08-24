@@ -36,6 +36,7 @@ RSpec.describe OnboardingProgress, type: :model do
     it "returns true when all core milestones are completed" do
       timestamp = Time.current
       onboarding_progress.first_campaign_created_at = timestamp
+      onboarding_progress.first_campaign_activated_at = timestamp
       onboarding_progress.first_character_created_at = timestamp
       onboarding_progress.first_fight_created_at = timestamp
       onboarding_progress.first_faction_created_at = timestamp
@@ -51,6 +52,7 @@ RSpec.describe OnboardingProgress, type: :model do
       OnboardingProgress.new(
         user: user,
         first_campaign_created_at: timestamp,
+        first_campaign_activated_at: timestamp,
         first_character_created_at: timestamp,
         first_fight_created_at: timestamp,
         first_faction_created_at: timestamp,
@@ -66,6 +68,7 @@ RSpec.describe OnboardingProgress, type: :model do
     it "returns false when milestones are complete but congratulations not dismissed" do
       timestamp = Time.current
       onboarding_progress.first_campaign_created_at = timestamp
+      onboarding_progress.first_campaign_activated_at = timestamp
       onboarding_progress.first_character_created_at = timestamp
       onboarding_progress.first_fight_created_at = timestamp
       onboarding_progress.first_faction_created_at = timestamp
@@ -88,6 +91,7 @@ RSpec.describe OnboardingProgress, type: :model do
     it "returns true when all milestones complete but congratulations not dismissed" do
       timestamp = Time.current
       onboarding_progress.first_campaign_created_at = timestamp
+      onboarding_progress.first_campaign_activated_at = timestamp
       onboarding_progress.first_character_created_at = timestamp
       onboarding_progress.first_fight_created_at = timestamp
       onboarding_progress.first_faction_created_at = timestamp
@@ -119,6 +123,7 @@ RSpec.describe OnboardingProgress, type: :model do
 
     it "returns character as next milestone when only campaign completed" do
       onboarding_progress.first_campaign_created_at = Time.current
+      onboarding_progress.first_campaign_activated_at = Time.current
       next_milestone = onboarding_progress.next_milestone
       expect(next_milestone[:key]).to eq('character')
       expect(next_milestone[:timestamp_field]).to eq(:first_character_created_at)
@@ -127,6 +132,7 @@ RSpec.describe OnboardingProgress, type: :model do
     it "returns nil when all milestones are completed" do
       timestamp = Time.current
       onboarding_progress.first_campaign_created_at = timestamp
+      onboarding_progress.first_campaign_activated_at = timestamp
       onboarding_progress.first_character_created_at = timestamp
       onboarding_progress.first_fight_created_at = timestamp
       onboarding_progress.first_faction_created_at = timestamp

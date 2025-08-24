@@ -2,7 +2,7 @@ require "rails_helper"
 RSpec.describe "Api::V2::Characters", type: :request do
   before(:each) do
     # players
-    @gamemaster = User.create!(email: "gamemaster@example.com", confirmed_at: Time.now, gamemaster: true)
+    @gamemaster = User.create!(email: "gamemaster@example.com", first_name: "Game", last_name: "Master", confirmed_at: Time.now, gamemaster: true)
     @player = User.create!(email: "player@example.com", confirmed_at: Time.now, gamemaster: false, first_name: "Player", last_name: "One")
     @campaign = @gamemaster.campaigns.create!(name: "Adventure")
     # factions

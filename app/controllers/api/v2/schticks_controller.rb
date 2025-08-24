@@ -58,11 +58,11 @@ class Api::V2::SchticksController < ApplicationController
 
       # Get categories without applying full sort_order
       categories_query = query.select("schticks.category").distinct
-      categories = categories_query.pluck(:category).uniq
+      categories = categories_query.pluck(:category).uniq.compact.sort
 
-      # Get seasons without applying full sort_order
+      # Get paths without applying full sort_order
       paths_query = query.select("schticks.path").distinct
-      paths = paths_query.pluck(:path).uniq
+      paths = paths_query.pluck(:path).uniq.compact.sort
 
       schticks = paginate(schticks, per_page: per_page, page: page)
 

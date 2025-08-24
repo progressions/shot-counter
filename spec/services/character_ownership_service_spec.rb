@@ -2,11 +2,11 @@ require "rails_helper"
 
 RSpec.describe CharacterOwnershipService do
   before(:each) do
-    @gamemaster = User.create!(email: "gamemaster@example.com", confirmed_at: Time.now, gamemaster: true)
-    @player = User.create!(email: "player@example.com", confirmed_at: Time.now)
-    @new_owner = User.create!(email: "newowner@example.com", confirmed_at: Time.now)
-    @admin = User.create!(email: "admin@example.com", confirmed_at: Time.now, admin: true)
-    @non_member = User.create!(email: "nonmember@example.com", confirmed_at: Time.now)
+    @gamemaster = User.create!(email: "gamemaster@example.com", confirmed_at: Time.now, gamemaster: true, first_name: "Game", last_name: "Master")
+    @player = User.create!(email: "player@example.com", confirmed_at: Time.now, first_name: "Player", last_name: "One")
+    @new_owner = User.create!(email: "newowner@example.com", confirmed_at: Time.now, first_name: "New", last_name: "Owner")
+    @admin = User.create!(email: "admin@example.com", confirmed_at: Time.now, admin: true, first_name: "Admin", last_name: "User")
+    @non_member = User.create!(email: "nonmember@example.com", confirmed_at: Time.now, first_name: "Non", last_name: "Member")
     
     @campaign = @gamemaster.campaigns.create!(name: "Test Campaign")
     @campaign.users << @player
@@ -105,7 +105,7 @@ RSpec.describe CharacterOwnershipService do
 
     context "with gamemaster from different campaign" do
       it "fails due to lack of authorization" do
-        other_gm = User.create!(email: "othergm@example.com", confirmed_at: Time.now, gamemaster: true)
+        other_gm = User.create!(email: "othergm@example.com", confirmed_at: Time.now, gamemaster: true, first_name: "Other", last_name: "GM")
         other_campaign = other_gm.campaigns.create!(name: "Other Campaign")
         
         service = CharacterOwnershipService.new(

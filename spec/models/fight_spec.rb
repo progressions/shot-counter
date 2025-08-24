@@ -2,7 +2,7 @@ require "rails_helper"
 
 RSpec.describe Fight, type: :model do
   before(:each) do
-    @user = User.create!(email: "email@example.com")
+    @user = User.create!(email: "email@example.com", first_name: "Test", last_name: "User")
     @action_movie = @user.campaigns.create!(name: "Action Movie")
   end
 

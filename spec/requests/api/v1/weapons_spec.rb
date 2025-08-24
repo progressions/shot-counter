@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe "Api::V1::Weapons", type: :request do
   before(:each) do
-    @gamemaster = User.create!(email: "email@example.com", confirmed_at: Time.now)
+    @gamemaster = User.create!(email: "email@example.com", first_name: "Game", last_name: "Master", confirmed_at: Time.now)
     @campaign = @gamemaster.campaigns.create!(name: "Adventure")
     @fight = @campaign.fights.create!(name: "Big Brawl")
     @brick = Character.create!(name: "Brick Manly", action_values: { "Type" => "PC" }, campaign_id: @campaign.id)

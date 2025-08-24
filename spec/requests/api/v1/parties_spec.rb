@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe "Api::V1::Parties", type: :request do
-  let!(:user) { User.create!(email: "email@example.com", confirmed_at: Time.now) }
+  let!(:user) { User.create!(email: "email@example.com", first_name: "Test", last_name: "User", confirmed_at: Time.now) }
   let!(:action_movie) { user.campaigns.create!(name: "Action Movie") }
   let!(:pirates) { user.campaigns.create!(name: "Pirates") }
   let(:fight) { Fight.create!(name: "Museum Fight", campaign: action_movie) }
@@ -84,7 +84,7 @@ RSpec.describe "Api::V1::Parties", type: :request do
       get "/api/v1/parties", headers: headers
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
-      expect(body["factions"].map { |f| f["name"] }).to eq(["The Dragons", "Ascended"])
+      expect(body["factions"].map { |f| f["name"] }).to eq(["Ascended", "The Dragons"])
     end
   end
 
