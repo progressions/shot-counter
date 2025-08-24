@@ -10,6 +10,12 @@ module OnboardingTrackable
   def track_onboarding_milestone
     Rails.logger.info "🎯 OnboardingTrackable: Tracking milestone for #{self.class.name} (ID: #{id})"
     
+    # Skip tracking for template characters
+    if self.class.name == "Character" && respond_to?(:is_template) && is_template
+      Rails.logger.info "⏭️ Skipping milestone tracking for template character: #{name}"
+      return
+    end
+    
     # Get the user - either directly or through campaign
     target_user = if respond_to?(:user) && user.present?
       Rails.logger.info "📍 Found user directly: #{user.email}"
