@@ -216,8 +216,12 @@ end
         pending_weapons = @character.instance_variable_get(:@pending_weapons) || []
         pending_schticks = @character.instance_variable_get(:@pending_schticks) || []
         
-        @character.weapons = pending_weapons
-        @character.schticks = pending_schticks
+        # Filter out any weapons/schticks that are already associated to avoid duplicates
+        new_weapons = pending_weapons - @character.weapons
+        new_schticks = pending_schticks - @character.schticks
+        
+        @character.weapons += new_weapons if new_weapons.any?
+        @character.schticks += new_schticks if new_schticks.any?
         
         Rails.cache.delete_matched("characters/#{current_campaign.id}/*")
         render json: @character, status: :created

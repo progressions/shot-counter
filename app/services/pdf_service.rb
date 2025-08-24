@@ -126,7 +126,9 @@ module PdfService
     def get_weapons_from_pdf(fields, campaign)
       (1..5).reduce([]) do |weapons, index|
         weapon = get_weapon(fields, index, campaign)
-        weapons << weapon if weapon
+        if weapon && !weapons.include?(weapon)
+          weapons << weapon
+        end
         weapons
       end
     end
@@ -158,7 +160,7 @@ module PdfService
     def get_schticks_from_pdf(fields, campaign)
       (1..10).reduce([]) do |schticks, index|
         schtick = get_schtick(fields, index, campaign)
-        if schtick
+        if schtick && !schticks.include?(schtick)
           schticks << schtick
         end
         schticks
