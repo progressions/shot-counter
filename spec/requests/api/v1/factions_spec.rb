@@ -1,8 +1,8 @@
 require 'rails_helper'
 
 RSpec.describe "Api::V1::Factions", type: :request do
-  let(:gamemaster) { User.create!(email: "gamemaster@example.com", confirmed_at: Time.now, gamemaster: true) }
-  let(:player) { User.create!(email: "player@example.com", confirmed_at: Time.now, gamemaster: false) }
+  let(:gamemaster) { User.create!(email: "gamemaster@example.com", first_name: "Game", last_name: "Master", confirmed_at: Time.now, gamemaster: true) }
+  let(:player) { User.create!(email: "player@example.com", first_name: "Player", last_name: "User", confirmed_at: Time.now, gamemaster: false) }
   let(:campaign) { gamemaster.campaigns.create!(name: "Adventure") }
   let(:dragons) { campaign.factions.create!(name: "The Dragons", active: true) }
   let(:ascended) { campaign.factions.create!(name: "The Ascended", active: true) }

@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe "Users::Passwords", type: :request do
-  let(:user) { User.create!(email: 'test@example.com', password: 'password123', confirmed_at: Time.now) }
+  let(:user) { User.create!(email: 'test@example.com', first_name: 'Test', last_name: 'User', password: 'password123', confirmed_at: Time.now) }
   let(:valid_token) { user.send_reset_password_instructions }
 
   before do

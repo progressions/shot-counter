@@ -56,7 +56,7 @@ RSpec.describe "Api::V2::Users Registration", type: :request do
         expect(user.last_name).to eq("Doe")
         expect(user.name).to eq("John Doe")
         expect(user.admin).to be_falsey
-        expect(user.gamemaster).to be_falsey
+        expect(user.gamemaster).to be_truthy
       end
     end
 

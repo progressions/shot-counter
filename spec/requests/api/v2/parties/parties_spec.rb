@@ -3,7 +3,7 @@ RSpec.describe "Api::V2::Parties", type: :request do
   before(:each) do
     allow_any_instance_of(ActiveStorage::Blob).to receive(:purge).and_return(true)
     # players
-    @gamemaster = User.create!(email: "gamemaster@example.com", confirmed_at: Time.now, gamemaster: true)
+    @gamemaster = User.create!(email: "gamemaster@example.com", first_name: "Game", last_name: "Master", confirmed_at: Time.now, gamemaster: true)
     @player = User.create!(email: "player@example.com", confirmed_at: Time.now, gamemaster: false, first_name: "Player", last_name: "One")
     @campaign = @gamemaster.campaigns.create!(name: "Adventure")
     # factions
@@ -386,7 +386,7 @@ RSpec.describe "Api::V2::Parties", type: :request do
       end
 
       it "returns 404 for parties in other campaigns" do
-        other_user = User.create!(email: "other@example.com", confirmed_at: Time.now, gamemaster: true)
+        other_user = User.create!(email: "other@example.com", confirmed_at: Time.now, gamemaster: true, first_name: "Other", last_name: "User")
         other_campaign = other_user.campaigns.create!(name: "Other Campaign")
         other_party = other_campaign.parties.create!(name: "Other Party")
         
@@ -395,7 +395,7 @@ RSpec.describe "Api::V2::Parties", type: :request do
       end
 
       it "returns 404 for fights in other campaigns" do
-        other_user = User.create!(email: "other@example.com", confirmed_at: Time.now, gamemaster: true)
+        other_user = User.create!(email: "other@example.com", confirmed_at: Time.now, gamemaster: true, first_name: "Other", last_name: "User")
         other_campaign = other_user.campaigns.create!(name: "Other Campaign")
         other_fight = other_campaign.fights.create!(name: "Other Fight")
         
@@ -404,7 +404,7 @@ RSpec.describe "Api::V2::Parties", type: :request do
       end
 
       it "returns 500 for users without current campaign" do
-        unauthorized_user = User.create!(email: "unauthorized@example.com", confirmed_at: Time.now)
+        unauthorized_user = User.create!(email: "unauthorized@example.com", confirmed_at: Time.now, first_name: "Unauthorized", last_name: "User")
         unauthorized_headers = Devise::JWT::TestHelpers.auth_headers({}, unauthorized_user)
         
         # Don't set current campaign for user - this should return 500

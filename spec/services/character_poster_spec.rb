@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe CharacterPoster do
-  let(:user) { User.create!(email: "email@example.com") }
+  let(:user) { User.create!(email: "email@example.com", first_name: "Test", last_name: "User") }
   let(:action_movie) { user.campaigns.create!(name: "Action Movie") }
   let(:brick) { Character.create!(name: "Brick Manly", action_values: {"Type" => "PC", "Guns" => 15, "Defense" => 14, "Toughness" => 7, "Speed" => 7, "Fortune" => 7, "Max Fortune" => 7}, campaign_id: action_movie.id) }
 

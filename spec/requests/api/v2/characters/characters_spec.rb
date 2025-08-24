@@ -2,7 +2,7 @@ require "rails_helper"
 RSpec.describe "Api::V2::Characters", type: :request do
   before(:each) do
     # players
-    @gamemaster = User.create!(email: "gamemaster@example.com", confirmed_at: Time.now, gamemaster: true)
+    @gamemaster = User.create!(email: "gamemaster@example.com", first_name: "Game", last_name: "Master", confirmed_at: Time.now, gamemaster: true)
     @player = User.create!(email: "player@example.com", confirmed_at: Time.now, gamemaster: false, first_name: "Player", last_name: "One")
 
     @campaign = @gamemaster.campaigns.create!(name: "Adventure")
@@ -268,9 +268,9 @@ RSpec.describe "Api::V2::Characters", type: :request do
 
     context "ownership reassignment" do
       before(:each) do
-        @new_owner = User.create!(email: "newowner@example.com", confirmed_at: Time.now)
+        @new_owner = User.create!(email: "newowner@example.com", confirmed_at: Time.now, first_name: "New", last_name: "Owner")
         @campaign.users << @new_owner
-        @non_member = User.create!(email: "nonmember@example.com", confirmed_at: Time.now)
+        @non_member = User.create!(email: "nonmember@example.com", confirmed_at: Time.now, first_name: "Non", last_name: "Member")
       end
 
       context "as gamemaster" do
@@ -323,7 +323,7 @@ RSpec.describe "Api::V2::Characters", type: :request do
 
       context "as admin" do
         before(:each) do
-          @admin = User.create!(email: "admin@example.com", confirmed_at: Time.now, admin: true)
+          @admin = User.create!(email: "admin@example.com", confirmed_at: Time.now, admin: true, first_name: "Admin", last_name: "User")
           @admin_headers = Devise::JWT::TestHelpers.auth_headers({}, @admin)
           set_current_campaign(@admin, @campaign)
         end

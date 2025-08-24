@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe FightPoster do
-  let(:user) { User.create!(email: "email@example.com") }
+  let(:user) { User.create!(email: "email@example.com", first_name: "Test", last_name: "User") }
   let(:action_movie) { user.campaigns.create!(name: "Action Movie") }
   let(:fight) { Fight.create!(name: "Museum Battle", description: "The Christening of the [@Immortal Woman](/sites/72f84df7-6dfc-42f3-8d55-dba8e40d3190), featuring [@Huan Ken](/characters/2bb9d3d6-3255-4d81-b7c4-64b17b95bbc5), King of the [@Thunder Pagoda](/factions/d9bc6c2f-ebe1-4300-a836-dcb36e6454ab)", campaign_id: action_movie.id, sequence: 1) }
   let(:other_fight) { Fight.create!(name: "Other Fight", campaign_id: action_movie.id, sequence: 1) }

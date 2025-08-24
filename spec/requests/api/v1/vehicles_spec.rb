@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe "Vehicles", type: :request do
-  let!(:user) { User.create!(email: "email@example.com", confirmed_at: Time.now, gamemaster: true) }
+  let!(:user) { User.create!(email: "email@example.com", first_name: "Test", last_name: "User", confirmed_at: Time.now, gamemaster: true) }
   let!(:action_movie) { user.campaigns.create!(name: "Action Movie") }
   let(:brick) { Character.create!(name: "Brick Manly", campaign: action_movie) }
   let(:dragons) { action_movie.factions.create!(name: "Dragons") }

@@ -2,7 +2,7 @@ require "rails_helper"
 
 RSpec.describe "Api::V1::Suggestions", type: :request do
   before(:each) do
-    @gamemaster = User.create!(email: "email@example.com", confirmed_at: Time.now)
+    @gamemaster = User.create!(email: "email@example.com", first_name: "Game", last_name: "Master", confirmed_at: Time.now)
     @campaign = @gamemaster.campaigns.create!(name: "Adventure")
     @headers = Devise::JWT::TestHelpers.auth_headers({}, @gamemaster)
     set_current_campaign(@gamemaster, @campaign)
