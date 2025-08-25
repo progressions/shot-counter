@@ -1,11 +1,21 @@
 class CampaignSeederService
   class << self
     def seed_campaign(campaign)
-      return false if campaign.seeded_at.present?
-      return false unless campaign.persisted?
+      if campaign.seeded_at.present?
+        Rails.logger.info "Campaign already seeded, seeded_at: #{campaign.seeded_at}"
+        return false
+      end
+      
+      unless campaign.persisted?
+        Rails.logger.info "Campaign not persisted"
+        return false
+      end
 
       master_template = Campaign.find_by(is_master_template: true)
-      return false unless master_template
+      unless master_template
+        Rails.logger.info "No master template found"
+        return false
+      end
 
       Rails.logger.info "Seeding campaign #{campaign.name} (ID: #{campaign.id}) from master template"
 
