@@ -297,6 +297,7 @@ RSpec.describe "Api::V2::Onboarding", type: :request do
         expect(@player.onboarding_progress).to be_present
         expect(@player.onboarding_progress.first_campaign_created_at).to be_present
       end
+
     end
 
     context "when user is not authenticated" do
@@ -354,6 +355,7 @@ RSpec.describe "Api::V2::Onboarding", type: :request do
         expect(@player.onboarding_progress).to be_present
         expect(@player.onboarding_progress.congratulations_dismissed_at).to be_present
       end
+
     end
 
     context "when user is not authenticated" do
