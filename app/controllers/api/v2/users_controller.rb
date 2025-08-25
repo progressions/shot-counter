@@ -48,6 +48,13 @@ class Api::V2::UsersController < ApplicationController
       all_user_ids = (member_user_ids + [owner_user_id]).uniq.compact
       query = query.where(id: all_user_ids)
     end
+    
+    # Handle cache buster - users use user-specific cache
+    if cache_buster_requested?
+      clear_resource_cache("users", current_user.id)
+      Rails.logger.info "🔄 Cache buster requested for users"
+    end
+    
     # Cache key
     cache_key = [
       "users/index",
@@ -62,7 +69,9 @@ class Api::V2::UsersController < ApplicationController
       params["character_id"],
       params["show_all"],
     ].join("/")
-    cached_result = Rails.cache.fetch(cache_key, expires_in: 5.minutes) do
+    # Skip cache if cache buster is requested
+    cached_result = if cache_buster_requested?
+      Rails.logger.info "⚡ Skipping cache for users index"
       users = query.order(Arel.sql(sort_order))
       users = paginate(users, per_page: per_page, page: page)
       {
@@ -73,6 +82,19 @@ class Api::V2::UsersController < ApplicationController
         ).serializable_hash,
         "meta" => pagination_meta(users)
       }
+    else
+      Rails.cache.fetch(cache_key, expires_in: 5.minutes) do
+        users = query.order(Arel.sql(sort_order))
+        users = paginate(users, per_page: per_page, page: page)
+        {
+          "users" => ActiveModelSerializers::SerializableResource.new(
+            users,
+            each_serializer: params[:autocomplete] ? UserAutocompleteSerializer : UserIndexSerializer,
+            adapter: :attributes
+          ).serializable_hash,
+          "meta" => pagination_meta(users)
+        }
+      end
     end
     render json: cached_result
   end

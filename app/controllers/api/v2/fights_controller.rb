@@ -50,6 +50,12 @@ class Api::V2::FightsController < ApplicationController
   query = query.joins(:shots).where(shots: { vehicle_id: params[:vehicle_id] }) if params[:vehicle_id].present?
   query = query.joins(:shots).joins("INNER JOIN characters ON shots.character_id = characters.id").where(characters: { user_id: params[:user_id] }) if params[:user_id].present?
 
+  # Handle cache buster
+  if cache_buster_requested?
+    clear_resource_cache("fights", current_campaign.id)
+    Rails.logger.info "🔄 Cache buster requested for fights"
+  end
+
   # Cache key - includes cache version that changes whenever any fight is modified
   cache_key = [
     "fights/index",
@@ -70,7 +76,9 @@ class Api::V2::FightsController < ApplicationController
     params["session"],
     params["autocomplete"],
   ].join("/")
-  cached_result = Rails.cache.fetch(cache_key, expires_in: 5.minutes) do
+  # Skip cache if cache buster is requested
+  cached_result = if cache_buster_requested?
+    Rails.logger.info "⚡ Skipping cache for fights index"
     fights = query.order(Arel.sql(sort_order)).distinct
     seasons = query.select("fights.season").distinct.pluck(:season).compact.uniq
     fights = paginate(fights, per_page: per_page, page: page)
@@ -83,6 +91,21 @@ class Api::V2::FightsController < ApplicationController
       "seasons" => seasons,
       "meta" => pagination_meta(fights)
     }
+  else
+    Rails.cache.fetch(cache_key, expires_in: 5.minutes) do
+      fights = query.order(Arel.sql(sort_order)).distinct
+      seasons = query.select("fights.season").distinct.pluck(:season).compact.uniq
+      fights = paginate(fights, per_page: per_page, page: page)
+      {
+        "fights" => ActiveModelSerializers::SerializableResource.new(
+          fights,
+          each_serializer: params[:autocomplete] ? FightLiteSerializer : FightIndexLiteSerializer,
+          adapter: :attributes
+        ).serializable_hash,
+        "seasons" => seasons,
+        "meta" => pagination_meta(fights)
+      }
+    end
   end
   render json: cached_result
 end

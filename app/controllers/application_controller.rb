@@ -53,4 +53,29 @@ class ApplicationController < ActionController::API
       total_count: object.total_count
     }
   end
+
+  # Cache buster helpers
+  def cache_buster_requested?
+    return false unless params[:cache_buster].present?
+    
+    # Treat these values as truthy
+    truthy_values = %w[true 1 yes TRUE True YES Yes]
+    truthy_values.include?(params[:cache_buster].to_s.strip)
+  end
+
+  def clear_resource_cache(resource_name, identifier = nil)
+    # Clear cache for a specific resource type
+    # identifier can be campaign_id or user_id depending on the resource
+    identifier ||= current_campaign&.id
+    return unless identifier
+
+    cache_pattern = "#{resource_name}/index/#{identifier}/*"
+    
+    begin
+      Rails.cache.delete_matched(cache_pattern)
+      Rails.logger.info "🗑️ Cache cleared for pattern: #{cache_pattern}"
+    rescue => e
+      Rails.logger.warn "Cache delete_matched not supported or failed: #{e.message}"
+    end
+  end
 end

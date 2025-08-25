@@ -42,11 +42,17 @@ class Api::V2::WeaponsController < ApplicationController
     # Join associations
     query = query.joins(:carries).where(carries: { character_id: params[:character_id] }) if params[:character_id].present?
 
+    # Handle cache buster
+    if cache_buster_requested?
+      clear_resource_cache("weapons", current_campaign.id)
+      Rails.logger.info "🔄 Cache buster requested for weapons"
+    end
+
     # Cache key - includes cache version that changes when any entity is modified
     cache_key = [
       "weapons/index",
       current_campaign.id,
-      Uweapon.cache_version_for(current_campaign.id),  # Changes when ANY weapons is created/updated/deleted
+      Weapon.cache_version_for(current_campaign.id),  # Changes when ANY weapons is created/updated/deleted
       sort_order,
       page,
       per_page,
@@ -58,7 +64,9 @@ class Api::V2::WeaponsController < ApplicationController
       params["autocomplete"],
     ].join("/")
 
-    cached_result = Rails.cache.fetch(cache_key, expires_in: 5.minutes) do
+    # Skip cache if cache buster is requested
+    cached_result = if cache_buster_requested?
+      Rails.logger.info "⚡ Skipping cache for weapons index"
       weapons = query.order(Arel.sql(sort_order))
 
       categories = weapons.pluck(:category).uniq.compact.reject(&:empty?).sort
@@ -76,6 +84,26 @@ class Api::V2::WeaponsController < ApplicationController
         "junctures" => junctures,
         "meta" => pagination_meta(weapons)
       }
+    else
+      Rails.cache.fetch(cache_key, expires_in: 5.minutes) do
+        weapons = query.order(Arel.sql(sort_order))
+
+        categories = weapons.pluck(:category).uniq.compact.reject(&:empty?).sort
+        junctures = weapons.pluck(:juncture).uniq.compact.reject(&:empty?).sort
+
+        weapons = paginate(weapons, per_page: per_page, page: page)
+
+        {
+          "weapons" => ActiveModelSerializers::SerializableResource.new(
+            weapons,
+            each_serializer: params[:autocomplete] ? WeaponAutocompleteSerializer : WeaponIndexSerializer,
+            adapter: :attributes
+          ).serializable_hash,
+          "categories" => categories,
+          "junctures" => junctures,
+          "meta" => pagination_meta(weapons)
+        }
+      end
     end
     render json: cached_result
   end
@@ -90,7 +118,7 @@ class Api::V2::WeaponsController < ApplicationController
     cache_key = [
       "weapons_batch",
       current_campaign.id,
-      Uweapon.cache_version_for(current_campaign.id),  # Changes when ANY weapons is created/updated/deleted
+      Weapon.cache_version_for(current_campaign.id),  # Changes when ANY weapons is created/updated/deleted
       ids.sort.join(","),
       params[:per_page] || 200,
       params[:page] || 1

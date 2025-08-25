@@ -42,6 +42,12 @@ class Api::V2::FactionsController < ApplicationController
     query = query.joins(:vehicles).where(vehicles: { id: params[:vehicle_id] }) if params[:vehicle_id].present?
     query = query.joins(:junctures).where(junctures: { id: params[:juncture_id] }) if params[:juncture_id].present?
 
+    # Handle cache buster
+    if cache_buster_requested?
+      clear_resource_cache("factions", current_campaign.id)
+      Rails.logger.info "🔄 Cache buster requested for factions"
+    end
+
     # Cache key - includes cache version that changes when any entity is modified
     cache_key = [
       "factions/index",
@@ -60,7 +66,9 @@ class Api::V2::FactionsController < ApplicationController
 
     ActiveRecord::Associations::Preloader.new(records: [current_campaign], associations: { user: [:image_attachment, :image_blob] })
 
-    cached_result = Rails.cache.fetch(cache_key, expires_in: 5.minutes) do
+    # Skip cache if cache buster is requested
+    cached_result = if cache_buster_requested?
+      Rails.logger.info "⚡ Skipping cache for factions index"
       factions = query.order(Arel.sql(sort_order))
       factions = paginate(factions, per_page: per_page, page: page)
 
@@ -72,6 +80,20 @@ class Api::V2::FactionsController < ApplicationController
         ).serializable_hash,
         "meta" => pagination_meta(factions)
       }
+    else
+      Rails.cache.fetch(cache_key, expires_in: 5.minutes) do
+        factions = query.order(Arel.sql(sort_order))
+        factions = paginate(factions, per_page: per_page, page: page)
+
+        {
+          "factions" => ActiveModelSerializers::SerializableResource.new(
+            factions,
+            each_serializer: params[:autocomplete] ? FactionAutocompleteSerializer : FactionIndexSerializer,
+            adapter: :attributes
+          ).serializable_hash,
+          "meta" => pagination_meta(factions)
+        }
+      end
     end
     render json: cached_result
   end

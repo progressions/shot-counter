@@ -28,6 +28,13 @@ class Api::V2::CampaignsController < ApplicationController
     Rails.logger.info "🔍 Campaigns#index called by user: #{current_user.email}"
     Rails.logger.info "   Params: #{params.inspect}"
     Rails.logger.info "   User is gamemaster: #{current_user.gamemaster?}"
+    
+    # Handle cache buster - campaigns use user-specific cache
+    if cache_buster_requested?
+      clear_resource_cache("campaigns", current_user.id)
+      Rails.logger.info "🔄 Cache buster requested for campaigns"
+    end
+    
     per_page = (params["per_page"] || 15).to_i
     page = (params["page"] || 1).to_i
     selects = [
@@ -85,7 +92,10 @@ class Api::V2::CampaignsController < ApplicationController
       params["vehicle_id"],
       params["show_all"],
     ].join("/")
-    cached_result = Rails.cache.fetch(cache_key, expires_in: 5.minutes) do
+    
+    # Skip cache if cache buster is requested
+    cached_result = if cache_buster_requested?
+      Rails.logger.info "⚡ Skipping cache for campaigns index"
       campaigns = query.order(Arel.sql(sort_order))
       campaigns = paginate(campaigns, per_page: per_page, page: page)
       {
@@ -96,7 +106,21 @@ class Api::V2::CampaignsController < ApplicationController
         ).serializable_hash,
         "meta" => pagination_meta(campaigns)
       }
+    else
+      Rails.cache.fetch(cache_key, expires_in: 5.minutes) do
+        campaigns = query.order(Arel.sql(sort_order))
+        campaigns = paginate(campaigns, per_page: per_page, page: page)
+        {
+          "campaigns" => ActiveModelSerializers::SerializableResource.new(
+            campaigns,
+            each_serializer: params[:autocomplete] ? CampaignAutocompleteSerializer : CampaignIndexLiteSerializer,
+            adapter: :attributes
+          ).serializable_hash,
+          "meta" => pagination_meta(campaigns)
+        }
+      end
     end
+    
     render json: cached_result
   end
 

@@ -44,11 +44,17 @@ class Api::V2::SitesController < ApplicationController
     # Join associations
     query = query.joins(:attunements).where(attunements: { character_id: params[:character_id] }) if params[:character_id].present?
 
+    # Handle cache buster
+    if cache_buster_requested?
+      clear_resource_cache("sites", current_campaign.id)
+      Rails.logger.info "🔄 Cache buster requested for sites"
+    end
+
     # Cache key - includes cache version that changes when any entity is modified
     cache_key = [
       "sites/index",
       current_campaign.id,
-      Usite.cache_version_for(current_campaign.id),  # Changes when ANY sites is created/updated/deleted
+      Site.cache_version_for(current_campaign.id),  # Changes when ANY sites is created/updated/deleted
       sort_order,
       page,
       per_page,
@@ -62,7 +68,9 @@ class Api::V2::SitesController < ApplicationController
       params["show_all"],
     ].join("/")
 
-    cached_result = Rails.cache.fetch(cache_key, expires_in: 5.minutes) do
+    # Skip cache if cache buster is requested
+    cached_result = if cache_buster_requested?
+      Rails.logger.info "⚡ Skipping cache for sites index"
       sites = query.order(Arel.sql(sort_order))
       sites = paginate(sites, per_page: per_page, page: page)
       # Fetch factions
@@ -84,6 +92,30 @@ class Api::V2::SitesController < ApplicationController
         ).serializable_hash,
         "meta" => pagination_meta(sites)
       }
+    else
+      Rails.cache.fetch(cache_key, expires_in: 5.minutes) do
+        sites = query.order(Arel.sql(sort_order))
+        sites = paginate(sites, per_page: per_page, page: page)
+        # Fetch factions
+        faction_ids = sites.pluck(:faction_id).uniq.compact
+        factions = Faction.where(id: faction_ids)
+                          .select("factions.id", "factions.name")
+                          .order("LOWER(factions.name) ASC")
+        # Archetypes
+        {
+          "sites" => ActiveModelSerializers::SerializableResource.new(
+            sites,
+            each_serializer: params[:autocomplete] ? SiteAutocompleteSerializer : SiteIndexSerializer,
+            adapter: :attributes
+          ).serializable_hash,
+          "factions" => ActiveModelSerializers::SerializableResource.new(
+            factions,
+            each_serializer: FactionLiteSerializer,
+            adapter: :attributes
+          ).serializable_hash,
+          "meta" => pagination_meta(sites)
+        }
+      end
     end
     render json: cached_result
   end
