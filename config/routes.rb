@@ -128,6 +128,7 @@ Rails.application.routes.draw do
       # Onboarding endpoints
       scope :onboarding do
         patch :dismiss_congratulations, to: "onboarding#dismiss_congratulations"
+        patch '', to: "onboarding#update"
       end
     end
     namespace :v1 do
