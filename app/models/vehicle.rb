@@ -1,6 +1,7 @@
 class Vehicle < ApplicationRecord
   include Broadcastable
   include WithImagekit
+  include CacheVersionable
 
   DEFAULT_ACTION_VALUES = {
     "Acceleration" => 0,

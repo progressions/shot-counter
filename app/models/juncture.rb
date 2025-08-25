@@ -1,6 +1,7 @@
 class Juncture < ApplicationRecord
   include Broadcastable
   include WithImagekit
+  include CacheVersionable
 
   belongs_to :campaign
   belongs_to :faction, optional: true

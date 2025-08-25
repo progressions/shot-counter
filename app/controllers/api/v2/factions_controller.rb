@@ -42,10 +42,11 @@ class Api::V2::FactionsController < ApplicationController
     query = query.joins(:vehicles).where(vehicles: { id: params[:vehicle_id] }) if params[:vehicle_id].present?
     query = query.joins(:junctures).where(junctures: { id: params[:juncture_id] }) if params[:juncture_id].present?
 
-    # Cache key
+    # Cache key - includes cache version that changes when any entity is modified
     cache_key = [
       "factions/index",
       current_campaign.id,
+      Ufaction.cache_version_for(current_campaign.id),  # Changes when ANY factions is created/updated/deleted
       sort_order,
       page,
       per_page,

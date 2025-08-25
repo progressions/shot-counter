@@ -1,6 +1,7 @@
 class Weapon < ApplicationRecord
   include Broadcastable
   include WithImagekit
+  include CacheVersionable
 
   belongs_to :campaign
   has_many :carries

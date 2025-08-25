@@ -50,6 +50,7 @@ class Api::V2::CharactersController < ApplicationController
   cache_key = [
     "characters/index",
     current_campaign.id,
+      Character.cache_version_for(current_campaign.id),  # Changes when ANY character is created/updated/deleted
     sort_order,
     page,
     per_page,
@@ -156,7 +157,6 @@ end
     end
 
     if @character.update(character_data)
-      Rails.cache.delete_matched("characters/#{current_campaign.id}/*")
       SyncCharacterToNotionJob.perform_later(@character.id)
       render json: @character.reload, serializer: CharacterSerializer, status: :ok
     else
@@ -184,7 +184,6 @@ end
     @character.carries.destroy_all
     @character.memberships.destroy_all
     @character.destroy!
-    Rails.cache.delete_matched("characters/#{current_campaign.id}/*")
     render json: { message: "Character deleted successfully" }, status: :ok
   end
 
@@ -196,7 +195,6 @@ end
       # Apply associations (schticks, weapons, etc.) after save
       CharacterDuplicatorService.apply_associations(@new_character)
       
-      Rails.cache.delete_matched("characters/#{current_campaign.id}/*")
       SyncCharacterToNotionJob.perform_later(@new_character.id)
       render json: @new_character, status: :created
     else
@@ -227,7 +225,6 @@ end
         @character.weapons += new_weapons if new_weapons.any?
         @character.schticks += new_schticks if new_schticks.any?
         
-        Rails.cache.delete_matched("characters/#{current_campaign.id}/*")
         render json: @character, status: :created
       else
         Rails.logger.error("Character import failed: #{@character.errors.full_messages.join(', ')}")
@@ -242,7 +239,6 @@ end
 
   def sync
     if NotionService.update_character_from_notion(@character)
-      Rails.cache.delete_matched("characters/#{current_campaign.id}/*")
       render json: @character.reload
     else
       render json: { error: "Notion sync failed" }, status: :unprocessable_entity
@@ -253,7 +249,6 @@ end
     if @character.image.attached?
       @character.image.purge
       if @character.save
-        Rails.cache.delete_matched("characters/#{current_campaign.id}/*")
         render json: @character
       else
         render json: @character.errors, status: :unprocessable_entity

@@ -2,6 +2,7 @@ class Site < ApplicationRecord
   include Broadcastable
   include WithImagekit
   include OnboardingTrackable
+  include CacheVersionable
 
   belongs_to :campaign
   belongs_to :faction, optional: true

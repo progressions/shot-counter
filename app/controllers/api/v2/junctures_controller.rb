@@ -43,10 +43,11 @@ class Api::V2::JuncturesController < ApplicationController
     query = query.joins(:characters).where(characters: { id: params[:character_id] }) if params[:character_id].present?
     query = query.joins(:vehicles).where(vehicles: { id: params[:vehicle_id] }) if params[:vehicle_id].present?
 
-    # Cache key
+    # Cache key - includes cache version that changes when any entity is modified
     cache_key = [
       "junctures/index",
       current_campaign.id,
+      Ujuncture.cache_version_for(current_campaign.id),  # Changes when ANY junctures is created/updated/deleted
       sort_order,
       page,
       per_page,

@@ -42,10 +42,11 @@ class Api::V2::WeaponsController < ApplicationController
     # Join associations
     query = query.joins(:carries).where(carries: { character_id: params[:character_id] }) if params[:character_id].present?
 
-    # Cache key
+    # Cache key - includes cache version that changes when any entity is modified
     cache_key = [
       "weapons/index",
       current_campaign.id,
+      Uweapon.cache_version_for(current_campaign.id),  # Changes when ANY weapons is created/updated/deleted
       sort_order,
       page,
       per_page,
@@ -89,6 +90,7 @@ class Api::V2::WeaponsController < ApplicationController
     cache_key = [
       "weapons_batch",
       current_campaign.id,
+      Uweapon.cache_version_for(current_campaign.id),  # Changes when ANY weapons is created/updated/deleted
       ids.sort.join(","),
       params[:per_page] || 200,
       params[:page] || 1

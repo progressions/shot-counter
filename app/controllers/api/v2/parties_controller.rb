@@ -47,10 +47,11 @@ class Api::V2::PartiesController < ApplicationController
     query = query.joins(:memberships).where(memberships: { character_id: params[:character_id] }) if params[:character_id].present?
     query = query.joins(:memberships).where(memberships: { vehicle_id: params[:vehicle_id] }) if params[:vehicle_id].present?
 
-    # Cache key
+    # Cache key - includes cache version that changes when any entity is modified
     cache_key = [
       "parties/index",
       current_campaign.id,
+      Uparty.cache_version_for(current_campaign.id),  # Changes when ANY parties is created/updated/deleted
       sort_order,
       page,
       per_page,
