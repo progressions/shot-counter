@@ -141,6 +141,11 @@ class Api::V2::CampaignsController < ApplicationController
       @campaign.image.attach(params[:image])
     end
     if @campaign.save
+      # Seed the campaign with template content (unless it's a master template)
+      unless @campaign.is_master_template?
+        CampaignSeederJob.perform_later(@campaign.id)
+      end
+      
       # Clear cache after creating a new campaign
       clear_campaign_cache_for_user(current_user)
       render json: @campaign, status: :created

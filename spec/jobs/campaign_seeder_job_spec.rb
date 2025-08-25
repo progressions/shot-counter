@@ -38,20 +38,13 @@ RSpec.describe CampaignSeederJob, type: :job do
       end
 
       it 'returns true on success' do
-        # Skip the after_create callback to test the job directly
-        fresh_campaign = Campaign.new(name: 'Fresh Test Campaign', user: gamemaster)
-        fresh_campaign.save!(validate: false)
-        fresh_campaign.update_column(:seeded_at, nil) # Ensure it's not seeded
-        
+        fresh_campaign = Campaign.create!(name: 'Fresh Test Campaign', user: gamemaster)
         result = described_class.perform_now(fresh_campaign.id)
         expect(result).to be true
       end
 
       it 'seeds the campaign with template data' do
-        # Skip the after_create callback to test the job directly
-        fresh_campaign = Campaign.new(name: 'Another Test Campaign', user: gamemaster)
-        fresh_campaign.save!(validate: false)
-        fresh_campaign.update_column(:seeded_at, nil) # Ensure it's not seeded
+        fresh_campaign = Campaign.create!(name: 'Another Test Campaign', user: gamemaster)
         
         expect {
           described_class.perform_now(fresh_campaign.id)

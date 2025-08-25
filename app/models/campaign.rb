@@ -21,7 +21,8 @@ class Campaign < ApplicationRecord
 
   validates :name, presence: true, allow_blank: false, uniqueness: { scope: :user_id }
 
-  after_create :enqueue_seeding_job, unless: :is_master_template?
+  # Seeding is now handled explicitly in the controller
+  # after_create :enqueue_seeding_job, unless: :is_master_template?
 
   def as_v1_json(args={})
     {
@@ -37,12 +38,6 @@ class Campaign < ApplicationRecord
   def campaign_id
     # Campaign model references itself for broadcasting compatibility
     id
-  end
-
-  private
-
-  def enqueue_seeding_job
-    CampaignSeederJob.perform_later(id)
   end
 
 end
