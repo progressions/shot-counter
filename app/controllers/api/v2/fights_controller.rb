@@ -50,10 +50,11 @@ class Api::V2::FightsController < ApplicationController
   query = query.joins(:shots).where(shots: { vehicle_id: params[:vehicle_id] }) if params[:vehicle_id].present?
   query = query.joins(:shots).joins("INNER JOIN characters ON shots.character_id = characters.id").where(characters: { user_id: params[:user_id] }) if params[:user_id].present?
 
-  # Cache key
+  # Cache key - includes campaign's updated_at to invalidate when any fight changes
   cache_key = [
     "fights/index",
     current_campaign.id,
+    current_campaign.updated_at.to_i,  # This will change when campaign is touched
     sort_order,
     page,
     per_page,
@@ -107,8 +108,6 @@ end
       @fight.image.attach(params[:image])
     end
     if @fight.save
-      # Clear fights index cache after creating a new fight
-      clear_fights_cache
       render json: @fight, serializer: FightSerializer, status: :created
     else
       render json: { errors: @fight.errors }, status: :unprocessable_entity
@@ -133,8 +132,6 @@ end
       @fight.image.attach(params[:image])
     end
     if @fight.update(fight_data)
-      # Clear fights index cache after updating a fight
-      clear_fights_cache
       render json: @fight.reload, serializer: FightSerializer, status: :ok
     else
       render json: { errors: @fight.errors }, status: :unprocessable_entity
@@ -158,12 +155,6 @@ end
   end
 
   private
-
-  def clear_fights_cache
-    # Clear all fights index cache entries for this campaign
-    Rails.cache.delete_matched("fights/index/#{current_campaign.id}/*")
-    Rails.logger.info "🗑️ Cleared fights cache for campaign #{current_campaign.id}"
-  end
 
   def require_current_campaign
     render status: 404 unless current_campaign

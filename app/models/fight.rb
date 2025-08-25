@@ -3,7 +3,7 @@ class Fight < ApplicationRecord
   include WithImagekit
   include OnboardingTrackable
 
-  belongs_to :campaign
+  belongs_to :campaign, touch: true
   has_many :shots, dependent: :destroy
   has_many :characters, through: :shots
   has_many :vehicles, through: :shots
