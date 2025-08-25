@@ -50,11 +50,11 @@ class Api::V2::FightsController < ApplicationController
   query = query.joins(:shots).where(shots: { vehicle_id: params[:vehicle_id] }) if params[:vehicle_id].present?
   query = query.joins(:shots).joins("INNER JOIN characters ON shots.character_id = characters.id").where(characters: { user_id: params[:user_id] }) if params[:user_id].present?
 
-  # Cache key - includes campaign's updated_at to invalidate when any fight changes
+  # Cache key - includes cache version that changes whenever any fight is modified
   cache_key = [
     "fights/index",
     current_campaign.id,
-    current_campaign.updated_at.to_i,  # This will change when campaign is touched
+    Fight.cache_version_for(current_campaign.id),  # Changes when ANY fight is created/updated/deleted
     sort_order,
     page,
     per_page,

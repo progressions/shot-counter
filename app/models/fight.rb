@@ -2,8 +2,9 @@ class Fight < ApplicationRecord
   include Broadcastable
   include WithImagekit
   include OnboardingTrackable
+  include CacheVersionable
 
-  belongs_to :campaign, touch: true
+  belongs_to :campaign
   has_many :shots, dependent: :destroy
   has_many :characters, through: :shots
   has_many :vehicles, through: :shots

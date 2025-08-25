@@ -1,6 +1,7 @@
 class Schtick < ApplicationRecord
   include Broadcastable
   include WithImagekit
+  include CacheVersionable
 
   CATEGORIES = [
     "Guns",

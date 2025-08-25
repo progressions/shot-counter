@@ -38,10 +38,11 @@ class Api::V2::SchticksController < ApplicationController
     # Join associations
     query = query.joins(:character_schticks).where(character_schticks: { character_id: params[:character_id] }) if params[:character_id].present?
 
-    # Cache key
+    # Cache key - includes cache version that changes whenever any schtick is modified
     cache_key = [
       "schticks/index",
       current_campaign.id,
+      Schtick.cache_version_for(current_campaign.id),  # Changes when ANY schtick is created/updated/deleted
       sort_order,
       page,
       per_page,
