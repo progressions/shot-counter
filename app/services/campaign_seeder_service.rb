@@ -39,6 +39,9 @@ class CampaignSeederService
         # Copy characters and vehicles last so they can reference the duplicated entities
         duplicate_characters(source_campaign, target_campaign)
         duplicate_vehicles(source_campaign, target_campaign)
+        
+        # Copy non-template characters from Master Campaign (if it exists)
+        copy_master_campaign_characters(target_campaign)
 
         # Mark campaign as seeded only if this was called from seed_campaign
         target_campaign.update!(seeded_at: Time.current) if target_campaign.seeded_at.nil?
@@ -53,6 +56,42 @@ class CampaignSeederService
     end
 
     private
+    
+    def copy_master_campaign_characters(target_campaign)
+      master_campaign = Campaign.find_by(name: 'Master Campaign')
+      
+      unless master_campaign
+        Rails.logger.info "No Master Campaign found, skipping non-template character copying"
+        return
+      end
+      
+      Rails.logger.info "Copying non-template characters from Master Campaign to #{target_campaign.name}"
+      
+      # Get all non-template characters from Master Campaign
+      characters_to_copy = master_campaign.characters.where(is_template: false)
+      
+      Rails.logger.info "Found #{characters_to_copy.count} non-template characters to copy"
+      
+      characters_to_copy.each do |character|
+        begin
+          # Use CharacterDuplicatorService to copy the character
+          duplicated_character = CharacterDuplicatorService.duplicate_character(
+            character, 
+            target_campaign.user, 
+            target_campaign
+          )
+          
+          if duplicated_character.save
+            CharacterDuplicatorService.apply_associations(duplicated_character)
+            Rails.logger.info "Copied character: #{duplicated_character.name} from Master Campaign"
+          else
+            Rails.logger.error "Failed to copy character #{character.name} from Master Campaign: #{duplicated_character.errors.full_messages.join(', ')}"
+          end
+        rescue StandardError => e
+          Rails.logger.error "Error copying character #{character.name} from Master Campaign: #{e.message}"
+        end
+      end
+    end
 
     def duplicate_characters(source_campaign, target_campaign)
       characters = source_campaign.characters.where(is_template: true)
