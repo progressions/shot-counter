@@ -42,10 +42,17 @@ class Api::V2::FactionsController < ApplicationController
     query = query.joins(:vehicles).where(vehicles: { id: params[:vehicle_id] }) if params[:vehicle_id].present?
     query = query.joins(:junctures).where(junctures: { id: params[:juncture_id] }) if params[:juncture_id].present?
 
-    # Cache key
+    # Handle cache buster
+    if cache_buster_requested?
+      clear_resource_cache("factions", current_campaign.id)
+      Rails.logger.info "🔄 Cache buster requested for factions"
+    end
+
+    # Cache key - includes cache version that changes when any entity is modified
     cache_key = [
       "factions/index",
       current_campaign.id,
+      Faction.cache_version_for(current_campaign.id),  # Changes when ANY factions is created/updated/deleted
       sort_order,
       page,
       per_page,
@@ -59,7 +66,9 @@ class Api::V2::FactionsController < ApplicationController
 
     ActiveRecord::Associations::Preloader.new(records: [current_campaign], associations: { user: [:image_attachment, :image_blob] })
 
-    cached_result = Rails.cache.fetch(cache_key, expires_in: 5.minutes) do
+    # Skip cache if cache buster is requested
+    cached_result = if cache_buster_requested?
+      Rails.logger.info "⚡ Skipping cache for factions index"
       factions = query.order(Arel.sql(sort_order))
       factions = paginate(factions, per_page: per_page, page: page)
 
@@ -71,6 +80,20 @@ class Api::V2::FactionsController < ApplicationController
         ).serializable_hash,
         "meta" => pagination_meta(factions)
       }
+    else
+      Rails.cache.fetch(cache_key, expires_in: 5.minutes) do
+        factions = query.order(Arel.sql(sort_order))
+        factions = paginate(factions, per_page: per_page, page: page)
+
+        {
+          "factions" => ActiveModelSerializers::SerializableResource.new(
+            factions,
+            each_serializer: params[:autocomplete] ? FactionAutocompleteSerializer : FactionIndexSerializer,
+            adapter: :attributes
+          ).serializable_hash,
+          "meta" => pagination_meta(factions)
+        }
+      end
     end
     render json: cached_result
   end
@@ -103,6 +126,8 @@ class Api::V2::FactionsController < ApplicationController
     end
 
     if @faction.save
+      # Clear factions index cache after creating a new faction
+      clear_factions_cache
       render json: @faction, status: :created
     else
       render json: { errors: @faction.errors }, status: :unprocessable_entity
@@ -136,6 +161,8 @@ class Api::V2::FactionsController < ApplicationController
     end
 
     if @faction.update(faction_data)
+      # Clear factions index cache after updating a faction
+      clear_factions_cache
       render json: @faction.reload
     else
       render json: { errors: @faction.errors }, status: :unprocessable_entity
@@ -171,6 +198,12 @@ class Api::V2::FactionsController < ApplicationController
   end
 
   private
+
+  def clear_factions_cache
+    # Clear all factions index cache entries for this campaign
+    Rails.cache.delete_matched("factions/index/#{current_campaign.id}/*")
+    Rails.logger.info "🗑️ Cleared factions cache for campaign #{current_campaign.id}"
+  end
 
   def faction_params
     params.require(:faction).permit(:name, :description, :image, character_ids: [], party_ids: [], site_ids: [], juncture_ids: [], vehicle_ids: [])

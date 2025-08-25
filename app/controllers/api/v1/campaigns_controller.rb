@@ -13,6 +13,11 @@ class Api::V1::CampaignsController < ApplicationController
     @campaign = current_user.campaigns.new(campaign_params)
 
     if @campaign.save
+      # Seed the campaign with template content (unless it's a master template)
+      unless @campaign.is_master_template?
+        CampaignSeederJob.perform_later(@campaign.id)
+      end
+      
       render json: @campaign
     else
       render json: @campaign.errors, status: 400

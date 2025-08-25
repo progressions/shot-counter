@@ -1,6 +1,8 @@
 class Party < ApplicationRecord
   include Broadcastable
   include WithImagekit
+  include OnboardingTrackable
+  include CacheVersionable
 
   has_many :memberships, dependent: :destroy
   has_many :characters, through: :memberships

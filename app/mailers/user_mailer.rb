@@ -30,14 +30,14 @@ class UserMailer < Devise::Mailer
     @user = params[:user]
     @campaign = params[:campaign]
 
-    mail(to: @user.email, subject: "You have joined the campaign: #{Wcampaign.name}")
+    mail(to: @user.email, subject: "You have joined the campaign: #{@campaign.name}")
   end
 
   def removed_from_campaign
     @user = params[:user]
     @campaign = params[:campaign]
 
-    mail(to: @user.email, subject: "You have been removed from the campaign: #{Wcampaign.name}")
+    mail(to: @user.email, subject: "You have been removed from the campaign: #{@campaign.name}")
   end
 
   def confirmation_instructions(record, token, opts={})

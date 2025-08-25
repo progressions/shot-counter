@@ -106,4 +106,36 @@ RSpec.describe OnboardingTrackable, type: :model do
       expect("first_site_created_at").to include("site")
     end
   end
+
+  describe "template character handling" do
+    let(:campaign) { Campaign.create!(name: "Test Campaign", user: user) }
+    let(:template_character) { campaign.characters.new(name: "Template Character", is_template: true) }
+    let(:regular_character) { campaign.characters.new(name: "Regular Character", is_template: false) }
+
+    context "when creating a template character" do
+      it "does not track onboarding milestone" do
+        expect {
+          template_character.save!
+        }.not_to change { user.onboarding_progress.reload.first_character_created_at }
+      end
+    end
+
+    context "when creating a regular character" do
+      it "tracks onboarding milestone" do
+        expect {
+          regular_character.save!
+        }.to change { user.onboarding_progress.reload.first_character_created_at }.from(nil).to(be_present)
+      end
+    end
+
+    context "when creating a character with nil is_template" do
+      let(:nil_template_character) { campaign.characters.new(name: "Nil Template Character", is_template: nil) }
+      
+      it "tracks onboarding milestone (treats nil as false)" do
+        expect {
+          nil_template_character.save!
+        }.to change { user.onboarding_progress.reload.first_character_created_at }.from(nil).to(be_present)
+      end
+    end
+  end
 end

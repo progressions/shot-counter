@@ -75,6 +75,78 @@ end
 
 puts "Created master template campaign: #{master_template.name}, ID: #{master_template.id}"
 
+# Populate Master Template Campaign with starter content
+# Create schticks for the master template
+master_schticks = [
+  { name: 'Both Guns Blazing', category: 'Guns', path: 'Way of the Gun', description: 'Fire two guns at once' },
+  { name: 'Lightning Reload', category: 'Guns', path: 'Way of the Gun', description: 'Reload instantly' },
+  { name: 'Path of the Righteous Fist', category: 'Martial Arts', path: 'Path of the Righteous Fist', description: 'Martial arts mastery' },
+  { name: 'Drunken Master', category: 'Martial Arts', path: 'Path of the Drunken Master', description: 'Fight better when drunk' },
+  { name: 'Blast', category: 'Sorcery', path: 'Sorcery', description: 'Magical energy attack' },
+  { name: 'Divination', category: 'Sorcery', path: 'Sorcery', description: 'See the future' }
+]
+
+master_schticks.each do |s|
+  master_template.schticks.find_or_create_by(name: s[:name]) do |schtick|
+    schtick.category = s[:category]
+    schtick.path = s[:path]
+    schtick.description = s[:description]
+  end
+end
+
+# Create weapons for the master template
+master_weapons = [
+  { name: 'Beretta M9', damage: '10/2/5', concealment: '2', reload_value: '1' },
+  { name: 'AK-47', damage: '13/5/3', concealment: '5', reload_value: '1' },
+  { name: 'Sword', damage: '12', concealment: '4', reload_value: '0' },
+  { name: 'Staff', damage: '10', concealment: '5', reload_value: '0' },
+  { name: 'Throwing Stars', damage: '7', concealment: '1', reload_value: '0' }
+]
+
+master_weapons.each do |w|
+  master_template.weapons.find_or_create_by(name: w[:name]) do |weapon|
+    weapon.damage = w[:damage]
+    weapon.concealment = w[:concealment]
+    weapon.reload_value = w[:reload_value]
+  end
+end
+
+# Create factions for the master template
+master_factions = [
+  { name: 'Dragons', description: 'Heroes fighting for justice' },
+  { name: 'Eaters of the Lotus', description: 'Evil sorcerers from ancient China' },
+  { name: 'Ascended', description: 'Animal spirits controlling the modern world' },
+  { name: 'Jammers', description: 'Anarchists from the future' }
+]
+
+master_factions.each do |f|
+  master_template.factions.find_or_create_by(name: f[:name]) do |faction|
+    faction.description = f[:description]
+  end
+end
+
+# Create junctures for the master template (with faction associations)
+master_junctures = [
+  { name: 'Ancient', description: '69 AD - The height of Imperial China', faction_name: 'Eaters of the Lotus' },
+  { name: '1850s', description: '1850 - The opium wars and colonial era', faction_name: 'Ascended' },
+  { name: 'Contemporary', description: '2020 - The modern world', faction_name: 'Dragons' },
+  { name: 'Future', description: '2074 - The dystopian future', faction_name: 'Jammers' }
+]
+
+master_junctures.each do |j|
+  faction = master_template.factions.find_by(name: j[:faction_name])
+  master_template.junctures.find_or_create_by(name: j[:name]) do |juncture|
+    juncture.description = j[:description]
+    juncture.faction = faction
+  end
+end
+
+puts "   Master Template populated with:"
+puts "     - Schticks: #{master_template.schticks.count}"
+puts "     - Weapons: #{master_template.weapons.count}"
+puts "     - Factions: #{master_template.factions.count}"
+puts "     - Junctures: #{master_template.junctures.count}"
+
 # Create multiple test campaigns for activation testing
 test_campaigns = [
   {
@@ -193,6 +265,22 @@ template_characters = [
     end
   end
 end
+
+# Now associate schticks and weapons with Master Template characters
+master_template.reload # Reload to get the newly created characters
+master_template.characters.where(is_template: true).each do |character|
+  # Add 2 random schticks if none exist
+  if character.schticks.empty? && master_template.schticks.any?
+    character.schticks << master_template.schticks.sample(2)
+  end
+  
+  # Add 2 random weapons if none exist
+  if character.weapons.empty? && master_template.weapons.any?
+    character.weapons << master_template.weapons.sample(2)
+  end
+end
+
+puts "   Template characters updated with schticks and weapons"
 
 # Create a test party with characters
 test_party = Party.find_or_create_by(

@@ -45,10 +45,17 @@ class Api::V2::VehiclesController < ApplicationController
     query = query.joins(:memberships).where(memberships: { party_id: params[:party_id] }) if params[:party_id].present?
     query = query.joins(:shots).where(shots: { fight_id: params[:fight_id] }) if params[:fight_id].present?
 
-    # Cache key
+    # Handle cache buster
+    if cache_buster_requested?
+      clear_resource_cache("vehicles", current_campaign.id)
+      Rails.logger.info "🔄 Cache buster requested for vehicles"
+    end
+
+    # Cache key - includes cache version that changes when any entity is modified
     cache_key = [
       "vehicles/index",
       current_campaign.id,
+      Vehicle.cache_version_for(current_campaign.id),  # Changes when ANY vehicles is created/updated/deleted
       sort_order,
       page,
       per_page,
@@ -64,7 +71,9 @@ class Api::V2::VehiclesController < ApplicationController
       params["archetype"],
     ].join("/")
 
-    cached_result = Rails.cache.fetch(cache_key, expires_in: 5.minutes) do
+    # Skip cache if cache buster is requested
+    cached_result = if cache_buster_requested?
+      Rails.logger.info "⚡ Skipping cache for vehicles index"
       vehicles = query
         .order(Arel.sql(sort_order))
 
@@ -95,6 +104,39 @@ class Api::V2::VehiclesController < ApplicationController
         "types" => types,
         "meta" => pagination_meta(vehicles)
       }
+    else
+      Rails.cache.fetch(cache_key, expires_in: 5.minutes) do
+        vehicles = query
+          .order(Arel.sql(sort_order))
+
+        # Fetch factions
+        faction_ids = vehicles.pluck(:faction_id).uniq.compact
+        factions = Faction.where(id: faction_ids)
+                          .select("factions.id", "factions.name")
+                          .order("LOWER(factions.name) ASC")
+
+        # Archetypes
+        archetypes = vehicles.map { |c| c.action_values["Archetype"] }.compact.uniq.sort
+        types = vehicles.map { |c| c.action_values["Type"] }.compact.uniq.sort
+
+        vehicles = paginate(vehicles, per_page: per_page, page: page)
+
+        {
+          "vehicles" => ActiveModelSerializers::SerializableResource.new(
+            vehicles,
+            each_serializer: params[:autocomplete] ? VehicleLiteSerializer : VehicleIndexSerializer,
+            adapter: :attributes
+          ).serializable_hash,
+          "factions" => ActiveModelSerializers::SerializableResource.new(
+            factions,
+            each_serializer: FactionLiteSerializer,
+            adapter: :attributes
+          ).serializable_hash,
+          "archetypes" => archetypes,
+          "types" => types,
+          "meta" => pagination_meta(vehicles)
+        }
+      end
     end
 
     render json: cached_result

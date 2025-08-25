@@ -47,10 +47,17 @@ class Api::V2::PartiesController < ApplicationController
     query = query.joins(:memberships).where(memberships: { character_id: params[:character_id] }) if params[:character_id].present?
     query = query.joins(:memberships).where(memberships: { vehicle_id: params[:vehicle_id] }) if params[:vehicle_id].present?
 
-    # Cache key
+    # Handle cache buster
+    if cache_buster_requested?
+      clear_resource_cache("parties", current_campaign.id)
+      Rails.logger.info "🔄 Cache buster requested for parties"
+    end
+
+    # Cache key - includes cache version that changes when any entity is modified
     cache_key = [
       "parties/index",
       current_campaign.id,
+      Party.cache_version_for(current_campaign.id),  # Changes when ANY parties is created/updated/deleted
       sort_order,
       page,
       per_page,
@@ -65,7 +72,9 @@ class Api::V2::PartiesController < ApplicationController
 
     ActiveRecord::Associations::Preloader.new(records: [current_campaign], associations: { user: [:image_attachment, :image_blob] })
 
-    cached_result = Rails.cache.fetch(cache_key, expires_in: 5.minutes) do
+    # Skip cache if cache buster is requested
+    cached_result = if cache_buster_requested?
+      Rails.logger.info "⚡ Skipping cache for parties index"
       parties = query.order(Arel.sql(sort_order))
       parties = paginate(parties, per_page: per_page, page: page)
       # Fetch factions
@@ -87,6 +96,30 @@ class Api::V2::PartiesController < ApplicationController
         ).serializable_hash,
         "meta" => pagination_meta(parties)
       }
+    else
+      Rails.cache.fetch(cache_key, expires_in: 5.minutes) do
+        parties = query.order(Arel.sql(sort_order))
+        parties = paginate(parties, per_page: per_page, page: page)
+        # Fetch factions
+        faction_ids = parties.pluck(:faction_id).uniq.compact
+        factions = Faction.where(id: faction_ids)
+                          .select("factions.id", "factions.name")
+                          .order("LOWER(factions.name) ASC")
+        # Archetypes
+        {
+          "parties" => ActiveModelSerializers::SerializableResource.new(
+            parties,
+            each_serializer: params[:autocomplete] ? PartyAutocompleteSerializer : PartyIndexSerializer,
+            adapter: :attributes
+          ).serializable_hash,
+          "factions" => ActiveModelSerializers::SerializableResource.new(
+            factions,
+            each_serializer: FactionLiteSerializer,
+            adapter: :attributes
+          ).serializable_hash,
+          "meta" => pagination_meta(parties)
+        }
+      end
     end
     render json: cached_result
   end
@@ -118,6 +151,8 @@ class Api::V2::PartiesController < ApplicationController
     end
 
     if @party.save
+      # Clear parties index cache after creating a new party
+      clear_parties_cache
       render json: @party, serializer: PartySerializer, status: :created
     else
       render json: { errors: @party.errors }, status: :unprocessable_entity
@@ -147,6 +182,8 @@ class Api::V2::PartiesController < ApplicationController
     end
 
     if @party.update(party_data)
+      # Clear parties index cache after updating a party
+      clear_parties_cache
       render json: @party.reload
     else
       render json: { errors: @party.errors }, status: :unprocessable_entity
@@ -200,6 +237,12 @@ class Api::V2::PartiesController < ApplicationController
   end
 
   private
+
+  def clear_parties_cache
+    # Clear all parties index cache entries for this campaign
+    Rails.cache.delete_matched("parties/index/#{current_campaign.id}/*")
+    Rails.logger.info "🗑️ Cleared parties cache for campaign #{current_campaign.id}"
+  end
 
   def set_party
     @party = current_campaign.parties.find(params[:id])

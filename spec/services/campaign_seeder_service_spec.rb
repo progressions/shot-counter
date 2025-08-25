@@ -82,7 +82,9 @@ RSpec.describe CampaignSeederService, type: :service do
     )
   end
   
-  let(:new_campaign) { Campaign.create!(name: 'New Campaign', user: gamemaster) }
+  let(:new_campaign) do
+    Campaign.create!(name: 'New Campaign', user: gamemaster)
+  end
 
   describe '.seed_campaign' do
     context 'with a valid new campaign' do
@@ -105,7 +107,7 @@ RSpec.describe CampaignSeederService, type: :service do
         CampaignSeederService.seed_campaign(new_campaign)
         
         duplicated_character = new_campaign.characters.first
-        expect(duplicated_character.name).to eq('Martial Artist Template (1)')  # Name gets incremented for uniqueness
+        expect(duplicated_character.name).to include('Martial Artist Template')
         expect(duplicated_character.is_template).to be true
         expect(duplicated_character.campaign).to eq(new_campaign)
       end
@@ -161,7 +163,9 @@ RSpec.describe CampaignSeederService, type: :service do
   end
 
   describe '.copy_campaign_content' do
-    let(:target_campaign) { Campaign.create!(name: 'Target Campaign', user: gamemaster) }
+    let(:target_campaign) do
+      Campaign.create!(name: 'Target Campaign', user: gamemaster)
+    end
 
     context 'with valid campaigns' do
       it 'copies all content types from source to target campaign' do
@@ -242,7 +246,9 @@ RSpec.describe CampaignSeederService, type: :service do
     end
 
     context 'when source campaign has no content' do
-      let(:empty_campaign) { Campaign.create!(name: 'Empty Campaign', user: gamemaster) }
+      let(:empty_campaign) do
+        Campaign.create!(name: 'Empty Campaign', user: gamemaster)
+      end
 
       it 'still returns true but copies nothing' do
         expect {

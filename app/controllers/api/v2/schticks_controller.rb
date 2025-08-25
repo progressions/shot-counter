@@ -38,10 +38,17 @@ class Api::V2::SchticksController < ApplicationController
     # Join associations
     query = query.joins(:character_schticks).where(character_schticks: { character_id: params[:character_id] }) if params[:character_id].present?
 
-    # Cache key
+    # Handle cache buster
+    if cache_buster_requested?
+      clear_resource_cache("schticks", current_campaign.id)
+      Rails.logger.info "🔄 Cache buster requested for schticks"
+    end
+
+    # Cache key - includes cache version that changes whenever any schtick is modified
     cache_key = [
       "schticks/index",
       current_campaign.id,
+      Schtick.cache_version_for(current_campaign.id),  # Changes when ANY schtick is created/updated/deleted
       sort_order,
       page,
       per_page,
@@ -53,7 +60,9 @@ class Api::V2::SchticksController < ApplicationController
       params["path"],
     ].join("/")
 
-    cached_result = Rails.cache.fetch(cache_key, expires_in: 5.minutes) do
+    # Skip cache if cache buster is requested
+    cached_result = if cache_buster_requested?
+      Rails.logger.info "⚡ Skipping cache for schticks index"
       schticks = query.order(Arel.sql(sort_order))
 
       # Get categories without applying full sort_order
@@ -76,6 +85,31 @@ class Api::V2::SchticksController < ApplicationController
         "paths" => paths,
         "meta" => pagination_meta(schticks)
       }
+    else
+      Rails.cache.fetch(cache_key, expires_in: 5.minutes) do
+        schticks = query.order(Arel.sql(sort_order))
+
+        # Get categories without applying full sort_order
+        categories_query = query.select("schticks.category").distinct
+        categories = categories_query.pluck(:category).uniq.compact.sort
+
+        # Get paths without applying full sort_order
+        paths_query = query.select("schticks.path").distinct
+        paths = paths_query.pluck(:path).uniq.compact.sort
+
+        schticks = paginate(schticks, per_page: per_page, page: page)
+
+        {
+          "schticks" => ActiveModelSerializers::SerializableResource.new(
+            schticks,
+            each_serializer: params[:autocomplete] ? SchtickAutocompleteSerializer : SchtickIndexLiteSerializer,
+            adapter: :attributes
+          ).serializable_hash,
+          "categories" => categories,
+          "paths" => paths,
+          "meta" => pagination_meta(schticks)
+        }
+      end
     end
     render json: cached_result
   end

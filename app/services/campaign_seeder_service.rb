@@ -1,15 +1,25 @@
 class CampaignSeederService
   class << self
     def seed_campaign(campaign)
-      return false if campaign.seeded_at.present?
-      return false unless campaign.persisted?
+      if campaign.seeded_at.present?
+        Rails.logger.info "Campaign already seeded, seeded_at: #{campaign.seeded_at}"
+        return false
+      end
+      
+      unless campaign.persisted?
+        Rails.logger.info "Campaign not persisted"
+        return false
+      end
 
       master_template = Campaign.find_by(is_master_template: true)
-      return false unless master_template
+      unless master_template
+        Rails.logger.info "No master template found"
+        return false
+      end
 
       Rails.logger.info "Seeding campaign #{campaign.name} (ID: #{campaign.id}) from master template"
 
-      copy_campaign_content(master_template, campaign)
+      return copy_campaign_content(master_template, campaign)
     end
 
     def copy_campaign_content(source_campaign, target_campaign)
@@ -18,13 +28,17 @@ class CampaignSeederService
       Rails.logger.info "Copying content from campaign #{source_campaign.name} to #{target_campaign.name}"
 
       ActiveRecord::Base.transaction do
-        # Copy all content types
-        duplicate_characters(source_campaign, target_campaign)
-        duplicate_vehicles(source_campaign, target_campaign)
+        # Copy schticks and weapons first so they exist when characters reference them
         duplicate_schticks(source_campaign, target_campaign)
         duplicate_weapons(source_campaign, target_campaign)
-        duplicate_junctures(source_campaign, target_campaign)
+        
+        # Copy factions before junctures since junctures reference factions
         duplicate_factions(source_campaign, target_campaign)
+        duplicate_junctures(source_campaign, target_campaign)
+        
+        # Copy characters and vehicles last so they can reference the duplicated entities
+        duplicate_characters(source_campaign, target_campaign)
+        duplicate_vehicles(source_campaign, target_campaign)
 
         # Mark campaign as seeded only if this was called from seed_campaign
         target_campaign.update!(seeded_at: Time.current) if target_campaign.seeded_at.nil?
@@ -46,10 +60,12 @@ class CampaignSeederService
       Rails.logger.info "Duplicating #{characters.count} characters"
 
       characters.each do |character|
-        duplicated_character = CharacterDuplicatorService.duplicate_character(character, target_campaign.user)
-        duplicated_character.campaign = target_campaign
+        # Pass the target_campaign as the third parameter so it uses the correct campaign for name checking
+        duplicated_character = CharacterDuplicatorService.duplicate_character(character, target_campaign.user, target_campaign)
         
         if duplicated_character.save
+          # Apply associations after the character is saved and has an ID
+          CharacterDuplicatorService.apply_associations(duplicated_character)
           Rails.logger.info "Duplicated character: #{duplicated_character.name}"
         else
           Rails.logger.error "Failed to duplicate character #{character.name}: #{duplicated_character.errors.full_messages.join(', ')}"
@@ -113,9 +129,16 @@ class CampaignSeederService
       junctures = source_campaign.junctures
       
       Rails.logger.info "Duplicating #{junctures.count} junctures"
+      
+      # Create faction mapping for juncture associations
+      faction_mapping = {}
+      source_campaign.factions.each do |source_faction|
+        target_faction = target_campaign.factions.find_by(name: source_faction.name)
+        faction_mapping[source_faction.id] = target_faction if target_faction
+      end
 
       junctures.each do |juncture|
-        duplicated_juncture = JunctureDuplicatorService.duplicate_juncture(juncture, target_campaign)
+        duplicated_juncture = JunctureDuplicatorService.duplicate_juncture(juncture, target_campaign, faction_mapping)
         
         if duplicated_juncture.save
           Rails.logger.info "Duplicated juncture: #{duplicated_juncture.name}"

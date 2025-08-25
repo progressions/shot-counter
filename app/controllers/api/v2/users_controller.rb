@@ -1,6 +1,7 @@
 class Api::V2::UsersController < ApplicationController
   before_action :authenticate_user!
-  before_action :require_admin, only: [:index, :create, :destroy, :show]
+  before_action :require_admin_or_gamemaster_for_campaign_users, only: [:index]
+  before_action :require_admin, only: [:create, :destroy, :show]
   before_action :set_user, only: [:show, :update, :destroy, :remove_image]
   before_action :require_self_or_admin, only: :update
   skip_before_action :authenticate_user!, only: [:register]
@@ -39,7 +40,21 @@ class Api::V2::UsersController < ApplicationController
       query = query.where(active: true)
     end
     query = query.joins(:characters).where(characters: { id: params[:character_id] }) if params[:character_id].present?
-    query = query.joins(:campaign_memberships).where(campaign_memberships: { campaign_id: params[:campaign_id] }) if params[:campaign_id].present?
+    if params[:campaign_id].present?
+      # Include both campaign members AND the campaign owner
+      campaign = Campaign.find(params[:campaign_id])
+      member_user_ids = campaign.users.pluck(:id)
+      owner_user_id = campaign.user_id
+      all_user_ids = (member_user_ids + [owner_user_id]).uniq.compact
+      query = query.where(id: all_user_ids)
+    end
+    
+    # Handle cache buster - users use user-specific cache
+    if cache_buster_requested?
+      clear_resource_cache("users", current_user.id)
+      Rails.logger.info "🔄 Cache buster requested for users"
+    end
+    
     # Cache key
     cache_key = [
       "users/index",
@@ -54,7 +69,9 @@ class Api::V2::UsersController < ApplicationController
       params["character_id"],
       params["show_all"],
     ].join("/")
-    cached_result = Rails.cache.fetch(cache_key, expires_in: 5.minutes) do
+    # Skip cache if cache buster is requested
+    cached_result = if cache_buster_requested?
+      Rails.logger.info "⚡ Skipping cache for users index"
       users = query.order(Arel.sql(sort_order))
       users = paginate(users, per_page: per_page, page: page)
       {
@@ -65,6 +82,19 @@ class Api::V2::UsersController < ApplicationController
         ).serializable_hash,
         "meta" => pagination_meta(users)
       }
+    else
+      Rails.cache.fetch(cache_key, expires_in: 5.minutes) do
+        users = query.order(Arel.sql(sort_order))
+        users = paginate(users, per_page: per_page, page: page)
+        {
+          "users" => ActiveModelSerializers::SerializableResource.new(
+            users,
+            each_serializer: params[:autocomplete] ? UserAutocompleteSerializer : UserIndexSerializer,
+            adapter: :attributes
+          ).serializable_hash,
+          "meta" => pagination_meta(users)
+        }
+      end
     end
     render json: cached_result
   end
@@ -265,6 +295,30 @@ class Api::V2::UsersController < ApplicationController
       render json: { error: "Admin access required" }, status: :forbidden
       return
     end
+  end
+
+  def require_admin_or_gamemaster_for_campaign_users
+    # Allow admin access to all users
+    return if current_user.admin?
+    
+    # Allow gamemaster access only when filtering by their own campaign
+    if params[:campaign_id].present?
+      begin
+        campaign = Campaign.find(params[:campaign_id])
+        if campaign.user_id == current_user.id
+          return
+        else
+          render json: { error: "You can only view users from your own campaigns" }, status: :forbidden
+          return
+        end
+      rescue ActiveRecord::RecordNotFound
+        render json: { error: "Campaign not found" }, status: :not_found
+        return
+      end
+    end
+    
+    # Require admin for all other user queries
+    render json: { error: "Admin access required" }, status: :forbidden
   end
 
   def require_self_or_admin

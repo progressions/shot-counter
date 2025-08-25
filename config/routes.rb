@@ -124,6 +124,11 @@ Rails.application.routes.draw do
           post :resend
         end
       end
+      
+      # Onboarding endpoints
+      scope :onboarding do
+        patch :dismiss_congratulations, to: "onboarding#dismiss_congratulations"
+      end
     end
     namespace :v1 do
       resources :ai, only: [:create]
@@ -204,6 +209,7 @@ Rails.application.routes.draw do
           delete :image, to: "users#remove_image"
         end
       end
+      
       resources :fights do
         member do
           patch :touch
