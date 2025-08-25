@@ -50,12 +50,12 @@ RSpec.describe "Campaign Seeding with db/seeds Content", type: :model do
       )
     end
 
-    it "automatically seeds new campaigns with Master Template content" do
+    it "seeds new campaigns with Master Template content when service is called" do
       # The campaign should be created without content initially
       expect(new_campaign.seeded_at).to be_nil
       expect(new_campaign.characters.count).to eq(0)
       
-      # Execute the seeding synchronously
+      # Execute the seeding manually (as done in controller)
       result = CampaignSeederService.seed_campaign(new_campaign)
       expect(result).to be true
       
@@ -128,9 +128,9 @@ RSpec.describe "Campaign Seeding with db/seeds Content", type: :model do
     end
   end
 
-  describe "Seeding with background job" do
-    it "enqueues CampaignSeederJob after campaign creation" do
-      expect(CampaignSeederJob).to receive(:perform_later).with(kind_of(String))
+  describe "Manual seeding with background job" do
+    it "does not automatically enqueue CampaignSeederJob after campaign creation" do
+      expect(CampaignSeederJob).not_to receive(:perform_later)
       
       Campaign.create!(
         name: "Job Test Campaign #{Time.current.to_i}",
@@ -138,7 +138,7 @@ RSpec.describe "Campaign Seeding with db/seeds Content", type: :model do
       )
     end
 
-    it "seeds campaign when job is executed" do
+    it "seeds campaign when job is manually executed" do
       campaign = Campaign.create!(
         name: "Job Execution Test #{Time.current.to_i}",
         user: gamemaster
@@ -146,7 +146,7 @@ RSpec.describe "Campaign Seeding with db/seeds Content", type: :model do
       
       expect(campaign.seeded_at).to be_nil
       
-      # Execute job synchronously
+      # Manually execute job (as would be done in controller)
       CampaignSeederJob.new.perform(campaign.id)
       
       campaign.reload
