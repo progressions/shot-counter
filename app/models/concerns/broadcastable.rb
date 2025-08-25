@@ -13,7 +13,7 @@ module Broadcastable
   end
 
   def broadcast_reload
-    puts "🔄 Broadcastable: #{self.class.name} (ID: #{id}) triggering reload broadcast for campaign_id: #{self.campaign_id}"
+    Rails.logger.info "🔄 Broadcastable: #{self.class.name} (ID: #{id}) triggering reload broadcast for campaign_id: #{self.campaign_id}"
     BroadcastCampaignReloadJob.perform_later(self.class.name, self.campaign_id)
   end
 

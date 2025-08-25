@@ -1,7 +1,11 @@
 require "rails_helper"
 
 RSpec.describe "Api::V2::Invitations", type: :request do
+  include ActiveJob::TestHelper
+  
   before(:each) do
+    # Set up ActiveJob test adapter for job expectations
+    ActiveJob::Base.queue_adapter = :test
     allow_any_instance_of(ActiveStorage::Blob).to receive(:purge).and_return(true)
     # Skip cleanup for now - focus on controller functionality
     # User.destroy_all
@@ -49,6 +53,10 @@ RSpec.describe "Api::V2::Invitations", type: :request do
     # Set current campaign for gamemaster
     set_current_campaign(@gamemaster, @campaign)
     set_current_campaign(@other_gamemaster, @other_campaign)
+  end
+  
+  after(:each) do
+    clear_enqueued_jobs
   end
 
   describe "POST /api/v2/invitations" do

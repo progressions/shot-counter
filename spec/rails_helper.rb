@@ -39,14 +39,26 @@ RSpec.configure do |config|
 
   # DatabaseCleaner configuration
   config.before(:suite) do
-    DatabaseCleaner.strategy = :transaction
-    DatabaseCleaner.clean_with(:truncation)
+    # Clean the entire database before running the suite
+    DatabaseCleaner.clean_with(:truncation, except: %w[ar_internal_metadata])
   end
 
-  config.around(:each) do |example|
-    DatabaseCleaner.cleaning do
-      example.run
-    end
+  config.before(:each) do
+    # Use transaction strategy for faster tests
+    DatabaseCleaner.strategy = :transaction
+  end
+
+  config.before(:each, js: true) do
+    # Use truncation for JS specs that may need committed data
+    DatabaseCleaner.strategy = :truncation, { except: %w[ar_internal_metadata] }
+  end
+
+  config.before(:each) do
+    DatabaseCleaner.start
+  end
+
+  config.after(:each) do
+    DatabaseCleaner.clean
   end
 
   # If you're not using ActiveRecord, or you'd prefer not to run each of your

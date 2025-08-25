@@ -2,15 +2,116 @@ require 'rails_helper'
 
 RSpec.describe "Campaign Seeding with db/seeds Content", type: :model do
   # This test verifies that new campaigns are properly seeded with content
-  # from the Master Template Campaign that's created by db/seeds.rb
+  # from the Master Template Campaign
   
-  before(:all) do
-    # Ensure we have clean test database with seed data
-    Rails.application.load_seed
+  # Create test data instead of relying on seeds
+  let!(:gamemaster) do
+    User.create!(
+      email: 'test_gm@example.com',
+      first_name: 'Test',
+      last_name: 'GM',
+      password: 'password123',
+      gamemaster: true
+    )
   end
 
-  let(:master_template) { Campaign.find_by(is_master_template: true) }
-  let(:gamemaster) { User.find_by(email: 'progressions@gmail.com') }
+  let!(:master_template) do
+    Campaign.create!(
+      name: 'Master Template Campaign',
+      is_master_template: true,
+      user: gamemaster
+    )
+  end
+
+  # Create minimal template content for testing
+  before(:each) do
+    # Only create if not already present
+    if master_template.characters.where(is_template: true).empty?
+      # Create template characters
+      4.times do |i|
+        char = Character.create!(
+          name: "Template Character #{i}",
+          is_template: true,
+          campaign: master_template,
+          user: gamemaster
+        )
+        
+        # Add schticks and weapons
+        categories = Schtick::CATEGORIES
+        paths = {
+          "Sorcery" => ["Fire", "Force", "Ice", "Lightning"],
+          "Martial Arts" => ["Path of the Tiger", "Path of the Dragon", "Path of the Crane"],
+          "Guns" => ["Both Guns Blazing", "Carnival of Carnage"],
+          "Driving" => ["Hot Pursuit", "Pedal to the Metal"]
+        }
+        
+        category = categories[i % categories.length]
+        path_options = paths[category] || ["Core"]
+        path = path_options[i % path_options.length]
+        
+        schtick = Schtick.create!(
+          name: "Template Schtick #{i}",
+          description: "A template schtick for #{category}",
+          category: category,
+          path: path,
+          campaign: master_template
+        )
+        char.schticks << schtick
+        
+        weapon = Weapon.create!(
+          name: "Weapon #{i}",
+          damage: 8,
+          campaign: master_template
+        )
+        char.weapons << weapon
+      end
+      
+      # Create additional schticks and weapons
+      2.times do |i|
+        categories = Schtick::CATEGORIES
+        paths = {
+          "Sorcery" => ["Fire", "Force", "Ice", "Lightning"],
+          "Martial Arts" => ["Path of the Tiger", "Path of the Dragon", "Path of the Crane"],
+          "Guns" => ["Both Guns Blazing", "Carnival of Carnage"],
+          "Driving" => ["Hot Pursuit", "Pedal to the Metal"]
+        }
+        
+        category = categories[(4 + i) % categories.length]
+        path_options = paths[category] || ["Core"]
+        path = path_options[i % path_options.length]
+        
+        Schtick.create!(
+          name: "Extra Schtick #{i}",
+          description: "An extra schtick for #{category}",
+          category: category,
+          path: path,
+          campaign: master_template
+        )
+        Weapon.create!(
+          name: "Extra Weapon #{i}",
+          damage: 7,
+          campaign: master_template
+        )
+      end
+      
+      # Create factions
+      4.times do |i|
+        Faction.create!(
+          name: "Faction #{i}",
+          campaign: master_template
+        )
+      end
+      
+      # Create junctures with faction associations
+      4.times do |i|
+        Juncture.create!(
+          name: "Juncture #{i}",
+          faction: master_template.factions[i],
+          campaign: master_template
+        )
+      end
+    end
+  end
 
   describe "Master Template Campaign from seeds" do
     it "exists with proper content" do
