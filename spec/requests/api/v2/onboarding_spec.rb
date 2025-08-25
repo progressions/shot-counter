@@ -60,14 +60,61 @@ RSpec.describe "Api::V2::Onboarding", type: :request do
         expect(onboarding_progress.congratulations_dismissed_at).to be_present
       end
 
-      it "updates onboarding progress with milestone timestamps" do
+      it "updates first_campaign_created_at milestone" do
         @gamemaster.ensure_onboarding_progress!
         onboarding_progress = @gamemaster.onboarding_progress
         
         patch "/api/v2/onboarding", 
           params: { 
             onboarding_progress: { 
-              id: onboarding_progress.id,
+              first_campaign_created_at: "2024-01-15T10:00:00Z" 
+            } 
+          }, 
+          headers: @gamemaster_headers
+        
+        expect(response).to have_http_status(200)
+        
+        json_response = JSON.parse(response.body)
+        expect(json_response["success"]).to be true
+        expect(json_response["onboarding_progress"]["first_campaign_created_at"]).to eq("2024-01-15T10:00:00.000Z")
+        
+        # Verify database was updated
+        onboarding_progress.reload
+        expect(onboarding_progress.first_campaign_created_at).to be_present
+        expect(onboarding_progress.first_campaign_created_at.iso8601).to eq("2024-01-15T10:00:00Z")
+      end
+
+      it "updates first_campaign_activated_at milestone" do
+        @gamemaster.ensure_onboarding_progress!
+        onboarding_progress = @gamemaster.onboarding_progress
+        
+        patch "/api/v2/onboarding", 
+          params: { 
+            onboarding_progress: { 
+              first_campaign_activated_at: "2024-01-15T10:15:00Z" 
+            } 
+          }, 
+          headers: @gamemaster_headers
+        
+        expect(response).to have_http_status(200)
+        
+        json_response = JSON.parse(response.body)
+        expect(json_response["success"]).to be true
+        expect(json_response["onboarding_progress"]["first_campaign_activated_at"]).to eq("2024-01-15T10:15:00.000Z")
+        
+        # Verify database was updated
+        onboarding_progress.reload
+        expect(onboarding_progress.first_campaign_activated_at).to be_present
+        expect(onboarding_progress.first_campaign_activated_at.iso8601).to eq("2024-01-15T10:15:00Z")
+      end
+
+      it "updates first_character_created_at milestone" do
+        @gamemaster.ensure_onboarding_progress!
+        onboarding_progress = @gamemaster.onboarding_progress
+        
+        patch "/api/v2/onboarding", 
+          params: { 
+            onboarding_progress: { 
               first_character_created_at: "2024-01-15T10:30:00Z" 
             } 
           }, 
@@ -77,11 +124,108 @@ RSpec.describe "Api::V2::Onboarding", type: :request do
         
         json_response = JSON.parse(response.body)
         expect(json_response["success"]).to be true
-        expect(json_response["onboarding_progress"]["first_character_created_at"]).to be_present
+        expect(json_response["onboarding_progress"]["first_character_created_at"]).to eq("2024-01-15T10:30:00.000Z")
         
         # Verify database was updated
         onboarding_progress.reload
         expect(onboarding_progress.first_character_created_at).to be_present
+        expect(onboarding_progress.first_character_created_at.iso8601).to eq("2024-01-15T10:30:00Z")
+      end
+
+      it "updates first_fight_created_at milestone" do
+        @gamemaster.ensure_onboarding_progress!
+        onboarding_progress = @gamemaster.onboarding_progress
+        
+        patch "/api/v2/onboarding", 
+          params: { 
+            onboarding_progress: { 
+              first_fight_created_at: "2024-01-15T10:45:00Z" 
+            } 
+          }, 
+          headers: @gamemaster_headers
+        
+        expect(response).to have_http_status(200)
+        
+        json_response = JSON.parse(response.body)
+        expect(json_response["success"]).to be true
+        expect(json_response["onboarding_progress"]["first_fight_created_at"]).to eq("2024-01-15T10:45:00.000Z")
+        
+        # Verify database was updated
+        onboarding_progress.reload
+        expect(onboarding_progress.first_fight_created_at).to be_present
+        expect(onboarding_progress.first_fight_created_at.iso8601).to eq("2024-01-15T10:45:00Z")
+      end
+
+      it "updates first_faction_created_at milestone" do
+        @gamemaster.ensure_onboarding_progress!
+        onboarding_progress = @gamemaster.onboarding_progress
+        
+        patch "/api/v2/onboarding", 
+          params: { 
+            onboarding_progress: { 
+              first_faction_created_at: "2024-01-15T11:00:00Z" 
+            } 
+          }, 
+          headers: @gamemaster_headers
+        
+        expect(response).to have_http_status(200)
+        
+        json_response = JSON.parse(response.body)
+        expect(json_response["success"]).to be true
+        expect(json_response["onboarding_progress"]["first_faction_created_at"]).to eq("2024-01-15T11:00:00.000Z")
+        
+        # Verify database was updated
+        onboarding_progress.reload
+        expect(onboarding_progress.first_faction_created_at).to be_present
+        expect(onboarding_progress.first_faction_created_at.iso8601).to eq("2024-01-15T11:00:00Z")
+      end
+
+      it "updates first_party_created_at milestone" do
+        @gamemaster.ensure_onboarding_progress!
+        onboarding_progress = @gamemaster.onboarding_progress
+        
+        patch "/api/v2/onboarding", 
+          params: { 
+            onboarding_progress: { 
+              first_party_created_at: "2024-01-15T11:15:00Z" 
+            } 
+          }, 
+          headers: @gamemaster_headers
+        
+        expect(response).to have_http_status(200)
+        
+        json_response = JSON.parse(response.body)
+        expect(json_response["success"]).to be true
+        expect(json_response["onboarding_progress"]["first_party_created_at"]).to eq("2024-01-15T11:15:00.000Z")
+        
+        # Verify database was updated
+        onboarding_progress.reload
+        expect(onboarding_progress.first_party_created_at).to be_present
+        expect(onboarding_progress.first_party_created_at.iso8601).to eq("2024-01-15T11:15:00Z")
+      end
+
+      it "updates first_site_created_at milestone" do
+        @gamemaster.ensure_onboarding_progress!
+        onboarding_progress = @gamemaster.onboarding_progress
+        
+        patch "/api/v2/onboarding", 
+          params: { 
+            onboarding_progress: { 
+              first_site_created_at: "2024-01-15T11:30:00Z" 
+            } 
+          }, 
+          headers: @gamemaster_headers
+        
+        expect(response).to have_http_status(200)
+        
+        json_response = JSON.parse(response.body)
+        expect(json_response["success"]).to be true
+        expect(json_response["onboarding_progress"]["first_site_created_at"]).to eq("2024-01-15T11:30:00.000Z")
+        
+        # Verify database was updated
+        onboarding_progress.reload
+        expect(onboarding_progress.first_site_created_at).to be_present
+        expect(onboarding_progress.first_site_created_at.iso8601).to eq("2024-01-15T11:30:00Z")
       end
 
       it "updates multiple onboarding progress fields at once" do
@@ -91,7 +235,6 @@ RSpec.describe "Api::V2::Onboarding", type: :request do
         patch "/api/v2/onboarding", 
           params: { 
             onboarding_progress: { 
-              id: onboarding_progress.id,
               first_campaign_created_at: "2024-01-15T10:00:00Z",
               first_campaign_activated_at: "2024-01-15T10:15:00Z",
               first_character_created_at: "2024-01-15T10:30:00Z"
@@ -118,7 +261,6 @@ RSpec.describe "Api::V2::Onboarding", type: :request do
         patch "/api/v2/onboarding", 
           params: { 
             onboarding_progress: { 
-              id: onboarding_progress.id,
               invalid_field: "invalid_value"
             } 
           }, 
