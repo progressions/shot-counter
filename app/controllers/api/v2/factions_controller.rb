@@ -46,7 +46,7 @@ class Api::V2::FactionsController < ApplicationController
     cache_key = [
       "factions/index",
       current_campaign.id,
-      Ufaction.cache_version_for(current_campaign.id),  # Changes when ANY factions is created/updated/deleted
+      Faction.cache_version_for(current_campaign.id),  # Changes when ANY factions is created/updated/deleted
       sort_order,
       page,
       per_page,
