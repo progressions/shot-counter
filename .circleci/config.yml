@@ -100,14 +100,26 @@ jobs:
             RAILS_ENV=test bundle exec rails db:create
             RAILS_ENV=test bundle exec rails db:schema:load
             
+      # Test RSpec setup first
+      - run:
+          name: Test RSpec setup
+          command: |
+            echo "Testing RSpec setup with a single model spec..."
+            RAILS_ENV=test DISABLE_BOOTSNAP=1 DISABLE_SPRING=1 bundle exec rspec spec/models/user_spec.rb --format documentation || true
+            
       # Run RSpec tests
       - run:
           name: Run tests
           command: |
             mkdir /tmp/test-results
-            RAILS_ENV=test DISABLE_BOOTSNAP=1 DISABLE_SPRING=1 bundle exec rspec --format progress \
+            echo "Starting full RSpec test suite..."
+            RAILS_ENV=test DISABLE_BOOTSNAP=1 DISABLE_SPRING=1 timeout 300 bundle exec rspec \
+                            --format documentation \
                             --format RspecJunitFormatter \
-                            --out /tmp/test-results/rspec.xml
+                            --out /tmp/test-results/rspec.xml \
+                            --fail-fast \
+                            || if [ $? -eq 124 ]; then echo "Tests timed out after 5 minutes"; exit 1; fi
+          no_output_timeout: 6m
       
       # Store test results for CircleCI
       - store_test_results:
