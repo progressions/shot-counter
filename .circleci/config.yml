@@ -73,10 +73,24 @@ jobs:
           name: Setup test credentials
           command: |
             if [ -n "$RAILS_TEST_KEY" ]; then
-              echo -n "$RAILS_TEST_KEY" > config/credentials/test.key
-              echo "Test key created with length: $(wc -c < config/credentials/test.key) characters"
+              # Remove any whitespace/newlines and write key
+              echo -n "$RAILS_TEST_KEY" | tr -d '\n\r ' > config/credentials/test.key
+              
+              # Debug output
+              echo "RAILS_TEST_KEY length from env: ${#RAILS_TEST_KEY}"
+              echo "Test key file created with content length: $(wc -c < config/credentials/test.key) characters"
+              echo "First 8 chars of key: $(head -c 8 config/credentials/test.key)..."
+              echo "Last 8 chars of key: ...$(tail -c 8 config/credentials/test.key)"
+              
+              # Verify it's exactly 32 characters
+              KEY_LENGTH=$(wc -c < config/credentials/test.key)
+              if [ "$KEY_LENGTH" -ne 32 ]; then
+                echo "ERROR: Key length is $KEY_LENGTH, expected 32"
+                exit 1
+              fi
             else
-              echo "Warning: RAILS_TEST_KEY not set in CircleCI environment variables"
+              echo "ERROR: RAILS_TEST_KEY not set in CircleCI environment variables"
+              exit 1
             fi
             
       # Database setup
