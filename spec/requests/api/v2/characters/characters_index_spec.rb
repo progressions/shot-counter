@@ -272,8 +272,13 @@ RSpec.describe "Api::V2::Characters", type: :request do
       expect(body["characters"].map { |c| c["name"] }).to eq(["Amanda Yin", "Ugly Shing"])
       expect(body["factions"].map { |f| f["name"] }).to eq(["The Ascended"])
     end
-    it "filters by is_template" do
-      get "/api/v2/characters", params: { is_template: true }, headers: @headers
+    it "filters by is_template (legacy parameter - admin only)" do
+      # Create admin user for this test
+      admin = User.create!(email: "admin_test@example.com", first_name: "Admin", last_name: "Test", confirmed_at: Time.now, admin: true)
+      admin_headers = Devise::JWT::TestHelpers.auth_headers({}, admin)
+      set_current_campaign(admin, @campaign)
+      
+      get "/api/v2/characters", params: { is_template: true }, headers: admin_headers
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
       expect(body["characters"].map { |c| c["name"] }).to eq(["Bandit"])
@@ -409,6 +414,165 @@ RSpec.describe "Api::V2::Characters", type: :request do
       expect(response).to have_http_status(200)
       body = JSON.parse(response.body)
       expect(body["characters"]).to eq([])
+    end
+  end
+
+  describe "Template filtering with template_filter parameter" do
+    before(:each) do
+      # Create additional test data for template testing
+      @admin = User.create!(email: "admin@example.com", first_name: "Admin", last_name: "User", confirmed_at: Time.now, admin: true)
+      @admin_headers = Devise::JWT::TestHelpers.auth_headers({}, @admin)
+      set_current_campaign(@admin, @campaign)
+      
+      # Create more templates for testing
+      @template2 = Character.create!(name: "Template Sorcerer", action_values: { "Type" => "PC", "Archetype" => "Sorcerer" }, campaign_id: @campaign.id, is_template: true, user_id: @gamemaster.id)
+      @template3 = Character.create!(name: "Template Boss", action_values: { "Type" => "Boss" }, campaign_id: @campaign.id, is_template: true, user_id: @gamemaster.id)
+    end
+
+    context "as admin user" do
+      it "filters to show only templates when template_filter=templates" do
+        get "/api/v2/characters", params: { template_filter: "templates" }, headers: @admin_headers
+        expect(response).to have_http_status(200)
+        body = JSON.parse(response.body)
+        expect(body["characters"].map { |c| c["name"] }).to eq(["Template Boss", "Template Sorcerer", "Bandit"])
+        expect(body["characters"].all? { |c| c["is_template"] == true }).to be true
+      end
+
+      it "filters to show only non-templates when template_filter=non-templates" do
+        get "/api/v2/characters", params: { template_filter: "non-templates" }, headers: @admin_headers
+        expect(response).to have_http_status(200)
+        body = JSON.parse(response.body)
+        expect(body["characters"].map { |c| c["name"] }).to eq(["Angie Lo", "Thug", "Amanda Yin", "Ugly Shing", "Serena", "Brick Manly"])
+        expect(body["characters"].none? { |c| c["is_template"] == true }).to be true
+      end
+
+      it "shows all characters when template_filter=all" do
+        get "/api/v2/characters", params: { template_filter: "all" }, headers: @admin_headers
+        expect(response).to have_http_status(200)
+        body = JSON.parse(response.body)
+        all_names = ["Template Boss", "Template Sorcerer", "Angie Lo", "Thug", "Amanda Yin", "Ugly Shing", "Serena", "Brick Manly", "Bandit"]
+        expect(body["characters"].map { |c| c["name"] }).to match_array(all_names)
+      end
+
+      it "defaults to non-templates when no template_filter provided" do
+        get "/api/v2/characters", headers: @admin_headers
+        expect(response).to have_http_status(200)
+        body = JSON.parse(response.body)
+        expect(body["characters"].map { |c| c["name"] }).to eq(["Angie Lo", "Thug", "Amanda Yin", "Ugly Shing", "Serena", "Brick Manly"])
+      end
+
+      it "defaults to non-templates when template_filter is invalid" do
+        get "/api/v2/characters", params: { template_filter: "invalid_value" }, headers: @admin_headers
+        expect(response).to have_http_status(200)
+        body = JSON.parse(response.body)
+        expect(body["characters"].map { |c| c["name"] }).to eq(["Angie Lo", "Thug", "Amanda Yin", "Ugly Shing", "Serena", "Brick Manly"])
+      end
+
+      it "combines template_filter with other filters" do
+        get "/api/v2/characters", params: { template_filter: "all", character_type: "PC" }, headers: @admin_headers
+        expect(response).to have_http_status(200)
+        body = JSON.parse(response.body)
+        expect(body["characters"].map { |c| c["name"] }).to match_array(["Template Sorcerer", "Serena", "Brick Manly", "Bandit"])
+      end
+
+      it "respects show_hidden with template_filter" do
+        @hidden_template = Character.create!(name: "Hidden Template", action_values: { "Type" => "PC" }, campaign_id: @campaign.id, is_template: true, user_id: @gamemaster.id, active: false)
+        
+        get "/api/v2/characters", params: { template_filter: "templates", show_hidden: true }, headers: @admin_headers
+        expect(response).to have_http_status(200)
+        body = JSON.parse(response.body)
+        expect(body["characters"].map { |c| c["name"] }).to include("Hidden Template")
+      end
+    end
+
+    context "as gamemaster user (non-admin)" do
+      it "always filters out templates regardless of template_filter=templates" do
+        get "/api/v2/characters", params: { template_filter: "templates" }, headers: @headers
+        expect(response).to have_http_status(200)
+        body = JSON.parse(response.body)
+        # Should not show templates even when explicitly requested
+        expect(body["characters"].map { |c| c["name"] }).to eq(["Angie Lo", "Thug", "Amanda Yin", "Ugly Shing", "Serena", "Brick Manly"])
+      end
+
+      it "shows non-templates when template_filter=non-templates" do
+        get "/api/v2/characters", params: { template_filter: "non-templates" }, headers: @headers
+        expect(response).to have_http_status(200)
+        body = JSON.parse(response.body)
+        expect(body["characters"].map { |c| c["name"] }).to eq(["Angie Lo", "Thug", "Amanda Yin", "Ugly Shing", "Serena", "Brick Manly"])
+      end
+
+      it "filters out templates when template_filter=all" do
+        get "/api/v2/characters", params: { template_filter: "all" }, headers: @headers
+        expect(response).to have_http_status(200)
+        body = JSON.parse(response.body)
+        # Non-admin users should never see templates
+        expect(body["characters"].map { |c| c["name"] }).to eq(["Angie Lo", "Thug", "Amanda Yin", "Ugly Shing", "Serena", "Brick Manly"])
+      end
+
+      it "defaults to non-templates when no template_filter provided" do
+        get "/api/v2/characters", headers: @headers
+        expect(response).to have_http_status(200)
+        body = JSON.parse(response.body)
+        expect(body["characters"].map { |c| c["name"] }).to eq(["Angie Lo", "Thug", "Amanda Yin", "Ugly Shing", "Serena", "Brick Manly"])
+      end
+    end
+
+    context "as player user (non-admin)" do
+      before(:each) do
+        @player_headers = Devise::JWT::TestHelpers.auth_headers({}, @player)
+        set_current_campaign(@player, @campaign)
+      end
+
+      it "always filters out templates regardless of template_filter parameter" do
+        get "/api/v2/characters", params: { template_filter: "templates" }, headers: @player_headers
+        expect(response).to have_http_status(200)
+        body = JSON.parse(response.body)
+        # Players should never see templates
+        expect(body["characters"].none? { |c| c["is_template"] == true }).to be true
+      end
+
+      it "cannot access templates even with direct filtering" do
+        get "/api/v2/characters", params: { template_filter: "all", is_template: true }, headers: @player_headers
+        expect(response).to have_http_status(200)
+        body = JSON.parse(response.body)
+        # Should override is_template parameter for non-admin users
+        expect(body["characters"].none? { |c| c["is_template"] == true }).to be true
+      end
+    end
+
+    context "template_filter with pagination" do
+      before(:each) do
+        # Create enough templates to test pagination
+        5.times do |i|
+          Character.create!(name: "Extra Template #{i}", action_values: { "Type" => "PC" }, campaign_id: @campaign.id, is_template: true, user_id: @gamemaster.id)
+        end
+      end
+
+      it "paginates template results correctly" do
+        get "/api/v2/characters", params: { template_filter: "templates", per_page: 3 }, headers: @admin_headers
+        expect(response).to have_http_status(200)
+        body = JSON.parse(response.body)
+        expect(body["characters"].length).to eq(3)
+        expect(body["meta"]["total_count"]).to eq(8) # 3 original + 5 extra templates
+        expect(body["meta"]["total_pages"]).to eq(3)
+      end
+    end
+
+    context "template_filter with sorting" do
+      it "sorts templates by name ascending" do
+        get "/api/v2/characters", params: { template_filter: "templates", sort: "name", order: "asc" }, headers: @admin_headers
+        expect(response).to have_http_status(200)
+        body = JSON.parse(response.body)
+        expect(body["characters"].map { |c| c["name"] }).to eq(["Bandit", "Template Boss", "Template Sorcerer"])
+      end
+
+      it "sorts mixed results when template_filter=all" do
+        get "/api/v2/characters", params: { template_filter: "all", sort: "name", order: "asc" }, headers: @admin_headers
+        expect(response).to have_http_status(200)
+        body = JSON.parse(response.body)
+        names = body["characters"].map { |c| c["name"] }
+        expect(names).to eq(names.sort)
+      end
     end
   end
 end

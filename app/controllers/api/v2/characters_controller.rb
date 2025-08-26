@@ -20,7 +20,8 @@ class Api::V2::CharactersController < ApplicationController
     "characters.created_at",
     "characters.updated_at",
     "characters.skills",
-    "characters.active"
+    "characters.active",
+    "characters.is_template"
   ]
   includes = [
     :image_positions,
@@ -32,7 +33,19 @@ class Api::V2::CharactersController < ApplicationController
     .select(selects)
     .includes(includes)
     .where(active: params["show_hidden"] == "true" ? [true, false, nil] : true)
-    .where(is_template: params["is_template"] == "true" ? true : [false, nil])
+    
+  # Apply template filtering with security enforcement
+  # Support both new template_filter parameter and legacy is_template parameter
+  if params["template_filter"].present?
+    template_filter = apply_template_filter(params["template_filter"])
+  elsif params["is_template"].present?
+    # Legacy parameter support - convert to new format
+    template_filter = apply_template_filter(params["is_template"] == "true" ? "templates" : "non-templates")
+  else
+    # Default to non-templates
+    template_filter = apply_template_filter(nil)
+  end
+  query = query.where(template_filter)
 
   # Apply filters
   query = query.where(id: params["id"]) if params["id"].present?
@@ -68,7 +81,7 @@ class Api::V2::CharactersController < ApplicationController
     params["faction_id"],
     params["type"],
     params["archetype"],
-    params["is_template"],
+    params["template_filter"],
     params["show_hidden"],
     params["autocomplete"]
   ].join("/")
@@ -298,6 +311,32 @@ end
   end
 
   private
+
+  def apply_template_filter(filter_param)
+    # Security enforcement: Non-admin users never see templates
+    unless current_user.admin?
+      # Log any attempts by non-admin users to access templates
+      if filter_param == "templates" || filter_param == "all"
+        Rails.logger.warn "Non-admin user #{current_user.email} attempted to access templates with filter: #{filter_param}"
+      end
+      # Force non-templates for non-admin users
+      return { is_template: [false, nil] }
+    end
+    
+    # For admin users, apply the requested filter
+    case filter_param
+    when "templates"
+      { is_template: true }
+    when "all"
+      {} # No filter on is_template, show all
+    when "non-templates", nil, ""
+      { is_template: [false, nil] }
+    else
+      # Invalid value defaults to non-templates
+      Rails.logger.info "Invalid template_filter value: #{filter_param}, defaulting to non-templates"
+      { is_template: [false, nil] }
+    end
+  end
 
   def set_character
     @character = @scoped_characters.find(params["id"])

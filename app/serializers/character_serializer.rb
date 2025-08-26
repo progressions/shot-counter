@@ -2,7 +2,7 @@ class CharacterSerializer < ActiveModel::Serializer
   attributes :id, :name, :active, :created_at, :updated_at, :action_values,
              :faction_id, :description, :skills, :category, :image_url,
              :task, :notion_page_id, :wealth, :juncture_id, :schtick_ids,
-             :party_ids, :site_ids, :advancement_ids, :weapon_ids, :entity_class, :user_id
+             :party_ids, :site_ids, :advancement_ids, :weapon_ids, :entity_class, :user_id, :is_template
 
   belongs_to :user, serializer: UserLiteSerializer
   belongs_to :faction, serializer: FactionLiteSerializer
