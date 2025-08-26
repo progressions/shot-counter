@@ -113,12 +113,16 @@ jobs:
           command: |
             mkdir /tmp/test-results
             echo "Starting full RSpec test suite..."
-            RAILS_ENV=test DISABLE_BOOTSNAP=1 DISABLE_SPRING=1 timeout 300 bundle exec rspec \
+            RAILS_ENV=test DISABLE_BOOTSNAP=1 DISABLE_SPRING=1 bundle exec rspec \
                             --format documentation \
                             --format RspecJunitFormatter \
                             --out /tmp/test-results/rspec.xml \
-                            --fail-fast \
-                            || if [ $? -eq 124 ]; then echo "Tests timed out after 5 minutes"; exit 1; fi
+                            --fail-fast
+            TEST_RESULT=$?
+            if [ $TEST_RESULT -ne 0 ]; then
+              echo "Tests failed with exit code $TEST_RESULT"
+              exit $TEST_RESULT
+            fi
           no_output_timeout: 6m
       
       # Store test results for CircleCI
