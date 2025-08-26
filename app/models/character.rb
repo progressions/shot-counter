@@ -95,7 +95,7 @@ class Character < ApplicationRecord
 
   after_update :broadcast_encounter_update
 
-  validates :name, presence: true, uniqueness: { scope: :campaign_id }
+  validates :name, presence: true, uniqueness: { scope: :campaign_id, message: "has already been taken" }
   validate :new_owner_is_campaign_member, on: :update, if: :user_id_changed?
 
   scope :active, -> { where(active: true) }
