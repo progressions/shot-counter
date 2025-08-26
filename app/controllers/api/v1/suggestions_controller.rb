@@ -6,8 +6,8 @@ class Api::V1::SuggestionsController < ApplicationController
   SEARCHABLE_MODELS = [
     { klass: Character, table: "characters", attributes: [:name], visibility_filter: { column: "active", value: true } },
     { klass: Vehicle, table: "vehicles", attributes: [:name], visibility_filter: { column: "active", value: true } },
-    { klass: Site, table: "sites", attributes: [:name], visibility_filter: { column: "secret", value: false } },
-    { klass: Party, table: "parties", attributes: [:name], visibility_filter: { column: "secret", value: false } },
+    { klass: Site, table: "sites", attributes: [:name], visibility_filter: { column: "active", value: true } },
+    { klass: Party, table: "parties", attributes: [:name], visibility_filter: { column: "active", value: true } },
     { klass: Faction, table: "factions", attributes: [:name], visiblity_filter: nil },
     { klass: Schtick, table: "schticks", attributes: [:name], visiblity_filter: nil },
     { klass: Weapon, table: "weapons", attributes: [:name], visiblity_filter: nil },

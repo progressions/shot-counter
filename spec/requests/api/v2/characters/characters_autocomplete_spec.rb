@@ -273,6 +273,8 @@ RSpec.describe "Api::V2::Characters", type: :request do
       expect(body["factions"].map { |f| f["name"] }).to eq(["The Ascended"])
     end
     it "filters by is_template" do
+      # Templates require admin access
+      @gamemaster.update!(admin: true)
       get "/api/v2/characters", params: { autocomplete: true, is_template: true }, headers: @headers
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
