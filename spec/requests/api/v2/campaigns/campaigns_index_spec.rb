@@ -113,16 +113,16 @@ RSpec.describe "Api::V2::Campaigns", type: :request do
         expect(body["campaigns"].map { |c| c["name"] }).to eq(["Adventure"])
       end
 
-      it "gets only active campaigns when show_all is false" do
-        get "/api/v2/campaigns", params: { show_all: "false" }, headers: @gamemaster_headers
+      it "gets only active campaigns when show_hidden is false" do
+        get "/api/v2/campaigns", params: { show_hidden: "false" }, headers: @gamemaster_headers
         expect(response).to have_http_status(:success)
         body = JSON.parse(response.body)
         expect(body["campaigns"].map { |c| c["name"] }).to eq(["Quest", "Adventure"])
         expect(body["campaigns"].map { |c| c["name"] }).not_to include("Old Campaign")
       end
 
-      it "gets all campaigns when show_all is true" do
-        get "/api/v2/campaigns", params: { show_all: "true" }, headers: @gamemaster_headers
+      it "gets all campaigns when show_hidden is true" do
+        get "/api/v2/campaigns", params: { show_hidden: "true" }, headers: @gamemaster_headers
         expect(response).to have_http_status(:success)
         body = JSON.parse(response.body)
         expect(body["campaigns"].map { |c| c["name"] }).to eq(["Old Campaign", "Quest", "Adventure"])

@@ -240,16 +240,16 @@ RSpec.describe "Api::V2::Vehicles", type: :request do
       expect(body["factions"].map { |f| f["name"] }).to eq(["The Ascended", "The Dragons"])
     end
 
-    it "gets only active vehicles when show_all is false" do
-      get "/api/v2/vehicles", params: { show_all: false }, headers: @headers
+    it "gets only active vehicles when show_hidden is false" do
+      get "/api/v2/vehicles", params: { show_hidden: false }, headers: @headers
       expect(response).to have_http_status(200)
       body = JSON.parse(response.body)
       expect(body["vehicles"].map { |f| f["name"] }).to eq(["Van", "Plane", "Bike", "Tank", "Car"])
       expect(body["vehicles"].map { |f| f["name"] }).not_to include("Dead Car")
     end
 
-    it "gets all vehicles when show_all is true" do
-      get "/api/v2/vehicles", params: { show_all: true }, headers: @headers
+    it "gets all vehicles when show_hidden is true" do
+      get "/api/v2/vehicles", params: { show_hidden: true }, headers: @headers
       expect(response).to have_http_status(200)
       body = JSON.parse(response.body)
       expect(body["vehicles"].map { |f| f["name"] }).to eq(["Dead Car", "Van", "Plane", "Bike", "Tank", "Car"])

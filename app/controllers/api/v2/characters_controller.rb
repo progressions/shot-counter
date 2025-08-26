@@ -31,7 +31,7 @@ class Api::V2::CharactersController < ApplicationController
   query = @scoped_characters
     .select(selects)
     .includes(includes)
-    .where(active: params["show_all"] == "true" ? [true, false, nil] : true)
+    .where(active: params["show_hidden"] == "true" ? [true, false, nil] : true)
     .where(is_template: params["is_template"] == "true" ? true : [false, nil])
 
   # Apply filters
@@ -69,6 +69,7 @@ class Api::V2::CharactersController < ApplicationController
     params["type"],
     params["archetype"],
     params["is_template"],
+    params["show_hidden"],
     params["autocomplete"]
   ].join("/")
 

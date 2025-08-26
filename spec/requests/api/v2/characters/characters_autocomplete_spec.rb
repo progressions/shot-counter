@@ -316,15 +316,15 @@ RSpec.describe "Api::V2::Characters", type: :request do
       expect(body["characters"].map { |c| c["name"] }).to include("No Archetype Character")
       expect(body["characters"].length).to be > 1  # Multiple characters may have empty archetypes
     end
-    it "gets only active characters when show_all is false" do
-      get "/api/v2/characters", params: { show_all: false }, headers: @headers
+    it "gets only active characters when show_hidden is false" do
+      get "/api/v2/characters", params: { show_hidden: false }, headers: @headers
       expect(response).to have_http_status(200)
       body = JSON.parse(response.body)
       expect(body["characters"].map { |f| f["name"] }).to eq(["Angie Lo", "Thug", "Amanda Yin", "Ugly Shing", "Serena", "Brick Manly"])
       expect(body["characters"].map { |f| f["name"] }).not_to include("Dead Guy")
     end
-    it "gets all characters when show_all is true" do
-      get "/api/v2/characters", params: { show_all: true }, headers: @headers
+    it "gets all characters when show_hidden is true" do
+      get "/api/v2/characters", params: { show_hidden: true }, headers: @headers
       expect(response).to have_http_status(200)
       body = JSON.parse(response.body)
       expect(body["characters"].map { |f| f["name"] }).to eq(["Dead Guy", "Angie Lo", "Thug", "Amanda Yin", "Ugly Shing", "Serena", "Brick Manly"])

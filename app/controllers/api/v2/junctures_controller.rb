@@ -34,7 +34,7 @@ class Api::V2::JuncturesController < ApplicationController
     query = query.where("junctures.name ILIKE ?", "%#{params['search']}%") if params["search"].present?
     query = query.where(params["faction_id"] == "__NONE__" ? "junctures.faction_id IS NULL" : "junctures.faction_id = ?", params["faction_id"]) if params["faction_id"].present?
 
-    if params["show_all"] == "true"
+    if params["show_hidden"] == "true"
       query = query.where(active: [true, false, nil])
     else
       query = query.where(active: true)
@@ -61,7 +61,7 @@ class Api::V2::JuncturesController < ApplicationController
       params["juncture_id"],
       params["autocomplete"],
       params["character_id"],
-      params["show_all"],
+      params["show_hidden"],
     ].join("/")
 
     ActiveRecord::Associations::Preloader.new(records: [current_campaign], associations: { user: [:image_attachment, :image_blob] })

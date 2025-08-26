@@ -32,7 +32,7 @@ class Api::V2::FactionsController < ApplicationController
       query = params["ids"].blank? ? query.where(id: nil) : query.where(id: params["ids"].split(","))
     end
     query = query.where("factions.name ILIKE ?", "%#{params['search']}%") if params["search"].present?
-    if params["show_all"] == "true"
+    if params["show_hidden"] == "true"
       query = query.where(active: [true, false, nil])
     else
       query = query.where(active: true)
@@ -61,7 +61,7 @@ class Api::V2::FactionsController < ApplicationController
       params["autocomplete"],
       params["character_id"],
       params["vehicle_id"],
-      params["show_all"],
+      params["show_hidden"],
     ].join("/")
 
     ActiveRecord::Associations::Preloader.new(records: [current_campaign], associations: { user: [:image_attachment, :image_blob] })

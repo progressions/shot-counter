@@ -161,16 +161,16 @@ RSpec.describe "Api::V2::Users", type: :request do
         expect(body["users"].map { |u| u["email"] }).to eq(["gamemaster@example.com"])
       end
 
-      it "gets only active users when show_all is false" do
-        get "/api/v2/users", params: { show_all: "false" }, headers: @admin_headers
+      it "gets only active users when show_hidden is false" do
+        get "/api/v2/users", params: { show_hidden: "false" }, headers: @admin_headers
         expect(response).to have_http_status(:success)
         body = JSON.parse(response.body)
         expect(body["users"].map { |u| u["email"] }).to eq(["player@example.com", "gamemaster@example.com", "admin@example.com"])
         expect(body["users"].map { |u| u["email"] }).not_to include("inactive@example.com")
       end
 
-      it "gets all users when show_all is true" do
-        get "/api/v2/users", params: { show_all: "true" }, headers: @admin_headers
+      it "gets all users when show_hidden is true" do
+        get "/api/v2/users", params: { show_hidden: "true" }, headers: @admin_headers
         expect(response).to have_http_status(:success)
         body = JSON.parse(response.body)
         expect(body["users"].map { |u| u["email"] }).to eq(["inactive@example.com", "player@example.com", "gamemaster@example.com", "admin@example.com"])
@@ -312,16 +312,16 @@ RSpec.describe "Api::V2::Users", type: :request do
         expect(body["users"].map { |u| u["email"] }).to eq(["gamemaster@example.com"])
       end
 
-      it "gets only active users when show_all is false" do
-        get "/api/v2/users", params: { autocomplete: true, show_all: "false" }, headers: @admin_headers
+      it "gets only active users when show_hidden is false" do
+        get "/api/v2/users", params: { autocomplete: true, show_hidden: "false" }, headers: @admin_headers
         expect(response).to have_http_status(:success)
         body = JSON.parse(response.body)
         expect(body["users"].map { |u| u["email"] }).to eq(["player@example.com", "gamemaster@example.com", "admin@example.com"])
         expect(body["users"].map { |u| u["email"] }).not_to include("inactive@example.com")
       end
 
-      it "gets all users when show_all is true" do
-        get "/api/v2/users", params: { autocomplete: true, show_all: "true" }, headers: @admin_headers
+      it "gets all users when show_hidden is true" do
+        get "/api/v2/users", params: { autocomplete: true, show_hidden: "true" }, headers: @admin_headers
         expect(response).to have_http_status(:success)
         body = JSON.parse(response.body)
         expect(body["users"].map { |u| u["email"] }).to eq(["inactive@example.com", "player@example.com", "gamemaster@example.com", "admin@example.com"])

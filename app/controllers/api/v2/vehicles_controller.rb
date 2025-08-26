@@ -35,7 +35,7 @@ class Api::V2::VehiclesController < ApplicationController
     query = query.where("vehicles.name ILIKE ?", "%#{params['search']}%") if params["search"].present?
     query = query.where("action_values->>'Type' = ?", params["vehicle_type"]) if params["vehicle_type"].present?
     query = query.where("action_values->>'Archetype' = ?", params["archetype"] == "__NONE__" ? "" : params["archetype"]) if params["archetype"].present?
-    if params["show_all"] == "true"
+    if params["show_hidden"] == "true"
       query = query.where(active: [true, false, nil])
     else
       query = query.where(active: true)

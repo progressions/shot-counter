@@ -66,7 +66,7 @@ class Api::V2::CampaignsController < ApplicationController
       query = params["ids"].blank? ? query.where(id: nil) : query.where(id: params["ids"].split(","))
     end
     query = query.where("campaigns.name ILIKE ?", "%#{params['search']}%") if params["search"].present?
-    if params["show_all"] == "true"
+    if params["show_hidden"] == "true"
       Rails.logger.info "   Showing all campaigns (active and inactive)"
       query = query.where(active: [true, false, nil])
     else
@@ -90,7 +90,7 @@ class Api::V2::CampaignsController < ApplicationController
       params["autocomplete"],
       params["character_id"],
       params["vehicle_id"],
-      params["show_all"],
+      params["show_hidden"],
     ].join("/")
     
     # Skip cache if cache buster is requested
@@ -319,8 +319,8 @@ class Api::V2::CampaignsController < ApplicationController
       (1..10).each do |page_num|
         # Clear for common per_page values (10, 15, 25)
         [10, 15, 25].each do |per_page_val|
-          # Clear both with and without show_all
-          [nil, "true", "false"].each do |show_all_val|
+          # Clear both with and without show_hidden
+          [nil, "true", "false"].each do |show_hidden_val|
             cache_key = [
               "campaigns/index",
               user.id,
@@ -331,7 +331,7 @@ class Api::V2::CampaignsController < ApplicationController
               nil, # autocomplete
               nil, # character_id
               nil, # vehicle_id
-              show_all_val, # show_all
+              show_hidden_val, # show_hidden
             ].join("/")
             Rails.cache.delete(cache_key)
           end

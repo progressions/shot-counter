@@ -195,8 +195,8 @@ RSpec.describe "Api::V2::Parties", type: :request do
       expect(body["factions"]).to eq([])
     end
 
-    it "gets only active parties when show_all is false" do
-      get "/api/v2/parties", params: { show_all: "false" }, headers: @headers
+    it "gets only active parties when show_hidden is false" do
+      get "/api/v2/parties", params: { show_hidden: "false" }, headers: @headers
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
       expect(body["parties"].map { |p| p["name"] }).to eq(["Rogue Team", "Ascended Party", "Dragons Party"])
@@ -204,8 +204,8 @@ RSpec.describe "Api::V2::Parties", type: :request do
       expect(body["factions"].map { |f| f["name"] }).to eq(["The Ascended", "The Dragons"])
     end
 
-    it "gets all parties when show_all is true" do
-      get "/api/v2/parties", params: { show_all: "true" }, headers: @headers
+    it "gets all parties when show_hidden is true" do
+      get "/api/v2/parties", params: { show_hidden: "true" }, headers: @headers
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
       expect(body["parties"].map { |p| p["name"] }).to eq(["Inactive Team", "Rogue Team", "Ascended Party", "Dragons Party"])
