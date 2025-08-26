@@ -1,4 +1,6 @@
 class Api::V2::VehiclesController < ApplicationController
+  include VisibilityFilterable
+  
   before_action :authenticate_user!
   before_action :require_current_campaign
   before_action :set_scoped_vehicles

@@ -1,4 +1,6 @@
 class Api::V2::CampaignsController < ApplicationController
+  include VisibilityFilterable
+  
   before_action :authenticate_user!
   before_action :require_gamemaster_or_admin, only: [:create, :update, :destroy, :remove_image]
   before_action :set_campaign, only: [:show, :update, :remove_image]
@@ -66,13 +68,8 @@ class Api::V2::CampaignsController < ApplicationController
       query = params["ids"].blank? ? query.where(id: nil) : query.where(id: params["ids"].split(","))
     end
     query = query.where("campaigns.name ILIKE ?", "%#{params['search']}%") if params["search"].present?
-    if params["show_hidden"] == "true"
-      Rails.logger.info "   Showing all campaigns (active and inactive)"
-      query = query.where(active: [true, false, nil])
-    else
-      Rails.logger.info "   Filtering to active campaigns only"
-      query = query.where(active: true)
-    end
+    query = query.where(apply_visibility_filter)
+    Rails.logger.info "   Applied visibility filter: #{params['visibility'] || 'visible'}"
     Rails.logger.info "   After active filter count: #{query.count}"
     
     # Apply select and includes after filtering
@@ -90,6 +87,7 @@ class Api::V2::CampaignsController < ApplicationController
       params["autocomplete"],
       params["character_id"],
       params["vehicle_id"],
+      params["visibility"],
       params["show_hidden"],
     ].join("/")
     

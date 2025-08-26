@@ -1,4 +1,6 @@
 class Api::V2::PartiesController < ApplicationController
+  include VisibilityFilterable
+  
   before_action :authenticate_user!
   before_action :require_current_campaign
   before_action :set_party, only: [:show, :update, :destroy, :remove_image]
@@ -38,11 +40,7 @@ class Api::V2::PartiesController < ApplicationController
     query = query.where(params["faction_id"] == "__NONE__" ? "parties.faction_id IS NULL" : "parties.faction_id = ?", params["faction_id"]) if params["faction_id"].present?
     query = query.where(params["juncture_id"] == "__NONE__" ? "parties.juncture_id IS NULL" : "parties.juncture_id = ?", params["juncture_id"]) if params["juncture_id"].present?
     query = query.where("parties.name ILIKE ?", "%#{params['search']}%") if params["search"].present?
-    if params["show_hidden"] == "true"
-      query = query.where(active: [true, false, nil])
-    else
-      query = query.where(active: true)
-    end
+    query = query.where(apply_visibility_filter)
     # Join associations
     query = query.joins(:memberships).where(memberships: { character_id: params[:character_id] }) if params[:character_id].present?
     query = query.joins(:memberships).where(memberships: { vehicle_id: params[:vehicle_id] }) if params[:vehicle_id].present?
@@ -67,6 +65,7 @@ class Api::V2::PartiesController < ApplicationController
       params["juncture_id"],
       params["autocomplete"],
       params["character_id"],
+      params["visibility"],
       params["show_hidden"],
     ].join("/")
 

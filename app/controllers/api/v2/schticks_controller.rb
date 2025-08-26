@@ -1,4 +1,6 @@
 class Api::V2::SchticksController < ApplicationController
+  include VisibilityFilterable
+  
   before_action :authenticate_user!
   before_action :require_current_campaign
 
@@ -26,12 +28,8 @@ class Api::V2::SchticksController < ApplicationController
       .select(selects)
       .includes(includes)
 
-    # Apply active filter
-    if params["show_hidden"] == "true"
-      query = query.where(active: [true, false, nil])
-    else
-      query = query.where(active: true)
-    end
+    # Apply visibility filter
+    query = query.where(apply_visibility_filter)
 
     # Apply filters
     query = query.where(id: params["id"]) if params["id"].present?
@@ -63,6 +61,7 @@ class Api::V2::SchticksController < ApplicationController
       params["user_id"],
       params["category"],
       params["character_id"],
+      params["visibility"],
       params["show_hidden"],
       params["autocomplete"],
       params["path"],

@@ -1,4 +1,6 @@
 class Api::V2::UsersController < ApplicationController
+  include VisibilityFilterable
+  
   before_action :authenticate_user!
   before_action :require_admin_or_gamemaster_for_campaign_users, only: [:index]
   before_action :require_admin, only: [:create, :destroy, :show]
@@ -34,11 +36,7 @@ class Api::V2::UsersController < ApplicationController
     end
     query = query.where("users.first_name ILIKE ? OR users.last_name ILIKE ?", "%#{params['search']}%", "%#{params['search']}%") if params["search"].present?
     query = query.where("users.email ILIKE ?", "%#{params['email']}%") if params["email"].present?
-    if params["show_hidden"] == "true"
-      query = query.where(active: [true, false, nil])
-    else
-      query = query.where(active: true)
-    end
+    query = query.where(apply_visibility_filter)
     query = query.joins(:characters).where(characters: { id: params[:character_id] }) if params[:character_id].present?
     if params[:campaign_id].present?
       # Include both campaign members AND the campaign owner
@@ -67,6 +65,7 @@ class Api::V2::UsersController < ApplicationController
       params["search"],
       params["campaign_id"],
       params["character_id"],
+      params["visibility"],
       params["show_hidden"],
     ].join("/")
     # Skip cache if cache buster is requested

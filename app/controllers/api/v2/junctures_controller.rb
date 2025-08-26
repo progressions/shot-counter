@@ -1,4 +1,6 @@
 class Api::V2::JuncturesController < ApplicationController
+  include VisibilityFilterable
+  
   before_action :authenticate_user!
   before_action :require_current_campaign
 
@@ -34,11 +36,7 @@ class Api::V2::JuncturesController < ApplicationController
     query = query.where("junctures.name ILIKE ?", "%#{params['search']}%") if params["search"].present?
     query = query.where(params["faction_id"] == "__NONE__" ? "junctures.faction_id IS NULL" : "junctures.faction_id = ?", params["faction_id"]) if params["faction_id"].present?
 
-    if params["show_hidden"] == "true"
-      query = query.where(active: [true, false, nil])
-    else
-      query = query.where(active: true)
-    end
+    query = query.where(apply_visibility_filter)
     # Join associations
     query = query.joins(:characters).where(characters: { id: params[:character_id] }) if params[:character_id].present?
     query = query.joins(:vehicles).where(vehicles: { id: params[:vehicle_id] }) if params[:vehicle_id].present?
@@ -61,6 +59,7 @@ class Api::V2::JuncturesController < ApplicationController
       params["juncture_id"],
       params["autocomplete"],
       params["character_id"],
+      params["visibility"],
       params["show_hidden"],
     ].join("/")
 

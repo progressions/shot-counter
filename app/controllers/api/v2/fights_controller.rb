@@ -1,4 +1,6 @@
 class Api::V2::FightsController < ApplicationController
+  include VisibilityFilterable
+  
   before_action :authenticate_user!
   before_action :require_current_campaign
   before_action :set_fight, only: [:show, :update, :destroy, :touch]
@@ -32,11 +34,7 @@ class Api::V2::FightsController < ApplicationController
   # Apply filters
   search_param = params["search"].presence
   query = query.where("fights.name ILIKE ?", "%#{search_param}%") if search_param
-  if params["show_hidden"] == "true"
-    query = query.where(active: [true, false, nil])
-  else
-    query = query.where(active: true)
-  end
+  query = query.where(apply_visibility_filter)
   query = query.where(id: params["id"]) if params["id"].present?
   if params.key?("ids")
     query = params["ids"].blank? ? query.where(id: nil) : query.where(id: params["ids"].split(","))
@@ -65,6 +63,7 @@ class Api::V2::FightsController < ApplicationController
     page,
     per_page,
     search_param,
+    params["visibility"],
     params["show_hidden"],
     params["character_id"],
     params["vehicle_id"],

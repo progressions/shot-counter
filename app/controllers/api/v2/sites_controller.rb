@@ -1,4 +1,6 @@
 class Api::V2::SitesController < ApplicationController
+  include VisibilityFilterable
+  
   before_action :authenticate_user!
   before_action :require_current_campaign
 
@@ -36,11 +38,7 @@ class Api::V2::SitesController < ApplicationController
     query = query.where(params["faction_id"] == "__NONE__" ? "sites.faction_id IS NULL" : "sites.faction_id = ?", params["faction_id"]) if params["faction_id"].present?
     query = query.where(params["juncture_id"] == "__NONE__" ? "sites.juncture_id IS NULL" : "sites.juncture_id = ?", params["juncture_id"]) if params["juncture_id"].present?
     query = query.where("sites.name ILIKE ?", "%#{params['search']}%") if params["search"].present?
-    if params["show_hidden"] == "true"
-      query = query.where(active: [true, false, nil])
-    else
-      query = query.where(active: true)
-    end
+    query = query.where(apply_visibility_filter)
     # Join associations
     query = query.joins(:attunements).where(attunements: { character_id: params[:character_id] }) if params[:character_id].present?
 
@@ -65,6 +63,7 @@ class Api::V2::SitesController < ApplicationController
       params["faction_id"],
       params["autocomplete"],
       params["character_id"],
+      params["visibility"],
       params["show_hidden"],
     ].join("/")
 

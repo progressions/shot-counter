@@ -1,4 +1,6 @@
 class Api::V2::CharactersController < ApplicationController
+  include VisibilityFilterable
+  
   before_action :authenticate_user!
   before_action :require_current_campaign
   before_action :set_scoped_characters
@@ -32,7 +34,7 @@ class Api::V2::CharactersController < ApplicationController
   query = @scoped_characters
     .select(selects)
     .includes(includes)
-    .where(active: params["show_hidden"] == "true" ? [true, false, nil] : true)
+    .where(apply_visibility_filter)
     
   # Apply template filtering with security enforcement
   # Support both new template_filter parameter and legacy is_template parameter
@@ -82,6 +84,7 @@ class Api::V2::CharactersController < ApplicationController
     params["type"],
     params["archetype"],
     params["template_filter"],
+    params["visibility"],
     params["show_hidden"],
     params["autocomplete"]
   ].join("/")

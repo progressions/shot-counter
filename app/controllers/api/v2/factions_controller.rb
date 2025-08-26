@@ -1,4 +1,6 @@
 class Api::V2::FactionsController < ApplicationController
+  include VisibilityFilterable
+  
   before_action :authenticate_user!
   before_action :require_current_campaign
 
@@ -32,11 +34,7 @@ class Api::V2::FactionsController < ApplicationController
       query = params["ids"].blank? ? query.where(id: nil) : query.where(id: params["ids"].split(","))
     end
     query = query.where("factions.name ILIKE ?", "%#{params['search']}%") if params["search"].present?
-    if params["show_hidden"] == "true"
-      query = query.where(active: [true, false, nil])
-    else
-      query = query.where(active: true)
-    end
+    query = query.where(apply_visibility_filter)
     # Join associations
     query = query.joins(:characters).where(characters: { id: params[:character_id] }) if params[:character_id].present?
     query = query.joins(:vehicles).where(vehicles: { id: params[:vehicle_id] }) if params[:vehicle_id].present?
@@ -61,6 +59,7 @@ class Api::V2::FactionsController < ApplicationController
       params["autocomplete"],
       params["character_id"],
       params["vehicle_id"],
+      params["visibility"],
       params["show_hidden"],
     ].join("/")
 
