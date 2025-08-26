@@ -34,7 +34,7 @@ class Api::V2::UsersController < ApplicationController
     end
     query = query.where("users.first_name ILIKE ? OR users.last_name ILIKE ?", "%#{params['search']}%", "%#{params['search']}%") if params["search"].present?
     query = query.where("users.email ILIKE ?", "%#{params['email']}%") if params["email"].present?
-    if params["show_all"] == "true"
+    if params["show_hidden"] == "true"
       query = query.where(active: [true, false, nil])
     else
       query = query.where(active: true)
@@ -67,7 +67,7 @@ class Api::V2::UsersController < ApplicationController
       params["search"],
       params["campaign_id"],
       params["character_id"],
-      params["show_all"],
+      params["show_hidden"],
     ].join("/")
     # Skip cache if cache buster is requested
     cached_result = if cache_buster_requested?

@@ -26,6 +26,13 @@ class Api::V2::SchticksController < ApplicationController
       .select(selects)
       .includes(includes)
 
+    # Apply active filter
+    if params["show_hidden"] == "true"
+      query = query.where(active: [true, false, nil])
+    else
+      query = query.where(active: true)
+    end
+
     # Apply filters
     query = query.where(id: params["id"]) if params["id"].present?
     if params.key?("ids")
@@ -56,6 +63,7 @@ class Api::V2::SchticksController < ApplicationController
       params["user_id"],
       params["category"],
       params["character_id"],
+      params["show_hidden"],
       params["autocomplete"],
       params["path"],
     ].join("/")

@@ -224,15 +224,15 @@ RSpec.describe "Api::V2::Fights", type: :request do
       body = JSON.parse(response.body)
       expect(body["fights"].map { |f| f["name"] }).to eq(["No Session Fight"])
     end
-    it "gets only active fights when show_all is false" do
-      get "/api/v2/fights", params: { autocomplete: true, show_all: false }, headers: @headers
+    it "gets only active fights when show_hidden is false" do
+      get "/api/v2/fights", params: { autocomplete: true, show_hidden: false }, headers: @headers
       expect(response).to have_http_status(200)
       body = JSON.parse(response.body)
       expect(body["fights"].map { |f| f["name"] }).to eq(["Airport Battle", "Small Skirmish", "Big Brawl"])
       expect(body["fights"].map { |f| f["name"] }).not_to include("Inactive Fight")
     end
-    it "gets all fights when show_all is true" do
-      get "/api/v2/fights", params: { autocomplete: true, show_all: true }, headers: @headers
+    it "gets all fights when show_hidden is true" do
+      get "/api/v2/fights", params: { autocomplete: true, show_hidden: true }, headers: @headers
       expect(response).to have_http_status(200)
       body = JSON.parse(response.body)
       expect(body["fights"].map { |f| f["name"] }).to eq(["Inactive Fight", "Airport Battle", "Small Skirmish", "Big Brawl"])

@@ -198,8 +198,8 @@ RSpec.describe "Api::V2::Sites", type: :request do
       expect(body["factions"]).to eq([])
     end
 
-    it "gets only active sites when show_all is false" do
-      get "/api/v2/sites", params: { show_all: "false" }, headers: @headers
+    it "gets only active sites when show_hidden is false" do
+      get "/api/v2/sites", params: { show_hidden: "false" }, headers: @headers
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
       expect(body["sites"].map { |s| s["name"] }).to eq(["Bandit Hideout", "Ascended HQ", "Dragons HQ"])
@@ -207,8 +207,8 @@ RSpec.describe "Api::V2::Sites", type: :request do
       expect(body["factions"].map { |f| f["name"] }).to eq(["The Ascended", "The Dragons"])
     end
 
-    it "gets all sites when show_all is true" do
-      get "/api/v2/sites", params: { show_all: "true" }, headers: @headers
+    it "gets all sites when show_hidden is true" do
+      get "/api/v2/sites", params: { show_hidden: "true" }, headers: @headers
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
       expect(body["sites"].map { |s| s["name"] }).to eq(["Stone Circle", "Bandit Hideout", "Ascended HQ", "Dragons HQ"])
@@ -384,8 +384,8 @@ RSpec.describe "Api::V2::Sites", type: :request do
       expect(body["factions"]).to eq([])
     end
 
-    it "gets only active sites when show_all is false" do
-      get "/api/v2/sites", params: { autocomplete: true, show_all: "false" }, headers: @headers
+    it "gets only active sites when show_hidden is false" do
+      get "/api/v2/sites", params: { autocomplete: true, show_hidden: "false" }, headers: @headers
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
       expect(body["sites"].map { |s| s["name"] }).to eq(["Bandit Hideout", "Ascended HQ", "Dragons HQ"])
@@ -393,8 +393,8 @@ RSpec.describe "Api::V2::Sites", type: :request do
       expect(body["factions"].map { |f| f["name"] }).to eq(["The Ascended", "The Dragons"])
     end
 
-    it "gets all sites when show_all is true" do
-      get "/api/v2/sites", params: { autocomplete: true, show_all: "true" }, headers: @headers
+    it "gets all sites when show_hidden is true" do
+      get "/api/v2/sites", params: { autocomplete: true, show_hidden: "true" }, headers: @headers
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
       expect(body["sites"].map { |s| s["name"] }).to eq(["Stone Circle", "Bandit Hideout", "Ascended HQ", "Dragons HQ"])

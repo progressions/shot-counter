@@ -162,16 +162,16 @@ RSpec.describe "Api::V2::Junctures", type: :request do
       expect(body["junctures"].map { |j| j["name"] }).to eq(["Future"])
     end
 
-    it "gets only active junctures when show_all is false" do
-      get "/api/v2/junctures", params: { show_all: "false" }, headers: @headers
+    it "gets only active junctures when show_hidden is false" do
+      get "/api/v2/junctures", params: { show_hidden: "false" }, headers: @headers
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
       expect(body["junctures"].map { |j| j["name"] }).to eq(["Future", "Ancient", "Modern"])
       expect(body["junctures"].map { |j| j["name"] }).not_to include("Inactive Juncture")
     end
 
-    it "gets all junctures when show_all is true" do
-      get "/api/v2/junctures", params: { show_all: "true" }, headers: @headers
+    it "gets all junctures when show_hidden is true" do
+      get "/api/v2/junctures", params: { show_hidden: "true" }, headers: @headers
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
       expect(body["junctures"].map { |j| j["name"] }).to eq(["Inactive Juncture", "Future", "Ancient", "Modern"])
@@ -329,16 +329,16 @@ RSpec.describe "Api::V2::Junctures", type: :request do
       expect(body["junctures"].map { |j| j["name"] }).to eq(["Ancient"])
     end
 
-    it "gets only active junctures when show_all is false" do
-      get "/api/v2/junctures", params: { autocomplete: true, show_all: "false" }, headers: @headers
+    it "gets only active junctures when show_hidden is false" do
+      get "/api/v2/junctures", params: { autocomplete: true, show_hidden: "false" }, headers: @headers
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
       expect(body["junctures"].map { |j| j["name"] }).to eq(["Future", "Ancient", "Modern"])
       expect(body["junctures"].map { |j| j["name"] }).not_to include("Inactive Juncture")
     end
 
-    it "gets all junctures when show_all is true" do
-      get "/api/v2/junctures", params: { autocomplete: true, show_all: "true" }, headers: @headers
+    it "gets all junctures when show_hidden is true" do
+      get "/api/v2/junctures", params: { autocomplete: true, show_hidden: "true" }, headers: @headers
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
       expect(body["junctures"].map { |j| j["name"] }).to eq(["Inactive Juncture", "Future", "Ancient", "Modern"])

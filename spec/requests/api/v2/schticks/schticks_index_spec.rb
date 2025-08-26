@@ -25,6 +25,8 @@ RSpec.describe "Api::V2::Schticks", type: :request do
     @blast = Schtick.create!(name: "Blast", description: "A big blast", category: "Sorcery", path: "Force", campaign_id: @campaign.id)
     @punch = Schtick.create!(name: "Punch", description: "Throws a punch", category: "Martial Arts", path: "Path of the Tiger", campaign_id: @campaign.id)
     @kick = Schtick.create!(name: "Kick", description: "A flying kick", category: "Martial Arts", path: "Path of the Tiger", campaign_id: @campaign.id)
+    # Hidden schtick for testing show_hidden filter
+    @hidden_technique = Schtick.create!(name: "Hidden Technique", description: "A secret technique", category: "Martial Arts", path: "Path of the Tiger", campaign_id: @campaign.id, active: false)
     @serena.schticks << @fireball
     @serena.schticks << @blast
     @brick.schticks << @punch
@@ -268,6 +270,29 @@ RSpec.describe "Api::V2::Schticks", type: :request do
       expect(body["schticks"]).to eq([])
       expect(body["categories"]).to eq([])
       expect(body["paths"]).to eq([])
+    end
+
+    it "gets only active schticks by default" do
+      get "/api/v2/schticks", headers: @headers
+      expect(response).to have_http_status(200)
+      body = JSON.parse(response.body)
+      expect(body["schticks"].map { |s| s["name"] }).to eq(["Kick", "Punch", "Blast", "Fireball"])
+      expect(body["schticks"].map { |s| s["name"] }).not_to include("Hidden Technique")
+    end
+
+    it "gets only active schticks when show_hidden is false" do
+      get "/api/v2/schticks", params: { show_hidden: false }, headers: @headers
+      expect(response).to have_http_status(200)
+      body = JSON.parse(response.body)
+      expect(body["schticks"].map { |s| s["name"] }).to eq(["Kick", "Punch", "Blast", "Fireball"])
+      expect(body["schticks"].map { |s| s["name"] }).not_to include("Hidden Technique")
+    end
+
+    it "gets all schticks when show_hidden is true" do
+      get "/api/v2/schticks", params: { show_hidden: true }, headers: @headers
+      expect(response).to have_http_status(200)
+      body = JSON.parse(response.body)
+      expect(body["schticks"].map { |s| s["name"] }).to eq(["Hidden Technique", "Kick", "Punch", "Blast", "Fireball"])
     end
   end
 

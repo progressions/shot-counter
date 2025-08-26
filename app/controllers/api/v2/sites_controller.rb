@@ -36,7 +36,7 @@ class Api::V2::SitesController < ApplicationController
     query = query.where(params["faction_id"] == "__NONE__" ? "sites.faction_id IS NULL" : "sites.faction_id = ?", params["faction_id"]) if params["faction_id"].present?
     query = query.where(params["juncture_id"] == "__NONE__" ? "sites.juncture_id IS NULL" : "sites.juncture_id = ?", params["juncture_id"]) if params["juncture_id"].present?
     query = query.where("sites.name ILIKE ?", "%#{params['search']}%") if params["search"].present?
-    if params["show_all"] == "true"
+    if params["show_hidden"] == "true"
       query = query.where(active: [true, false, nil])
     else
       query = query.where(active: true)
@@ -65,7 +65,7 @@ class Api::V2::SitesController < ApplicationController
       params["faction_id"],
       params["autocomplete"],
       params["character_id"],
-      params["show_all"],
+      params["show_hidden"],
     ].join("/")
 
     # Skip cache if cache buster is requested

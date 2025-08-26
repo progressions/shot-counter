@@ -32,7 +32,7 @@ class Api::V2::FightsController < ApplicationController
   # Apply filters
   search_param = params["search"].presence
   query = query.where("fights.name ILIKE ?", "%#{search_param}%") if search_param
-  if params["show_all"] == "true"
+  if params["show_hidden"] == "true"
     query = query.where(active: [true, false, nil])
   else
     query = query.where(active: true)
@@ -65,7 +65,7 @@ class Api::V2::FightsController < ApplicationController
     page,
     per_page,
     search_param,
-    params["active"],
+    params["show_hidden"],
     params["character_id"],
     params["vehicle_id"],
     params["user_id"],

@@ -177,16 +177,16 @@ RSpec.describe "Api::V2::Factions", type: :request do
       expect(body["factions"].map { |f| f["name"] }).to eq(["The Outlaws"])
     end
 
-    it "gets only active factions when show_all is false" do
-      get "/api/v2/factions", params: { show_all: "false" }, headers: @headers
+    it "gets only active factions when show_hidden is false" do
+      get "/api/v2/factions", params: { show_hidden: "false" }, headers: @headers
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
       expect(body["factions"].map { |f| f["name"] }).to eq(["The Outlaws", "The Ascended", "The Dragons"])
       expect(body["factions"].map { |f| f["name"] }).not_to include("Inactive Faction")
     end
 
-    it "gets all factions when show_all is true" do
-      get "/api/v2/factions", params: { show_all: "true" }, headers: @headers
+    it "gets all factions when show_hidden is true" do
+      get "/api/v2/factions", params: { show_hidden: "true" }, headers: @headers
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
       expect(body["factions"].map { |f| f["name"] }).to eq(["Inactive Faction", "The Outlaws", "The Ascended", "The Dragons"])
@@ -335,16 +335,16 @@ RSpec.describe "Api::V2::Factions", type: :request do
       expect(body["factions"].map { |f| f["name"] }).to eq(["The Ascended"])
     end
 
-    it "gets only active factions when show_all is false" do
-      get "/api/v2/factions", params: { autocomplete: true, show_all: "false" }, headers: @headers
+    it "gets only active factions when show_hidden is false" do
+      get "/api/v2/factions", params: { autocomplete: true, show_hidden: "false" }, headers: @headers
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
       expect(body["factions"].map { |f| f["name"] }).to eq(["The Outlaws", "The Ascended", "The Dragons"])
       expect(body["factions"].map { |f| f["name"] }).not_to include("Inactive Faction")
     end
 
-    it "gets all factions when show_all is true" do
-      get "/api/v2/factions", params: { autocomplete: true, show_all: "true" }, headers: @headers
+    it "gets all factions when show_hidden is true" do
+      get "/api/v2/factions", params: { autocomplete: true, show_hidden: "true" }, headers: @headers
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
       expect(body["factions"].map { |f| f["name"] }).to eq(["Inactive Faction", "The Outlaws", "The Ascended", "The Dragons"])
