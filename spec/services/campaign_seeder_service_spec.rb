@@ -514,6 +514,25 @@ RSpec.describe CampaignSeederService, type: :service do
         copied_schtick = target_campaign.schticks.first
         expect(copied_schtick.image_positions.count).to eq(0)
       end
+      
+      it 'copies image positions for the campaign itself' do
+        # Add image positions to source campaign
+        ImagePosition.create!(
+          positionable: source_campaign,
+          context: 'desktop_index',
+          x_position: 500.0,
+          y_position: 600.0,
+          style_overrides: { theme: 'dark' }
+        )
+        
+        CampaignSeederService.copy_campaign_content(source_campaign, target_campaign)
+        
+        expect(target_campaign.image_positions.count).to eq(1)
+        position = target_campaign.image_positions.find_by(context: 'desktop_index')
+        expect(position.x_position).to eq(500.0)
+        expect(position.y_position).to eq(600.0)
+        expect(position.style_overrides).to eq({ 'theme' => 'dark' })
+      end
     end
   end
 end

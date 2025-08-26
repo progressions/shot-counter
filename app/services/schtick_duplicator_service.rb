@@ -10,6 +10,9 @@ module SchtickDuplicatorService
       # Store the original prerequisite info for later linking
       @duplicated_schtick.instance_variable_set(:@original_prerequisite, schtick.prerequisite)
       
+      # Store reference to source schtick for image position copying
+      @duplicated_schtick.instance_variable_set(:@source_schtick, schtick)
+      
       if schtick.image.attached?
         @duplicated_schtick.image.attach(
           io: StringIO.new(schtick.image.blob.download),
@@ -33,6 +36,15 @@ module SchtickDuplicatorService
         end
       end
     end
+    
+    def apply_associations(duplicated_schtick)
+      return unless duplicated_schtick.persisted?
+      
+      # Copy image positions from source schtick if we have a reference to it
+      if duplicated_schtick.instance_variable_defined?(:@source_schtick)
+        copy_image_positions(duplicated_schtick.instance_variable_get(:@source_schtick), duplicated_schtick)
+      end
+    end
 
     private
 
@@ -53,6 +65,22 @@ module SchtickDuplicatorService
       end
 
       schtick
+    end
+    
+    def copy_image_positions(source_entity, target_entity)
+      return unless source_entity.respond_to?(:image_positions)
+      
+      source_entity.image_positions.each do |position|
+        ImagePosition.create!(
+          positionable: target_entity,
+          context: position.context,
+          x_position: position.x_position,
+          y_position: position.y_position,
+          style_overrides: position.style_overrides
+        )
+      end
+    rescue StandardError => e
+      Rails.logger.warn "Failed to copy image positions for #{target_entity.class.name} #{target_entity.id}: #{e.message}"
     end
   end
 end

@@ -42,6 +42,9 @@ class CampaignSeederService
         
         # Copy non-template characters from Master Campaign (if it exists)
         copy_master_campaign_characters(target_campaign)
+        
+        # Copy the campaign's own image positions
+        copy_image_positions(source_campaign, target_campaign)
 
         # Mark campaign as seeded only if this was called from seed_campaign
         target_campaign.update!(seeded_at: Time.current) if target_campaign.seeded_at.nil?
@@ -83,8 +86,7 @@ class CampaignSeederService
           
           if duplicated_character.save
             CharacterDuplicatorService.apply_associations(duplicated_character)
-            # Copy image positions
-            copy_image_positions(character, duplicated_character)
+            # Image positions are now copied within apply_associations
             Rails.logger.info "Copied character: #{duplicated_character.name} from Master Campaign"
           else
             Rails.logger.error "Failed to copy character #{character.name} from Master Campaign: #{duplicated_character.errors.full_messages.join(', ')}"
@@ -106,10 +108,8 @@ class CampaignSeederService
         
         if duplicated_character.save
           # Apply associations after the character is saved and has an ID
+          # This also copies image positions
           CharacterDuplicatorService.apply_associations(duplicated_character)
-          
-          # Copy image positions
-          copy_image_positions(character, duplicated_character)
           
           Rails.logger.info "Duplicated character: #{duplicated_character.name}"
         else
@@ -128,8 +128,8 @@ class CampaignSeederService
         duplicated_vehicle = VehicleDuplicatorService.duplicate_vehicle(vehicle, target_campaign.user, target_campaign)
         
         if duplicated_vehicle.save
-          # Copy image positions
-          copy_image_positions(vehicle, duplicated_vehicle)
+          # Apply associations including image positions
+          VehicleDuplicatorService.apply_associations(duplicated_vehicle)
           
           Rails.logger.info "Duplicated vehicle: #{duplicated_vehicle.name}"
         else
@@ -148,8 +148,8 @@ class CampaignSeederService
         duplicated_schtick = SchtickDuplicatorService.duplicate_schtick(schtick, target_campaign)
         
         if duplicated_schtick.save
-          # Copy image positions
-          copy_image_positions(schtick, duplicated_schtick)
+          # Apply associations including image positions
+          SchtickDuplicatorService.apply_associations(duplicated_schtick)
           
           Rails.logger.info "Duplicated schtick: #{duplicated_schtick.name}"
         else
@@ -168,8 +168,8 @@ class CampaignSeederService
         duplicated_weapon = WeaponDuplicatorService.duplicate_weapon(weapon, target_campaign)
         
         if duplicated_weapon.save
-          # Copy image positions
-          copy_image_positions(weapon, duplicated_weapon)
+          # Apply associations including image positions
+          WeaponDuplicatorService.apply_associations(duplicated_weapon)
           
           Rails.logger.info "Duplicated weapon: #{duplicated_weapon.name}"
         else
@@ -195,8 +195,8 @@ class CampaignSeederService
         duplicated_juncture = JunctureDuplicatorService.duplicate_juncture(juncture, target_campaign, faction_mapping)
         
         if duplicated_juncture.save
-          # Copy image positions
-          copy_image_positions(juncture, duplicated_juncture)
+          # Apply associations including image positions
+          JunctureDuplicatorService.apply_associations(duplicated_juncture)
           
           Rails.logger.info "Duplicated juncture: #{duplicated_juncture.name}"
         else
@@ -215,8 +215,8 @@ class CampaignSeederService
         duplicated_faction = FactionDuplicatorService.duplicate_faction(faction, target_campaign)
         
         if duplicated_faction.save
-          # Copy image positions
-          copy_image_positions(faction, duplicated_faction)
+          # Apply associations including image positions
+          FactionDuplicatorService.apply_associations(duplicated_faction)
           
           Rails.logger.info "Duplicated faction: #{duplicated_faction.name}"
         else

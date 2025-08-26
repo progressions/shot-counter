@@ -13,6 +13,9 @@ module CharacterDuplicatorService
       @duplicated_character.define_singleton_method(:source_weapons) { character.weapons }
       @duplicated_character.define_singleton_method(:source_image) { character.image if character.image.attached? }
       
+      # Store reference to source character for image position copying
+      @duplicated_character.instance_variable_set(:@source_character, character)
+      
       if character.image.attached?
         @duplicated_character.define_singleton_method(:attach_source_image) do
           self.image.attach(
@@ -46,6 +49,11 @@ module CharacterDuplicatorService
       if duplicated_character.respond_to?(:attach_source_image)
         duplicated_character.attach_source_image
       end
+      
+      # Copy image positions from source character if we have a reference to it
+      if duplicated_character.instance_variable_defined?(:@source_character)
+        copy_image_positions(duplicated_character.instance_variable_get(:@source_character), duplicated_character)
+      end
     end
 
     def set_unique_name(character)
@@ -65,6 +73,24 @@ module CharacterDuplicatorService
       end
 
       character
+    end
+    
+    private
+    
+    def copy_image_positions(source_entity, target_entity)
+      return unless source_entity.respond_to?(:image_positions)
+      
+      source_entity.image_positions.each do |position|
+        ImagePosition.create!(
+          positionable: target_entity,
+          context: position.context,
+          x_position: position.x_position,
+          y_position: position.y_position,
+          style_overrides: position.style_overrides
+        )
+      end
+    rescue StandardError => e
+      Rails.logger.warn "Failed to copy image positions for #{target_entity.class.name} #{target_entity.id}: #{e.message}"
     end
   end
 end
