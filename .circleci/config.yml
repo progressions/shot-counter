@@ -73,7 +73,8 @@ jobs:
           name: Setup test credentials
           command: |
             if [ -n "$RAILS_TEST_KEY" ]; then
-              echo "$RAILS_TEST_KEY" > config/credentials/test.key
+              echo -n "$RAILS_TEST_KEY" > config/credentials/test.key
+              echo "Test key created with length: $(wc -c < config/credentials/test.key) characters"
             else
               echo "Warning: RAILS_TEST_KEY not set in CircleCI environment variables"
             fi
