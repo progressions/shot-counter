@@ -6,6 +6,9 @@ module WeaponDuplicatorService
       @duplicated_weapon.campaign = target_campaign
       @duplicated_weapon = set_unique_name(@duplicated_weapon)
       
+      # Store reference to source weapon for image position copying
+      @duplicated_weapon.instance_variable_set(:@source_weapon, weapon)
+      
       if weapon.image.attached?
         @duplicated_weapon.image.attach(
           io: StringIO.new(weapon.image.blob.download),
@@ -15,6 +18,15 @@ module WeaponDuplicatorService
       end
 
       @duplicated_weapon
+    end
+    
+    def apply_associations(duplicated_weapon)
+      return unless duplicated_weapon.persisted?
+      
+      # Copy image positions from source weapon if we have a reference to it
+      if duplicated_weapon.instance_variable_defined?(:@source_weapon)
+        copy_image_positions(duplicated_weapon.instance_variable_get(:@source_weapon), duplicated_weapon)
+      end
     end
 
     private
@@ -36,6 +48,22 @@ module WeaponDuplicatorService
       end
 
       weapon
+    end
+    
+    def copy_image_positions(source_entity, target_entity)
+      return unless source_entity.respond_to?(:image_positions)
+      
+      source_entity.image_positions.each do |position|
+        ImagePosition.create!(
+          positionable: target_entity,
+          context: position.context,
+          x_position: position.x_position,
+          y_position: position.y_position,
+          style_overrides: position.style_overrides
+        )
+      end
+    rescue StandardError => e
+      Rails.logger.warn "Failed to copy image positions for #{target_entity.class.name} #{target_entity.id}: #{e.message}"
     end
   end
 end
