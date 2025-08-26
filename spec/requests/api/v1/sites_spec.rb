@@ -22,8 +22,8 @@ RSpec.describe "Api::V1::Sites", type: :request do
       expect(body["sites"].map { |s| s["name"] }).to eq(["Baseball Field", "The Site"])
     end
 
-    it "doesn't return secret sites by default" do
-      site.secret = true
+    it "doesn't return inactive sites by default" do
+      site.active = false
       site.save!
       get "/api/v1/sites", headers: headers
       expect(response).to have_http_status(:success)
@@ -31,21 +31,21 @@ RSpec.describe "Api::V1::Sites", type: :request do
       expect(body["sites"].map { |s| s["name"] }).to eq(["Baseball Field"])
     end
 
-    it "doesn't return secret sites for a player" do
-      site.secret = true
+    it "doesn't return inactive sites for a player" do
+      site.active = false
       site.save!
-      get "/api/v1/sites?secret=true", headers: headers
+      get "/api/v1/sites?show_hidden=true", headers: headers
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
       expect(body["sites"].map { |s| s["name"] }).to eq(["Baseball Field"])
     end
 
-    it "returns secret sites for a gamemaster" do
-      site.secret = true
+    it "returns inactive sites for a gamemaster" do
+      site.active = false
       site.save!
       user.gamemaster = true
       user.save!
-      get "/api/v1/sites?secret=true", headers: headers
+      get "/api/v1/sites?show_hidden=true", headers: headers
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
       expect(body["sites"].map { |s| s["name"] }).to eq(["Baseball Field", "The Site"])
@@ -127,12 +127,12 @@ RSpec.describe "Api::V1::Sites", type: :request do
       expect(body["faction"]["name"]).to eq(dragons.name)
     end
 
-    it "updates secret flag" do
-      put "/api/v1/sites/#{site.id}", params: { site: { secret: true } }, headers: headers
+    it "updates active flag" do
+      put "/api/v1/sites/#{site.id}", params: { site: { active: false } }, headers: headers
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
       expect(body["name"]).to eq("The Site")
-      expect(site.reload.secret).to eq(true)
+      expect(site.reload.active).to eq(false)
     end
   end
 
