@@ -9,10 +9,12 @@ class Api::V1::PartiesController < ApplicationController
     if params[:id].present?
       @parties = @parties.where(id: params[:id])
     end
-    if params[:secret] == "true" && current_user.gamemaster?
-      @parties = @parties.where(secret: [true, false])
+    if params[:show_hidden] == "true" && current_user.gamemaster?
+      # Show all parties (active and inactive) for gamemaster
+      @parties = @parties
     else
-      @parties = @parties.where(secret: false)
+      # Show only active parties for regular users
+      @parties = @parties.where(active: true)
     end
     if params[:search].present?
       @parties = @parties.where("name ILIKE ?", "%#{params[:search]}%")
@@ -90,6 +92,6 @@ class Api::V1::PartiesController < ApplicationController
   end
 
   def party_params
-    params.require(:party).permit(:name, :description, :faction_id, :secret, :image)
+    params.require(:party).permit(:name, :description, :faction_id, :active, :image)
   end
 end

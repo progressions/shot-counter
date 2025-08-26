@@ -10,10 +10,12 @@ class Api::V1::SitesController < ApplicationController
     if params[:id].present?
       @sites = @sites.where(id: params[:id])
     end
-    if params[:secret] == "true" && current_user.gamemaster?
-      @sites = @sites.where(secret: [true, false])
+    if params[:show_hidden] == "true" && current_user.gamemaster?
+      # Show all sites (active and inactive) for gamemaster
+      @sites = @sites
     else
-      @sites = @sites.where(secret: false)
+      # Show only active sites for regular users
+      @sites = @sites.where(active: true)
     end
     if params[:search].present?
       @sites = @sites.where("name ILIKE ?", "%#{params[:search]}%")
@@ -73,6 +75,6 @@ class Api::V1::SitesController < ApplicationController
   private
 
   def site_params
-    params.require(:site).permit(:name, :description, :faction_id, :secret, :image)
+    params.require(:site).permit(:name, :description, :faction_id, :active, :image)
   end
 end
