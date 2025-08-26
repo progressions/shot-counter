@@ -427,5 +427,93 @@ RSpec.describe CampaignSeederService, type: :service do
         }.to change { target_campaign.characters.count }.by(2) # Only Master Campaign characters
       end
     end
+    
+    context 'when entities have image positions' do
+      before do
+        # Add image positions to source entities
+        ImagePosition.create!(
+          positionable: source_character,
+          context: 'desktop_index',
+          x_position: 100.5,
+          y_position: 200.5,
+          style_overrides: { color: 'red' }
+        )
+        
+        ImagePosition.create!(
+          positionable: source_character,
+          context: 'mobile_index',
+          x_position: 50.0,
+          y_position: 75.0,
+          style_overrides: { size: 'small' }
+        )
+        
+        ImagePosition.create!(
+          positionable: source_vehicle,
+          context: 'desktop_entity',
+          x_position: 300.0,
+          y_position: 400.0,
+          style_overrides: { border: 'thick' }
+        )
+        
+        ImagePosition.create!(
+          positionable: source_faction,
+          context: 'desktop_index',
+          x_position: 150.0,
+          y_position: 250.0,
+          style_overrides: {}
+        )
+      end
+      
+      it 'copies image positions for characters' do
+        CampaignSeederService.copy_campaign_content(source_campaign, target_campaign)
+        
+        copied_character = target_campaign.characters.find_by(name: 'Source Character')
+        expect(copied_character.image_positions.count).to eq(2)
+        
+        desktop_position = copied_character.image_positions.find_by(context: 'desktop_index')
+        expect(desktop_position.x_position).to eq(100.5)
+        expect(desktop_position.y_position).to eq(200.5)
+        expect(desktop_position.style_overrides).to eq({ 'color' => 'red' })
+        
+        mobile_position = copied_character.image_positions.find_by(context: 'mobile_index')
+        expect(mobile_position.x_position).to eq(50.0)
+        expect(mobile_position.y_position).to eq(75.0)
+        expect(mobile_position.style_overrides).to eq({ 'size' => 'small' })
+      end
+      
+      it 'copies image positions for vehicles' do
+        CampaignSeederService.copy_campaign_content(source_campaign, target_campaign)
+        
+        copied_vehicle = target_campaign.vehicles.first
+        expect(copied_vehicle.image_positions.count).to eq(1)
+        
+        position = copied_vehicle.image_positions.find_by(context: 'desktop_entity')
+        expect(position.x_position).to eq(300.0)
+        expect(position.y_position).to eq(400.0)
+        expect(position.style_overrides).to eq({ 'border' => 'thick' })
+      end
+      
+      it 'copies image positions for factions' do
+        CampaignSeederService.copy_campaign_content(source_campaign, target_campaign)
+        
+        copied_faction = target_campaign.factions.first
+        expect(copied_faction.image_positions.count).to eq(1)
+        
+        position = copied_faction.image_positions.find_by(context: 'desktop_index')
+        expect(position.x_position).to eq(150.0)
+        expect(position.y_position).to eq(250.0)
+        expect(position.style_overrides).to eq({})
+      end
+      
+      it 'handles entities without image positions gracefully' do
+        # source_schtick has no image positions
+        expect {
+          CampaignSeederService.copy_campaign_content(source_campaign, target_campaign)
+        }.not_to raise_error
+        
+        copied_schtick = target_campaign.schticks.first
+        expect(copied_schtick.image_positions.count).to eq(0)
+      end
+    end
   end
 end

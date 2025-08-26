@@ -83,6 +83,8 @@ class CampaignSeederService
           
           if duplicated_character.save
             CharacterDuplicatorService.apply_associations(duplicated_character)
+            # Copy image positions
+            copy_image_positions(character, duplicated_character)
             Rails.logger.info "Copied character: #{duplicated_character.name} from Master Campaign"
           else
             Rails.logger.error "Failed to copy character #{character.name} from Master Campaign: #{duplicated_character.errors.full_messages.join(', ')}"
@@ -105,6 +107,10 @@ class CampaignSeederService
         if duplicated_character.save
           # Apply associations after the character is saved and has an ID
           CharacterDuplicatorService.apply_associations(duplicated_character)
+          
+          # Copy image positions
+          copy_image_positions(character, duplicated_character)
+          
           Rails.logger.info "Duplicated character: #{duplicated_character.name}"
         else
           Rails.logger.error "Failed to duplicate character #{character.name}: #{duplicated_character.errors.full_messages.join(', ')}"
@@ -122,6 +128,9 @@ class CampaignSeederService
         duplicated_vehicle = VehicleDuplicatorService.duplicate_vehicle(vehicle, target_campaign.user, target_campaign)
         
         if duplicated_vehicle.save
+          # Copy image positions
+          copy_image_positions(vehicle, duplicated_vehicle)
+          
           Rails.logger.info "Duplicated vehicle: #{duplicated_vehicle.name}"
         else
           Rails.logger.error "Failed to duplicate vehicle #{vehicle.name}: #{duplicated_vehicle.errors.full_messages.join(', ')}"
@@ -139,6 +148,9 @@ class CampaignSeederService
         duplicated_schtick = SchtickDuplicatorService.duplicate_schtick(schtick, target_campaign)
         
         if duplicated_schtick.save
+          # Copy image positions
+          copy_image_positions(schtick, duplicated_schtick)
+          
           Rails.logger.info "Duplicated schtick: #{duplicated_schtick.name}"
         else
           Rails.logger.error "Failed to duplicate schtick #{schtick.name}: #{duplicated_schtick.errors.full_messages.join(', ')}"
@@ -156,6 +168,9 @@ class CampaignSeederService
         duplicated_weapon = WeaponDuplicatorService.duplicate_weapon(weapon, target_campaign)
         
         if duplicated_weapon.save
+          # Copy image positions
+          copy_image_positions(weapon, duplicated_weapon)
+          
           Rails.logger.info "Duplicated weapon: #{duplicated_weapon.name}"
         else
           Rails.logger.error "Failed to duplicate weapon #{weapon.name}: #{duplicated_weapon.errors.full_messages.join(', ')}"
@@ -180,6 +195,9 @@ class CampaignSeederService
         duplicated_juncture = JunctureDuplicatorService.duplicate_juncture(juncture, target_campaign, faction_mapping)
         
         if duplicated_juncture.save
+          # Copy image positions
+          copy_image_positions(juncture, duplicated_juncture)
+          
           Rails.logger.info "Duplicated juncture: #{duplicated_juncture.name}"
         else
           Rails.logger.error "Failed to duplicate juncture #{juncture.name}: #{duplicated_juncture.errors.full_messages.join(', ')}"
@@ -197,12 +215,33 @@ class CampaignSeederService
         duplicated_faction = FactionDuplicatorService.duplicate_faction(faction, target_campaign)
         
         if duplicated_faction.save
+          # Copy image positions
+          copy_image_positions(faction, duplicated_faction)
+          
           Rails.logger.info "Duplicated faction: #{duplicated_faction.name}"
         else
           Rails.logger.error "Failed to duplicate faction #{faction.name}: #{duplicated_faction.errors.full_messages.join(', ')}"
           raise ActiveRecord::RecordInvalid, duplicated_faction
         end
       end
+    end
+    
+    def copy_image_positions(source_entity, target_entity)
+      return unless source_entity.respond_to?(:image_positions)
+      
+      source_entity.image_positions.each do |position|
+        ImagePosition.create!(
+          positionable: target_entity,
+          context: position.context,
+          x_position: position.x_position,
+          y_position: position.y_position,
+          style_overrides: position.style_overrides
+        )
+      end
+      
+      Rails.logger.info "Copied #{source_entity.image_positions.count} image positions for #{target_entity.class.name} #{target_entity.id}"
+    rescue StandardError => e
+      Rails.logger.warn "Failed to copy image positions for #{target_entity.class.name} #{target_entity.id}: #{e.message}"
     end
   end
 end
