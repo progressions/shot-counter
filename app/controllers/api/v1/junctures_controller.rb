@@ -13,9 +13,11 @@ class Api::V1::JuncturesController < ApplicationController
     if params[:id].present?
       @junctures = @junctures.where(id: params[:id])
     end
-    if params[:hidden] == "true" && current_user.gamemaster?
-      @junctures = @junctures.where(active: [true, false])
+    if params[:show_hidden] == "true" && current_user.gamemaster?
+      # Show all junctures (active and inactive) for gamemaster
+      @junctures = @junctures
     else
+      # Show only active junctures for regular users
       @junctures = @junctures.where(active: true)
     end
     if params[:search].present?
