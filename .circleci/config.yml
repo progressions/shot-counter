@@ -72,7 +72,11 @@ jobs:
       - run:
           name: Setup test credentials
           command: |
-            echo "2cffd5a092c61292b6885e61e8a4a12f" > config/credentials/test.key
+            if [ -n "$RAILS_TEST_KEY" ]; then
+              echo "$RAILS_TEST_KEY" > config/credentials/test.key
+            else
+              echo "Warning: RAILS_TEST_KEY not set in CircleCI environment variables"
+            fi
             
       # Database setup
       - run:
