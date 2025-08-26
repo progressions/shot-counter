@@ -37,6 +37,7 @@ RSpec.describe "Api::V2::Weapons", type: :request do
     @winchest = @campaign.weapons.create!(name: "Winchester Rifle", description: "A reliable rifle.", juncture: "Past", category: "Ranged", damage: 14, concealment: 4, reload_value: 2, mook_bonus: 0, kachunk: false)
     @sword = @campaign.weapons.create!(name: "Sword", description: "A sharp blade.", juncture: "Ancient", category: "Melee", damage: 8, concealment: nil, reload_value: 0, mook_bonus: 0, kachunk: false)
     @bow = @campaign.weapons.create!(name: "Bow", description: "A long-range weapon.", juncture: "Ancient", category: "Ranged", damage: 6, concealment: 3, reload_value: 1, mook_bonus: 0, kachunk: false)
+    @hidden_weapon = @campaign.weapons.create!(name: "Hidden Blade", description: "A concealed weapon.", juncture: "Modern", category: "Melee", damage: 5, concealment: 0, reload_value: 0, mook_bonus: 0, kachunk: false, active: false)
     @brick.weapons << @beretta
     @serena.weapons << @sword
     @headers = Devise::JWT::TestHelpers.auth_headers({}, @gamemaster)
@@ -312,6 +313,30 @@ RSpec.describe "Api::V2::Weapons", type: :request do
       expect(response).to have_http_status(200)
       body = JSON.parse(response.body)
       expect(body["weapons"].map { |w| w["name"] }).to eq(["Winchester Rifle", "Sword", "Colt Python", "Bow", "Beretta 92FS"])
+    end
+
+    it "gets only active weapons by default" do
+      get "/api/v2/weapons", headers: @headers
+      expect(response).to have_http_status(200)
+      body = JSON.parse(response.body)
+      expect(body["weapons"].map { |w| w["name"] }).not_to include("Hidden Blade")
+      expect(body["weapons"].length).to eq(5)
+    end
+
+    it "gets only active weapons when show_hidden is false" do
+      get "/api/v2/weapons", params: { show_hidden: false }, headers: @headers
+      expect(response).to have_http_status(200)
+      body = JSON.parse(response.body)
+      expect(body["weapons"].map { |w| w["name"] }).not_to include("Hidden Blade")
+      expect(body["weapons"].length).to eq(5)
+    end
+
+    it "gets all weapons including hidden when show_hidden is true" do
+      get "/api/v2/weapons", params: { show_hidden: true }, headers: @headers
+      expect(response).to have_http_status(200)
+      body = JSON.parse(response.body)
+      expect(body["weapons"].map { |w| w["name"] }).to include("Hidden Blade")
+      expect(body["weapons"].length).to eq(6)
     end
   end
 end
