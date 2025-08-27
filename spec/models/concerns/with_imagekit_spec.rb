@@ -37,6 +37,9 @@ RSpec.describe WithImagekit, type: :model do
         character.image.attach(image_file)
         character.save!
         
+        # Wait to ensure the attachment is older than 1 second
+        sleep 1.1
+        
         # Add positions after image attachment
         character.image_positions.create!(
           context: 'desktop_entity',

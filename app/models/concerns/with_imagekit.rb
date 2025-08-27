@@ -40,18 +40,14 @@ module WithImagekit
 
   def clear_image_positions_on_image_upload
     # Clear positions when a new image is uploaded
-    if image.attached? && image_positions.exists?
-      # Check if the attachment was created very recently (during this request)
-      # AND this record was just updated (indicating potential image change)
-      if image.attachment.created_at > 1.second.ago && updated_at > 1.second.ago
-        # Additional safety: only clear if positions were created before the image
-        oldest_position = image_positions.minimum(:created_at)
-        if oldest_position && oldest_position < image.attachment.created_at
-          count_before = image_positions.count
-          image_positions.destroy_all
-          Rails.logger.info("Cleared #{count_before} image positions for #{self.class.name}##{id} after image upload")
-        end
-      end
+    return unless image.attached? && image_positions.exists?
+    
+    # Check if the attachment was just created (within the last second)
+    # and the record was just updated (indicating an image upload)
+    if image.attachment.created_at > 1.second.ago && updated_at > 1.second.ago
+      count_before = image_positions.count
+      image_positions.destroy_all
+      Rails.logger.info("Cleared #{count_before} image positions for #{self.class.name}##{id} after image upload")
     end
   end
 end
