@@ -80,10 +80,6 @@ class Api::V1::CharactersController < ApplicationController
 
   def import
     if params[:pdf_file].present?
-      # Initialize PDFtk with the path to the pdftk binary
-      pdftk = PdfForms.new('/usr/local/bin/pdftk') # Adjust path as needed
-
-      # Save uploaded PDF temporarily
       uploaded_file = params[:pdf_file]
 
       @character = PdfService.pdf_to_character(uploaded_file, current_campaign, { user: current_user })
