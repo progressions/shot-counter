@@ -13,13 +13,13 @@ RSpec.describe "Api::V1::Suggestions", type: :request do
       # Create test data
       @character = @campaign.characters.create!(name: "Brick Manly", action_values: { "Type" => "PC" }, active: true)
       @vehicle = @campaign.vehicles.create!(name: "Brutus Truck", action_values: { "Type" => "PC" }, active: true)
-      @site = @campaign.sites.create!(name: "Brutus Base", secret: false)
+      @site = @campaign.sites.create!(name: "Brutus Base", active: true)
       @other_character = @campaign.characters.create!(name: "Sam Stealth", action_values: { "Type" => "NPC" }, active: true)
 
       # Verify data is queryable
       character_count = Character.where(campaign_id: @campaign.id, name: "Brick Manly", active: true).count
       vehicle_count = Vehicle.where(campaign_id: @campaign.id, name: "Brutus Truck", active: true).count
-      site_count = Site.where(campaign_id: @campaign.id, name: "Brutus Base", secret: false).count
+      site_count = Site.where(campaign_id: @campaign.id, name: "Brutus Base", active: true).count
       Rails.logger.debug "Character count: #{character_count}, Vehicle count: #{vehicle_count}, Site count: #{site_count}"
       expect(character_count).to eq(1)
       expect(vehicle_count).to eq(1)
@@ -55,20 +55,20 @@ RSpec.describe "Api::V1::Suggestions", type: :request do
       expect(body).to eq(expected)
     end
 
-    it "excludes inactive characters and vehicles, and secret sites" do
-      # Create inactive/secret test data
+    it "excludes inactive characters, vehicles, and sites" do
+      # Create inactive test data
       @inactive_character = @campaign.characters.create!(name: "Brick Inactive", action_values: { "Type" => "PC" }, active: false)
       @inactive_vehicle = @campaign.vehicles.create!(name: "Brutus Broken", action_values: { "Type" => "PC" }, active: false)
-      @secret_site = @campaign.sites.create!(name: "Brutus Secret", secret: true)
+      @inactive_site = @campaign.sites.create!(name: "Brutus Secret", active: false)
       # Create active/visible test data
       @character = @campaign.characters.create!(name: "Brick Manly", action_values: { "Type" => "PC" }, active: true)
       @vehicle = @campaign.vehicles.create!(name: "Brutus Truck", action_values: { "Type" => "PC" }, active: true)
-      @site = @campaign.sites.create!(name: "Brutus Base", secret: false)
+      @site = @campaign.sites.create!(name: "Brutus Base", active: true)
 
       # Verify data is queryable
       character_count = Character.where(campaign_id: @campaign.id, name: "Brick Manly", active: true).count
       vehicle_count = Vehicle.where(campaign_id: @campaign.id, name: "Brutus Truck", active: true).count
-      site_count = Site.where(campaign_id: @campaign.id, name: "Brutus Base", secret: false).count
+      site_count = Site.where(campaign_id: @campaign.id, name: "Brutus Base", active: true).count
       Rails.logger.debug "Character count: #{character_count}, Vehicle count: #{vehicle_count}, Site count: #{site_count}"
       expect(character_count).to eq(1)
       expect(vehicle_count).to eq(1)
@@ -107,7 +107,7 @@ RSpec.describe "Api::V1::Suggestions", type: :request do
     it "returns an empty hash for an empty query" do
       @character = @campaign.characters.create!(name: "Brick Manly", action_values: { "Type" => "PC" }, active: true)
       @vehicle = @campaign.vehicles.create!(name: "Brutus Truck", action_values: { "Type" => "PC" }, active: true)
-      @site = @campaign.sites.create!(name: "Brutus Base", secret: false)
+      @site = @campaign.sites.create!(name: "Brutus Base", active: true)
 
       get "/api/v1/suggestions", headers: @headers, params: { query: "" }
 
@@ -119,7 +119,7 @@ RSpec.describe "Api::V1::Suggestions", type: :request do
     it "returns an empty hash for a whitespace-only query" do
       @character = @campaign.characters.create!(name: "Brick Manly", action_values: { "Type" => "PC" }, active: true)
       @vehicle = @campaign.vehicles.create!(name: "Brutus Truck", action_values: { "Type" => "PC" }, active: true)
-      @site = @campaign.sites.create!(name: "Brutus Base", secret: false)
+      @site = @campaign.sites.create!(name: "Brutus Base", active: true)
 
       get "/api/v1/suggestions", headers: @headers, params: { query: "   " }
 
@@ -131,7 +131,7 @@ RSpec.describe "Api::V1::Suggestions", type: :request do
     it "returns an empty hash for a non-matching query" do
       @character = @campaign.characters.create!(name: "Brick Manly", action_values: { "Type" => "PC" }, active: true)
       @vehicle = @campaign.vehicles.create!(name: "Brutus Truck", action_values: { "Type" => "PC" }, active: true)
-      @site = @campaign.sites.create!(name: "Brutus Base", secret: false)
+      @site = @campaign.sites.create!(name: "Brutus Base", active: true)
 
       get "/api/v1/suggestions", headers: @headers, params: { query: "xyz" }
 
@@ -153,17 +153,17 @@ RSpec.describe "Api::V1::Suggestions", type: :request do
       other_campaign = @gamemaster.campaigns.create!(name: "Other Adventure")
       other_campaign.characters.create!(name: "Brutus Other", action_values: { "Type" => "NPC" }, active: true)
       other_campaign.vehicles.create!(name: "Brutus Other Truck", action_values: { "Type" => "PC" }, active: true)
-      other_campaign.sites.create!(name: "Brutus Other Base", secret: false)
+      other_campaign.sites.create!(name: "Brutus Other Base", active: true)
 
       # Create data in the current campaign
       @character = @campaign.characters.create!(name: "Brick Manly", action_values: { "Type" => "PC" }, active: true)
       @vehicle = @campaign.vehicles.create!(name: "Brutus Truck", action_values: { "Type" => "PC" }, active: true)
-      @site = @campaign.sites.create!(name: "Brutus Base", secret: false)
+      @site = @campaign.sites.create!(name: "Brutus Base", active: true)
 
       # Verify data is queryable
       character_count = Character.where(campaign_id: @campaign.id, name: "Brick Manly", active: true).count
       vehicle_count = Vehicle.where(campaign_id: @campaign.id, name: "Brutus Truck", active: true).count
-      site_count = Site.where(campaign_id: @campaign.id, name: "Brutus Base", secret: false).count
+      site_count = Site.where(campaign_id: @campaign.id, name: "Brutus Base", active: true).count
       Rails.logger.debug "Character count: #{character_count}, Vehicle count: #{vehicle_count}, Site count: #{site_count}"
       expect(character_count).to eq(1)
       expect(vehicle_count).to eq(1)

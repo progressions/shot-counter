@@ -28,8 +28,8 @@ RSpec.describe "Api::V1::Parties", type: :request do
       expect(body["parties"].map { |p| p["name"] }).to eq(["The Gang", "The Party"])
     end
 
-    it "doesn't return secret parties by default" do
-      party.secret = true
+    it "doesn't return inactive parties by default" do
+      party.active = false
       party.save!
       get "/api/v1/parties", headers: headers
       expect(response).to have_http_status(:success)
@@ -38,21 +38,21 @@ RSpec.describe "Api::V1::Parties", type: :request do
       expect(body["parties"][0]["name"]).to eq("The Gang")
     end
 
-    it "doesn't return secret parties for a player" do
-      party.secret = true
+    it "doesn't return inactive parties for a player" do
+      party.active = false
       party.save!
-      get "/api/v1/parties?secret=true", headers: headers
+      get "/api/v1/parties?show_hidden=true", headers: headers
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
       expect(body["parties"].map { |p| p["name"] }).to eq(["The Gang"])
     end
 
-    it "returns secret parties for a gamemaster" do
-      party.secret = true
+    it "returns inactive parties for a gamemaster" do
+      party.active = false
       party.save!
       user.gamemaster = true
       user.save!
-      get "/api/v1/parties?secret=true", headers: headers
+      get "/api/v1/parties?show_hidden=true", headers: headers
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
       expect(body["parties"].map { |p| p["name"] }).to eq(["The Gang", "The Party"])
@@ -157,10 +157,10 @@ RSpec.describe "Api::V1::Parties", type: :request do
       expect(body["faction"]["name"]).to eq("The Dragons")
     end
 
-    it "updates the secret flag" do
-      put "/api/v1/parties/#{party.id}", params: { party: { secret: true } }, headers: headers
+    it "updates the active flag" do
+      put "/api/v1/parties/#{party.id}", params: { party: { active: false } }, headers: headers
       expect(response).to have_http_status(:success)
-      expect(party.reload.secret).to eq(true)
+      expect(party.reload.active).to eq(false)
     end
   end
 

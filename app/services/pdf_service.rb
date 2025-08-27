@@ -302,10 +302,17 @@ module PdfService
     end
 
     def pdftk
-      if Rails.env.production?
-        @pdftk ||= PdfForms.new("/usr/bin/pdftk")
-      else
-        @pdftk ||= PdfForms.new
+      @pdftk ||= begin
+        # Try to find pdftk in common locations
+        paths = ['/usr/bin/pdftk', '/usr/local/bin/pdftk']
+        pdftk_path = paths.find { |path| File.exist?(path) }
+        
+        if pdftk_path
+          PdfForms.new(pdftk_path)
+        else
+          # Let PdfForms try to find it in PATH
+          PdfForms.new
+        end
       end
     end
   end

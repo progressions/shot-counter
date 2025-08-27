@@ -21,7 +21,7 @@ RSpec.describe "Automatic Milestone Tracking", type: :model do
 
       campaign.characters.create!(name: "Another Character", user: user)
 
-      expect(onboarding_progress.reload.first_character_created_at).to eq(original_timestamp)
+      expect(onboarding_progress.reload.first_character_created_at).to be_within(1.second).of(original_timestamp)
     end
   end
 

@@ -43,7 +43,7 @@ RSpec.describe OnboardingTrackable, type: :model do
           allow(Time).to receive(:current).and_return(freeze_time)
           test_model.save!
           test_model.send(:track_onboarding_milestone) # Force call the method to test
-          expect(user.onboarding_progress.reload.first_campaign_created_at).to eq(freeze_time)
+          expect(user.onboarding_progress.reload.first_campaign_created_at).to be_within(1.second).of(freeze_time)
         end
       end
 

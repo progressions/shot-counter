@@ -34,7 +34,7 @@ RSpec.describe "Api::V1::Junctures", type: :request do
     it "doesn't return inactive junctures for a player" do
       juncture.active = false
       juncture.save!
-      get "/api/v1/junctures?hidden=false", headers: headers
+      get "/api/v1/junctures?show_hidden=false", headers: headers
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
       expect(body["junctures"].map { |s| s["name"] }).to eq(["Baseball Field"])
@@ -45,7 +45,7 @@ RSpec.describe "Api::V1::Junctures", type: :request do
       juncture.save!
       user.gamemaster = true
       user.save!
-      get "/api/v1/junctures?hidden=true", headers: headers
+      get "/api/v1/junctures?show_hidden=true", headers: headers
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
       expect(body["junctures"].map { |s| s["name"] }).to eq(["Baseball Field", "The Juncture"])
