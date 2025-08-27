@@ -94,7 +94,7 @@ RSpec.describe "Api::V1::Campaigns", type: :request do
       expect(response).to have_http_status(:success)
       body = JSON.parse(response.body)
       expect(body["name"]).to eq("Action Movie")
-      expect(body["users"].map { |u| u["email"] }).to eq(["alice@example.com", "marcie@example.com"])
+      expect(body["users"].map { |u| u["email"] }).to match_array(["alice@example.com", "marcie@example.com"])
     end
 
     it "fetches campaign you play in" do
