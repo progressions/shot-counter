@@ -11,10 +11,10 @@ class Api::V1::PartiesController < ApplicationController
     end
     if params[:show_hidden] == "true" && current_user.gamemaster?
       # Show all parties (active and inactive) for gamemaster
-      @parties = @parties
+      # @parties = @parties
     else
       # Show only active parties for regular users
-      @parties = @parties.where(active: true)
+      # @parties = @parties.where(active: true)
     end
     if params[:search].present?
       @parties = @parties.where("name ILIKE ?", "%#{params[:search]}%")
