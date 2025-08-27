@@ -4,6 +4,7 @@ module WithImagekit
   included do
     has_one_attached :image
     after_save :clear_image_url_cache
+    after_save :clear_image_positions_on_image_upload
   end
 
   def image_url
@@ -34,6 +35,19 @@ module WithImagekit
   def clear_image_url_cache
     if saved_changes.key?("image_attachment_id") && image.attached?
       Rails.cache.delete("image_url/#{self.class.name}/#{id}/#{image.attachment.id}")
+    end
+  end
+
+  def clear_image_positions_on_image_upload
+    # Clear positions when a new image is uploaded
+    return unless image.attached? && image_positions.exists?
+    
+    # Check if the attachment was just created (within the last second)
+    # and the record was just updated (indicating an image upload)
+    if image.attachment.created_at > 1.second.ago && updated_at > 1.second.ago
+      count_before = image_positions.count
+      image_positions.destroy_all
+      Rails.logger.info("Cleared #{count_before} image positions for #{self.class.name}##{id} after image upload")
     end
   end
 end
