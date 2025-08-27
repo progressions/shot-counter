@@ -21,7 +21,6 @@ class Party < ApplicationRecord
       name: name,
       description: description,
       faction: faction,
-      secret: secret,
       characters: characters.map { |character|
         {
           id: character.id,
