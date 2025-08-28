@@ -151,6 +151,8 @@ GEM
       devise (~> 4.0)
       warden-jwt_auth (~> 0.8)
     diff-lcs (1.6.2)
+    dockerfile-rails (1.7.10)
+      rails (>= 3.0.0)
     domain_name (0.6.20240107)
     drb (2.2.3)
     dry-auto_inject (1.1.0)
@@ -178,6 +180,7 @@ GEM
     faraday-net_http (3.4.1)
       net-http (>= 0.5.0)
     ffi (1.17.2-x86_64-darwin)
+    ffi (1.17.2-x86_64-linux-gnu)
     globalid (1.2.1)
       activesupport (>= 6.1)
     hashie (5.0.0)
@@ -264,6 +267,8 @@ GEM
     nio4r (2.7.4)
     nokogiri (1.18.9-x86_64-darwin)
       racc (~> 1.4)
+    nokogiri (1.18.9-x86_64-linux-gnu)
+      racc (~> 1.4)
     notion-ruby-client (1.2.2)
       faraday (>= 2.0)
       faraday-mashify (>= 0.1.1)
@@ -277,6 +282,7 @@ GEM
       rexml (~> 3.2, >= 3.2.6)
       safe_shell (>= 1.0.3, < 2.0)
     pg (1.6.0-x86_64-darwin)
+    pg (1.6.0-x86_64-linux)
     pp (0.6.2)
       prettyprint
     prettyprint (0.2.0)
@@ -413,6 +419,7 @@ GEM
 
 PLATFORMS
   x86_64-darwin-24
+  x86_64-linux
 
 DEPENDENCIES
   active_model_serializers
@@ -426,6 +433,7 @@ DEPENDENCIES
   devise (~> 4.9.4)
   devise-jwt (~> 0.11.0)
   discordrb!
+  dockerfile-rails (>= 1.7)
   httparty
   image_processing (~> 1.2)
   imagekitio

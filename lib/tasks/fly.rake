@@ -18,6 +18,6 @@ namespace :fly do
   #  - failures here result in VM being stated, shutdown, and rolled back
   #    to last successful deploy (if any).
   task :server do
-    sh 'bin/rails server'
+    sh 'bin/rails server -b 0.0.0.0 -p 8080'
   end
 end

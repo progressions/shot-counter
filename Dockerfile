@@ -72,7 +72,7 @@ RUN bundle install && rm -rf vendor/bundle/ruby/*/cache
 # install deployment packages
 FROM base
 
-ARG DEPLOY_PACKAGES="postgresql-client file vim curl gzip libsqlite3-0 redis-tools pdftk-java"
+ARG DEPLOY_PACKAGES="postgresql-client file vim curl gzip libsqlite3-0 redis-tools pdftk-java libvips42"
 ENV DEPLOY_PACKAGES=${DEPLOY_PACKAGES}
 
 RUN --mount=type=cache,id=prod-apt-cache,sharing=locked,target=/var/cache/apt \

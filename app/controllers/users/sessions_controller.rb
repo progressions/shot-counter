@@ -7,9 +7,10 @@ class Users::SessionsController < Devise::SessionsController
 
   # POST /resource/sign_in
   def create
-    Rails.logger.info(sign_in_params)
+    # Log only the email, never the password
+    Rails.logger.info("Login attempt for email: #{sign_in_params[:email]}")
     @user = User.find_by(email: sign_in_params[:email])
-    if @user && @user.password == sign_in_params[:password]
+    if @user && @user.valid_password?(sign_in_params[:password])
       sign_in(:user, @user)
       
       # Generate JWT token for the response header
