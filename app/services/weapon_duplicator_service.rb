@@ -10,11 +10,19 @@ module WeaponDuplicatorService
       @duplicated_weapon.instance_variable_set(:@source_weapon, weapon)
       
       if weapon.image.attached?
-        @duplicated_weapon.image.attach(
-          io: StringIO.new(weapon.image.blob.download),
-          filename: weapon.image.blob.filename,
-          content_type: weapon.image.blob.content_type
-        )
+        begin
+          # Handle ImageKit download - force read as string
+          downloaded = weapon.image.blob.download
+          image_data = downloaded.is_a?(String) ? downloaded : downloaded.read
+          
+          @duplicated_weapon.image.attach(
+            io: StringIO.new(image_data),
+            filename: weapon.image.blob.filename,
+            content_type: weapon.image.blob.content_type
+          )
+        rescue => e
+          Rails.logger.warn "Failed to duplicate image for weapon #{weapon.name}: #{e.message}"
+        end
       end
 
       @duplicated_weapon

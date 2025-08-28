@@ -8,11 +8,19 @@ module VehicleDuplicatorService
       duplicated_vehicle = set_unique_name(duplicated_vehicle)
       
       if vehicle.image.attached?
-        duplicated_vehicle.image.attach(
-          io: StringIO.new(vehicle.image.blob.download),
-          filename: vehicle.image.blob.filename,
-          content_type: vehicle.image.blob.content_type
-        )
+        begin
+          # Handle ImageKit download - force read as string
+          downloaded = vehicle.image.blob.download
+          image_data = downloaded.is_a?(String) ? downloaded : downloaded.read
+          
+          duplicated_vehicle.image.attach(
+            io: StringIO.new(image_data),
+            filename: vehicle.image.blob.filename,
+            content_type: vehicle.image.blob.content_type
+          )
+        rescue => e
+          Rails.logger.warn "Failed to duplicate image for vehicle #{vehicle.name}: #{e.message}"
+        end
       end
       
       # Store reference to source vehicle for image position copying

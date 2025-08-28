@@ -14,11 +14,19 @@ module SchtickDuplicatorService
       @duplicated_schtick.instance_variable_set(:@source_schtick, schtick)
       
       if schtick.image.attached?
-        @duplicated_schtick.image.attach(
-          io: StringIO.new(schtick.image.blob.download),
-          filename: schtick.image.blob.filename,
-          content_type: schtick.image.blob.content_type
-        )
+        begin
+          # Handle ImageKit download - force read as string
+          downloaded = schtick.image.blob.download
+          image_data = downloaded.is_a?(String) ? downloaded : downloaded.read
+          
+          @duplicated_schtick.image.attach(
+            io: StringIO.new(image_data),
+            filename: schtick.image.blob.filename,
+            content_type: schtick.image.blob.content_type
+          )
+        rescue => e
+          Rails.logger.warn "Failed to duplicate image for schtick #{schtick.name}: #{e.message}"
+        end
       end
 
       @duplicated_schtick

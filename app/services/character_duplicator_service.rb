@@ -18,11 +18,19 @@ module CharacterDuplicatorService
       
       if character.image.attached?
         @duplicated_character.define_singleton_method(:attach_source_image) do
-          self.image.attach(
-            io: StringIO.new(character.image.blob.download),
-            filename: character.image.blob.filename,
-            content_type: character.image.blob.content_type
-          )
+          begin
+            # Handle ImageKit download - force read as string
+            downloaded = character.image.blob.download
+            image_data = downloaded.is_a?(String) ? downloaded : downloaded.read
+            
+            self.image.attach(
+              io: StringIO.new(image_data),
+              filename: character.image.blob.filename,
+              content_type: character.image.blob.content_type
+            )
+          rescue => e
+            Rails.logger.warn "Failed to duplicate image for character #{character.name}: #{e.message}"
+          end
         end
       end
 
@@ -57,7 +65,7 @@ module CharacterDuplicatorService
     end
 
     def set_unique_name(character)
-      return unless character.name.present?
+      return character unless character.name.present?
 
       base_name = character.name.strip
       if character.campaign.characters.exists?(name: base_name)
