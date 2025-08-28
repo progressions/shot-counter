@@ -1107,7 +1107,7 @@ archetypes:
     weapons:
       - name: "Unarmed"
         damage: 7
-      - name: "Walther PPK Autoloader Pistol"
+      - name: "Walther PPK"
         damage: 9
         concealment: 1
         reload: 4

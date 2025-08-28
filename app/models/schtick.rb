@@ -35,7 +35,9 @@ class Schtick < ApplicationRecord
   has_many :image_positions, as: :positionable, dependent: :destroy
 
   validates :name, presence: true, uniqueness: { scope: [:category, :campaign_id] }
+  validate :associations_belong_to_same_campaign
   validates :category, inclusion: { in: CATEGORIES }, unless: -> { path == "Core" }
+  validate :associations_belong_to_same_campaign
   validate :prerequisite_must_be_in_same_category_and_path
 
   has_one_attached :image
@@ -121,5 +123,17 @@ class Schtick < ApplicationRecord
     end
 
     result
+  end
+
+  private
+
+  def associations_belong_to_same_campaign
+    return unless campaign_id.present?
+
+    # Check characters
+    if characters.any? && characters.exists?(["campaign_id != ?", campaign_id])
+      errors.add(:characters, "must all belong to the same campaign")
+    end
+
   end
 end
