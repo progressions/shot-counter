@@ -43,6 +43,7 @@ class Vehicle < ApplicationRecord
   before_validation :ensure_non_integer_values
 
   validates :name, presence: true, uniqueness: { scope: :campaign_id }
+  validate :associations_belong_to_same_campaign
 
   def as_v1_json(args={})
     shot = args[:shot]
@@ -160,6 +161,30 @@ class Vehicle < ApplicationRecord
       if self.action_values[key] == 0
         self.action_values[key] = DEFAULT_ACTION_VALUES[key]
       end
+    end
+  end
+
+  def associations_belong_to_same_campaign
+    return unless campaign_id.present?
+
+    # Check faction
+    if faction_id.present? && faction && faction.campaign_id != campaign_id
+      errors.add(:faction, "must belong to the same campaign")
+    end
+
+    # Check juncture
+    if juncture_id.present? && juncture && juncture.campaign_id != campaign_id
+      errors.add(:juncture, "must belong to the same campaign")
+    end
+
+    # Check parties
+    if parties.any? && parties.exists?(["campaign_id != ?", campaign_id])
+      errors.add(:parties, "must all belong to the same campaign")
+    end
+
+    # Check fights (through shots)
+    if fights.any? && fights.exists?(["campaign_id != ?", campaign_id])
+      errors.add(:fights, "must all belong to the same campaign")
     end
   end
 end

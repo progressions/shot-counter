@@ -1,0 +1,1338 @@
+---
+title: "Feng Shui 2 Archetypes"
+description: "Complete collection of character archetypes for Feng Shui 2 RPG"
+version: "1.2"
+
+archetypes:
+  - name: "Archer"
+    quote: "I become one with the arrow. The arrow becomes one with your left ventricle."
+    stats:
+      guns: 14
+      defense: 14
+      toughness: 6
+      chi: 7
+      speed: 8
+    abilities:
+      - name: "Wuxia Archery"
+        description: "At the outset of any fight, note the highest Damage Value of any firearm carried by an ally taking part in the combat who attacks with Guns. The Damage Value of your arrows is 1 point below that."
+      - name: "Rapid Volley"
+        description: "When you wound an opponent with an arrow, spend 1 Chi point and 3 shots to deal the same Wound Points again to the same opponent."
+      - name: "Hair-Trigger Neck Hairs"
+        description: "Gain +1 Defense for the first sequence of any fight your opponents start unexpectedly."
+      - name: "Soul of the Sniper"
+        description: "If you are the first combatant to attack in a fight, you gain +2 Guns on that attack. You and all of your allies gain +1 to Attack values for the rest of the first sequence."
+      - name: "The Way the Wind Blows"
+        description: "Instead of a penalty under Adverse Conditions, you get a +2 Immunity Bonus to attacks."
+      - name: "Smoke Arrow"
+        description: "When you hit an opponent with an arrow, that opponent suffers a point of Impairment until the next keyframe. The maximum Impairment any target can take from a Smoke Arrow is 1."
+    weapons:
+      - name: "Unarmed"
+        damage: 7
+      - name: "Bow and Arrows"
+        damage: 7
+        concealment: 5
+        reload: 1
+    skills:
+      - "Backup Attack: Martial Arts 12"
+      - "Info: Chinese Philosophy 13"
+      - "Medicine 9"
+      - "Info (any) 11"
+    juncture: "Ancient (+any other)"
+    wealth: "Working Stiff"
+    description: "You exert supreme mastery over mankind's perfect missile weapon, the bow and arrow. With perfect serenity you pull the drawstring. With a sense of time's crystalline nature, you divide the moment of aiming into a spiderweb of interlocking infinities. At the moment of precision, you loose the string. Your mind's eye flies through the air, following the arrowhead as it closes the distance between you and your target. With the silence of the serpent, it strikes. Already you have drawn another arrow, ready to repeat. Guns may be louder, faster, more destructive. But no one deals death more beautifully than you."
+
+  - name: "Bandit"
+    quote: "Bah! In times like these, honor exists only among thieves!"
+    stats:
+      martial_arts: 13
+      defense: 15
+      toughness: 8
+      chi: 7
+      speed: 6
+    abilities:
+      - name: "Survivor's Roar"
+        description: "+2 to Martial Arts if you took damage from an enemy attack since you last made an attack of your own."
+      - name: "Hard to Kill"
+        description: "If you fail an Up Check, spend 2 Chi to spring back into action x shots later (where x=the absolute value of the Up Check Outcome) with a Wound Point value of 24."
+      - name: "Strong"
+        description: "Add 1 to your Damage on any successful Martial Arts strike, including strikes with hand- to-hand weapons. (Damage Values for your starting weapons already include this bonus.)"
+      - name: "Rise of the Downtrodden"
+        description: "Spend 1 Chi and 1 shot as an interrupt when struck by an attack. Until the end of the fight, the Damage Value of the weapon hitting you becomes the Damage Value of your hand-to-hand weapon."
+      - name: "No-o-o-o-o!!"
+        description: "Spend 1 Chi and 1 shot as an interrupt when an ally makes an Up check. Until the end of fight, add the total number of Up checks made by allies this fight to the Damage you deal on a successful successful attack."
+      - name: "Irascible"
+        description: "Whenever someone tries to intimidate you, you must spend 1 Chi or act on the irresistible urge to smash someone or something."
+    weapons:
+      - name: "Unarmed"
+        damage: 7
+      - name: "Staff-sword"
+        damage: 8
+      - name: "Axe"
+        damage: 11
+      - name: "Dagger"
+        damage: 10
+    skills:
+      - "Intimidation 12"
+      - "Deceit 12"
+      - "Leadership 12"
+      - "Info: Peasant Life 15"
+    juncture: "Ancient, Past"
+    wealth: "Poor"
+    description: "Nobody starts out wanting to be a bandit. You began life as a farmer, craftsman or merchant. Then disaster struck. A flood destroyed your farm. Imperial taxes drove you into poverty. Perhaps you were the victim of other bandits. In any case, you turned your back on society. You began to live off what you could steal. With guile and determination, you turned survival into not only a way of life, but a source of inspiration for others. What life dished out to you, you took, and converted into power. Other bandits now flock to you. Imperial soldiers hunt you. Merchants shudder whenever someone speaks your name. And yet, you find yourself returning to the very society that you once abandoned. Something draws you there—something you wish to fight for—something you must defend. You have taken the first few steps on a new road. It leads either to redemption, or to death."
+
+  - name: "Big Bruiser"
+    quote: "Was that supposed to hurt?"
+    stats:
+      martial_arts: 12
+      defense: 12
+      toughness: 12
+      fortune: 6
+      speed: 5
+    abilities:
+      - name: "Establishing Shot"
+        description: "Your first Martial Arts attack of any fight gets a +2 bonus."
+      - name: "Mounting Fury"
+        description: "If you miss with a Martial Arts attack, you gain a +1 cumulative bonus to your next Martial Arts attack. Bonus resets to 0 after you hit, and at the end of the fight."
+      - name: "Very Big"
+        description: "You make Up Checks and gain Marks of Death only when you reach 50 Wound Points. -1 Impairment occurs only at 40 Wound Points, -2 Impairment at 45 Wound Points."
+      - name: "Very Strong"
+        description: "Add 3 to your Damage on any successful Martial Arts strike, including strikes with hand-to-hand weapons. (Damage Values for your starting weapons already include this bonus.) You can use absurdly large objects, like parking meters, as improvised weapons. +3 to all Strength checks."
+      - name: "The Bigger They Come"
+        description: "-5 Toughness if you reach 50 or more Wound Points, until all Death checks from this fight have been resolved."
+      - name: "Healthy as a Horse"
+        description: "+3 bonus to Constitution checks."
+    weapons:
+      - name: "Unarmed"
+        damage: 7
+      - name: "Baseball Bat"
+        damage: 13
+      - name: "Shotgun"
+        damage: 13
+        concealment: 5
+        reload: 4
+    skills:
+      - "Backup Attack: Guns 11"
+      - "Intimidation 14"
+      - "Info 11 (choose a working-class occupation)"
+    juncture: "Modern (+ any other)"
+    wealth: "Working stiff"
+    description: "With your size and strength, you cast an intimidating shadow across the scene of any fight. You don't hit as often as other combatants, but when you do, look out! Your massive frame allows you to withstand blows that would flatten a smaller fighter. Most people assume you're stupid, and maybe you are—but maybe not, letting you play their misperceptions to your advantage. You may have worked as a manual laborer, or as a guard of some kind. You might be a quiet, gentle giant or a bullying loudmouth. You are definitely a mountain of determination and endurance. Make best use of your mammoth damage by going toe-to-toe with the group's major foes. To specialize in taking out mooks, play a Killer or Masked Avenger."
+
+  - name: "Bodyguard"
+    quote: "Get down! Now!"
+    stats:
+      guns: 14
+      defense: 14
+      toughness: 6
+      fortune: 7
+      speed: 8
+    abilities:
+      - name: "The Client"
+        description: "At the beginning of any fight, designate any PC or GMC as your client, who you will go on to protect."
+      - name: "Take the Bullet"
+        description: "Spend 1 Fortune when your client takes damage. The client takes 0 Damage. You take 7 Wound Points."
+      - name: "Dammit!"
+        description: "On your next attack after your client takes damage, gain +2 Attack against the character who dealt the damage."
+      - name: "Who Got Hit?"
+        description: "At the end of the fight, remove any number of Marks of Death from your client, applying instead to yourself."
+      - name: "Take the Shot"
+        description: "+4 Guns vs. targets using hostages as human shields."
+      - name: "Fast Draw I"
+        description: "If the first attack of the sequence is a Guns attack, add 2 to your Initiative result."
+    weapons:
+      - name: "Unarmed"
+        damage: 7
+      - name: "H&K P7"
+        damage: 10
+        concealment: 2
+        reload: 4
+      - name: "Mini Uzi"
+        damage: 10
+        concealment: 3
+        reload: 2
+    skills:
+      - "Backup Attack: Martial Arts 12"
+      - "Driving 13"
+      - "Info: Celebrities 12"
+      - "Info: World Leaders 12"
+    juncture: "Modern (+ any other)"
+    wealth: "Rich"
+    description: "You have a very particular set of skills. As a Personal Protection Specialist, you get your client from point A to point C while avoiding the bad guy at point B. Obscure outside the tight circles of your profession, you avoid the glare of fame cast by your celebrity and political clients. Maybe you lost the client who most mattered to you, the one you broke the rules for and fell in love with. Perhaps your client has been taken by shadowy forces, and your entry into the chi wars comes as you swear to get her back. Now your greatest act of protection awaits, as you discover the chi wars and realize that the entire world needs a bodyguard."
+
+  - name: "Bounty Hunter"
+    quote: "Poster says dead or alive. Which will it be?"
+    stats:
+      guns: 13
+      defense: 14
+      toughness: 7
+      fortune: 6
+      speed: 8
+    abilities:
+      - name: "The Quarry"
+        description: "At the beginning of a fight, designate one enemy as your quarry. If the plot has already established that you're hunting an enemy who appears in the fight, that character automatically becomes the quarry."
+      - name: "Crosshairs"
+        description: "Your Attacks against the quarry gain a +2 bonus."
+      - name: "Due Diligence"
+        description: "The quarry's first attack against you automatically fails."
+      - name: "Share the Homework"
+        description: "Spend x Fortune; x allies of your choice gain +1 to Attacks against the quarry until the end of the fight."
+      - name: "Signature Weapon (Loretta)"
+        description: "Your favorite shotgun, Loretta, a Remington 870 Police with a notch on the stock for each successful capture, has a Damage Value of 16 when you wield it. Give Loretta a different proper name if you prefer."
+      - name: "Fast Draw I"
+        description: "If the first attack of the sequence is a Guns attack, add 2 to your Initiative result."
+    weapons:
+      - name: "Unarmed"
+        damage: 7
+      - name: "Telescoping Baton"
+        damage: 9
+      - name: "Remington 870 Police Shotgun"
+        damage: 13
+        concealment: 5
+        reload: 4
+    skills:
+      - "Backup Attack: Martial Arts* 12"
+      - "Detective 13"
+      - "Intrusion 13"
+      - "Driving 12"
+      - "Info: Truck Stops and Cheap Motels 12"
+    juncture: "Modern (or Ancient, Past)"
+    wealth: "Working stiff"
+    description: "You started out skip chasing and finding deadbeat dads, but your considerable talent soon found you tracking a craftier, more desperate class of crooks. You often sign on to hunt criminals who have crossed international borders, or are hiding out in countries without extradition treaties. You always get your quarry, and though you're not looking for a scrap you take pride in handling a takedown quickly and with minimal fuss. At first, your latest gig seemed like any other. Then your target displayed a depth of resources that didn't fit the profile. The deeper you dug, the weirder the story got. Still hot on the trail, you little suspect what your next step will plunge you into."
+
+  - name: "Cyborg"
+    quote: "They lost the technology. And rebuilt me anyway."
+    stats:
+      scroungetech: 13
+      defense: 13
+      toughness: 9
+      fortune: 6
+      speed: 6
+    abilities:
+      - name: "Yowch!"
+        description: "When you take your first point of Impairment, you suffer an obvious injury to your mechanical parts that others can't help finding disturbing. The shot cost of any attack against you increases by your degree of impairment."
+      - name: "Shower of Sparks"
+        description: "The damage of your Scroungetech attacks increases by 2 for each point of Impairment you're currently suffering."
+      - name: "Fluid Spill"
+        description: "If, when you are impaired, an enemy misses you in close combat, spend 1 Fortune as an interrupt to attack that enemy."
+      - name: "Blow Up Real Good"
+        description: "Take X Marks of Death to make a Scroungetech attack. Damage Value 20, against X-1 targets, who can be either in close or ranged proximity. Your attack hits every target whose Defense your attack meets or beats. If your result is less than the lowest Defense among any target, gain a retroactive +1 bonus to it."
+      - name: "Robot Arm"
+        description: "Make close Scroungetech attacks with a Damage Value of 11."
+      - name: "On-board Flamethrower"
+        description: "Make ranged Scroungetech attacks with a Damage Value of 14. Each time you attack with it, take 3 Wound Points."
+      - name: "System Malfunction"
+        description: "-2 Toughness when making Up or Death checks."
+    weapons:
+      - name: "Unarmed"
+        damage: 7
+      - name: "Robot Arm"
+        damage: 11
+      - name: "On-board Flamethrower*"
+        damage: 14
+        note: "*each time you attack with it, take 3 Wound Points."
+      - name: "Duct-taped Futuristic Pistol"
+        damage: 10
+        concealment: 1
+        reload: 4
+    skills:
+      - "Backup Attack: Guns 13"
+      - "Fix-It 13"
+      - "Sabotage 13"
+    juncture: "Future"
+    wealth: "Poor"
+    description: "An inhabitant of the scorched future juncture, you suffered a fate that should have killed you. Recovered by radiation-addled members of the Jammer cult, you begged for a merciful demise. Instead they tried to save you, using their bizarre scrounged technology. You returned to consciousness both better and worse than before, an amalgam of mangled humanity and barely operational robotic prosthetics. Impelled onward by a cranial chip that won't let you kill yourself, you plunge into the the chi war in search of a cure for your freakish condition—or maybe just the oblivion destiny continues to withhold from you."
+
+  - name: "Drifter"
+    quote: "Nope, I ain't from around here."
+    stats:
+      guns: 13
+      defense: 13
+      toughness: 8
+      fortune: 7
+      speed: 6
+    abilities:
+      - name: "Like the Cavalry"
+        description: "If you were not with the other PCs when they arrived at the scene of a fight, you can show up in mid-fight, during or after sequence 1, shot 4. You reveal yourself anywhere in the fight location, without having to explain how you got there."
+      - name: "Ammunitional Rescue"
+        description: "After using Like the Cavalry, your first Guns attack gains +4 bonus. For the rest of the fight, you get +2 to Guns, Martial Arts, and Defense."
+      - name: "Air of Mystery"
+        description: "+2 Defense against Sorcery attacks."
+      - name: "Don't Mess With Clint"
+        description: "If you are the only PC in a fight, spend 1 Fortune and 1 shot to put down a mook, no check required."
+      - name: "Lone Wolf"
+        description: "+3 Defense if you are the only viable target for three or more named character opponents."
+    weapons:
+      - name: "Unarmed"
+        damage: 7
+      - name: "Kimber Solo Carry Shotgun"
+        damage: 10
+        concealment: 1
+        reload: 5
+      - name: "Taurus Model 94 Revolver"
+        damage: 8
+        concealment: 2
+        reload: 4
+      - name: "K2 Rifle"
+        damage: 13
+        concealment: 4
+        reload: 2
+    gear:
+      - "* +1 vs Mooks"
+    skills:
+      - "Backup Attack: Martial Arts* 11"
+      - "Fix-It 11"
+      - "Gambling 11"
+    juncture: "Modern"
+    wealth: "Poor"
+    description: "Whatever your story is, you ain't tellin'. Constantly on the move, you want nothing more than to be left alone—and maybe the simple pleasures of life, like a cold drink on a hot day. Destiny, that well known son of a bitch, has other plans. You have a knack for wandering into other peoples' trouble, and a conscience that won't let you stay out of it. Whenever thugs are threatening a helpless young widow, you'll be there. There with a great big freaking gun. And if you have to plant a bunch of them in the ground, well, you always warn them not to mess with you. A great choice if you know you'll be attending game sessions irregularly."
+
+  - name: "Driver"
+    quote: "I just drive, man."
+    stats:
+      martial_arts: "13*"
+      defense: 13
+      toughness: 6
+      fortune: 7
+      speed: 8
+    abilities:
+      - name: "Rage Outside the Machine"
+        description: "When you are the only PC in a scene, or your vehicle has 35 or more Chase Points, gain +2 Martial Arts."
+      - name: "I Just Painted That"
+        description: "Gain +2 Martial Arts at any time against a character who damaged your vehicle, even superficially, during the current session."
+      - name: "Tools of the Trade"
+        description: "After you make a successful Martial Arts attack with a wrench, tire iron or improvised blunt weapon, spend 1 Fortune as an interrupt to give it a Damage Value of 15 until next keyframe."
+      - name: "Custom Ride"
+        description: "You own and usually drive a customized vehicle, one you know down to every quirk and rivet. Compared to the standard model, it gets +1 to Handling and Squeal."
+      - name: "Lightning Speed"
+        description: "Pay 3 Fortune; until next keyframe, the shot cost of all your Driving actions decreases by 1, with a minimum cost of 1."
+      - name: "Vroom!"
+        description: "If you are in the driver's seat of a vehicle at the beginning of a sequence, spend 1 Fortune to gain an Initiative result 1 higher than that of any other fight participants. Any other heroes with Vroom! go during the same higher shot as you, by player seating order."
+      - name: "Cool Car Jacket"
+        description: "You have the skills Seduction 11 and Intimidate 11, but only when wearing the jacket, and only when it is in good shape. The jacket is like new again at the start of each new adventure."
+    weapons:
+      - name: "Unarmed"
+        damage: 7
+      - name: "Tire Iron"
+        damage: 9
+    gear:
+      - "Cool Car Jacket"
+      - "1973 Chevelle: Acceleration 8; Handling 9 (Squeal 11); Frame 6 (Crunch 8)*"
+      - "*includes bonuses from Custom Ride"
+    skills:
+      - "Driving 15"
+      - "Fix-It 12"
+    juncture: "Modern"
+    wealth: "Working stiff"
+    description: "Chill-out electrobeat pulses from your speakers. Sodium-lit empty highway snakes out before you. With gentle control you accelerate. You are your car. You are at peace. Existential zen zen zen. Everyone covets your skills. Fast drivers meet demands in dark places. A vehicle like yours doesn't pay for itself. So you cross a line or two. Stay cool, cool, cool, you tell yourself. Forget everything else. Just be the road. Who are you fooling? Jacketed inside that cool, bottled within all that control, burns six-twenty horsepower of rage, rage, rage."
+
+  - name: "Everyday Hero"
+    quote: "Hey, I may not have the faintest clue what's going on here, but I'm an American, dammit! And that means I got two strong American fists, and a big American heart—and a big American gun!"
+    stats:
+      martial_arts: 13
+      defense: 15
+      toughness: 6
+      fortune: 9
+      speed: 6
+    abilities:
+      - name: "Lucky You"
+        description: "When you run out of Fortune points, roll a die. On a 1 or 2, regain all your spent Fortune points."
+      - name: "Improvised Weapon Mastery"
+        description: "Gain +1 Martial Arts when fighting with an improvised weapon found at the scene. After 3 successful attacks, you lose the bonus—unless you describe yourself picking up and using a different improvised weapon (shot cost 1.)"
+      - name: "Accidental Awesome"
+        description: "After you fail an attack check with an improvised weapon, add a free Fortune die to your next check or Dodge."
+    weapons:
+      - name: "Unarmed"
+        damage: 7
+    skills:
+      - "Backup Attack: Guns 11"
+      - "Driving 12"
+      - "Info: Classic Cars 15"
+      - "Info: Classic Rock 15"
+      - "Info: Beer 15"
+      - "Info: Sports Fan 15"
+    juncture: "Modern"
+    wealth: "Working Stiff"
+    description: "You might be nobody special, but that's the source of all your awesome. Unlike some archetypes you could name, you work for a living, probably in a good, honest, vanishing blue collar job. Maybe you're a factory worker, a truck driver, a plumber, or a sailor. You might be on vacation when the action begins. You find yourself in a crossfire as the result of a job-related errand. Aside from taking care of your melodramatic hook, all you really want to do is sit down with a can of beer and watch some sports at the local bar. But somehow trouble always comes looking for you. That's because of your basic, essential decency and/or stupidity. And also your peculiar luck. On one hand, your luck gets you through situations that even you don't believe you could survive, but on the other hand, your luck tends to get you into weird and frightening situations to begin with because the good guys need your help. You may not be the smartest, or the strongest, or the most skilled person in the world. But you're a good guy, and \"Good guys always fnish—ugh! Hey, wha'd you shoot me for? Oh, man, now I'm bleeding... howzabout a knuckle sandwich?\" A good choice if you like to play mechanically simple characters."
+
+  - name: "Ex-Special Forces"
+    quote: "So after the charges go off and blow up the oil tank, I'll come in on the chopper hanging from the rope ladder and take care of the dozen-or-so guards on the terrace. Once they're outta the picture, drop me onto the roof and I'll break into the secret lab and stop the mad scientist."
+    stats:
+      guns: 14
+      defense: 14
+      toughness: 7
+      fortune: 7
+      speed: 7
+    abilities:
+      - name: "Field Triage"
+        description: "During a fight, spend 1 Fortune and 1 shot to remove a point of Impairment from another nearby character, or 1 Fortune and 3 shots to remove it from yourself."
+      - name: "Highly Trained"
+        description: "At the beginning of any fight, you may swap your Guns and Martial Arts attack values. Swap remains in effect for duration of fight."
+      - name: "Bloody But Unbowed"
+        description: "+2 bonus to Up checks."
+      - name: "For the Squad"
+        description: "Regain a spent Fortune point after making a Boost."
+      - name: "Claw of the Tiger"
+        description: "When your Martial Arts attack deals Wound Points to an opponent, roll a die; if the result is even, add the result to the Wound Points dealt."
+      - name: "Tiger Stance"
+        description: "When targeted for a Martial Arts attack, interrupt and spend 2 Chi to make one Martial Arts attack against your attacker, resolved before the original attack."
+    weapons:
+      - name: "Unarmed"
+        damage: 7
+      - name: "Combat Knife"
+        damage: 10
+      - name: "H&K HK45C Autoloader"
+        damage: 10
+        concealment: 1
+        reload: 3
+      - name: "H&K MP5 Submachinegun"
+        damage: 11
+        concealment: 3
+        reload: 1
+      - name: "M16 A3 Assault Rifle"
+        damage: 13
+        concealment: 5
+        reload: 1
+    skills:
+      - "Backup Attack: Martial Arts 13"
+      - "Sabotage 12"
+      - "Intrusion 11"
+      - "Info: Anti-Terrorism 15"
+    juncture: "Modern (+ any other)"
+    wealth: "Poor"
+    description: "Afghanistan. Iraq. Places you still aren't allowed to name. A former member of an elite force trained in counter-terrorism, hostage rescue, and sabotage missions, you had a hard-bitten military mindset drilled into you along with your extensive list of deadly skills. It is possible that you were dishonorably discharged from your beloved corps, fairly or otherwise, this might be your melodramatic hook. People keep expecting you to relax, to kick back, to get along, just like everybody else. But you can't. Your nerves are still on edge. Whenever you get into a fender bender, or a confrontation on the street, it takes all of your determination not to leap on the guy harassing you and beat him to a pulp. You long for a new cause to believe in, one you can feel as much fervor for as your old corps. Most of all, you want the pure rush you get from combat. There's nothing you'd like more than to feel the taste of blood and fear in your mouth on another battlefield. If that battlefield involves a fight for justice and freedom against tyrants from across the timestream, so much the better."
+
+  - name: "Exorcist Monk"
+    quote: "Banish all spirits from the world of man!"
+    stats:
+      martial_arts: 13
+      defense: 15
+      toughness: 6
+      chi: 8
+      speed: 7
+    abilities:
+      - name: "Balance Bringer"
+        description: "+2 Martial Arts and +2 Toughness vs. foes with Sorcery or Creature Powers attacks."
+      - name: "Shred the False Veil"
+        description: "If you damage an opponent disguised by magic or sorcery, it reverts to its true form. If you down a transformed animal foe, it reverts to its animal form. If you down a supernatural creature, it is immediately banished to the spirit realm and can never return to the present juncture."
+      - name: "Slow the Tiger"
+        description: "After a successful Martial Arts attack, spend 1 Chi and 1 shot. Target of the attack adds 1 to the shot cost of all actions with a cost of 1 or more. Effect remains until end of the fight, or when you take your next point of Impairment, whichever comes first."
+      - name: "Chop the Willow"
+        description: "After a successful Martial Arts attack, spend 2 Chi and 1 shot. Target of the attack gains 1 Impairment point, until the end of the fight, or when you take your next point of Impairment, whichever comes first. Can't increase Impairment above usual limit of 2."
+      - name: "Stave Off Monkey"
+        description: "When an opponent makes a successful attack against you, interrupt and pay 2 shots; the attack fails."
+      - name: "Blunt the Crane's Beak"
+        description: "When an opponent makes a successful attack against one of your nearby allies, interrupt and spend 1 shot to reduce attack's Damage Value by 5."
+      - name: "Prodigious Leap"
+        description: "Spend 1 shot to make a horizontal, vertical or diagonal leap of up to 14 m. Also costs 1 Chi, if your current Chi is less than 2. If you have two or more other shticks in the Welcoming Sky path, leap increases to 28 m."
+    weapons:
+      - name: "Unarmed"
+        damage: 7
+      - name: "Staff"
+        damage: 10
+    juncture: "Ancient"
+    wealth: "Poor"
+    description: "Few know this, but the chi war began when impudent beings from the spirit world entered the world of man and began to interfere with it. This began the great imbalance that granted geomantic power to rascals and men of violence, and opened up ruptures between time periods. For the world to return to peace, enabling people to once again pursue enlightenment through detachment, the spirits must be sent back where they belong. You, a wise and therefore powerful monk, have descended from the serenity of your mountain monastery to perform the necessary exorcisms. Though you'll not turn a blind eye to other evils, none of them can be truly vanquished until your central task is done. Before choosing this archetype, check with your GM to make sure you'll be encountering enough magic opponents to make it fun."
+
+  - name: "Full-Metal Nutball"
+    quote: "Technically it's unsafe to store something like this here, but..."
+    stats:
+      guns: 13
+      defense: 13
+      toughness: 6
+      fortune: 7
+      speed: 8
+    abilities:
+      - name: "Bag Full of Guns II"
+        description: "You rotate through a selection of guns over the course of a fight. Start each fight with a revolver (9/2/6.) Each time you attack and fail to dish out more than 15 Wound Points, spend 0 shots to switch to any other firearm with a Damage 1 point higher than your current gun. Effect tops out with an experimental firearm you made yourself (Damage 15.) It falls apart at the end of the fight."
+      - name: "Ready Resupply"
+        description: "When an ally is disarmed, spend 1 Fortune and 1 shot as an interrupt to immediately rearm the ally. Select as the ally's new weapon any gun with a damage equal to your current gun."
+      - name: "Oops, Forgot that One"
+        description: "You always fail Concealment checks. If searched for weapons, the searchers always find everything you're carrying and completely disarm you. Even if you said you hid at least one hidden ankle piece. (This does not mean that you always have a weapon.)"
+      - name: "Wild Grenade"
+        description: "When you miss with a grenade, spend 1 Fortune. Characters between you and your target do not make Fortune rolls to avoid it. Instead you and a nearby character of your choice, other than the target, take 20 damage from flying debris."
+      - name: "Nutball Luck"
+        description: "Spend 1 Fortune to gain +2 Defense vs. Guns attacks and Toughness +3 vs. explosion and debris damage until end of sequence."
+      - name: "Grenades"
+        description: "Start play with 3 grenades. Gain up to 6 grenades each time you revisit your hideout."
+    weapons:
+      - name: "Unarmed"
+        damage: 7
+    skills:
+      - "Driving 10"
+      - "Fix-It 15"
+    juncture: "Modern (+ Future)"
+    wealth: "Poor"
+    description: "They call you a gun nut. Accent on the gun. Well, also, come to think of it, accent on the nut. Okay, okay, sure, they apply equally. Except that you don't just love guns. You delight in ordnance of all kinds, the more explosive the better. Your weird little hideout bristles with rare, illegal and just plain impractical weaponry. How you acquired it all with no visible means of support may be revealed in the course of play, or remain a mystery hardly worth addressing. You don't shoot your firearms as well as you lovingly care for them, so when you finally get a chance to pull the trigger for real, the results skew toward the slapstick as well as the lethal. When you meet real deal shooting and killing types, you try to contain your drooling enthusiasm, but when things get hot the whooping and hollering starts. Mostly you come off as a lovable oddball. In addition to your pistolophilia, you likely spout various paranoid beliefs. When you stumble into the secret war, you may be as surprised as any when you discover how right you've been!"
+
+  - name: "Gambler"
+    quote: "The odds of my having that card are 145,987 to one. But then again, I am feeling lucky today. And you know that things go my way when I feel lucky. So do you want me to look at your card, or do you just want to give me the money now?"
+    stats:
+      guns: 13
+      defense: 13
+      toughness: 6
+      fortune: 8
+      speed: 7
+    abilities:
+      - name: "Stack the Odds"
+        description: "Spend 1 Fortune to reverse the results of any Swerve, treating the negative die as positive and vice versa. Others must share their die results with you when asked. Explain how your planning or advance knowledge led to this reversal."
+      - name: "Fast Draw I"
+        description: "If the first attack of the sequence is a Guns attack, add 2 to your Initiative result."
+      - name: "Bank Shot"
+        description: "After a Guns attack against a mook fails, add a free Fortune die to your next Guns attack."
+    weapons:
+      - name: "Unarmed"
+        damage: 7
+      - name: "Beretta Model 21 Bobcat Autoloader"
+        damage: 8
+        concealment: 1
+        reload: 4
+    skills:
+      - "Backup Attack: Martial Arts 12"
+      - "Gambling 15"
+      - "Info: Criminal Underworld 13"
+      - "Seduction 13"
+    juncture: "Modern (+ any other)"
+    wealth: "Rich"
+    description: "As a devil-may-care hang-glider on the winds of fate, you've turned natural luck and a flair for getting yourself out of scrapes and into a profitable career. You've learned to handle yourself in a fight—not all losers are good sports, after all—and mostly you rely on your drop-dead smile and your airtight instincts to keep yourself out of trouble. With these two weapons at your disposal, you've carved out a life of luxury for yourself—no pleasure is too fashy or shallow for your tastes. You came from humble beginnings and made your fortune using only your brains and your need for victory. The latest clothes, the shiniest gadgets: these are things you've dreamed of since childhood. But the real prize is the sheer joy of beating the odds, of triumphing over your opponents when logic decrees that you should be down for the count. Now a melodramatic hook pulls you into the chi war, a situation where all of the odds you've memorized are turned upside down. Nonetheless, you face this new adventure with a grin and a heaping helping of aplomb. You know it won't take you long to figure the angles."
+
+  - name: "Gene Freak"
+    quote: "Don't go! I didn't ask to be this way!"
+    stats:
+      mutant: 13
+      defense: 13
+      toughness: 6
+      genome: 9
+      speed: 6
+    abilities:
+      - name: "Mutant Punch"
+        description: "Make hand-to-hand attacks using your Mutant Attack Value."
+      - name: "Push"
+        description: "Spend 1 Genome point and 3 shots to make a ranged attack. Damage Value 11, against your opponent, using your Mutant attack value. If you deliver a Smackdown, the target flies X meters through the air directly away from you, where X = the number of Wound Points you dish out."
+      - name: "Very Strong"
+        description: "Spend 1 Genome point. Until end of sequence, add 3 to your Damage on any successful hand-to-hand strike (using your Mutant attack value) including strikes with hand-to-hand weapons. You can use absurdly large objects, like parking meters, as improvised weapons."
+      - name: "Berserk Rage"
+        description: "Spend 1 Genome point and 1 shot; your Mutant attack increases by 2 until end of sequence."
+      - name: "Very Fast"
+        description: "Spend 2 Genome points. Until end of sequence, the shot costs of all your actions decreases by 1, with a minimum of 1 per action. You can move up to 30m per sequence."
+      - name: "Pain Eater"
+        description: "When your attack takes a foe from 0 to 1 Impairment, or from 1 to 2 Impairment, regain 3 spent Genome points. When an ally's attack takes a foe from 0 to 1 Impairment, or from 1 to 2 Impairment, regain 1 spent Genome point."
+      - name: "Force Shield"
+        description: "Spend 1 Genome point and 1 shot; your Defense increases by 1 until end of sequence."
+    weapons:
+      - name: "Unarmed"
+        damage: 7
+    juncture: "Future (+ Modern)"
+    wealth: "Poor"
+    description: "Bizarre energies released by the cataclysmic destruction of a futuristic hyper-Orwellian regime swirled through your world, altering the DNA of hapless survivors. Most died, but a few survived, twisted, traumatized, but able to manifest previously unknown bodily feats. Some energies escaped through poisoned feng shui sites into the present day. Often believing themselves to have been changed by brushes with ordinary radiation or other experiments gone awry, a handful of moderns also acquired credibility-defying super powers. Most gene freaks want to be left alone. Maybe you do, too, but a melodramatic hook prevents it. Or maybe you've decided to take an active, heroic part in the chi war in search of a cure, or to show that some cursed with unwanted might can wield it with responsibility and discipline."
+
+  - name: "Ghost"
+    quote: "Although the gulf of life and death separates us, can I still not love you?"
+    stats:
+      sorcery: 13
+      defense: 12
+      toughness: 6
+      magic: 8
+      speed: 7
+    abilities:
+      - name: "Insubstantial"
+        description: "Pass through solid matter by checking Creature Power against a Difficulty of 1 for each inch of material you are moving through. Specify two types of matter you cannot pass through; your GM picks a third."
+      - name: "Flight"
+        description: "You can fly through the air, at a speed matching a fit jogger running below you. During a sequence you can fly up to 21 m."
+      - name: "Chi Blast"
+        description: "As a standard 3-shot action, direct a ranged attack of raw magical energy at a combatant of your choice, using your Sorcery attack value, Damage 9. Specialty: Blast."
+      - name: "Love Potion"
+        description: "Spend 1 Magic to formulate a potion which causes a GMC to fall head over heels in love with another character specified by the sorcerer at time of formulation. If attraction to the object of affection contradicts the ingester's orientation, the pull remains powerful but platonic. The dosed character makes a Will Check with your Sorcery value as the Difficulty at the end of each scene, and recovers at the beginning of the following session. Specialty: Influence"
+      - name: "Damage Immunity: Bullets"
+        description: "You take no damage from Guns attacks, unless shot by magic or silver bullets."
+      - name: "Hovering Presence"
+        description: "You make boosts with a shot cost of 2."
+      - name: "Traditional Healing Only"
+        description: "The Medicine skill only heals you if the practitioner trained in the Ancient juncture."
+    weapons:
+      - name: "Unarmed"
+        damage: 7
+    skills:
+      - "Seduction 13"
+      - "Info: Musicianship 13"
+      - "Base value for Creature Powers checks is 14."
+    juncture: "Ancient (+ Netherworld)"
+    wealth: "Poor"
+    description: "Ghosts aplenty haunt the magic-rich ancient juncture. You are one of these—a spirit unwilling or unable to leave the trappings of mortal life behind to join the eternal cycle of reincarnation. The Netherworld is also home to many ghosts, former warriors whose life forces were too strong to depart the Inner Kingdom when their physical bodies died. Other ghosts prey on mortals, motivated either by jealousy of the living or by the same malign intentions they harbored in life. But you are tied to the Earth for some other reason. Your soul cannot rest, for in life you swore a solemn oath to complete some great undertaking. This crucial unfinished business probably comprises your melodramatic hook. You may have sworn to protect someone, to wreak vengeance on an enemy, or to recover some lost treasure or artifact. Ghosts have a bad habit of falling in love with mortals, and can often be stunningly beautiful and alluring. Although you know such loves are forbidden, you may already fnd yourself in a romantic entanglement that crosses the sacred barrier between the living and the dead. If you are not in such a doomed relationship, you are suffciently prone to such temptations that you might end up in one before the series is out."
+
+  - name: "Highway Ronin"
+    quote: "All that's left of the world is the open road."
+    stats:
+      guns: 13
+      defense: 13
+      toughness: 7
+      fortune: 6
+      speed: 8
+    abilities:
+      - name: "Armor Plated"
+        description: "You own and usually drive a customized vehicle whose body you have strategically reinforced. Compared to the standard model, it gets +1 to Frame and Crunch."
+      - name: "Dazed and Contused"
+        description: "Characters getting out of a vehicle you have just rammed add 3 to the shot cost of their subsequent actions, and take 1 point of Impairment until the end of the sequence."
+      - name: "Swerve II"
+        description: "An opponent ramming your vehicle takes an additional 4 Frame points."
+      - name: "Tarmac Warrior"
+        description: "If you exit your vehicle after making at least one Driving check, +2 to your attacks until end of fight."
+      - name: "Takes a Licking"
+        description: "As an interrupt after your vehicle takes Chase Points from a ram/sideswipe, or a character attack or stunt, spend 1 Fortune and 1 shot to reduce your vehicle's total Chase Points by 7."
+      - name: "Against All Warlords!"
+        description: "+2 Guns vs. Bosses. When a boss succeeds at an Up check necessitated by your attack, the GM must make a single additional Up check for the boss to remain up."
+    weapons:
+      - name: "Unarmed"
+        damage: 7
+      - name: "S&W Model 19 Combat Magnum Revolver"
+        damage: 11
+        concealment: 2
+        reload: 5
+      - name: "Ruger Red Label Shotgun, sawed off"
+        damage: 10
+        concealment: 3
+        reload: 6
+    gear:
+      - "Ford Falcon Coupe: Acceleration 8; Handling 8 (Squeal 10);"
+      - "Frame 7 (Crunch 9)*"
+      - "*includes Armor Plated bonuses"
+    skills:
+      - "Backup Attack: Martial Arts* 13"
+      - "Driving 14"
+    juncture: "Future"
+    wealth: "Poor"
+    description: "Until you discovered the chi war, you drove the desolate highways of the shattered future, not to get somewhere, but to escape from everywhere else. You fought for gasoline, for your freedom from captivity, and sometimes to avoid ending up on a cannibal's flame grill. When confronted with the helpless, the desperate, you told them they didn't need another hero. But in the end, you stepped up, and drove your battered but trusty vehicle against the strong, to protect the weak. Now you've learned of the chi war, and the real reason your world imploded, you figure your survival skills might be turned to an ultimate purpose—to rewrite the history of the future, so the huddled masses need never fear again."
+
+  - name: "Karate Cop"
+    quote: "You have the right to remain—OOUCH—silent! You have the right to—URGH!—an attorney. Anything you say can and will—HNNHHHGHK!—be used against you in a court of—HHNNNHH!"
+    stats:
+      martial_arts: 13
+      defense: 14
+      toughness: 7
+      fortune: 7
+      speed: 7
+    abilities:
+      - name: "Glutton for Punishment"
+        description: "When you take Wound Points from a Martial Arts attack, or take non-attack damage, your next Martial Arts attack this fight gets a +2 bonus. This bonus stacks with other effects but not with itself."
+      - name: "Underdog Desperation"
+        description: "+2 Toughness vs. opponents with fewer Wound Points than you."
+      - name: "Ouch!"
+        description: "When you miss with an unarmed attack, you take x Wound Points, where x equals your Swerve. Your next Martial Arts attack this fight gets a +x bonus. If successful, heal x Wound Points."
+      - name: "Indefatigable"
+        description: "Impairment points do not decrease your Martial Arts attack value."
+      - name: "Stop Right There!"
+        description: "Spend 1 shot to automatically stop an enemy from Cheesing It."
+      - name: "Take the Shot"
+        description: "+4 Guns vs. targets using hostages as human shields."
+    weapons:
+      - name: "Unarmed"
+        damage: 7
+      - name: "Colt Detective Special Revolver"
+        damage: 9
+        concealment: 1
+        reload: 5
+      - name: "Remington 870 Police Shotgun"
+        damage: 13
+        concealment: 5
+        reload: 4
+    skills:
+      - "Backup Attack: Guns 13"
+      - "Driving 11"
+      - "Police 15"
+    juncture: "Modern (+ any other)"
+    wealth: "Working Stiff"
+    description: "You are a loyal, team-playing officer of the law who happens to be about as adept in the martial arts as you are with your service revolver. You overcome the bad guys not by being bigger or tougher but by sheer pluck and perseverance. When you punch a huge slab of a goon in the jaw, it hurts your hand. When you leap from a bridge to a passing hovercraft, you feel the impact roll up through your body. When fireworks set your jacket aflame mid-fight, you struggle awkwardly to put it out. You're not the most graceful combatant of the chi wars, or able to manifest the bizarre fu powers of the ancient masters. But no matter how many times they knock you down, you get back up, shake off the pain, and keep running after the wrongdoers."
+
+  - name: "Killer"
+    quote: "Forty of them, one of me. Looks like the odds are about even."
+    stats:
+      guns: 15
+      defense: 14
+      toughness: 6
+      fortune: 6
+      speed: 9
+    abilities:
+      - name: "Both Guns Blazing II"
+        description: "Fire two guns simultaneously at your opponent; these must be handguns or otherwise outfitted with a pistol grip. Treat as one attack at Guns -1, with the Damage Values of both guns added together, and the opponent's Toughness doubled."
+      - name: "Carnival of Carnage III"
+        description: "+2 Guns vs mooks. Subtract 1 from the shot cost of any attack on a mook or mooks. Minimum shot cost remains 1."
+      - name: "Heroic Bloodshed"
+        description: "In the climactic fight of an adventure, any attack that deals you more than 4 Wound Points deals an additional 3 Wound Points."
+    weapons:
+      - name: "Unarmed"
+        damage: 7
+      - name: "Taurus Model 85 Revolver"
+        damage: 9
+        concealment: 2
+        reload: 5
+      - name: "Beretta M12 Submachinegun"
+        damage: 10
+        concealment: 5
+        reload: 1
+      - name: "HK MP5 Submachinegun"
+        damage: 10
+        concealment: 5
+        reload: 1
+      - name: "SVD Dragunov Sniper Rifle"
+        damage: 13
+        concealment: 5
+        reload: 3
+    gear:
+      - "Beretta 92Fs Autoloader Pistol 10/2/3"
+    skills:
+      - "Backup Attack: Martial Arts* 10"
+    juncture: "Modern (+ any other)"
+    wealth: "Rich"
+    description: "You used to work as a professional assassin. Maybe you serve an intelligence agency. More likely you whacked people for the triads. You prided yourself on cool, calculated efficiency and the ability to get the job done without getting involved. You know everything there is to know about the acquisition, handling and employment of firearms. You've been perforated by bullets more times than you can count. What you call an occupational hazard. The intellectual puzzle of the perfect kill mattered to you then. The value of your life, or those of your victims, never factored into the equation. Until now. Possibly through your melodramatic hook, you are about to plunge into the the chi war. Now you have the power to change history with your trigger finger, instead of just wiping out unsuspecting target. And maybe, just maybe, that gives you a chance to redeem yourself..."
+
+  - name: "Magic Cop"
+    quote: "There are some things man was meant not to know. It's my job to hunt down those things and kill them."
+    stats:
+      guns: 14
+      defense: 13
+      toughness: 7
+      magic: 8
+      speed: 6
+    abilities:
+      - name: "Hair-Trigger Neck Hairs"
+        description: "Gain +1 Defense for the first sequence of any fight your opponents start unexpectedly."
+      - name: "Stop Right There!"
+        description: "Spend 1 shot to automatically stop an enemy from Cheesing It."
+      - name: "Inured to Weirdness"
+        description: "When a Sorcery, Creature or Scroungetech attack misses you, regain a spent Fortune point."
+      - name: "Banishment"
+        description: "Spend 3 Magic and 3 shots; on a Sorcery success against a supernatural creature's Defense, it Cheeses It. On a failure, you regain the Magic points. Specialty: Summoning"
+      - name: "Ghost Sense"
+        description: "Spend 1 Magic to see the ghosts all around you in a single scene. Unless you count the odd grotesque transformation or ineffective lunge in your direction, they can't really communicate with you. But their presence and appearance may provide clues to past events in the area. Specialty: Divination"
+      - name: "Juncture Adapted"
+        description: "When in your home juncture, ignore any juncture costs for Sorcery."
+    weapons:
+      - name: "Unarmed"
+        damage: 7
+      - name: "Colt Detective Special Revolver"
+        damage: 9
+        concealment: 1
+        reload: 5
+      - name: "Remington 870 Police Shotgun"
+        damage: 13
+        concealment: 5
+        reload: 4
+    skills:
+      - "Back-Up Attack: Sorcery 13"
+      - "Info: Occult 13"
+      - "Police 12"
+    juncture: "Modern"
+    wealth: "Working Stiff"
+    description: "Even in junctures where magic is rare and difficult to perform, supernatural manifestations still ooze from the world's dark corners, with sometimes lethal results. Many large police jurisdictions secretly maintain small units of officers trained in the mystic arts. These cops are able to take on the occasional renegade sorcerer or shaman who might pop up, and can dispatch demons and ghosts without freaking out. You are one of these cops. You're probably a loner; the system is set so you have little contact with regular law enforcement officials. Other officers think you're nuts, if they know who you are at all. You have built up tough mental defenses against the creatures of the night. To normal folks, you come off as grim or aloof. You might think of yourself as a holy warrior, implacably gunning down anything that smacks of the occult. Or maybe you wish you could build a bridge between the world of the supernatural and the world of everyday humanity. Magic cops are often drawn into the chi war as they hunt down agents of the Lotus or escapees from the Netherworld, discovering that there is much hidden beneath reality's mundane veneer that even they know nothing about."
+
+  - name: "Martial Artist"
+    quote: "Your kung fu is strong. You shall be a worthy opponent."
+    stats:
+      martial_arts: 15
+      defense: 15
+      toughness: 8
+      chi: 8
+      speed: 7
+    abilities:
+      - name: "Hands Without Shadow"
+        description: "+X Martial Arts vs. opponents whose Defense values, bonuses included, exceed your current Defense. X = the difference between Defense values."
+      - name: "Dim Mak"
+        description: "Any time after the 2nd sequence, spend 3 Chi and make a Martial Arts punch attack against a featured foe. If successful, ignore normal Damage determination; the foe's Wound Point total is now 34. If unsuccessful, regain 2 Chi."
+      - name: "Lightning Fist"
+        description: "When you hit an opponent with a Martial Arts punch attack, spend 1 Chi and 1 shot as an interrupt. For this attack, and until next keyframe, your target's Toughness is halved (round fractions up)."
+      - name: "Whirl of Fury"
+        description: "Spend 1 Chi and 3 shots to make a Martial Arts nunchaku attack. If you hit, this and all of your nunchaku attacks for the rest of the fight have a Damage Value of 12."
+      - name: "Blur of Rage"
+        description: "Spend 1 Chi as you make a Martial Arts nunchaku attack against a mook. Until next keyframe, roll a die whenever a mook attacks you. On an even result, the mook drops."
+    weapons:
+      - name: "Unarmed"
+        damage: 7
+      - name: "Nunchuku"
+        damage: 8
+    skills:
+      - "Info: Eastern Philosophy 11"
+      - "Leadership 11"
+    juncture: "Modern (+ any other)"
+    wealth: "Working Stiff"
+    description: "An accomplished young student of one or more schools of hand-to-hand combat, you are as effective with your bare hands as when wielding traditional hand-to-hand weapons. Embarking on a lifetime's study, you have lately mastered a number of esoteric chi powers. Most importantly, you have absorbed a profound truth: martial arts are more than just a series of combat moves. They represent an ancient and learned discipline, one that preaches restraint, discipline, and humility. You work hard to live up to that philosophy. You choose your fights carefully, and work to uphold the values you have learned, such as reverence for elders, respect for the traditions of the past, and self-sacrifice for the greater good. You probably work at a humble job, caring little for material goods. The only goal you consider worthy of pursuing is the physical and spiritual perfection attained by the great masters of the past. When you encounter the outlines of the chi war, your dedication to honor and self-perfection leads you into the battle against evil without a second thought."
+
+  - name: "Masked Avenger"
+    quote: "Tremble in fear, evildoers! Your time of reckoning is at hand!"
+    stats:
+      guns: 13
+      defense: 13
+      toughness: 8
+      fortune: 6
+      speed: 7
+    abilities:
+      - name: "Tremble, Evildoers!"
+        description: "When you attack a single mook and drop it, 4 other mooks Cheese It. If your positive die exploded, a total of 6 mooks Cheeses It."
+      - name: "Trained for Armor"
+        description: "Ignore Initiative penalties for armor."
+      - name: "Utility Belt"
+        description: "After spending Fortune on a boost, roll a die. On an even result, you get the Fortune point back."
+      - name: "Eagle Eye"
+        description: "Add +x to the shot cost of a Guns attack to gain +x Guns for that attack. X cannot exceed 3."
+    weapons:
+      - name: "Unarmed"
+        damage: 7
+      - name: "Colt 1911 Autoloader"
+        damage: 10
+        concealment: 2
+        reload: 4
+    gear:
+      - "Police Shell Armor 5/25/0*"
+      - "*includes Trained for Armor bonuses"
+    skills:
+      - "Backup Attack: Martial Arts 12"
+      - "Detective 15"
+      - "Intimidation 12"
+      - "Info: Science 15"
+      - "Fix-It 11"
+    juncture: "Modern (+ any other)"
+    wealth: "Rich"
+    description: "For many years, you watched your society slowly sink into corruption. Crime runs rampant on the streets. Justice eludes the common man. Criminals are rewarded; victims forgotten. The police and judiciary, hopelessly tainted or just plain unable to deal with the evil's rising tide, can't be trusted to do the job. The time for brooding is over. Seeking to strike fear into the hearts of evildoers, you have donned a distinctive, armored costume and identity-concealing mask to take the law into your own hands. You use your own uncompromising moral compass to find wrongdoers and beat the crap out of them. With your fierce fists and barking automatic pistols, you aim to turn back the clock and return to an era of justice. Although your abilities are formidable, you do not expect to transform society all on your own. Only when people stand up for themselves and take back their own streets will the criminals of the world truly quake in fear. Rhetoric aside, your mission may not be entirely altruistic: the Masked Avenger's melodramatic hook usually involves sworn vengeance of some sort. Did some terrible event that pushed you over the edge from thinking about vigilantism to stalking the streets in funny clothes looking for villains to punish? Maybe you're a little crazy—but the really crazy ones are the bad guys who stand in your way."
+
+  - name: "Maverick Cop"
+    quote: "Freeze, scumbag!"
+    stats:
+      guns: 13
+      defense: 13
+      toughness: 8
+      fortune: 6
+      speed: 7
+    abilities:
+      - name: "Signature Weapon"
+        description: "Your favorite .357 Magnum deals 3 more damage than the norm."
+      - name: "Blam Blam Epigram"
+        description: "Add 1 to the shot cost of any Guns attack and make a pithy quip before or after shooting. The Damage Value of your weapon increases by 2 against a non-Impaired opponent, by 8 against an Impaired opponent."
+      - name: "Justice Bringer"
+        description: "+2 Guns versus any target you know to be a murderer, torturer, or felony sex offender."
+      - name: "Hot Pursuit"
+        description: "+2 Driving when you are the pursuer in a vehicle chase."
+      - name: "Tight Roll I"
+        description: "When a vehicle you're driving crashes, you and all occupants gain +2 Toughness against crash damage."
+    weapons:
+      - name: "Unarmed"
+        damage: 7
+      - name: "Smith & Wesson Model 29 Revolver*"
+        damage: 14
+        concealment: 3
+        reload: 5
+      - name: "Colt Detective Special Revolver"
+        damage: 9
+        concealment: 1
+        reload: 5
+      - name: "Winchester Model 70 Rifle"
+        damage: 13
+        concealment: 5
+        reload: 5
+    gear:
+      - "* contains Signature Weapon bonuses"
+      - "1981 Chevrolet Impala: Acceleration 8; Handling 8 (Squeal 10); Frame 6 (Crunch 8)"
+    skills:
+      - "Backup Attack: Martial Arts* 12"
+      - "Driving 13"
+      - "Police 15"
+      - "Info: Dive Bars 15"
+    juncture: "Modern (+ any other)"
+    wealth: "Working Stiff"
+    description: "The Maverick Cop is a plainclothes detective assigned to a major crime unit of a big city. You may work undercover, you may be in anti-mob unit, or you may be a homicide detective. Good-looking but slovenly, you may cultivate a drinking problem and definitely have a personal life in a state of serious disorder. Despite the fact that you are one yourself, you've always had a problem with authority figures. You see yourself as a loner, but this may date back only as far as your last partner getting killed, or the origin point of some other your melodramatic hook. You are always on the verge of being fired and are often on suspension. You keep your job only because your gruff superior officer has a secret soft spot for you, and because you get results. Although you always get the job done in the end, things always seem to conspire to make you look bad. People connected to your investigations have a habit of getting killed. Witnesses get snuffed. Bystanders fall like tenpins whenever you take part in a firefight. Most of all, you never seem to be able to just apprehend a crook. It's not like you deliberately set out to empty the contents of your high-caliber revolver into each and every scumbag you're supposed to arrest. You warn them even, tell them they shouldn't be feeling lucky, shouldn't get you riled. Punks never learn."
+
+  - name: "Ninja"
+    quote: "If I wished to kill you, you would be dead already. You would not have seen me coming."
+    stats:
+      martial_arts: 13
+      defense: 15
+      toughness: 6
+      chi: 7
+      speed: 8
+    abilities:
+      - name: "Joint Cased"
+        description: "+2 Martial Arts if the current fight takes place in a location you have ever covertly entered using your Intrusion skill."
+      - name: "Friend of Darkness"
+        description: "When attacking an opponent for the first time in the current fight, treat opponent's Toughness as 4."
+      - name: "Dark's Soft Whisper"
+        description: "Make any attack completely silently. On a Guns attack, describe yourself using a silencer."
+      - name: "Panther Pounce"
+        description: "If you are the only PC in a scene and you encounter a single GMC, spend 0 Chi (for a mook) or 2 Chi (for a named character) to knock out, daze or otherwise render the target helpless and unable to interfere with you. Lasts for five minutes, or until you try to harm the character, whichever comes first."
+      - name: "Catlike Tread"
+        description: "When you give an ally a Defense boost, you also gain the benefit of the boost."
+    weapons:
+      - name: "Unarmed"
+        damage: 7
+      - name: "Stiletto"
+        damage: 9
+      - name: "Tonfa"
+        damage: 8
+      - name: "Throwing Stars"
+        damage: 5
+      - name: "Combat Knife"
+        damage: 10
+    gear:
+      - "Throwing Knives (6)"
+    skills:
+      - "Deceit 12"
+      - "Intrusion 15"
+      - "Fix-It 11"
+      - "Info: Architecture 15"
+    juncture: "Past (+ Ancient, Modern)"
+    wealth: "Working Stiff"
+    description: "If you hail from the Past juncture, you may be an actual member of the legendary Japanese secret society of assassins. But in Feng Shui, the term 'Ninja' is also used generically to describe any operative who specializes in stealth and penetration missions. Although capable of holding your own during a fight, you prefer deception and surprise over the frontal assault. Ninjas maintain a mystique around themselves, often pretending to have secret mystical powers. Although the Ninja does have a passing acquaintance with esoteric chi abilities, the mystery surrounding you is mostly due to your own wit and presence. It is not fame that you crave so much as cultivating that mystique. You wish your deeds to be famous, but your identity a secret. You want to be feared. You want to be whispered about. Nothing amuses you more than to stand among people who have no clue just how quick and deadly you are. But lately, you have begun to feel a sense of emptiness. Maybe you have suffered a loss in love, or some other personal blow that has made you feel less invincible than usual. Perhaps you've begun to question your amoral existence. When you discover the chi war, you are pulled in either by your melodramatic hook, or by the awakening of a desire to do something—to leave a mark on the world, even if no one will ever know your name."
+
+  - name: "Old Master"
+    quote: "You think I am old and feeble, do you? Well, face my Flying Windmill Kick, asshole!"
+    stats:
+      martial_arts: 16
+      defense: 15
+      toughness: 5
+      chi: 10
+      speed: 6
+    abilities:
+      - name: "Chi Flow Perception"
+        description: "Base damage with a punch or kick is 10."
+      - name: "Prodigious Leap"
+        description: "Spend 1 Shot to make a horizontal, vertical or diagonal leap of up to 28m. Also costs 1 Chi, if your current Chi is less than 2."
+      - name: "Willow Step"
+        description: "Spend 1 Chi and 1 shot to gain +2 Defense against non-Martial Arts attacks until next keyframe."
+      - name: "Aerial Pushaway"
+        description: "When an enemy misses you with a Martial Arts attack, spend 1 shot to fly up to 14m backwards, away from your enemy. Regain 1 spent Chi point."
+      - name: "Flying Windmill Kick"
+        description: "Spend 4 shots to make a Martial Arts kick attack. If the attack hits, you may make another kick attack on the same opponent at 0 shot cost. You may continue doing this until an attack fails."
+      - name: "Ominous Flutter"
+        description: "Spend 1 Chi. Until the end of the fight, any attack you immediately precede with a Prodigious Leap gets a +1 bonus."
+      - name: "Tired Bones"
+        description: "Make a Difficulty 7 Constitution check whenever you take damage during a fight. Each time you fail, your Defense drops by 1, and stays that way until end of fight."
+      - name: "King on the Water"
+        description: "In a fight under the adverse condition Torrential Rain, spend 1 Chi and 0 shots to gain a +2 Immunity Bonus until end of fight or end of condition."
+    weapons:
+      - name: "Unarmed"
+        damage: 10
+      - name: "Staff"
+        damage: 8
+    skills:
+      - "Info: Chinese Philosophy 15"
+      - "Info: Calligraphy 15"
+      - "Leadership 11"
+    juncture: "Ancient (+ Past, Modern)"
+    wealth: "Working Stiff"
+    description: "You are an elderly expert who long ago conquered the most difficult principles of martial arts and chi powers. You spent many long years perfecting others in the secrets of your art, and are used to being treated with utmost respect. You can therefore be a bit of a hothead when challenged by others who do not know enough to bow before your superior experience. You are a harsh disciplinarian; no matter what juncture you hail from, you grumpily pine for the good old days when proper respect was paid to elders and the heavens were in harmony with the Earth. Although you no longer possess the physical strength and endurance you had as a young student, your skill and chi powers still make you a formidable opponent. You want to retire from active participation in the world of martial arts, leaving the field to the young men and women you have trained to follow in your footsteps. Now you want to rest, and to study the arts and ancient poems. But the tide of evil in the world seems to be growing again. You must show a new generation of heroes to become masters themselves, as your masters taught you. Used to deference and with bones growing more tired by the day, you can be surprisingly cranky, even comically crude, when crossed. Some life lessons are best imparted with a clout upside the head."
+
+  - name: "Private Investigator"
+    quote: "All my life, I've been waiting for someone dressed like you to waltz into this office and give me a spiel like that. Not that I believe it for a second, but it's lovely to see your daydreams realized."
+    stats:
+      guns: 13
+      defense: 13
+      toughness: 7
+      fortune: 6
+      speed: 7
+    abilities:
+      - name: "Finding the Tell"
+        description: "+2 to attacks vs. characters you spoke with in the previous scene."
+      - name: "Needling Remark"
+        description: "When exchanging barbs with a character in a non-combat scene, spend 1 Fortune. Until the end of the adventure, that character gets +1 to attack you; you get +2 to attack the character."
+      - name: "Cut the Bull"
+        description: "When you and the other PCs are speculating as to the best course of action, or as to the motivations of a given character, you can spend a Fortune point to have the GM straight out tell you whether your speculation is correct or incorrect."
+      - name: "Disarming Shot"
+        description: "Spend 1 shots and 1 Fortune to fire a shot that knocks a weapon from an enemy's hand. An enemy carrying another weapon must spend 1 shot to draw it before attacking. Without another weapon, the enemy must spend 3 shots and make a rearm check to recover the weapon."
+    weapons:
+      - name: "Unarmed"
+        damage: 7
+      - name: "Rossi Model 515 Revolver"
+        damage: 9
+        concealment: 2
+        reload: 5
+    skills:
+      - "Backup Attack: Martial Arts 12"
+      - "Detective 15"
+      - "Info: Business 14"
+      - "Info: Law 11"
+      - "Intrusion 11"
+    juncture: "Modern (+ any other)"
+    wealth: "Working Stiff"
+    description: "As an experienced investigator you have accumulated contacts throughout society: from well-heeled clients who can afford to hire you, to the enforcers of the law you must occasionally skirt, to the seediest elements of the underworld. You don't often work for lawyers, digging up information for use in court cases. When one corporation sues another, you find yourself poring over corporate ledgers and sifting for obscure references in old business publications. You've worked for insurance companies, keeping plaintiffs under surveillance to see if they're as injured as they claim to be. And then of course there are divorce cases. Although you may have gotten into your line of work because you fell in love with the film noir world of Philip Marlowe and Sam Spade, you've spent more time hunched over a laptop performing background checks than you have slugging it out with gangsters and crooked cops. Maybe that's why, when you sniff out the first clues that point you to the existence of the chi war, you're ready to chuck the real-life world of the private detective in favor of the fantastic adventure you've always dreamed of."
+
+  - name: "Redeemed Pirate"
+    quote: "You killed my friends, imperialist dog! Now taste my steel!"
+    stats:
+      martial_arts: 13
+      defense: 14
+      toughness: 7
+      chi: 7
+      speed: 7
+    abilities:
+      - name: "Swashbuckling"
+        description: "After performing a stunt that has you swinging on a rope or otherwise evoking classic pirate action, gain +2 to attacks until end of sequence."
+      - name: "Iron Gut"
+        description: "+3 to Constitution checks to resist the effects of overindulgence in food and alcohol, and against poisons of all kinds."
+      - name: "Rebellious Streak"
+        description: "After taking Wound Points from a boss, add a free Fortune die to your next check."
+      - name: "Prodigious Leap"
+        description: "Spend 1 Shot to make a horizontal, vertical or diagonal leap of up to 14m. Also costs 1 Chi, if your current Chi is less than 2. After you gain two or more other schticks in the Welcoming Sky path, leap increases to 28m."
+      - name: "Firm Grip"
+        description: "You are immune to disarm effects."
+    weapons:
+      - name: "Unarmed"
+        damage: 7
+      - name: "Black Powder Pistol"
+        damage: 7
+        concealment: 3
+        reload: 6
+      - name: "Cutlass"
+        damage: 11
+    skills:
+      - "Backup Attack: Guns 12"
+      - "Gambling 11"
+      - "Info: Seafaring and Piracy 15"
+      - "Intimidation 12"
+    juncture: "Past (+ any other)"
+    wealth: "Working Stiff"
+    description: "You used to be a member of one of the many pirate gangs that sailed the South China Sea. The sea belonged to you and your comrades and there wasn't a thing the Manchus could do about it. You lived a heedless live of looting and slaying. When the British feet arrived in Chinese waters and took it upon themselves to end piracy, matters grew dicier for you and your friends. Against these impudent foreigners, you did what you had to do to survive—including some things you weren't proud of. Your efforts against the British brought you into contact with the monks of the Guiding Hand. From them, you learned of the chi war. Yet you bridled under their Buddhist purity. Detachment from earthly pleasures has never been your way. The pivotal events of your melodramatic hook sent you to wandering again, perhaps far from your time and the seas you where you feel most confident. Now you are about to throw in with a ragged band of misfits, in whose company you might finally redeem the darkness of your past."
+
+  - name: "Scrappy Kid"
+    quote: "Hey, when do we get to stop the evil scientists from taking over the world? Huh, huh? When do we? Can I play with that gun? Ah, c'mon, I won't wreck it or nothin'. That sword is really cool. Can we stop the evil scientists now, can we, can we, huh, huh? Are we there yet?"
+    stats:
+      martial_arts: 13
+      defense: 15
+      toughness: 4
+      chi: 9
+      speed: 9
+    abilities:
+      - name: "Distraction"
+        description: "Describe a distracting non-lethal assault against your target. Instead of damage, on a successful Martial Arts attack, the target suffers 3 Impairment for a number of shots equal to your Outcome. You can't further distract an already distracted opponent."
+      - name: "Look Out, Kid!"
+        description: "Roll a die when you are attacked while benefiting from a Defense boost. On an even result the boost continues until end of next shot."
+      - name: "Eyes of the Fox"
+        description: "Pay 2 Chi to reduce Wound Points dealt to you by an attack to 3."
+      - name: "The Fox's Retreat"
+        description: "Spend 1 Chi. Until next keyframe, Dodges increase your Defense by 4."
+      - name: "Forceful Dart"
+        description: "Spend 1 Chi to give your thrown darts or throwing stars a Damage Value of x-1 until next keyframe, x=the highest base Damage Value of any weapon currently being wielded by an ally. (Ignoring any special damage bonuses the ally gets.)"
+      - name: "A Ride is a Ride"
+        description: "Ignore Unfamiliar Vehicle penalties."
+    weapons:
+      - name: "Unarmed"
+        damage: 7
+      - name: "Throwing Stars*"
+        damage: 5
+        note: "* describe as a yo-yo attack, if desired"
+    skills:
+      - "Deceit 10"
+      - "Driving 11"
+      - "Intrusion 11"
+      - "Info: Kid Culture 15"
+    juncture: "Modern (+ any other)"
+    wealth: "Poor"
+    description: "Life is simple. You're a kid. You like to have fun. But there are these bad guys who want to wreck everybody's happiness. They think they're better than everyone else. They want to be the boss of you. So even though boring old grown-ups want to keep you safely tucked away somewhere stupid, you're gonna do something about it. After all, why should they get all the fun of shooting guns off and watching explosions and meeting cool monsters and all that stuff? Sure, you're not exactly a killing machine, like you plan to be when you grow up. But you're not bad for someone whose age isn't yet in the double digits yet. You're the best kung fu kid in your class, and you've learned some tricks you weren't supposed to learn yet. And you're fast, you know how to duck, and bad guys underestimate you. Chi war—hey, what could be cooler? You don't have to play the Scrappy Kid as comic relief. (And shouldn't, if your GM and the rest of the group want to maintain a consistently dark and gritty tone in your Feng Shui series.) Maybe you're a grim little warrior, forced by tragedy to fight back in a grownup world. Just because you haven't hit puberty yet doesn't mean that you don't have a threatening squint worthy of Clint Eastwood."
+
+  - name: "Sifu"
+    quote: "Martial arts is not a way of fighting. It is a way of living."
+    stats:
+      martial_arts: 14
+      defense: 14
+      toughness: 7
+      chi: 7
+      speed: 7
+    abilities:
+      - name: "Flow Restoration"
+        description: "Touch a subject who is unable to act due to the effect of the Point Blockage fu power. Subject is released from effect and takes an action during the following shot. Subject gets +2 to next check."
+      - name: "Corners of the Mouth"
+        description: "Allies may spend 1 shot and 1 Fortune to give you 1 Chi."
+      - name: "Pressure Block"
+        description: "When an opponent misses you with a Martial Arts attack, spend 1 Chi as an interrupt to give opponent currently unaffected by Pressure Block a -1 Martial Arts penalty until end of fight."
+      - name: "Healing Chi"
+        description: "Spend 3 shots and 1 Chi; make a Martial Arts check and subtract the Action Result from the patient's current Wound Point total, which can't drop below 0."
+      - name: "Point Blockage"
+        description: "After making a successful Martial Arts check, spend 3 Chi and 1 shot to prevent your opponent from taking actions until next keyframe, or until opponent takes 3 or more Wound Points, whichever comes first."
+      - name: "The Power of Love"
+        description: "Cradle an (apparently) dead comrade in your arms, weeping and wailing until your tears spatter his or her face. Spend 1 Chi when an ally who is close enough for you to touch fails a Death check. Your ally lapses into immediate, death-like unconsciousness but gets to make a new Death check."
+    weapons:
+      - name: "Unarmed"
+        damage: 7
+      - name: "Umbrella"
+        damage: 10
+        note: "* damage 7 when wielded by anyone else"
+    skills:
+      - "Info: Calligraphy 15"
+      - "Info: Chinese Philosophy 14"
+      - "Medicine 15"
+    juncture: "Past (+ any other)"
+    wealth: "Working Stiff"
+    description: "Sometimes the greatest warrior fights by healing his comrades. With your mastery of pressure points, perhaps in tandem with Western medicine, you keep your fellow heroes up, when they would otherwise fall. Whether they're bruised, battered, scorched or riddled with bullets, you can supply the few miraculous jabs required to send them tottering back into the fight for another round of brutal punishment. You serve as headmaster of a martial arts school, healer to the surrounding neighborhood, and beacon of wisdom for all who seek your counsel. You teach your students to embrace the honor and tranquillity of Chinese philosophy. A man of peace, you were dragged only reluctantly into a battle with the injustices of your age, and from there into the fires of the chi war. You would sooner bring your adversaries to light than kick them into the darkness. But because you are a humble, learned person, you are not so arrogant as to think that you can heal everyone. When push comes to shove, sometimes the weak must be defended. On those sad days, you stop setting bones and start breaking them. Want to specialize in healing and denial attacks? Play the Sifu. If you'd rather be the best at fu powers, though you falter in the stretch, play the Old Master."
+
+  - name: "Sorcerer"
+    quote: "Taste the wrath of the Abysmal Fountain!"
+    stats:
+      sorcery: 14
+      defense: 13
+      toughness: 6
+      magic: 8
+      speed: 7
+    abilities:
+      - name: "Chi Blast"
+        description: "As a standard 3-shot action, direct a ranged attack of raw magical energy at a combatant of your choice, using your Sorcery attack value, at a Damage Value equal to your Magic value (not the number of points you now have.) Specialty: Blast"
+      - name: "Magnetic Blast"
+        description: "When you hit a vehicle with a chi blast, it takes +3 Condition Points. Specialty: Blast"
+      - name: "Fight Finder"
+        description: "Spend 1 Magic to know the location of the nearest group of people who want to kill you. You do not know which group. If no one wants to kill you, it must be early in the series. You get the Magic point back. Specialty: Divination"
+      - name: "Observe Chi"
+        description: "See the flow of chi in an area, noting how strong or weak it is and if it is corrupted or impinged upon by some unnatural force. Immediately identify feng shui sites. Tell whether an individual you can see in person is attuned to at least one feng shui site. Specialty: Divination"
+      - name: "Heal Wounds"
+        description: "Spend 1 Magic to reduce the Wound Points of any character who has not had Wound Points reduced in the current scene by the result of your Sorcery task check. In combat, takes 4 shots. Specialty: Heal"
+      - name: "Flight"
+        description: "Fly through the air, moving up to 5m per shot. Specialty: Movement"
+      - name: "Scroll of Spells"
+        description: "Spend 2 Magic to gain any Sorcery schtick you don't have, provided you have at least one schtick within that specialty, until end of session. Takes 3 shots if used in combat (6 shots if you're looking at the rulebook when your shot comes up.)"
+    weapons:
+      - name: "Unarmed"
+        damage: 7
+      - name: "Chi Blast"
+        damage: 8
+    juncture: "Ancient"
+    wealth: "Rich"
+    description: "You are a master of the occult arts, studied in the ancient techniques of channeling and transforming chi energy into a supernatural force, bent by your will. Some say this corrupts chi energy into what it was not meant to be. You call those people fools. Although there are many ways to do harm to an opponent, none has quite the awe-inspiring effect of an energy bolt cast from a magician's hand. You have some trouble manifesting your great powers in later junctures, such as our own and 1850, where the chi flow has been suppressed. But in other junctures, you access your unearthly abilities without impediment. However, in most places superstitious cretins assume that all sorcerers pursue sinister ends. True, most of you who follow the ways of the occult wind up doing great harm to the people. They have been corrupted by exposure to the Underworld, the home of demons and evil spirits. Or perhaps they have been seduced by their own lust for power. But that does not describe you! You have the will to resist, where weaker minds have failed. Given the bad reputation of sorcerers, you have learned to keep your mystic abilities hidden as you fight for the right side of the chi war. With the sorcerer's versatility comes some additional complexity. You will want to own a copy of the book to play it to the fullest."
+
+  - name: "Spy"
+    quote: "With all the torture these days, getting captured is Plan B. But it's still a plan."
+    stats:
+      guns: 13
+      defense: 14
+      toughness: 7
+      fortune: 7
+      speed: 7
+    abilities:
+      - name: "Integrated Training"
+        description: "+1 to Guns if your previous attack used Martial Arts. +1 to Martial Arts if your previous attack used Guns."
+      - name: "Scoped Out"
+        description: "+1 to Guns, Martial Arts and Defense vs. characters you have exchanged dialogue with in a previous time or location."
+    weapons:
+      - name: "Unarmed"
+        damage: 7
+      - name: "Walther PPK"
+        damage: 9
+        concealment: 1
+        reload: 4
+    skills:
+      - "Backup Attack: Martial Arts 14"
+      - "Deceit 15"
+      - "Fix-It 11"
+      - "Gambling 12"
+      - "Info: Fashion 15"
+      - "Info: Food and Drink 14"
+      - "Info: Geopolitics 12"
+      - "Intrusion 12"
+      - "Seduction 13"
+    juncture: "Modern"
+    wealth: "Rich"
+    description: "You used to work for an intelligence agency. There are any number of reasons why you might have left, melodramatic hooks all of them. Maybe you were squeezed out by the machinations of shady new superiors. (Did you overhear them saying something about a Lodge, or a Wheel?) Maybe you left under a cloud, after making a tragic mistake that led to the deaths of those under you. Or maybe you don't remember who you used to be and why those assassins keep chasing you, but are determined to find out. Your retirement, happy or otherwise, comes to an abrupt end when the shadow world closes in on you again—this time revealing the strange outlines of the chi war. What it offers, more than the chance to put those mothballed skills back into the field, is a feeling that may be new to you—that this time, you'll know why you're fighting, and that the fight is just."
+
+  - name: "Supernatural Creature"
+    quote: "Arrrhhhhh!"
+    stats:
+      creature: 13
+      defense: 13
+      toughness: 7
+      magic: 8
+      speed: 6
+    abilities:
+      - name: "Natural Weapon"
+        description: "Your Creature Powers attacks occur at close range, striking your opponent with spines, claws, jagged teeth or another monstrous body part of your choice, dealing 13 damage."
+      - name: "Amphibian"
+        description: "You can easily move, breathe and fight underwater."
+      - name: "Conditional Escalation"
+        description: "You gain +2 to Creature Powers if any one of your allies has accrued 25 or more Wound Points, or +3 to Creature Powers if any of them are down."
+      - name: "Regeneration"
+        description: "Your Wound Point total decreases by 2 at the beginning of each sequence."
+      - name: "Transformation I"
+        description: "You may change back and forth from your true form to that of an ordinary-looking human being. Describe the one human form you can assume. While in this form you can't access your other creature powers. In combat, it takes you 3 shots to transform. In any other scene, it takes about twenty seconds."
+      - name: "Inhuman Physiology"
+        description: "The Medicine skill works to heal you only if the doctor using it was trained in the Ancient juncture or Netherworld."
+      - name: "Gruesome Appearance"
+        description: "When in monstrous form, you gain the Intimidate skill at an Action Value of 12."
+    weapons:
+      - name: "Unarmed"
+        damage: 7
+      - name: "Natural Weapon"
+        damage: 13
+    juncture: "Ancient"
+    wealth: "Poor"
+    description: "You are a being from the Underworld, a mystic realm haunted by demons and the spirits of the dead. You are yourself a being that human would describe as a monster or evil spirit, but you are not evil, for even the denizens of the Underworld are capable of exercising free will and doing right instead of wrong. You realize, however, that almost none of your kindred bother to make this effort. They live to terrorize and to inflict pain. You did, too, until you were summoned and dominated by the cruel eunuch sorcerers of the Eaters of the Lotus. At first, you followed their orders—you had no choice. Shackled by mystic bonds. But eventually you were able, through intense mental effort, to break free of their influence. You saw around you people who lived in fear, people whose lives were seen as mere playthings by your Lotus masters. And although most demons would never even think such thoughts, you decided that you would atone for the wrongs you had done, and destroy those who had forced you to do them. Supernatural Creatures vary widely in appearance, but all are horrific. Some appear as decomposed human corpses, others as grotesque ogres. Others show no resemblance to the humanoid form. Although you may now fight for the forces of good, your alarming features prevent you from ever passing as a normal member of society."
+
+  - name: "Sword Master"
+    quote: "I have nothing left but this blade. This twenty-four inches of tamahagane steel."
+    stats:
+      martial_arts: 14
+      defense: 14
+      toughness: 6
+      chi: 6
+      speed: 9
+    abilities:
+      - name: "Rippling Death"
+        description: "Spend 1 Chi and 2 shots to gain +2 Martial Arts vs. multiple opponents until end of sequence."
+      - name: "Blooded Blade"
+        description: "Add +1 to Damage Value with swords for each mook you drop. The bonus is reduced by half (round up) each time you hit a named foe and lasts until the end of the fight."
+      - name: "Backslash"
+        description: "When you hit a named foe, spend 1 Chi as an interrupt and roll a die. Odd: drop 1 mook. Even: drop 2 mooks."
+      - name: "Bullet Deflection"
+        description: "When you are missed by a named foe's ranged attack while Dodging, drop 1 mook."
+      - name: "Water Sword"
+        description: "When you hit a named foe, a number of named foes equal to your Swerve lose 1 shot each, if your Swerve is more than 1."
+    weapons:
+      - name: "Unarmed"
+        damage: 7
+      - name: "Sword"
+        damage: 10
+        concealment: 5
+    skills:
+      - "Gambling 11"
+      - "Info: Smithing and Metallurgy 14"
+      - "Intimidation 13"
+    juncture: "Past"
+    wealth: "Poor"
+    description: "Once you enjoyed status, respect, and honor, as a true warrior. You cared only for the practice field, for the art of the sword. You trained until your blade became an extension of your being. Only in those elongated split seconds when you dueled against a foe, when the time stolen for an intake of breath could mean the difference between life and death, did you feel truly alive. That was a long time ago. Before you were betrayed, before you were forced to confront the emptiness of your warrior ethos. You might have believed it, but your superiors never did. And when the bad times came, they discarded you, without a second thought. Since then you've wandered the earth, seeking a fight. Not a fight, the fight. The one that will once more give your life meaning."
+
+  - name: "Thief"
+    quote: "I was thinking of myself as retired. But then the head of that museum came on TV and said that their defenses were foolproof, that no one could get to the Guildenstern Diamond."
+    stats:
+      martial_arts: 13
+      defense: 16
+      toughness: 6
+      fortune: 6
+      speed: 9
+    abilities:
+      - name: "Quicksilver Dice"
+        description: "If you get hit while Dodging, you regain any Fortune spent on the Dodge, and your next attack action costs only 1 shot."
+      - name: "Fast Learner"
+        description: "+1 Defense against any opponent who has already hit you during the current sequence."
+      - name: "Hightailing It"
+        description: "+2 Driving when you are the pursued in a vehicle chase."
+    weapons:
+      - name: "Unarmed"
+        damage: 7
+      - name: "Telescoping Baton"
+        damage: 10
+    gear:
+      - "1956 Austin Healey: Acceleration 9; Handling 7 (Squeal 9); Frame 6 (Crunch 8)"
+    skills:
+      - "Backup Attack: Guns 12"
+      - "Driving 12"
+      - "Deceit 12"
+      - "Info: Art and Antiques 15"
+      - "Info: Gems and Jewels 15"
+      - "Intrusion 15"
+    juncture: "Modern (+ Ancient, Past)"
+    wealth: "Rich"
+    description: "You are a master thief. Although you make your living taking things from their legal owners, you don't do so primarily for the money. Sure, you live in luxury from the proceeds of your past misdeeds. But it's the challenge that keeps your ambitions sharp. You operate through careful, methodical research, by assembling every available scrap of information about your target. When you go in, you have every angle planned out to the millisecond. You also plan for something to go wrong. That's when the adrenaline kicks in, when you have to think fast and get it right the first time. When the alarms are screaming and the footfalls of heavily-armed guards are rushing your way, when the distance to your getaway vehicle seems impossibly vast in the moment you have left to you—that's the moment you live for. That's not mere money is just gravy. Still, there's a thought nagging at the back of your skull that maybe all of this thrill-seeking is just a little bit meaningless—maybe even adolescent. Lately you've been thinking about leaving a positive mark on the world. Robbing from the rich and giving to the poor, or something like that. Is there a way to use your skills for the greater good?"
+
+  - name: "Transformed Crab"
+    quote: "I already told you to back off."
+    stats:
+      martial_arts: 13
+      defense: 14
+      toughness: 8
+      chi: 8
+      speed: 6
+    abilities:
+      - name: "Stalky Eyes"
+        description: "+2 Defense before your first shot in a sequence."
+      - name: "Pincer"
+        description: "On a successful bare-handed Martial Arts attack, you deal 11 damage; shot cost of target's next attack increases by 1. Latter effect not cumulative with previous Pincer attacks."
+      - name: "Scuttle"
+        description: "+2 to Martial Arts vs featured foes and bosses, if your previous attack was against a different featured foe or boss than the one you're attacking now."
+      - name: "Shell I"
+        description: "Spend 1 Chi and 3 shots; gain +2 Toughness until next keyframe."
+      - name: "Crusty Defender"
+        description: "+2 to Martial Arts and +1 to Defense when defending a feng shui site from attack."
+      - name: "Knuckle Dependent"
+        description: "-2 damage on Martial Arts weapons attacks."
+    weapons:
+      - name: "Unarmed"
+        damage: 7
+      - name: "Pincer (Martial Arts)"
+        damage: 11
+    skills:
+      - "Backup Attack: Guns 10"
+      - "Fix-It 11"
+      - "Intimidate 13"
+    juncture: "Modern (+ any other)"
+    wealth: "Working Stiff"
+    description: "In the Ancient juncture, animal spirits from the supernatural realm between being and non-being sometimes yearn for the vividness of mortal existence, and through innate magic assume human form. They face not only the dangers brought by strange and powerful human emotions, but the efforts of exorcist monks, who seek to strip them of their new identities, sending them howling back to the spirit world. Sometime between then and the Past, transformed animals banded together to prevent them from doing this. By slowly leaching magic from the world, they made it much harder for exorcists and sorcerers to banish, control, or revert them to their old status as intelligent snakes, foxes, tortoises, spiders, and so on. Once established, this alliance sought to protect itself by amassing political power. By the 19th century, these so-called Ascended secretly rule the world, as they continue to do in Modern times. Depending on when you were born, you might have literally changed from an animal into a human, or have such an individual way back in your family lineage. You may or may not know any of the secretive transformed animals of the Ascended, who fight the geomantic battle to keep magic difficult in the Past and Modern eras. Somehow destiny throws you into the chi war not on their side, but with the anarchic, freedom-loving Dragons. Perhaps that's because you carry the blood of their namesake—the mightiest of Chinese supernatural creatures, the dragon. Knowing, imperious, confident, you stride through humanity's ranks mantled in good fortune. Driven by your melodramatic hook, you're willing to risk all you've achieved and accumulated for victory in the chi war."
+
+  - name: "Transformed Dragon"
+    quote: "Don't hate me for being awesome."
+    stats:
+      martial_arts: 13
+      defense: 13
+      toughness: 7
+      chi: 7
+      speed: 7
+    abilities:
+      - name: "Innate Superiority"
+        description: "Your unarmed Martial Arts Damage equals the Damage value of the foe you're hitting, +1."
+      - name: "Omnicompetent"
+        description: "If no other PC present for the current session has a value of 13 or more in a given skill, spend 1 Chi to gain a value of 15 in that skill until end of session."
+      - name: "Quick Study"
+        description: "Spend 1 Chi to gain a schtick possessed by a PC whose player is absent. When using this schtick, you can spend your Chi points in place of any other Fortune sub-type. Each time you use a Sorcery or Creature Powers schtick that requires a check or expenditure, you gain 1 Reversion Point."
+      - name: "Fatal Reversion"
+        description: "Your dragon form can only survive in magical environments. If you are reverted to dragon form in a magic-hostile juncture, you die."
+    weapons:
+      - name: "Unarmed"
+        damage: 7
+    gear:
+      - "Porsche 918 Spyder: Acceleration 9; Handling 7 (Squeal 9); Frame 6 (Crunch 8)"
+    skills:
+      - "Backup Attack: Guns 12"
+    juncture: "Modern (+ any other)"
+    wealth: "Rich"
+    description: "In Ancient days, animal spirits from the supernatural realm between being and non-being sometimes yearn for the vividness of mortal existence, and through innate magic assume human form. They face not only the dangers brought by strange and powerful human emotions, but the efforts of exorcist monks, who seek to strip them of their new identities, sending them howling back to the spirit world. Sometime between then and the Past, transformed animals banded together to prevent them from doing this. By slowly leaching magic from the world, they made it much harder for exorcists and sorcerers to banish, control, or revert them to their old status as intelligent snakes, foxes, tortoises, spiders, and so on. Once established, this alliance sought to protect itself by amassing political power. By the 19th century, these so-called Ascended secretly rule the world, as they continue to do in Modern times. Depending on when you were born, you might have literally changed from an animal into a human, or have such an individual way back in your family lineage. You may or may not know any of the secretive transformed animals of the Ascended, who fight the geomantic battle to keep magic difficult in the Past and Modern eras. Somehow destiny throws you into the chi war not on their side, but with the anarchic, freedom-loving Dragons. Perhaps that's because you carry the blood of their namesake—the mightiest of Chinese supernatural creatures, the dragon. Knowing, imperious, confident, you stride through humanity's ranks mantled in good fortune. Driven by your melodramatic hook, you're willing to risk all you've achieved and accumulated for victory in the chi war."
+
+  - name: "Two-Fisted Archaeologist"
+    quote: "Your idol's a replica, Ginet. I switched them back in Singapore."
+    stats:
+      martial_arts: 13
+      defense: 13
+      toughness: 7
+      fortune: 8
+      speed: 6
+    abilities:
+      - name: "World Heritage Badass"
+        description: "+1 to Martial Arts when fighting at a historic or archaeological site, or for possession of a historical artifact."
+      - name: "Dogged"
+        description: "Gain a bonus to Toughness equal to your Impairment."
+      - name: "Counter Ritual"
+        description: "Spend 1 Fortune and 3 shots to add 3 to all Difficulties for a specified Sorcery schtick, Creature Power, or magical relic, until end of fight."
+      - name: "Whip Master"
+        description: "At the beginning of a sequence, if you are fighting with a whip, choose to gain either +1 Martial Arts or +1 Defense until end of sequence. Martial Arts bonus increases to +2 for stunts. You lose the bonus if you switch to another weapon."
+    weapons:
+      - name: "Unarmed"
+        damage: 7
+      - name: "Whip"
+        damage: 10
+        note: "* damage 8 if wielded by others"
+      - name: "Smith & Wesson M1917 Autoloader"
+        damage: 10
+        concealment: 2
+        reload: 6
+    skills:
+      - "Backup Attack: Guns 12"
+      - "Detective 11"
+      - "Info: History 15"
+    juncture: "Modern (+ Past)"
+    wealth: "Working Stiff"
+    description: "The past is dangerous. Your years as a field historian have proved that time and time again. Magic isn't mere myth—it used to be stronger, and pockets of its power reside in the iconic treasures your museum trustees back home most want you to find and bring back for their display cases. Through bitter experience you've learned that some of these are best stored in secure facilities, where the chaos they'd unleash cannot threaten humanity. By seeking these items you've nosed your way into a covert battle waged with history as its prize, and knowledge of that history a key weapon. Your rivals have ranged from unscrupulous profiteers to hallucinogen-snorting cultists to reactionary terrorist groups. The archaeological sites you've dedicated your professional life to resonate with mystical energies, making them strategic prizes in that fight. To protect both innocent lives and the precious heritage of these sites, you're about to join the chi war."
+
+junctures:
+  - "Ancient"
+  - "Past" 
+  - "Modern"
+  - "Future"
+  - "Netherworld"
+
+wealth_levels:
+  - "Poor"
+  - "Working Stiff"
+  - "Rich"
+
+game_info:
+  title: "Feng Shui 2"
+  publisher: "Atlas Games"
+  description: "Action movie RPG featuring time-traveling martial artists"

@@ -20,6 +20,7 @@ class Fight < ApplicationRecord
   has_many :image_positions, as: :positionable, dependent: :destroy
 
   validates :name, presence: true, uniqueness: { scope: :campaign_id }
+  validate :associations_belong_to_same_campaign
 
   scope :active, -> { where(active: true) }
 
@@ -100,5 +101,21 @@ class Fight < ApplicationRecord
     Rails.logger.info "Broadcasting to #{channel} with payload: #{payload.inspect}"
     result = ActionCable.server.broadcast(channel, payload)
     Rails.logger.info "Broadcast result: #{result.inspect} (number of subscribers)"
+  end
+
+  private
+
+  def associations_belong_to_same_campaign
+    return unless campaign_id.present?
+
+    # Check characters through shots
+    if characters.any? && characters.exists?(["campaign_id != ?", campaign_id])
+      errors.add(:characters, "must all belong to the same campaign")
+    end
+
+    # Check vehicles through shots
+    if vehicles.any? && vehicles.exists?(["campaign_id != ?", campaign_id])
+      errors.add(:vehicles, "must all belong to the same campaign")
+    end
   end
 end
