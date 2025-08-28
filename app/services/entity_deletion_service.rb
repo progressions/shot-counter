@@ -7,12 +7,12 @@ class EntityDeletionService
 
   def perform_deletion(entity, force: false)
     if can_delete?(entity, force: force)
-      handle_associations(entity) if force
-      
-      if entity.destroy!
+      ActiveRecord::Base.transaction do
+        handle_associations(entity) if force
+        
+        # Use delete instead of destroy to skip callbacks since we've already handled associations
+        entity.delete
         { success: true, message: 'Entity successfully deleted' }
-      else
-        { success: false, error: { message: 'Failed to delete entity' } }
       end
     else
       constraints = check_constraints(entity)
@@ -26,7 +26,9 @@ class EntityDeletionService
       }
     end
   rescue => e
-    { success: false, error: { message: e.message } }
+    Rails.logger.error "Deletion failed: #{e.message}"
+    Rails.logger.error e.backtrace.join("\n")
+    { success: false, error: { message: "Failed to delete: #{e.message}" } }
   end
 
   def can_delete?(entity, force: false)
