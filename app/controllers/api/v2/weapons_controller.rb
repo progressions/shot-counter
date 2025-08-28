@@ -246,19 +246,9 @@ class Api::V2::WeaponsController < ApplicationController
   end
 
   def destroy
-    if @weapon.carry_ids.any? && !params[:force]
-      render json: { errors: { carries: true  } }, status: 400 and return
-    end
-
-    if @weapon.carry_ids.any? && params[:force]
-      @weapon.carries.destroy_all
-    end
-
-    if @weapon.destroy!
-      render :ok
-    else
-      render json: { errors: @weapon.errors }, status: 400
-    end
+    service = WeaponDeletionService.new
+    result = service.delete(@weapon, force: params[:force].present?)
+    handle_deletion_result(result)
   end
 
   def remove_image

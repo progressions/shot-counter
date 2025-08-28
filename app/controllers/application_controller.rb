@@ -40,6 +40,19 @@ class ApplicationController < ActionController::API
     end
   end
 
+  def handle_deletion_result(result)
+    if result[:success]
+      render json: {}, status: :ok
+    else
+      # Return standardized error response with 422 status for constraint violations
+      if result[:error][:error_type] == 'associations_exist'
+        render json: result[:error], status: :unprocessable_entity
+      else
+        render json: result[:error], status: :bad_request
+      end
+    end
+  end
+
   def redis
     @redis ||= Redis.new
   end

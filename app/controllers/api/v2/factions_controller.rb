@@ -170,24 +170,9 @@ class Api::V2::FactionsController < ApplicationController
 
   def destroy
     @faction = current_campaign.factions.find(params[:id])
-    if @faction.character_ids.any? && !params[:force]
-      render json: { errors: { characters: true } }, status: 400 and return
-    end
-    if @faction.vehicle_ids.any? && !params[:force]
-      render json: { errors: { vehicles: true } }, status: 400 and return
-    end
-    if params[:force]
-      @faction.characters.update_all(faction_id: nil)
-      @faction.vehicles.update_all(faction_id: nil)
-      @faction.parties.update_all(faction_id: nil)
-      @faction.sites.update_all(faction_id: nil)
-      @faction.junctures.update_all(faction_id: nil)
-    end
-    if @faction.destroy!
-      render :ok
-    else
-      render json: { errors: @faction.errors }, status: 400
-    end
+    service = FactionDeletionService.new
+    result = service.delete(@faction, force: params[:force].present?)
+    handle_deletion_result(result)
   end
 
   def remove_image

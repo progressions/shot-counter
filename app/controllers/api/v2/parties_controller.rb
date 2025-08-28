@@ -210,19 +210,9 @@ class Api::V2::PartiesController < ApplicationController
   end
 
   def destroy
-    if @party.membership_ids.any? && !params[:force]
-      render json: { errors: { memberships: true  } }, status: 400 and return
-    end
-
-    if @party.membership_ids.any? && params[:force]
-      @party.memberships.destroy_all
-    end
-
-    if @party.destroy!
-      render :ok
-    else
-      render json: { errors: @party.errors }, status: 400
-    end
+    service = PartyDeletionService.new
+    result = service.delete(@party, force: params[:force].present?)
+    handle_deletion_result(result)
   end
 
   def remove_image

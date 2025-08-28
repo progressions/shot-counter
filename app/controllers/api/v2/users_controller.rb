@@ -246,18 +246,9 @@ class Api::V2::UsersController < ApplicationController
   end
 
   def destroy
-    if @user.characters.any? && !params[:force]
-      render json: { errors: { characters: true } }, status: 400 and return
-    end
-    if params[:force]
-      @user.characters.update_all(user_id: nil)
-      @user.campaigns.update_all(user_id: nil)
-    end
-    if @user.destroy!
-      render :ok
-    else
-      render json: { errors: @user.errors }, status: 400
-    end
+    service = UserDeletionService.new
+    result = service.delete(@user, force: params[:force].present?)
+    handle_deletion_result(result)
   end
 
   def remove_image

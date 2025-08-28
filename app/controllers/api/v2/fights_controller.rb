@@ -166,8 +166,9 @@ end
   end
 
   def destroy
-    @fight.destroy
-    render :ok
+    service = FightDeletionService.new
+    result = service.delete(@fight, force: params[:force].present?)
+    handle_deletion_result(result)
   end
 
   def remove_image

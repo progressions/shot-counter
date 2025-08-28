@@ -187,19 +187,9 @@ class Api::V2::SitesController < ApplicationController
 
   def destroy
     @site = current_campaign.sites.find(params[:id])
-    if @site.attunement_ids.any? && !params[:force]
-      render json: { errors: { attunements: true  } }, status: 400 and return
-    end
-
-    if @site.attunement_ids.any? && params[:force]
-      @site.attunements.destroy_all
-    end
-
-    if @site.destroy!
-      render :ok
-    else
-      render json: { errors: @site.errors }, status: 400
-    end
+    service = SiteDeletionService.new
+    result = service.delete(@site, force: params[:force].present?)
+    handle_deletion_result(result)
   end
 
   def remove_image

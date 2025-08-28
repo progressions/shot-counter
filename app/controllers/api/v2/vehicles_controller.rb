@@ -219,11 +219,9 @@ class Api::V2::VehiclesController < ApplicationController
   end
 
   def destroy
-    if @vehicle.destroy!
-      render :ok
-    else
-      render json: { errors: @vehicle.errors }, status: 400
-    end
+    service = VehicleDeletionService.new
+    result = service.delete(@vehicle, force: params[:force].present?)
+    handle_deletion_result(result)
   end
 
   def archetypes

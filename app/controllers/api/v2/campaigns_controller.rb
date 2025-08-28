@@ -195,17 +195,7 @@ class Api::V2::CampaignsController < ApplicationController
     # Use the new CampaignDeletionService for unified response handling
     service = CampaignDeletionService.new
     result = service.delete(@campaign, force: params[:force].present?)
-    
-    if result[:success]
-      render json: {}, status: :ok
-    else
-      # Return standardized error response with 422 status for constraint violations
-      if result[:error][:error_type] == 'associations_exist'
-        render json: result[:error], status: :unprocessable_entity
-      else
-        render json: result[:error], status: :bad_request
-      end
-    end
+    handle_deletion_result(result)
   end
 
   def current

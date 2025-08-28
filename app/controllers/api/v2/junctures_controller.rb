@@ -182,23 +182,9 @@ class Api::V2::JuncturesController < ApplicationController
 
   def destroy
     @juncture = current_campaign.junctures.find(params[:id])
-    if @juncture.character_ids.any? && !params[:force]
-      render json: { errors: { associations: true } }, status: 400 and return
-    end
-    if @juncture.vehicle_ids.any? && !params[:force]
-      render json: { errors: { associations: true } }, status: 400 and return
-    end
-    if params[:force]
-      @juncture.characters.update_all(juncture_id: nil)
-      @juncture.vehicles.update_all(juncture_id: nil)
-      @juncture.parties.update_all(juncture_id: nil)
-      @juncture.sites.update_all(juncture_id: nil)
-    end
-    if @juncture.destroy!
-      render :ok
-    else
-      render json: { errors: @juncture.errors }, status: 400
-    end
+    service = JunctureDeletionService.new
+    result = service.delete(@juncture, force: params[:force].present?)
+    handle_deletion_result(result)
   end
 
   def remove_image

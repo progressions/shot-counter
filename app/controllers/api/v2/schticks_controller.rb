@@ -266,20 +266,9 @@ class Api::V2::SchticksController < ApplicationController
 
   def destroy
     @schtick = current_campaign.schticks.find(params[:id])
-
-    if @schtick.character_schtick_ids.any? && !params[:force]
-      render json: { errors: { characters: true  } }, status: 400 and return
-    end
-
-    if @schtick.character_schtick_ids.any? && params[:force]
-      @schtick.character_schticks.destroy_all
-    end
-
-    if @schtick.destroy!
-      render :ok
-    else
-      render json: { errors: @schtick.errors }, status: 400
-    end
+    service = SchtickDeletionService.new
+    result = service.delete(@schtick, force: params[:force].present?)
+    handle_deletion_result(result)
   end
 
   private

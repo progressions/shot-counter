@@ -229,10 +229,9 @@ end
   end
 
   def destroy
-    @character.carries.destroy_all
-    @character.memberships.destroy_all
-    @character.destroy!
-    render json: { message: "Character deleted successfully" }, status: :ok
+    service = CharacterDeletionService.new
+    result = service.delete(@character, force: params[:force].present?)
+    handle_deletion_result(result)
   end
 
   def duplicate
