@@ -342,6 +342,27 @@ RSpec.describe "Api::V2::Characters", type: :request do
         end
       end
     end
+
+    context "when updating active status" do
+      it "sets active to false" do
+        patch "/api/v2/characters/#{@brick.id}", params: { character: { active: false } }, headers: @headers
+        expect(response).to have_http_status(:success)
+        body = JSON.parse(response.body)
+        expect(body["active"]).to eq(false)
+        @brick.reload
+        expect(@brick.active).to eq(false)
+      end
+
+      it "sets active to true" do
+        @dead_guy.update!(active: false)
+        patch "/api/v2/characters/#{@dead_guy.id}", params: { character: { active: true } }, headers: @headers
+        expect(response).to have_http_status(:success)
+        body = JSON.parse(response.body)
+        expect(body["active"]).to eq(true)
+        @dead_guy.reload
+        expect(@dead_guy.active).to eq(true)
+      end
+    end
   end
 
   describe "GET /show" do

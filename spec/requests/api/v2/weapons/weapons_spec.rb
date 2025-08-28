@@ -198,6 +198,27 @@ RSpec.describe "Api::V2::Weapons", type: :request do
       expect(@beretta.concealment).to eq(1)
       expect(@beretta.reload_value).to eq(2)
     end
+
+    context "when updating active status" do
+      it "sets active to false" do
+        patch "/api/v2/weapons/#{@beretta.id}", params: { weapon: { active: false } }, headers: @headers
+        expect(response).to have_http_status(:success)
+        body = JSON.parse(response.body)
+        expect(body["active"]).to eq(false)
+        @beretta.reload
+        expect(@beretta.active).to eq(false)
+      end
+
+      it "sets active to true" do
+        @colt.update!(active: false)
+        patch "/api/v2/weapons/#{@colt.id}", params: { weapon: { active: true } }, headers: @headers
+        expect(response).to have_http_status(:success)
+        body = JSON.parse(response.body)
+        expect(body["active"]).to eq(true)
+        @colt.reload
+        expect(@colt.active).to eq(true)
+      end
+    end
   end
 
   describe "GET /show" do

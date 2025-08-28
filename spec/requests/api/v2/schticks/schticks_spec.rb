@@ -167,6 +167,27 @@ RSpec.describe "Api::V2::Schticks", type: :request do
       @fireball.reload
       expect(@fireball.image.attached?).to be_truthy
     end
+
+    context "when updating active status" do
+      it "sets active to false" do
+        patch "/api/v2/schticks/#{@fireball.id}", params: { schtick: { active: false } }, headers: @headers
+        expect(response).to have_http_status(:success)
+        body = JSON.parse(response.body)
+        expect(body["active"]).to eq(false)
+        @fireball.reload
+        expect(@fireball.active).to eq(false)
+      end
+
+      it "sets active to true" do
+        @blast.update!(active: false)
+        patch "/api/v2/schticks/#{@blast.id}", params: { schtick: { active: true } }, headers: @headers
+        expect(response).to have_http_status(:success)
+        body = JSON.parse(response.body)
+        expect(body["active"]).to eq(true)
+        @blast.reload
+        expect(@blast.active).to eq(true)
+      end
+    end
   end
 
   describe "GET /show" do

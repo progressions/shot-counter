@@ -187,7 +187,7 @@ class Api::V2::WeaponsController < ApplicationController
       weapon_data = weapon_params.to_h.symbolize_keys
     end
 
-    weapon_data.slice(:name, :description, :active)
+    weapon_data = weapon_data.slice(:name, :description, :damage, :concealment, :reload_value, :juncture, :mook_bonus, :category, :kachunk, :active)
 
     @weapon = current_campaign.weapons.new(weapon_data)
 
@@ -217,7 +217,7 @@ class Api::V2::WeaponsController < ApplicationController
     else
       weapon_data = weapon_params.to_h.symbolize_keys
     end
-    weapon_data = weapon_data.slice(:name, :description, :damage, :concealment, :reload_value, :juncture, :mook_bonus, :category, :kachunk)
+    weapon_data = weapon_data.slice(:name, :description, :damage, :concealment, :reload_value, :juncture, :mook_bonus, :category, :kachunk, :active)
 
     # Handle image attachment if present
     if params[:image].present?
@@ -284,7 +284,7 @@ class Api::V2::WeaponsController < ApplicationController
   def weapon_params
     params.require(:weapon).permit(:name,
      :description, :damage, :concealment, :reload_value, :juncture, :mook_bonus, :category,
-     :kachunk, :image)
+     :kachunk, :active, :image)
   end
 
   def pagination_meta(object)

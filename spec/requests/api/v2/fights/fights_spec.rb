@@ -194,6 +194,27 @@ RSpec.describe "Api::V2::Fights", type: :request do
         @brawl.reload
         expect(@brawl.image.attached?).to be_truthy
       end
+
+      context "when updating active status" do
+        it "sets active to false" do
+          patch "/api/v2/fights/#{@brawl.id}", params: { fight: { active: false } }, headers: @gamemaster_headers
+          expect(response).to have_http_status(:ok)
+          body = JSON.parse(response.body)
+          expect(body["active"]).to eq(false)
+          @brawl.reload
+          expect(@brawl.active).to eq(false)
+        end
+
+        it "sets active to true" do
+          @skirmish.update!(active: false)
+          patch "/api/v2/fights/#{@skirmish.id}", params: { fight: { active: true } }, headers: @gamemaster_headers
+          expect(response).to have_http_status(:ok)
+          body = JSON.parse(response.body)
+          expect(body["active"]).to eq(true)
+          @skirmish.reload
+          expect(@skirmish.active).to eq(true)
+        end
+      end
     end
 
     context "when fight does not exist" do

@@ -236,7 +236,7 @@ class Api::V2::SchticksController < ApplicationController
     else
       schtick_data = schtick_params.to_h.symbolize_keys
     end
-    schtick_data = schtick_data.slice(:name, :description, :category, :path, :color, :prerequisite_id)
+    schtick_data = schtick_data.slice(:name, :description, :category, :path, :color, :prerequisite_id, :active)
 
     # Handle image attachment if present
     if params[:image].present?
@@ -289,7 +289,7 @@ class Api::V2::SchticksController < ApplicationController
   end
 
   def schtick_params
-    params.require(:schtick).permit(:name, :description, :category, :path, :color, :image_url, :prerequisite_id)
+    params.require(:schtick).permit(:name, :description, :category, :path, :color, :image_url, :prerequisite_id, :active)
   end
 
   def sort_order

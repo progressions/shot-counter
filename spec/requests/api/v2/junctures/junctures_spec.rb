@@ -193,6 +193,27 @@ RSpec.describe "Api::V2::Junctures", type: :request do
       @ancient.reload
       expect(@ancient.characters).not_to include(@brick)
     end
+
+    context "when updating active status" do
+      it "sets active to false" do
+        patch "/api/v2/junctures/#{@modern.id}", params: { juncture: { active: false } }, headers: @headers
+        expect(response).to have_http_status(:success)
+        body = JSON.parse(response.body)
+        expect(body["active"]).to eq(false)
+        @modern.reload
+        expect(@modern.active).to eq(false)
+      end
+
+      it "sets active to true" do
+        @inactive_juncture.update!(active: false)
+        patch "/api/v2/junctures/#{@inactive_juncture.id}", params: { juncture: { active: true } }, headers: @headers
+        expect(response).to have_http_status(:success)
+        body = JSON.parse(response.body)
+        expect(body["active"]).to eq(true)
+        @inactive_juncture.reload
+        expect(@inactive_juncture.active).to eq(true)
+      end
+    end
   end
 
   describe "GET /show" do
