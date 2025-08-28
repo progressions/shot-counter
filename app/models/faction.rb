@@ -14,6 +14,7 @@ class Faction < ApplicationRecord
   has_one_attached :image
 
   validates :name, presence: true, uniqueness: { scope: :campaign_id }
+  validate :associations_belong_to_same_campaign
   after_update :broadcast_campaign_update
 
   def as_v1_json(args = {})
@@ -35,4 +36,36 @@ class Faction < ApplicationRecord
     }
   end
 
+
+  private
+
+  def associations_belong_to_same_campaign
+    return unless campaign_id.present?
+
+    # Check characters
+    if characters.any? && characters.exists?(["campaign_id != ?", campaign_id])
+      errors.add(:characters, "must all belong to the same campaign")
+    end
+
+    # Check vehicles
+    if vehicles.any? && vehicles.exists?(["campaign_id != ?", campaign_id])
+      errors.add(:vehicles, "must all belong to the same campaign")
+    end
+
+    # Check parties
+    if parties.any? && parties.exists?(["campaign_id != ?", campaign_id])
+      errors.add(:parties, "must all belong to the same campaign")
+    end
+
+    # Check sites
+    if sites.any? && sites.exists?(["campaign_id != ?", campaign_id])
+      errors.add(:sites, "must all belong to the same campaign")
+    end
+
+    # Check junctures
+    if junctures.any? && junctures.exists?(["campaign_id != ?", campaign_id])
+      errors.add(:junctures, "must all belong to the same campaign")
+    end
+
+  end
 end

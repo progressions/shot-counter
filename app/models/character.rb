@@ -97,6 +97,7 @@ class Character < ApplicationRecord
 
   validates :name, presence: true, uniqueness: { scope: :campaign_id, message: "has already been taken" }
   validate :new_owner_is_campaign_member, on: :update, if: :user_id_changed?
+  validate :associations_belong_to_same_campaign
 
   scope :active, -> { where(active: true) }
 
@@ -428,6 +429,45 @@ class Character < ApplicationRecord
     
     unless campaign.users.include?(user)
       errors.add(:user_id, "must be a member of the campaign")
+    end
+  end
+
+  def associations_belong_to_same_campaign
+    return unless campaign_id.present?
+
+    # Check faction
+    if faction_id.present? && faction && faction.campaign_id != campaign_id
+      errors.add(:faction, "must belong to the same campaign")
+    end
+
+    # Check juncture
+    if juncture_id.present? && juncture && juncture.campaign_id != campaign_id
+      errors.add(:juncture, "must belong to the same campaign")
+    end
+
+    # Check schticks
+    if schticks.any? && schticks.exists?(["campaign_id != ?", campaign_id])
+      errors.add(:schticks, "must all belong to the same campaign")
+    end
+
+    # Check weapons
+    if weapons.any? && weapons.exists?(["campaign_id != ?", campaign_id])
+      errors.add(:weapons, "must all belong to the same campaign")
+    end
+
+    # Check parties
+    if parties.any? && parties.exists?(["campaign_id != ?", campaign_id])
+      errors.add(:parties, "must all belong to the same campaign")
+    end
+
+    # Check sites
+    if sites.any? && sites.exists?(["campaign_id != ?", campaign_id])
+      errors.add(:sites, "must all belong to the same campaign")
+    end
+
+    # Check fights (through shots)
+    if fights.any? && fights.exists?(["campaign_id != ?", campaign_id])
+      errors.add(:fights, "must all belong to the same campaign")
     end
   end
 end

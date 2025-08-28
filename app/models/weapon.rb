@@ -10,7 +10,9 @@ class Weapon < ApplicationRecord
   has_one_attached :image
 
   validates :name, presence: true, uniqueness: { scope: :campaign_id }
+  validate :associations_belong_to_same_campaign
   validates :damage, presence: true
+  validate :associations_belong_to_same_campaign
   after_update :broadcast_campaign_update
 
   def as_v1_json(args = {})
@@ -27,5 +29,17 @@ class Weapon < ApplicationRecord
       kachunk: kachunk,
       image_url: image_url
     }
+  end
+
+  private
+
+  def associations_belong_to_same_campaign
+    return unless campaign_id.present?
+
+    # Check characters
+    if characters.any? && characters.exists?(["campaign_id != ?", campaign_id])
+      errors.add(:characters, "must all belong to the same campaign")
+    end
+
   end
 end

@@ -14,6 +14,7 @@ class Party < ApplicationRecord
   has_many :image_positions, as: :positionable, dependent: :destroy
 
   validates :name, presence: true, uniqueness: { scope: :campaign_id }
+  validate :associations_belong_to_same_campaign
 
   def as_v1_json(options = {})
     {
@@ -45,4 +46,26 @@ class Party < ApplicationRecord
     }
   end
 
+
+  private
+
+  def associations_belong_to_same_campaign
+    return unless campaign_id.present?
+
+    # Check characters
+    if characters.any? && characters.exists?(["campaign_id != ?", campaign_id])
+      errors.add(:characters, "must all belong to the same campaign")
+    end
+
+    # Check vehicles
+    if vehicles.any? && vehicles.exists?(["campaign_id != ?", campaign_id])
+      errors.add(:vehicles, "must all belong to the same campaign")
+    end
+
+    # Check faction
+    if faction_id.present? && faction && faction.campaign_id != campaign_id
+      errors.add(:faction, "must belong to the same campaign")
+    end
+
+  end
 end
