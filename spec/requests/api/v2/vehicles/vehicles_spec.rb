@@ -115,6 +115,27 @@ RSpec.describe "Api::V2::Vehicles", type: :request do
       expect(@car.name).to eq("Car")
       expect(@car.juncture_id).to eq(@ancient.id)
     end
+
+    context "when updating active status" do
+      it "sets active to false" do
+        patch "/api/v2/vehicles/#{@car.id}", params: { vehicle: { active: false } }, headers: @headers
+        expect(response).to have_http_status(:success)
+        body = JSON.parse(response.body)
+        expect(body["active"]).to eq(false)
+        @car.reload
+        expect(@car.active).to eq(false)
+      end
+
+      it "sets active to true" do
+        @bike.update!(active: false)
+        patch "/api/v2/vehicles/#{@bike.id}", params: { vehicle: { active: true } }, headers: @headers
+        expect(response).to have_http_status(:success)
+        body = JSON.parse(response.body)
+        expect(body["active"]).to eq(true)
+        @bike.reload
+        expect(@bike.active).to eq(true)
+      end
+    end
   end
 
   describe "GET /show" do

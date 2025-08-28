@@ -219,6 +219,27 @@ RSpec.describe "Api::V2::Parties", type: :request do
       @ascended_party.reload
       expect(@ascended_party.vehicles).not_to include(@tank)
     end
+
+    context "when updating active status" do
+      it "sets active to false" do
+        patch "/api/v2/parties/#{@dragons_party.id}", params: { party: { active: false } }, headers: @headers
+        expect(response).to have_http_status(:success)
+        body = JSON.parse(response.body)
+        expect(body["active"]).to eq(false)
+        @dragons_party.reload
+        expect(@dragons_party.active).to eq(false)
+      end
+
+      it "sets active to true" do
+        @inactive_team.update!(active: false)
+        patch "/api/v2/parties/#{@inactive_team.id}", params: { party: { active: true } }, headers: @headers
+        expect(response).to have_http_status(:success)
+        body = JSON.parse(response.body)
+        expect(body["active"]).to eq(true)
+        @inactive_team.reload
+        expect(@inactive_team.active).to eq(true)
+      end
+    end
   end
 
   describe "GET /show" do

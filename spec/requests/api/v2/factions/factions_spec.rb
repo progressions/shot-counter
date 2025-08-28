@@ -228,6 +228,27 @@ RSpec.describe "Api::V2::Factions", type: :request do
       @outlaws.reload
       expect(@outlaws.vehicles).not_to include(@tank)
     end
+
+    context "when updating active status" do
+      it "sets active to false" do
+        patch "/api/v2/factions/#{@dragons.id}", params: { faction: { active: false } }, headers: @headers
+        expect(response).to have_http_status(:success)
+        body = JSON.parse(response.body)
+        expect(body["active"]).to eq(false)
+        @dragons.reload
+        expect(@dragons.active).to eq(false)
+      end
+
+      it "sets active to true" do
+        @inactive_faction.update!(active: false)
+        patch "/api/v2/factions/#{@inactive_faction.id}", params: { faction: { active: true } }, headers: @headers
+        expect(response).to have_http_status(:success)
+        body = JSON.parse(response.body)
+        expect(body["active"]).to eq(true)
+        @inactive_faction.reload
+        expect(@inactive_faction.active).to eq(true)
+      end
+    end
   end
 
   describe "GET /show" do

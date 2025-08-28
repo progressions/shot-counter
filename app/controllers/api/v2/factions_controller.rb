@@ -115,7 +115,7 @@ class Api::V2::FactionsController < ApplicationController
       faction_data = faction_params.to_h.symbolize_keys
     end
 
-    faction_data = faction_data.slice(:name, :description, :character_ids, :party_ids, :site_ids, :juncture_ids, :vehicle_ids)
+    faction_data = faction_data.slice(:name, :description, :character_ids, :party_ids, :site_ids, :juncture_ids, :vehicle_ids, :active)
 
     @faction = current_campaign.factions.new(faction_data)
 
@@ -147,7 +147,7 @@ class Api::V2::FactionsController < ApplicationController
     else
       faction_data = faction_params.to_h.symbolize_keys
     end
-    faction_data = faction_data.slice(:name, :description, :character_ids, :party_ids, :site_ids, :juncture_ids, :vehicle_ids)
+    faction_data = faction_data.slice(:name, :description, :character_ids, :party_ids, :site_ids, :juncture_ids, :vehicle_ids, :active)
 
     # Handle image attachment if present
     if params[:image].present?
@@ -205,7 +205,7 @@ class Api::V2::FactionsController < ApplicationController
   end
 
   def faction_params
-    params.require(:faction).permit(:name, :description, :image, character_ids: [], party_ids: [], site_ids: [], juncture_ids: [], vehicle_ids: [])
+    params.require(:faction).permit(:name, :description, :active, :image, character_ids: [], party_ids: [], site_ids: [], juncture_ids: [], vehicle_ids: [])
   end
 
   def sort_order

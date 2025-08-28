@@ -161,6 +161,27 @@ RSpec.describe "Api::V2::Sites", type: :request do
       @dragons_hq.reload
       expect(@dragons_hq.image.attached?).to be_truthy
     end
+
+    context "when updating active status" do
+      it "sets active to false" do
+        patch "/api/v2/sites/#{@dragons_hq.id}", params: { site: { active: false } }, headers: @headers
+        expect(response).to have_http_status(:success)
+        body = JSON.parse(response.body)
+        expect(body["active"]).to eq(false)
+        @dragons_hq.reload
+        expect(@dragons_hq.active).to eq(false)
+      end
+
+      it "sets active to true" do
+        @bandit_hideout.update!(active: false)
+        patch "/api/v2/sites/#{@bandit_hideout.id}", params: { site: { active: true } }, headers: @headers
+        expect(response).to have_http_status(:success)
+        body = JSON.parse(response.body)
+        expect(body["active"]).to eq(true)
+        @bandit_hideout.reload
+        expect(@bandit_hideout.active).to eq(true)
+      end
+    end
   end
 
   describe "GET /show" do

@@ -237,6 +237,27 @@ RSpec.describe "Api::V2::Campaigns", type: :request do
         @campaign.reload
         expect(@campaign.image.attached?).to be_truthy
       end
+
+      context "when updating active status" do
+        it "sets active to false" do
+          patch "/api/v2/campaigns/#{@campaign.id}", params: { campaign: { active: false } }, headers: @gamemaster_headers
+          expect(response).to have_http_status(:success)
+          body = JSON.parse(response.body)
+          expect(body["active"]).to eq(false)
+          @campaign.reload
+          expect(@campaign.active).to eq(false)
+        end
+
+        it "sets active to true" do
+          @inactive_campaign.update!(active: false)
+          patch "/api/v2/campaigns/#{@inactive_campaign.id}", params: { campaign: { active: true } }, headers: @gamemaster_headers
+          expect(response).to have_http_status(:success)
+          body = JSON.parse(response.body)
+          expect(body["active"]).to eq(true)
+          @inactive_campaign.reload
+          expect(@inactive_campaign.active).to eq(true)
+        end
+      end
     end
 
     context "when user is admin" do
