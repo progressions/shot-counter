@@ -9,10 +9,12 @@ module Broadcastable
   end
 
   def broadcast_campaign_update
+    return if Thread.current[:disable_broadcasts]
     BroadcastCampaignUpdateJob.perform_later(self.class.name, id)
   end
 
   def broadcast_reload
+    return if Thread.current[:disable_broadcasts]
     Rails.logger.info "🔄 Broadcastable: #{self.class.name} (ID: #{id}) triggering reload broadcast for campaign_id: #{self.campaign_id}"
     BroadcastCampaignReloadJob.perform_later(self.class.name, self.campaign_id)
   end

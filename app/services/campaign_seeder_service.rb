@@ -27,6 +27,9 @@ class CampaignSeederService
 
       Rails.logger.info "Copying content from campaign #{source_campaign.name} to #{target_campaign.name}"
 
+      # Disable broadcasts during bulk seeding operations
+      Thread.current[:disable_broadcasts] = true
+      
       ActiveRecord::Base.transaction do
         # Copy schticks and weapons first so they exist when characters reference them
         duplicate_schticks(source_campaign, target_campaign)
@@ -51,11 +54,18 @@ class CampaignSeederService
       end
 
       Rails.logger.info "Successfully copied content to campaign #{target_campaign.name}"
+      
+      # Send a single reload broadcast after all content is copied
+      BroadcastCampaignReloadJob.perform_later("Campaign", target_campaign.id)
+      
       true
     rescue StandardError => e
       Rails.logger.error "Failed to copy campaign content: #{e.message}"
       Rails.logger.error e.backtrace.join("\n")
       false
+    ensure
+      # Re-enable broadcasts
+      Thread.current[:disable_broadcasts] = false
     end
 
     private
@@ -144,10 +154,18 @@ class CampaignSeederService
       
       Rails.logger.info "Duplicating #{schticks.count} schticks"
 
+      # Keep track of original to new mapping for prerequisites
+      original_to_new_mapping = {}
+      duplicated_schticks = []
+
       schticks.each do |schtick|
         duplicated_schtick = SchtickDuplicatorService.duplicate_schtick(schtick, target_campaign)
         
         if duplicated_schtick.save
+          # Track the mapping for prerequisite linking
+          original_to_new_mapping[schtick.id] = duplicated_schtick
+          duplicated_schticks << duplicated_schtick
+          
           # Apply associations including image positions
           SchtickDuplicatorService.apply_associations(duplicated_schtick)
           
@@ -157,6 +175,10 @@ class CampaignSeederService
           raise ActiveRecord::RecordInvalid, duplicated_schtick
         end
       end
+      
+      # Now link all the prerequisites after all schticks are created
+      SchtickDuplicatorService.link_prerequisites(duplicated_schticks, original_to_new_mapping)
+      Rails.logger.info "Linked prerequisites for duplicated schticks"
     end
 
     def duplicate_weapons(source_campaign, target_campaign)
