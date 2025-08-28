@@ -1,4 +1,7 @@
 Rails.application.routes.draw do
+  # Health check endpoint for Fly.io (must be public/unauthenticated)
+  get '/health', to: 'health#show'
+  
   # Mount ActionCable for WebSocket support
   mount ActionCable.server => '/cable'
   

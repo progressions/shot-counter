@@ -45,7 +45,7 @@ kill_timeout = "5s"
     timeout = "5s"
     grace_period = "10s"
     method = "GET"
-    path = "/api/v2/users/current"
+    path = "/health"
 
 [[vm]]
   memory = "1gb"
