@@ -336,7 +336,7 @@ RSpec.describe "Api::V2::Campaigns", type: :request do
         expect(response).to have_http_status(:ok)
         expect(Campaign.exists?(@other_campaign.id)).to be_falsey
         expect { @other_campaign.reload }.to raise_error(ActiveRecord::RecordNotFound)
-        expect(@other_character.reload.campaign_id).to be_nil
+        expect { @other_character.reload }.to raise_error(ActiveRecord::RecordNotFound)
       end
 
       it "returns an error for the current campaign" do
