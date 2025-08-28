@@ -292,11 +292,16 @@ RSpec.describe "Api::V2::Campaigns", type: :request do
         expect { @inactive_campaign.reload }.to raise_error(ActiveRecord::RecordNotFound)
       end
 
-      it "returns an error for a campaign with associations" do
+      it "returns a unified error response for a campaign with associations" do
         delete "/api/v2/campaigns/#{@other_campaign.id}", headers: @gamemaster_headers
-        expect(response).to have_http_status(:bad_request)
+        expect(response).to have_http_status(:unprocessable_entity)
         body = JSON.parse(response.body)
-        expect(body["errors"]).to eq({ "associations" => true })
+        expect(body["error_type"]).to eq("associations_exist")
+        expect(body["entity_type"]).to eq("campaign")
+        expect(body["entity_id"]).to eq(@other_campaign.id)
+        expect(body["constraints"]).to have_key("characters")
+        expect(body["constraints"]["characters"]["count"]).to be > 0
+        expect(body["suggestions"]).to include("Use force=true parameter to cascade delete")
         expect(Campaign.exists?(@other_campaign.id)).to be_truthy
       end
 

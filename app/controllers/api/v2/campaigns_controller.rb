@@ -191,21 +191,20 @@ class Api::V2::CampaignsController < ApplicationController
       render json: { error: "Cannot destroy the current campaign" }, status: :unauthorized
       return
     end
-    if (@campaign.characters.any? || @campaign.vehicles.any? || @campaign.factions.any? || @campaign.junctures.any? || @campaign.fights.any?) && !params[:force]
-      render json: { errors: { associations: true } }, status: :bad_request
-      return
-    end
-    if params[:force]
-      @campaign.characters.update_all(campaign_id: nil)
-      @campaign.vehicles.update_all(campaign_id: nil)
-      @campaign.factions.update_all(campaign_id: nil)
-      @campaign.junctures.update_all(campaign_id: nil)
-      @campaign.fights.update_all(campaign_id: nil)
-    end
-    if @campaign.destroy!
-      render :ok
+    
+    # Use the new CampaignDeletionService for unified response handling
+    service = CampaignDeletionService.new
+    result = service.delete(@campaign, force: params[:force].present?)
+    
+    if result[:success]
+      render json: {}, status: :ok
     else
-      render json: { errors: @campaign.errors }, status: :bad_request
+      # Return standardized error response with 422 status for constraint violations
+      if result[:error][:error_type] == 'associations_exist'
+        render json: result[:error], status: :unprocessable_entity
+      else
+        render json: result[:error], status: :bad_request
+      end
     end
   end
 
