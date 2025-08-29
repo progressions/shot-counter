@@ -2,7 +2,7 @@ module CharacterDuplicatorService
   class << self
     def duplicate_character(character, user, target_campaign = nil)
       attributes = character.attributes
-      @duplicated_character = Character.new(attributes.except("id", "created_at", "updated_at", "user_id", "campaign_id"))
+      @duplicated_character = Character.new(attributes.except("id", "created_at", "updated_at", "user_id", "campaign_id", "juncture_id", "faction_id"))
       # Use the target campaign if provided, otherwise fall back to the source character's campaign
       @duplicated_character.campaign = target_campaign || character.campaign
       @duplicated_character.user = user
@@ -11,6 +11,8 @@ module CharacterDuplicatorService
       # Store the original character's associations to be applied after save
       @duplicated_character.define_singleton_method(:source_schticks) { character.schticks }
       @duplicated_character.define_singleton_method(:source_weapons) { character.weapons }
+      @duplicated_character.define_singleton_method(:source_juncture) { character.juncture }
+      @duplicated_character.define_singleton_method(:source_faction) { character.faction }
       @duplicated_character.define_singleton_method(:source_image) { character.image if character.image.attached? }
       
       # Store reference to source character for image position copying
@@ -52,6 +54,18 @@ module CharacterDuplicatorService
         source_weapon_names = duplicated_character.source_weapons.pluck(:name)
         target_weapons = duplicated_character.campaign.weapons.where(name: source_weapon_names)
         duplicated_character.weapons = target_weapons
+      end
+      
+      if duplicated_character.respond_to?(:source_juncture) && duplicated_character.source_juncture
+        # Find matching juncture in the target campaign by name
+        target_juncture = duplicated_character.campaign.junctures.find_by(name: duplicated_character.source_juncture.name)
+        duplicated_character.update!(juncture: target_juncture) if target_juncture
+      end
+      
+      if duplicated_character.respond_to?(:source_faction) && duplicated_character.source_faction
+        # Find matching faction in the target campaign by name
+        target_faction = duplicated_character.campaign.factions.find_by(name: duplicated_character.source_faction.name)
+        duplicated_character.update!(faction: target_faction) if target_faction
       end
       
       if duplicated_character.respond_to?(:attach_source_image)

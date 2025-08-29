@@ -311,17 +311,8 @@ end
   private
 
   def apply_template_filter(filter_param)
-    # Security enforcement: Non-admin users never see templates
-    unless current_user.admin?
-      # Log any attempts by non-admin users to access templates
-      if filter_param == "templates" || filter_param == "all"
-        Rails.logger.warn "Non-admin user #{current_user.email} attempted to access templates with filter: #{filter_param}"
-      end
-      # Force non-templates for non-admin users
-      return { is_template: [false, nil] }
-    end
-    
-    # For admin users, apply the requested filter
+    # Allow users to access templates in their own campaigns for character creation
+    # Templates are already scoped to current_campaign, so this is safe
     case filter_param
     when "templates"
       { is_template: true }
