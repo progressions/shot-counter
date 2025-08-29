@@ -20,6 +20,7 @@ class Campaign < ApplicationRecord
   has_many :image_positions, as: :positionable, dependent: :destroy
 
   validates :name, presence: true, allow_blank: false, uniqueness: { scope: :user_id }
+  validate :only_one_master_template
 
   # Seeding is now handled explicitly in the controller
   # after_create :enqueue_seeding_job, unless: :is_master_template?
@@ -38,6 +39,17 @@ class Campaign < ApplicationRecord
   def campaign_id
     # Campaign model references itself for broadcasting compatibility
     id
+  end
+
+  private
+
+  def only_one_master_template
+    return unless is_master_template?
+    
+    existing_master = Campaign.where(is_master_template: true).where.not(id: id)
+    if existing_master.exists?
+      errors.add(:is_master_template, "can only be true for one campaign at a time")
+    end
   end
 
 end

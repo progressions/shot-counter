@@ -48,6 +48,9 @@ class CampaignSeederService
         
         # Copy the campaign's own image positions
         copy_image_positions(source_campaign, target_campaign)
+        
+        # Copy the campaign's main image
+        copy_campaign_image(source_campaign, target_campaign)
 
         # Mark campaign as seeded only if this was called from seed_campaign
         target_campaign.update!(seeded_at: Time.current) if target_campaign.seeded_at.nil?
@@ -264,6 +267,43 @@ class CampaignSeederService
       Rails.logger.info "Copied #{source_entity.image_positions.count} image positions for #{target_entity.class.name} #{target_entity.id}"
     rescue StandardError => e
       Rails.logger.warn "Failed to copy image positions for #{target_entity.class.name} #{target_entity.id}: #{e.message}"
+    end
+    
+    def copy_campaign_image(source_campaign, target_campaign)
+      return unless source_campaign.image.attached?
+      
+      Rails.logger.info "Copying campaign image from #{source_campaign.name} to #{target_campaign.name}"
+      
+      begin
+        # Use the same ImageKit-aware download logic as CharacterDuplicatorService
+        downloaded = source_campaign.image.blob.service.download(source_campaign.image.blob.key)
+        
+        # Handle ImageKit ActiveStorage adapter
+        if downloaded.class.name == 'ImageKiIo::ActiveStorage::IKFile'
+          Rails.logger.info "ImageKit IKFile detected for campaign image, fetching via URL..."
+          require 'net/http'
+          uri = URI(downloaded.instance_variable_get(:@identifier)['url'])
+          image_data = Net::HTTP.get(uri)
+        elsif downloaded.is_a?(String)
+          image_data = downloaded
+        elsif downloaded.respond_to?(:read)
+          image_data = downloaded.read
+        else
+          Rails.logger.warn "Unknown campaign image download object type: #{downloaded.class}"
+          return
+        end
+        
+        if image_data && image_data.bytesize > 0
+          target_campaign.image.attach(
+            io: StringIO.new(image_data),
+            filename: source_campaign.image.blob.filename,
+            content_type: source_campaign.image.blob.content_type
+          )
+          Rails.logger.info "Successfully copied campaign image: #{source_campaign.image.blob.filename} (#{image_data.bytesize} bytes)"
+        end
+      rescue => e
+        Rails.logger.error "Failed to copy campaign image: #{e.class} - #{e.message}"
+      end
     end
   end
 end
