@@ -311,8 +311,14 @@ end
   private
 
   def apply_template_filter(filter_param)
-    # Allow users to access templates in their own campaigns for character creation
-    # Templates are already scoped to current_campaign, so this is safe
+    # Only admin users can access templates
+    # Non-admin users (gamemasters and players) should never see templates
+    if !current_user.admin?
+      # Non-admin users always get non-templates only
+      return { is_template: [false, nil] }
+    end
+    
+    # Admin users can use template filtering
     case filter_param
     when "templates"
       { is_template: true }
