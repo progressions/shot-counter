@@ -9,6 +9,105 @@ RSpec.describe Campaign, type: :model do
     it "requires a name" do
       expect(Campaign.create(name: nil)).to be_invalid
     end
+
+    describe "master template validation" do
+      it "allows one master template to exist" do
+        master_template = Campaign.create!(
+          name: "Master Template", 
+          user: user,
+          is_master_template: true
+        )
+        
+        expect(master_template).to be_valid
+        expect(master_template.is_master_template?).to be true
+      end
+
+      it "prevents multiple master templates from being created" do
+        # Create first master template
+        Campaign.create!(
+          name: "First Master", 
+          user: user,
+          is_master_template: true
+        )
+
+        # Try to create second master template
+        second_master = Campaign.build(
+          name: "Second Master",
+          user: user,
+          is_master_template: true
+        )
+
+        expect(second_master).to be_invalid
+        expect(second_master.errors[:is_master_template]).to include("can only be true for one campaign at a time")
+      end
+
+      it "allows updating a master template without validation errors" do
+        master_template = Campaign.create!(
+          name: "Master Template", 
+          user: user,
+          is_master_template: true
+        )
+
+        # Update the master template
+        master_template.name = "Updated Master Template"
+        expect(master_template).to be_valid
+        expect(master_template.save).to be true
+      end
+
+      it "allows changing a master template to non-master" do
+        master_template = Campaign.create!(
+          name: "Master Template", 
+          user: user,
+          is_master_template: true
+        )
+
+        # Change from master to non-master
+        master_template.is_master_template = false
+        expect(master_template).to be_valid
+        expect(master_template.save).to be true
+      end
+
+      it "allows creating a new master template after removing the old one" do
+        # Create first master template
+        first_master = Campaign.create!(
+          name: "First Master", 
+          user: user,
+          is_master_template: true
+        )
+
+        # Change it to non-master
+        first_master.update!(is_master_template: false)
+
+        # Now create a new master template
+        second_master = Campaign.build(
+          name: "Second Master",
+          user: user,
+          is_master_template: true
+        )
+
+        expect(second_master).to be_valid
+        expect(second_master.save).to be true
+      end
+
+      it "allows non-master templates to be created even when master template exists" do
+        # Create master template
+        Campaign.create!(
+          name: "Master Template", 
+          user: user,
+          is_master_template: true
+        )
+
+        # Create regular campaign
+        regular_campaign = Campaign.build(
+          name: "Regular Campaign",
+          user: user,
+          is_master_template: false
+        )
+
+        expect(regular_campaign).to be_valid
+        expect(regular_campaign.save).to be true
+      end
+    end
   end
 
   describe "associations" do

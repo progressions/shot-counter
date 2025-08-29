@@ -182,10 +182,23 @@ module PdfService
       skills_text = get_field(fields, "Skills").to_s
       return nil if skills_text.blank?
       
-      # Split by carriage returns to get individual skill lines
-      skills_text.split("\r").each do |skill_line|
-        # Look for "Backup Attack: [Type]: [Value]" format
-        match = skill_line.match(/\s*Backup Attack\s*:\s*(.+?)\s*:\s*(\d+)\s*/)
+      # Split by carriage returns (handle both \r and \r\n)
+      skills_text.split(/\r\n?/).each do |skill_line|
+        # Look for both formats:
+        # 1. "Backup Attack: [Type]: [Value]" (colon-colon format)
+        # 2. "Backup Attack: [Type] [Value]" (colon-space format)
+        
+        # Skip if this line doesn't contain backup attack
+        next unless skill_line.match(/Backup Attack/)
+        
+        # Try colon format first: "Backup Attack: [Type]: [Value]"
+        match = skill_line.match(/\s*Backup Attack\s*:\s*(.+?)\s*:\s*(\d+)\s*$/)
+        
+        # If colon format didn't match, try space format: "Backup Attack: [Type] [Value]"
+        if !match
+          match = skill_line.match(/\s*Backup Attack\s*:\s*(.+?)\s+(\d+)\s*$/)
+        end
+        
         if match && match[1].present? && match[2].present?
           skill_name = match[1].strip
           skill_value = match[2].to_i
@@ -203,8 +216,8 @@ module PdfService
       skills_text = get_field(fields, "Skills")
       return {} if skills_text.blank?
       
-      skills_text.to_s.split("\r").reduce({}) do |skills_hash, skill_line|
-        # Skip backup attack entries entirely
+      skills_text.to_s.split(/\r\n?/).reduce({}) do |skills_hash, skill_line|
+        # Skip backup attack entries entirely (both colon-colon and colon-space formats)
         next skills_hash if skill_line.match(/\s*Backup Attack\s*:/)
         
         # Match both formats: "Skill Name: Value" and "Skill Name Value"

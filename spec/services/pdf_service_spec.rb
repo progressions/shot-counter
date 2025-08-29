@@ -87,6 +87,45 @@ RSpec.describe PdfService, type: :service do
           "Martial Arts" => 14
         })
       end
+      
+      it 'parses "Backup Attack: Martial Arts 12" space format correctly' do
+        fields = [
+          mock_field.new("Skills", "Deceit: 8\r\nBackup Attack: Martial Arts 12\r\nDodge: 10")
+        ]
+        
+        result = PdfService.get_secondary_attack_from_pdf(fields)
+        
+        expect(result).to eq({
+          "SecondaryAttack" => "Martial Arts",
+          "Martial Arts" => 12
+        })
+      end
+      
+      it 'parses "Backup Attack: Guns 15" space format correctly' do
+        fields = [
+          mock_field.new("Skills", "Backup Attack: Guns 15\r\nDeceit: 8")
+        ]
+        
+        result = PdfService.get_secondary_attack_from_pdf(fields)
+        
+        expect(result).to eq({
+          "SecondaryAttack" => "Guns",
+          "Guns" => 15
+        })
+      end
+      
+      it 'handles space format with extra whitespace' do
+        fields = [
+          mock_field.new("Skills", "  Backup Attack:   Sorcery   13  \r\nDodge: 8")
+        ]
+        
+        result = PdfService.get_secondary_attack_from_pdf(fields)
+        
+        expect(result).to eq({
+          "SecondaryAttack" => "Sorcery",
+          "Sorcery" => 13
+        })
+      end
     end
     
     context 'with no backup attack' do
@@ -199,6 +238,22 @@ RSpec.describe PdfService, type: :service do
       ]
     end
     
+    let(:space_format_fields) do
+      [
+        mock_field.new("Name", "Test Character"),
+        mock_field.new("Attack Type", "Guns"),
+        mock_field.new("Attack", "13"),
+        mock_field.new("Defense", "12"),
+        mock_field.new("Toughness", "8"),
+        mock_field.new("Fortune Type", "Fortune"),
+        mock_field.new("Fortune", "5"),
+        mock_field.new("Speed", "7"),
+        mock_field.new("Skills", "Deceit: 8\r\nBackup Attack: Martial Arts 12\r\nDodge: 10"),
+        mock_field.new("Archetype", "Cop"),
+        mock_field.new("Wealth", "Working Stiff")
+      ]
+    end
+    
     it 'correctly integrates backup attack parsing into character attributes' do
       result = PdfService.pdf_attributes_for_character(fields, campaign)
       
@@ -210,6 +265,26 @@ RSpec.describe PdfService, type: :service do
     
     it 'excludes backup attack from regular skills parsing' do
       result = PdfService.pdf_attributes_for_character(fields, campaign)
+      
+      # Skills should not include the "Backup Attack" entry
+      expect(result[:skills]).to eq({
+        "Deceit" => 8,
+        "Dodge" => 10
+      })
+      expect(result[:skills]).not_to have_key("Backup Attack")
+    end
+    
+    it 'correctly integrates space format backup attack parsing into character attributes' do
+      result = PdfService.pdf_attributes_for_character(space_format_fields, campaign)
+      
+      expect(result[:action_values]).to include({
+        "SecondaryAttack" => "Martial Arts",
+        "Martial Arts" => 12
+      })
+    end
+    
+    it 'excludes space format backup attack from regular skills parsing' do
+      result = PdfService.pdf_attributes_for_character(space_format_fields, campaign)
       
       # Skills should not include the "Backup Attack" entry
       expect(result[:skills]).to eq({
