@@ -1,16 +1,28 @@
 class SchtickDeletionService < EntityDeletionService
   protected
 
-  # Only prerequisite relationships should block deletion
+  # Both character associations and prerequisite relationships should block deletion
   def blocking_constraints(schtick)
     dependent_schticks = Schtick.where(prerequisite: schtick)
     
-    {
-      'prerequisite_for' => {
+    constraints = {}
+    
+    character_count = schtick.character_schticks.count
+    if character_count > 0
+      constraints['characters'] = {
+        count: character_count,
+        label: 'characters with schtick'
+      }
+    end
+    
+    if dependent_schticks.count > 0
+      constraints['prerequisite_for'] = {
         count: dependent_schticks.count,
         label: 'schticks requiring this as prerequisite'
       }
-    }.select { |_, data| data[:count] > 0 }
+    end
+    
+    constraints
   end
 
   def association_counts(schtick)

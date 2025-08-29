@@ -1,9 +1,19 @@
 class WeaponDeletionService < EntityDeletionService
   protected
 
-  # No blocking constraints - weapons can always be deleted
+  # Weapons with carries cannot be deleted (unless forced)
   def blocking_constraints(weapon)
-    {}
+    constraints = {}
+    
+    carries_count = weapon.carries.count
+    if carries_count > 0
+      constraints['carries'] = {
+        count: carries_count,
+        label: 'characters/vehicles carrying'
+      }
+    end
+    
+    constraints
   end
 
   def association_counts(weapon)

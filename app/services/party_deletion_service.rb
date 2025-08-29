@@ -1,9 +1,19 @@
 class PartyDeletionService < EntityDeletionService
   protected
 
-  # No blocking constraints - parties can always be deleted
+  # Parties with memberships cannot be deleted (unless forced)
   def blocking_constraints(party)
-    {}
+    constraints = {}
+    
+    membership_count = party.memberships.count
+    if membership_count > 0
+      constraints['memberships'] = {
+        count: membership_count,
+        label: 'party members'
+      }
+    end
+    
+    constraints
   end
 
   def association_counts(party)
