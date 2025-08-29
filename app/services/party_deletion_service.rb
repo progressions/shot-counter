@@ -3,16 +3,16 @@ class PartyDeletionService < EntityDeletionService
 
   def association_counts(party)
     {
-      'characters' => {
-        count: party.character_party_memberships.count,
+      'memberships' => {
+        count: party.memberships.count,
         label: 'party members'
       }
     }
   end
 
   def handle_associations(party)
-    # Remove all character memberships
-    party.character_party_memberships.destroy_all
+    # Remove all memberships
+    party.memberships.destroy_all
   end
 
   def entity_type_name

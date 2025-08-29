@@ -276,9 +276,12 @@ RSpec.describe "Api::V2::Parties", type: :request do
 
     it "returns an error for a party with memberships" do
       delete "/api/v2/parties/#{@dragons_party.id}", headers: @headers
-      expect(response).to have_http_status(400)
+      expect(response).to have_http_status(422)
       body = JSON.parse(response.body)
-      expect(body["errors"]).to eq({ "memberships" => true })
+      expect(body["error_type"]).to eq("associations_exist")
+      expect(body["entity_type"]).to eq("party")
+      expect(body["constraints"]["memberships"]["count"]).to be > 0
+      expect(body["constraints"]["memberships"]["label"]).to eq("party members")
       expect(Party.exists?(@dragons_party.id)).to be_truthy
     end
 
