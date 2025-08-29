@@ -376,9 +376,11 @@ RSpec.describe "Api::V2::Users", type: :request do
 
       it "returns an error for a user with character associations" do
         delete "/api/v2/users/#{@player.id}", headers: @admin_headers
-        expect(response).to have_http_status(400)
+        expect(response).to have_http_status(422)
         body = JSON.parse(response.body)
-        expect(body["errors"]).to eq({ "characters" => true })
+        expect(body["error_type"]).to eq("associations_exist")
+        expect(body["entity_type"]).to eq("user")
+        expect(body["constraints"]["characters"]["count"]).to be > 0
         expect(User.exists?(@player.id)).to be_truthy
       end
 

@@ -216,9 +216,11 @@ RSpec.describe "Api::V2::Sites", type: :request do
 
     it "returns an error for a site with attunements" do
       delete "/api/v2/sites/#{@dragons_hq.id}", headers: @headers
-      expect(response).to have_http_status(400)
+      expect(response).to have_http_status(422)
       body = JSON.parse(response.body)
-      expect(body["errors"]).to eq({ "attunements" => true })
+      expect(body["error_type"]).to eq("associations_exist")
+      expect(body["entity_type"]).to eq("site")
+      expect(body["constraints"]["attunements"]["count"]).to be > 0
       expect(Site.exists?(@dragons_hq.id)).to be_truthy
     end
 

@@ -214,9 +214,12 @@ RSpec.describe "Api::V2::Schticks", type: :request do
   describe "DELETE /destroy" do
     it "returns an error if the schtick is known by a character" do
       delete "/api/v2/schticks/#{@fireball.id}", headers: @headers
-      expect(response).to have_http_status(:bad_request)
+      expect(response).to have_http_status(422)
       body = JSON.parse(response.body)
-      expect(body["errors"]).to eq({ "characters" => true })
+      expect(body["error_type"]).to eq("associations_exist")
+      expect(body["entity_type"]).to eq("schtick")
+      expect(body["constraints"]["characters"]["count"]).to be > 0
+      expect(body["constraints"]["characters"]["label"]).to eq("characters with schtick")
     end
 
     it "deletes a schtick that nobody knows" do

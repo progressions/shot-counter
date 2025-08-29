@@ -258,9 +258,11 @@ RSpec.describe "Api::V2::Weapons", type: :request do
 
     it "returns an error for a weapon with carries" do
       delete "/api/v2/weapons/#{@beretta.id}", headers: @headers
-      expect(response).to have_http_status(400)
+      expect(response).to have_http_status(422)
       body = JSON.parse(response.body)
-      expect(body["errors"]).to eq({ "carries" => true })
+      expect(body["error_type"]).to eq("associations_exist")
+      expect(body["entity_type"]).to eq("weapon")
+      expect(body["constraints"]["carries"]["count"]).to be > 0
       expect(Weapon.exists?(@beretta.id)).to be_truthy
     end
 
