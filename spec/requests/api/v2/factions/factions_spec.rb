@@ -291,17 +291,23 @@ RSpec.describe "Api::V2::Factions", type: :request do
 
     it "returns an error for a faction with character associations" do
       delete "/api/v2/factions/#{@dragons.id}", headers: @headers
-      expect(response).to have_http_status(400)
+      expect(response).to have_http_status(422)
       body = JSON.parse(response.body)
-      expect(body["errors"]).to eq({ "characters" => true })
+      expect(body["error_type"]).to eq("associations_exist")
+      expect(body["entity_type"]).to eq("faction")
+      expect(body["constraints"]["characters"]["count"]).to eq(2)
+      expect(body["constraints"]["characters"]["label"]).to eq("faction members")
       expect(Faction.exists?(@dragons.id)).to be_truthy
     end
 
     it "returns an error for a faction with vehicle associations" do
       delete "/api/v2/factions/#{@ascended.id}", headers: @headers
-      expect(response).to have_http_status(400)
+      expect(response).to have_http_status(422)
       body = JSON.parse(response.body)
-      expect(body["errors"]).to eq({ "vehicles" => true })
+      expect(body["error_type"]).to eq("associations_exist")
+      expect(body["entity_type"]).to eq("faction")
+      expect(body["constraints"]["vehicles"]["count"]).to eq(1)
+      expect(body["constraints"]["vehicles"]["label"]).to eq("faction vehicles")
       expect(Faction.exists?(@ascended.id)).to be_truthy
     end
 
