@@ -1,6 +1,11 @@
 class PartyDeletionService < EntityDeletionService
   protected
 
+  # No blocking constraints - parties can always be deleted
+  def blocking_constraints(party)
+    {}
+  end
+
   def association_counts(party)
     {
       'memberships' => {
@@ -10,9 +15,14 @@ class PartyDeletionService < EntityDeletionService
     }
   end
 
-  def handle_associations(party)
-    # Remove all memberships
+  def cleanup_owned_associations(party)
+    # Always remove all memberships when deleting party
     party.memberships.destroy_all
+  end
+
+  # Legacy method for compatibility
+  def handle_associations(party)
+    cleanup_owned_associations(party)
   end
 
   def entity_type_name

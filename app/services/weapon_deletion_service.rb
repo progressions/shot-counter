@@ -1,6 +1,11 @@
 class WeaponDeletionService < EntityDeletionService
   protected
 
+  # No blocking constraints - weapons can always be deleted
+  def blocking_constraints(weapon)
+    {}
+  end
+
   def association_counts(weapon)
     {
       'carries' => {
@@ -10,9 +15,14 @@ class WeaponDeletionService < EntityDeletionService
     }
   end
 
-  def handle_associations(weapon)
-    # Remove all carry relationships (characters and vehicles carrying this weapon)
+  def cleanup_owned_associations(weapon)
+    # Always clean up carry relationships when deleting weapon
     weapon.carries.destroy_all
+  end
+
+  # Legacy method for compatibility
+  def handle_associations(weapon)
+    cleanup_owned_associations(weapon)
   end
 
   def entity_type_name

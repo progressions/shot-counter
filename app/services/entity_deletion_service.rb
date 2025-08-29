@@ -8,7 +8,18 @@ class EntityDeletionService
   def perform_deletion(entity, force: false)
     if can_delete?(entity, force: force)
       ActiveRecord::Base.transaction do
-        handle_associations(entity) if force
+        # Always clean up owned associations (if method exists)
+        cleanup_owned_associations(entity) if respond_to?(:cleanup_owned_associations, true)
+        
+        # Handle blocking associations if force is true (if method exists) 
+        if force
+          if respond_to?(:handle_blocking_associations, true)
+            handle_blocking_associations(entity)
+          else
+            # Fallback to legacy method for backwards compatibility
+            handle_associations(entity)
+          end
+        end
         
         # Use destroy to properly handle dependent associations
         entity.destroy!
@@ -37,7 +48,12 @@ class EntityDeletionService
   end
 
   def check_constraints(entity)
-    association_counts(entity).select { |_, data| data[:count] > 0 }
+    # Use blocking_constraints if defined, otherwise fall back to all associations
+    if respond_to?(:blocking_constraints, true)
+      blocking_constraints(entity)
+    else
+      association_counts(entity).select { |_, data| data[:count] > 0 }
+    end
   end
 
   def unified_error_response(entity_type:, entity_id:, constraints:)
