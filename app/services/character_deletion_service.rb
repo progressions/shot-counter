@@ -8,7 +8,7 @@ class CharacterDeletionService < EntityDeletionService
         label: 'schticks'
       },
       'weapons' => {
-        count: character.character_weapons.count,
+        count: character.carries.count,
         label: 'weapons carried'
       },
       'shots' => {
@@ -16,7 +16,7 @@ class CharacterDeletionService < EntityDeletionService
         label: 'active fight positions'
       },
       'party_memberships' => {
-        count: character.character_party_memberships.count,
+        count: character.memberships.count,
         label: 'party memberships'
       }
     }
@@ -27,13 +27,13 @@ class CharacterDeletionService < EntityDeletionService
     character.schticks.destroy_all
     
     # Remove character from weapons (clear carries relationship)
-    character.character_weapons.destroy_all
+    character.carries.destroy_all
     
     # Remove from active fights
     character.shots.destroy_all
     
     # Remove from parties
-    character.character_party_memberships.destroy_all
+    character.memberships.destroy_all
   end
 
   def entity_type_name
