@@ -179,31 +179,58 @@ module PdfService
     end
 
     def get_secondary_attack_from_pdf(fields)
-      get_field(fields, "Skills")
-        .to_s
-        .split("\r")
-        .map { |skill| skill.split(":") }
-        .filter { |skill| skill.length == 2 && skill[0].strip == "Backup Attack" }
-        .map { |skill| match = skill[1].match(/\s*(.*?)\s*\((\d+)\)/) }
-        .map { |match| match ? { "SecondaryAttack" => match[1], match[1] => match[2].to_i } : nil }
-        .first
+      skills_text = get_field(fields, "Skills").to_s
+      return nil if skills_text.blank?
+      
+      # Split by carriage returns (handle both \r and \r\n)
+      skills_text.split(/\r\n?/).each do |skill_line|
+        # Look for both formats:
+        # 1. "Backup Attack: [Type]: [Value]" (colon-colon format)
+        # 2. "Backup Attack: [Type] [Value]" (colon-space format)
+        
+        # Skip if this line doesn't contain backup attack
+        next unless skill_line.match(/Backup Attack/)
+        
+        # Try colon format first: "Backup Attack: [Type]: [Value]"
+        match = skill_line.match(/\s*Backup Attack\s*:\s*(.+?)\s*:\s*(\d+)\s*$/)
+        
+        # If colon format didn't match, try space format: "Backup Attack: [Type] [Value]"
+        if !match
+          match = skill_line.match(/\s*Backup Attack\s*:\s*(.+?)\s+(\d+)\s*$/)
+        end
+        
+        if match && match[1].present? && match[2].present?
+          skill_name = match[1].strip
+          skill_value = match[2].to_i
+          return {
+            "SecondaryAttack" => skill_name,
+            skill_name => skill_value
+          }
+        end
+      end
+      
+      nil
     end
 
     def get_skills_from_pdf(fields)
       skills_text = get_field(fields, "Skills")
-      skills = skills_text.to_s.split("\r").map do |skill|
-        match = skill.match(/^(.+?)\s+(\d+)$/)
-        match ? [match[1].strip, match[2].strip] : nil
-      end.compact
-      skills.reduce({}) do |att, skill|
-        name = skill[0]
-        value = skill[1]
-
-        if name != "Backup Attack"
-          att[name] = value.to_i
+      return {} if skills_text.blank?
+      
+      skills_text.to_s.split(/\r\n?/).reduce({}) do |skills_hash, skill_line|
+        # Skip backup attack entries entirely (both colon-colon and colon-space formats)
+        next skills_hash if skill_line.match(/\s*Backup Attack\s*:/)
+        
+        # Match both formats: "Skill Name: Value" and "Skill Name Value"
+        match = skill_line.match(/^\s*(.+?)\s*:\s*(\d+)\s*$/) || 
+                skill_line.match(/^\s*(.+?)\s+(\d+)\s*$/)
+        
+        if match && match[1].present? && match[2].present?
+          skill_name = match[1].strip
+          skill_value = match[2].to_i
+          skills_hash[skill_name] = skill_value
         end
-
-        att
+        
+        skills_hash
       end
     end
 

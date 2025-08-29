@@ -1,6 +1,21 @@
 class CharacterDeletionService < EntityDeletionService
   protected
 
+  # Only associations that should block deletion without force
+  def blocking_constraints(character)
+    {
+      'shots' => {
+        count: character.shots.count,
+        label: 'active fight positions'
+      },
+      'party_memberships' => {
+        count: character.memberships.count,
+        label: 'party memberships'
+      }
+    }.select { |_, data| data[:count] > 0 }
+  end
+
+  # All associations for reference (used in handle_associations)
   def association_counts(character)
     {
       'schticks' => {
@@ -22,18 +37,23 @@ class CharacterDeletionService < EntityDeletionService
     }
   end
 
-  def handle_associations(character)
-    # Destroy schticks (they belong to character)
+
+  def cleanup_owned_associations(character)
+    # Always clean up these - they belong to the character
     character.schticks.destroy_all
-    
-    # Remove character from weapons (clear carries relationship)
     character.carries.destroy_all
-    
-    # Remove from active fights
+  end
+
+  def handle_blocking_associations(character)
+    # Only clean these up when force is true
     character.shots.destroy_all
-    
-    # Remove from parties
     character.memberships.destroy_all
+  end
+
+  # Legacy method for compatibility (kept for force delete)
+  def handle_associations(character)
+    cleanup_owned_associations(character)
+    handle_blocking_associations(character)
   end
 
   def entity_type_name
