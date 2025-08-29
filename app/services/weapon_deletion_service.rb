@@ -3,23 +3,16 @@ class WeaponDeletionService < EntityDeletionService
 
   def association_counts(weapon)
     {
-      'characters' => {
-        count: weapon.character_weapons.count,
-        label: 'characters carrying'
-      },
-      'vehicles' => {
-        count: weapon.vehicle_weapons.count,
-        label: 'vehicles mounted'
+      'carries' => {
+        count: weapon.carries.count,
+        label: 'characters/vehicles carrying'
       }
     }
   end
 
   def handle_associations(weapon)
-    # Remove weapon from all characters
-    weapon.character_weapons.destroy_all
-    
-    # Remove weapon from all vehicles
-    weapon.vehicle_weapons.destroy_all
+    # Remove all carry relationships (characters and vehicles carrying this weapon)
+    weapon.carries.destroy_all
   end
 
   def entity_type_name

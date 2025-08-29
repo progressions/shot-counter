@@ -2,12 +2,17 @@ class SiteDeletionService < EntityDeletionService
   protected
 
   def association_counts(site)
-    # Sites typically don't have associations that block deletion
-    {}
+    {
+      'attunements' => {
+        count: site.attunements.count,
+        label: 'character attunements'
+      }
+    }
   end
 
   def handle_associations(site)
-    # No associations to handle for sites
+    # Remove all attunements (character-site relationships)
+    site.attunements.destroy_all
   end
 
   def entity_type_name
