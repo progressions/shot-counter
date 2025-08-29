@@ -249,17 +249,23 @@ RSpec.describe "Api::V2::Junctures", type: :request do
 
     it "returns an error for a juncture with character associations" do
       delete "/api/v2/junctures/#{@modern.id}", headers: @headers
-      expect(response).to have_http_status(400)
+      expect(response).to have_http_status(422)
       body = JSON.parse(response.body)
-      expect(body["errors"]).to eq({ "associations" => true })
+      expect(body["error_type"]).to eq("associations_exist")
+      expect(body["entity_type"]).to eq("juncture")
+      expect(body["constraints"]["characters"]["count"]).to be > 0
+      expect(body["constraints"]["characters"]["label"]).to eq("juncture characters")
       expect(Juncture.exists?(@modern.id)).to be_truthy
     end
 
     it "returns an error for a juncture with vehicle associations" do
       delete "/api/v2/junctures/#{@ancient.id}", headers: @headers
-      expect(response).to have_http_status(400)
+      expect(response).to have_http_status(422)
       body = JSON.parse(response.body)
-      expect(body["errors"]).to eq({ "associations" => true })
+      expect(body["error_type"]).to eq("associations_exist")
+      expect(body["entity_type"]).to eq("juncture")
+      expect(body["constraints"]["vehicles"]["count"]).to be > 0
+      expect(body["constraints"]["vehicles"]["label"]).to eq("juncture vehicles")
       expect(Juncture.exists?(@ancient.id)).to be_truthy
     end
 
