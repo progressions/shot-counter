@@ -27,11 +27,11 @@ class UserDeletionService < EntityDeletionService
   end
 
   def handle_associations(user)
-    # Delete all characters owned by this user
-    user.characters.destroy_all
+    # Nullify user_id for characters (don't delete them)
+    user.characters.update_all(user_id: nil)
     
-    # Delete all vehicles owned by this user
-    user.vehicles.destroy_all
+    # Nullify user_id for vehicles (don't delete them)
+    user.vehicles.update_all(user_id: nil)
     
     # Transfer campaign ownership or destroy campaigns
     user.campaigns.destroy_all

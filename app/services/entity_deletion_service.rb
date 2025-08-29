@@ -10,8 +10,8 @@ class EntityDeletionService
       ActiveRecord::Base.transaction do
         handle_associations(entity) if force
         
-        # Use delete instead of destroy to skip callbacks since we've already handled associations
-        entity.delete
+        # Use destroy to properly handle dependent associations
+        entity.destroy!
         { success: true, message: 'Entity successfully deleted' }
       end
     else
