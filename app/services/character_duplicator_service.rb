@@ -21,17 +21,55 @@ module CharacterDuplicatorService
       if character.image.attached?
         @duplicated_character.define_singleton_method(:attach_source_image) do
           begin
-            # Handle ImageKit download - force read as string
-            downloaded = character.image.blob.download
-            image_data = downloaded.is_a?(String) ? downloaded : downloaded.read
+            Rails.logger.info "Starting image duplication for character #{character.name}"
+            Rails.logger.info "Source image key: #{character.image.blob.key}"
+            Rails.logger.info "Source image size: #{character.image.blob.byte_size} bytes"
             
-            self.image.attach(
-              io: StringIO.new(image_data),
-              filename: character.image.blob.filename,
-              content_type: character.image.blob.content_type
-            )
+            # Try multiple approaches to get image data
+            image_data = nil
+            
+            # Handle ImageKit ActiveStorage adapter specifically
+            begin
+              Rails.logger.info "Trying blob service download..."
+              downloaded = character.image.blob.service.download(character.image.blob.key)
+              
+              # Check if this is an ImageKit IKFile object
+              if downloaded.class.name == 'ImageKiIo::ActiveStorage::IKFile'
+                Rails.logger.info "ImageKit IKFile detected, fetching via URL..."
+                # Use the URL from the ImageKit object to download the actual file data
+                require 'net/http'
+                uri = URI(downloaded.instance_variable_get(:@identifier)['url'])
+                image_data = Net::HTTP.get(uri)
+                Rails.logger.info "ImageKit URL download successful, size: #{image_data.bytesize} bytes"
+              elsif downloaded.is_a?(String)
+                image_data = downloaded
+                Rails.logger.info "Direct string download successful, size: #{image_data.bytesize} bytes"
+              elsif downloaded.respond_to?(:read)
+                image_data = downloaded.read
+                Rails.logger.info "Stream read successful, size: #{image_data.bytesize} bytes"
+              else
+                Rails.logger.warn "Unknown download object type: #{downloaded.class}"
+                Rails.logger.warn "Available methods: #{downloaded.methods.grep(/read|data|string|url/)}"
+                return
+              end
+            rescue => error
+              Rails.logger.error "Image download failed: #{error.class} - #{error.message}"
+              return
+            end
+            
+            if image_data && image_data.bytesize > 0
+              self.image.attach(
+                io: StringIO.new(image_data),
+                filename: character.image.blob.filename,
+                content_type: character.image.blob.content_type
+              )
+              Rails.logger.info "Successfully attached image for character #{character.name}, size: #{image_data.bytesize} bytes"
+            else
+              Rails.logger.error "No valid image data obtained for character #{character.name}"
+            end
           rescue => e
-            Rails.logger.warn "Failed to duplicate image for character #{character.name}: #{e.message}"
+            Rails.logger.error "Failed to duplicate image for character #{character.name}: #{e.class} - #{e.message}"
+            Rails.logger.error "Backtrace: #{e.backtrace.first(5).join('\n')}"
           end
         end
       end
