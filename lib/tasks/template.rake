@@ -4,6 +4,12 @@ namespace :template do
     exporter = TemplateExporter.new
     exporter.export
   end
+  
+  desc "Import master template from SQL file (uses most recent export or IMPORT_FILE env var)"
+  task import: :environment do
+    importer = TemplateImporter.new
+    importer.import
+  end
 end
 
 class TemplateExporter
@@ -490,5 +496,82 @@ class TemplateExporter
   def quote(value)
     return 'NULL' if value.nil?
     "'#{value.to_s.gsub("'", "''")}'"
+  end
+end
+
+class TemplateImporter
+  def initialize
+    @export_dir = Rails.root.join('db', 'exports')
+  end
+  
+  def import
+    Rails.logger.info "Starting master template import..."
+    
+    # Find the import file
+    import_file = find_import_file
+    raise "Import file not found: #{ENV['IMPORT_FILE']}" if ENV['IMPORT_FILE'] && !File.exist?(import_file)
+    
+    # Ensure required user exists
+    ensure_admin_user_exists
+    
+    # Read the SQL content
+    sql_content = File.read(import_file)
+    Rails.logger.info "Importing from: #{import_file}"
+    
+    # Execute the SQL (already contains BEGIN/COMMIT)
+    begin
+      ActiveRecord::Base.connection.execute(sql_content)
+      Rails.logger.info "Import completed successfully"
+      # Reset connection state after executing raw SQL with transactions
+      ActiveRecord::Base.connection.reconnect!
+    rescue => e
+      Rails.logger.error "Import failed: #{e.message}"
+      ActiveRecord::Base.connection.reconnect!
+      raise
+    end
+    
+    # Log summary
+    master_template = Campaign.find_by(is_master_template: true)
+    if master_template
+      Rails.logger.info "Master template '#{master_template.name}' imported with:"
+      Rails.logger.info "  - #{master_template.characters.count} characters"
+      Rails.logger.info "  - #{master_template.vehicles.count} vehicles"
+      Rails.logger.info "  - #{master_template.factions.count} factions"
+      Rails.logger.info "  - #{master_template.sites.count} sites"
+      Rails.logger.info "  - #{master_template.schticks.count} schticks"
+      Rails.logger.info "  - #{master_template.weapons.count} weapons"
+    end
+    
+    puts "Template import completed successfully from: #{File.basename(import_file)}"
+  end
+  
+  private
+  
+  def find_import_file
+    if ENV['IMPORT_FILE']
+      # Use specified file
+      Pathname.new(ENV['IMPORT_FILE'])
+    else
+      # Find most recent export
+      export_files = Dir[@export_dir.join('*.sql')].sort
+      raise "No export files found in #{@export_dir}. Run 'rake template:export' first." if export_files.empty?
+      
+      Pathname.new(export_files.last)
+    end
+  end
+  
+  def ensure_admin_user_exists
+    # Ensure there's an admin user for the campaign assignment
+    unless User.exists?(email: 'progressions@gmail.com') || User.exists?(admin: true)
+      Rails.logger.warn "No admin user found. Creating default admin user."
+      User.create!(
+        email: 'progressions@gmail.com',
+        password: SecureRandom.hex(16),
+        first_name: 'System',
+        last_name: 'Admin',
+        admin: true,
+        confirmed_at: Time.now
+      )
+    end
   end
 end
