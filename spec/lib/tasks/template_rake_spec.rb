@@ -153,6 +153,30 @@ RSpec.describe 'template:export', type: :task do
         expect(content).to include('INSERT INTO factions')
       end
 
+      it 'includes image positions when they exist' do
+        # Create an image position for the character
+        ImagePosition.create!(
+          positionable: @character,
+          context: 'desktop_entity',
+          x_position: 0.5,
+          y_position: 0.3,
+          style_overrides: { 'scale' => 1.2 }
+        )
+        
+        Rake::Task['template:export'].invoke
+        
+        # Get the most recent export file
+        export_files = Dir[Rails.root.join('db', 'exports', '*.sql')].sort
+        export_file = export_files.last
+        content = File.read(export_file)
+        
+        # Check for image_positions
+        expect(content).to include('INSERT INTO image_positions')
+        expect(content).to include('Character')
+        expect(content).to include('0.5')
+        expect(content).to include('0.3')
+      end
+
       it 'wraps all statements in a transaction' do
         Rake::Task['template:export'].invoke
         

@@ -40,6 +40,7 @@ class TemplateExporter
     export_schticks
     export_weapons
     export_join_tables
+    export_image_positions
     
     # End transaction
     @sql_statements << "COMMIT;"
@@ -56,12 +57,15 @@ class TemplateExporter
   def export_campaign
     Rails.logger.info "Exporting campaign: #{@master_template.name}"
     
+    # For master templates, we need to include a user_id
+    # We'll use a special system user or the first admin user in production
     sql = <<~SQL
       INSERT INTO campaigns (
-        id, name, description, is_master_template, active,
+        id, user_id, name, description, is_master_template, active,
         created_at, updated_at
       ) VALUES (
         '#{@master_template.id}',
+        (SELECT id FROM users WHERE email = 'progressions@gmail.com' OR admin = true ORDER BY created_at LIMIT 1),
         #{quote(@master_template.name)},
         #{quote(@master_template.description)},
         true,
@@ -143,14 +147,12 @@ class TemplateExporter
       sql = <<~SQL
         INSERT INTO factions (
           id, campaign_id, name, description,
-          image_url, active,
-          created_at, updated_at
+          active, created_at, updated_at
         ) VALUES (
           '#{faction.id}',
           '#{@master_template.id}',
           #{quote(faction.name)},
           #{quote(faction.description)},
-          #{quote(faction.image_url)},
           #{faction.active},
           NOW(),
           NOW()
@@ -366,6 +368,66 @@ class TemplateExporter
   end
 
   # Memberships are for party-character relationships, not character-faction
+
+  def export_image_positions
+    # Get all image positions for entities in this campaign
+    entity_ids = []
+    entity_types = []
+    
+    # Collect all entity IDs and types
+    @master_template.characters.pluck(:id).each do |id|
+      entity_ids << id
+      entity_types << ['Character', id]
+    end
+    
+    @master_template.vehicles.pluck(:id).each do |id|
+      entity_ids << id
+      entity_types << ['Vehicle', id]
+    end
+    
+    @master_template.factions.pluck(:id).each do |id|
+      entity_ids << id
+      entity_types << ['Faction', id]
+    end
+    
+    @master_template.sites.pluck(:id).each do |id|
+      entity_ids << id
+      entity_types << ['Site', id]
+    end
+    
+    return if entity_types.empty?
+    
+    # Query for image positions
+    image_positions = ImagePosition.where(
+      entity_types.map { |type, id| "(positionable_type = '#{type}' AND positionable_id = '#{id}')" }.join(" OR ")
+    )
+    
+    return if image_positions.empty?
+    
+    Rails.logger.info "Exporting #{image_positions.count} image positions"
+    
+    image_positions.each do |position|
+      sql = <<~SQL
+        INSERT INTO image_positions (
+          id, positionable_type, positionable_id, context,
+          x_position, y_position, style_overrides,
+          created_at, updated_at
+        ) VALUES (
+          '#{position.id}',
+          #{quote(position.positionable_type)},
+          '#{position.positionable_id}',
+          #{quote(position.context)},
+          #{position.x_position},
+          #{position.y_position},
+          #{quote(position.style_overrides.to_json)},
+          NOW(),
+          NOW()
+        ) ON CONFLICT (id) DO NOTHING;
+      SQL
+      
+      @sql_statements << sql.strip
+    end
+  end
 
   def quote(value)
     return 'NULL' if value.nil?

@@ -1,10 +1,11 @@
 BEGIN;
 
 INSERT INTO campaigns (
-  id, name, description, is_master_template, active,
+  id, user_id, name, description, is_master_template, active,
   created_at, updated_at
 ) VALUES (
   '7b17864e-4e39-41c2-a5b7-6bbbd5aa4ff2',
+  (SELECT id FROM users WHERE email = 'progressions@gmail.com' OR admin = true ORDER BY created_at LIMIT 1),
   'Master Campaign',
   '<p>The master template other campaigns are based on, including Character templates, Schticks, Weapons, and Factions.</p>',
   true,
@@ -9474,20 +9475,6 @@ INSERT INTO weapons (
   id, campaign_id, name, damage, concealment, reload_value,
   created_at, updated_at
 ) VALUES (
-  '82ed94c7-2a57-4511-beb7-f97cb5d4f82f',
-  '7b17864e-4e39-41c2-a5b7-6bbbd5aa4ff2',
-  'Grendel P-30',
-  8,
-  1,
-  1,
-  NOW(),
-  NOW()
-) ON CONFLICT (id) DO NOTHING;
-
-INSERT INTO weapons (
-  id, campaign_id, name, damage, concealment, reload_value,
-  created_at, updated_at
-) VALUES (
   '41abac95-bc86-401f-b49d-8b3fa5f80236',
   '7b17864e-4e39-41c2-a5b7-6bbbd5aa4ff2',
   'Browning Hi-Power',
@@ -9582,16 +9569,28 @@ INSERT INTO weapons (
   NOW()
 ) ON CONFLICT (id) DO NOTHING;
 
+INSERT INTO weapons (
+  id, campaign_id, name, damage, concealment, reload_value,
+  created_at, updated_at
+) VALUES (
+  '82ed94c7-2a57-4511-beb7-f97cb5d4f82f',
+  '7b17864e-4e39-41c2-a5b7-6bbbd5aa4ff2',
+  'Grendel P-30',
+  8,
+  1,
+  1,
+  NOW(),
+  NOW()
+) ON CONFLICT (id) DO NOTHING;
+
 INSERT INTO factions (
   id, campaign_id, name, description,
-  image_url, active,
-  created_at, updated_at
+  active, created_at, updated_at
 ) VALUES (
   '6bc3abe7-2890-432f-a397-89c763f54d18',
   '7b17864e-4e39-41c2-a5b7-6bbbd5aa4ff2',
   'The Dragons',
   '<p>The perennial underdogs of the Chi War, constantly rising from humble origins to fight for freedom and justice. Founded by heroes like Kar Fai and the Prof, they recruit everyday heroes, maverick cops, martial artists, and masked avengers who believe in protecting ordinary people. They have a tendency to get wiped out and need constant replacement, but their cause - defending the little guy against overwhelming odds - ensures new generations always answer the call.</p>',
-  'https://ik.imagekit.io/nvqgwnjgv/chi-war-development/The_Dragons_e8XI4PLDS.png',
   true,
   NOW(),
   NOW()
@@ -9599,14 +9598,12 @@ INSERT INTO factions (
 
 INSERT INTO factions (
   id, campaign_id, name, description,
-  image_url, active,
-  created_at, updated_at
+  active, created_at, updated_at
 ) VALUES (
   'c52de513-622e-4bda-a88e-cec2a5c13ddb',
   '7b17864e-4e39-41c2-a5b7-6bbbd5aa4ff2',
   'The Guiding Hand',
   '<p>Traditional Chinese monks and martial artists fighting to preserve their civilization against foreign corruption. Founded in 1810 by politically minded monks who foresaw China''s decline, they use spiritual wisdom, kung fu mastery, and feng shui knowledge to resist colonial powers and maintain traditional values. Led by Perfect Master Quan Lo, they operate through Golden Candle Societies, combining ancient martial arts with patriotic resistance.</p>',
-  'https://ik.imagekit.io/nvqgwnjgv/chi-war-development/The_Guiding_Hand_PsAEzSyKyF.png',
   true,
   NOW(),
   NOW()
@@ -9614,14 +9611,12 @@ INSERT INTO factions (
 
 INSERT INTO factions (
   id, campaign_id, name, description,
-  image_url, active,
-  created_at, updated_at
+  active, created_at, updated_at
 ) VALUES (
   '9afef0d9-233c-4696-b237-aed0515e0500',
   '7b17864e-4e39-41c2-a5b7-6bbbd5aa4ff2',
   'The New Simian Army',
   '<p>A militant faction of cyber-enhanced apes led by Furious George, who broke away from the Jammers after the C-Bomb''s detonation. Believing that the extinction of humanity was evolution''s plan, they see themselves as the rightful inheritors of Earth. Unlike the guilt-ridden Battlechimp Potemkin, Furious George views the C-Bomb as divine providence and leads his simian supremacist army to complete what he sees as natural selection''s work.</p>',
-  'https://ik.imagekit.io/nvqgwnjgv/chi-war-development/The_New_Simian_Army_v4lQcL3mI.png',
   true,
   NOW(),
   NOW()
@@ -9629,14 +9624,12 @@ INSERT INTO factions (
 
 INSERT INTO factions (
   id, campaign_id, name, description,
-  image_url, active,
-  created_at, updated_at
+  active, created_at, updated_at
 ) VALUES (
   '8a2a13dc-447f-4e71-98fd-732c8d65be78',
   '7b17864e-4e39-41c2-a5b7-6bbbd5aa4ff2',
   'The Eaters of the Lotus',
   '<p>Corrupt eunuch sorcerers who have manipulated Chinese imperial courts for millennia. These pale, long-fingernailed court officials use dark magic to accumulate power behind the throne, commanding demons and evil spirits while presenting themselves as loyal servants. They infest periods of weak imperial rule, twisting policy through their intermediary positions between emperors and outside officials, always seeking to expand their supernatural influence.</p>',
-  'https://ik.imagekit.io/nvqgwnjgv/chi-war-development/Eaters_of_the_Lotus_NuQyPRoSS.png',
   true,
   NOW(),
   NOW()
@@ -9644,14 +9637,12 @@ INSERT INTO factions (
 
 INSERT INTO factions (
   id, campaign_id, name, description,
-  image_url, active,
-  created_at, updated_at
+  active, created_at, updated_at
 ) VALUES (
   '50a7bc5c-ca36-48b7-a17b-5698c2e1958e',
   '7b17864e-4e39-41c2-a5b7-6bbbd5aa4ff2',
   'The Jammers',
   '<p>Anarchist rebels who destroyed the Future juncture by detonating a Chi Bomb to eliminate all magic and free humanity from supernatural control. These scrappy revolutionaries, originally led by cyber-apes Battlechimp Potemkin and Furious George, believed that feng shui sites allowed totalitarian control over people''s minds and identities. Though their bomb had catastrophic consequences, they maintain that destroying chi was necessary to preserve free will.</p>',
-  'https://ik.imagekit.io/nvqgwnjgv/chi-war-development/The_Jammers_k-5iq_chse.png',
   true,
   NOW(),
   NOW()
@@ -9659,14 +9650,12 @@ INSERT INTO factions (
 
 INSERT INTO factions (
   id, campaign_id, name, description,
-  image_url, active,
-  created_at, updated_at
+  active, created_at, updated_at
 ) VALUES (
   'd12ebf38-6bf4-485d-ab01-36e71e99306a',
   '7b17864e-4e39-41c2-a5b7-6bbbd5aa4ff2',
   'Grundle''s Wasteland Empire',
   '<p>The cyborg warlord General Grundle rules the post-apocalyptic Future through control of fuel, weapons, and technology. From his massive mechanical throne, this grotesquely obese dictator commands road warriors, scavenger gangs, and anyone desperate enough to serve him for gasoline and protection. His empire is built on the ruins of civilization, where survival depends on automotive warfare and allegiance to the only authority left standing in the wasteland.</p>',
-  'https://ik.imagekit.io/nvqgwnjgv/chi-war-development/General_Grundle_NEVqZeL4y6.png',
   true,
   NOW(),
   NOW()
@@ -9674,14 +9663,12 @@ INSERT INTO factions (
 
 INSERT INTO factions (
   id, campaign_id, name, description,
-  image_url, active,
-  created_at, updated_at
+  active, created_at, updated_at
 ) VALUES (
   'c2c5b7cc-0c64-4866-97c1-b1c9b0e8c457',
   '7b17864e-4e39-41c2-a5b7-6bbbd5aa4ff2',
   'The Thunder Pagoda',
   '<p>The Thunder Monarch leads a twisted religious order that combines demonic power with corrupted divine authority. His followers are fanatical zealots who believe their master is the true voice of heaven, speaking through storms and lightning. Operating from gothic cathedral-fortresses in the Netherworld, they conduct blasphemous ceremonies mixing sacred rituals with supernatural horror. Huan Ken''s faction aims to establish a theocracy where his word is divine law, using fear and religious fervor to control both supernatural beings and any mortals they encounter.</p>',
-  'https://ik.imagekit.io/nvqgwnjgv/chi-war-development/Huan_Ken_oO2XgzfM4.png',
   true,
   NOW(),
   NOW()
@@ -9689,14 +9676,12 @@ INSERT INTO factions (
 
 INSERT INTO factions (
   id, campaign_id, name, description,
-  image_url, active,
-  created_at, updated_at
+  active, created_at, updated_at
 ) VALUES (
   'ce40d0a1-ed7c-4122-a219-996e46425115',
   '7b17864e-4e39-41c2-a5b7-6bbbd5aa4ff2',
   'The Ice Pagoda',
   '<p>The Ice Monarch rules an elegant but merciless court of crystalline beauty and absolute cold. Her followers are aristocratic sorcerers who value perfection, order, and the preservation of power through unchanging hierarchy. From palaces of living ice, they practice subtle manipulation and patient scheming, believing that true power comes from patience and precision rather than brute force. Pi Tui''s faction seeks to impose their vision of perfect order on the chaotic world, creating a realm where everything has its proper place and nothing ever changes without their permission.</p>',
-  'https://ik.imagekit.io/nvqgwnjgv/chi-war-development/Pui_Ti_1eLMqsaBq.png',
   true,
   NOW(),
   NOW()
@@ -9704,14 +9689,12 @@ INSERT INTO factions (
 
 INSERT INTO factions (
   id, campaign_id, name, description,
-  image_url, active,
-  created_at, updated_at
+  active, created_at, updated_at
 ) VALUES (
   'f1b59811-a684-4d3f-a07b-4fcafc79eb7d',
   '7b17864e-4e39-41c2-a5b7-6bbbd5aa4ff2',
   'The Fire Pagoda',
   '<p>The Fire Monarch commands legions of flame-wielding sorcerers and fire elementals across the scorched realms of the Netherworld. His followers worship him as the incarnation of destructive power, believing that only through burning away the old can the new be born. Li Ting''s domain features volcanic fortresses and cities of molten glass, where his servants forge weapons from living flame and conduct rituals in rivers of lava. His faction seeks to return to the earthly realm to purify it through cleansing fire, viewing the current world as corrupt and in need of renewal through destruction.</p>',
-  'https://ik.imagekit.io/nvqgwnjgv/chi-war-development/Li_Ting_6_B2GDJVnc.png',
   true,
   NOW(),
   NOW()
@@ -9719,14 +9702,12 @@ INSERT INTO factions (
 
 INSERT INTO factions (
   id, campaign_id, name, description,
-  image_url, active,
-  created_at, updated_at
+  active, created_at, updated_at
 ) VALUES (
   '954edb9f-afd2-4df8-985d-6756594d0d94',
   '7b17864e-4e39-41c2-a5b7-6bbbd5aa4ff2',
   'The Darkness Pagoda',
   '<p>The Darkness Monarch commands a secretive network of spies, assassins, and occult scholars who operate from hidden temples throughout the Netherworld''s darkest corners. Her followers master the arts of stealth, information gathering, and striking from shadows, believing that knowledge and secrecy are the ultimate weapons. They conduct their operations through a web of cults and secret societies, infiltrating other factions and gathering intelligence for their mistress. Ming I''s faction aims to control the world through information and fear, ruling from the shadows while others fight openly for power.</p>',
-  'https://ik.imagekit.io/nvqgwnjgv/chi-war-development/Ming_Yi_jf1YDThyM.png',
   true,
   NOW(),
   NOW()
@@ -9734,14 +9715,12 @@ INSERT INTO factions (
 
 INSERT INTO factions (
   id, campaign_id, name, description,
-  image_url, active,
-  created_at, updated_at
+  active, created_at, updated_at
 ) VALUES (
   'c44f7eaf-425b-497f-b278-92a3bc612e55',
   '7b17864e-4e39-41c2-a5b7-6bbbd5aa4ff2',
   'Manlysaka',
   '<p>A ruthless techno-corporate empire that promotes cybernetic supremacy through economic manipulation, technological addiction, and systematic discrimination against unenhanced humans. Led by the cyborg executive Ma Yujun, Manlysaka operates on the philosophy that human evolution requires the abandonment of biological weakness in favor of mechanical perfection, using their monopoly on cybernetic technology to create a society where augmentation is both carrot and stick. The corporation maintains control through vertical integration - they manufacture the implants, provide the financing, control the job market that requires them, and own the medical facilities that install them, creating a closed loop where citizens must literally buy their way into the new cybernetic aristocracy or face permanent underclass status. Manlysaka''s agents include enhanced corporate security forces, executive cyborgs with neural-linked management capabilities, and street-level enforcers who hunt down "purist" resistance movements, all united by their belief that Ma Yujun''s vision of a post-human future represents the next step in evolution rather than the corporate enslavement of the human soul.</p>',
-  'https://ik.imagekit.io/nvqgwnjgv/chi-war-development/Manlysaka_q3TJn-6_G.png',
   true,
   NOW(),
   NOW()
@@ -9749,14 +9728,12 @@ INSERT INTO factions (
 
 INSERT INTO factions (
   id, campaign_id, name, description,
-  image_url, active,
-  created_at, updated_at
+  active, created_at, updated_at
 ) VALUES (
   'f9c89687-9813-4c50-98fb-ceecfcc5e335',
   '7b17864e-4e39-41c2-a5b7-6bbbd5aa4ff2',
   'The Ascended',
   '<p>A secret society of transformed animals who have ruled the world from the shadows for centuries. Originally animals who magically became human in ancient times, their descendants now control governments, corporations, and media worldwide. They maintain power by controlling feng shui sites to keep magic suppressed - if magic returns, they risk reverting to their animal forms. Most members are ordinary humans unaware of the conspiracy, but the inner circles (the Pledged and the Lodge) know they serve mysterious masters with inhuman heritage.</p>',
-  'https://ik.imagekit.io/nvqgwnjgv/chi-war-development/The_Ascended_Zx6uYB_koM.png',
   true,
   NOW(),
   NOW()
@@ -12608,6 +12585,838 @@ INSERT INTO carries (
   '3725c300-39ab-427d-9eea-21659acdcd2b',
   'e95d3487-5ef2-478c-8035-b878c455e463',
   '4b337cb9-316a-4edb-bd17-82f8d476ce13',
+  NOW(),
+  NOW()
+) ON CONFLICT (id) DO NOTHING;
+
+INSERT INTO image_positions (
+  id, positionable_type, positionable_id, context,
+  x_position, y_position, style_overrides,
+  created_at, updated_at
+) VALUES (
+  '45f5a4d9-80e8-4c3a-b3bd-f5416a3ce7a8',
+  'Character',
+  '115f61d2-3839-42fc-9f85-d9765c7bf1f7',
+  'desktop_edit',
+  0.0,
+  -311.0,
+  '{}',
+  NOW(),
+  NOW()
+) ON CONFLICT (id) DO NOTHING;
+
+INSERT INTO image_positions (
+  id, positionable_type, positionable_id, context,
+  x_position, y_position, style_overrides,
+  created_at, updated_at
+) VALUES (
+  '43bdfa8e-4462-4515-a340-c0444c384058',
+  'Character',
+  '5c62b67e-21bb-45f7-939a-c10547fa7015',
+  'desktop_edit',
+  0.0,
+  -230.0,
+  '{}',
+  NOW(),
+  NOW()
+) ON CONFLICT (id) DO NOTHING;
+
+INSERT INTO image_positions (
+  id, positionable_type, positionable_id, context,
+  x_position, y_position, style_overrides,
+  created_at, updated_at
+) VALUES (
+  '1a162536-d419-4f52-afc4-c3c1303bfba7',
+  'Character',
+  '5ef803e9-4696-4df7-b12e-4766176d82b3',
+  'desktop_edit',
+  0.0,
+  -92.0,
+  '{}',
+  NOW(),
+  NOW()
+) ON CONFLICT (id) DO NOTHING;
+
+INSERT INTO image_positions (
+  id, positionable_type, positionable_id, context,
+  x_position, y_position, style_overrides,
+  created_at, updated_at
+) VALUES (
+  '5b675fa1-1671-442d-9fb9-39908be665c6',
+  'Character',
+  'd39997e5-f720-49d5-a43b-83a2d983e037',
+  'desktop_edit',
+  0.0,
+  -129.0,
+  '{}',
+  NOW(),
+  NOW()
+) ON CONFLICT (id) DO NOTHING;
+
+INSERT INTO image_positions (
+  id, positionable_type, positionable_id, context,
+  x_position, y_position, style_overrides,
+  created_at, updated_at
+) VALUES (
+  '874d2bd9-dada-4566-9f69-35cd49355d2c',
+  'Character',
+  'ac248717-2f82-44b5-ac39-83b582777a96',
+  'desktop_edit',
+  0.0,
+  -104.0,
+  '{}',
+  NOW(),
+  NOW()
+) ON CONFLICT (id) DO NOTHING;
+
+INSERT INTO image_positions (
+  id, positionable_type, positionable_id, context,
+  x_position, y_position, style_overrides,
+  created_at, updated_at
+) VALUES (
+  'c34ef044-bce6-40cb-87be-76cc969fe4a2',
+  'Character',
+  '322d42d3-26a5-46d0-8eb8-977da4ce996c',
+  'desktop_edit',
+  0.0,
+  -84.0,
+  '{}',
+  NOW(),
+  NOW()
+) ON CONFLICT (id) DO NOTHING;
+
+INSERT INTO image_positions (
+  id, positionable_type, positionable_id, context,
+  x_position, y_position, style_overrides,
+  created_at, updated_at
+) VALUES (
+  '47df097b-55a1-4015-9fd2-3bc4a89e9acb',
+  'Character',
+  '85a65881-99b7-4aba-91d9-7e759b8c761e',
+  'desktop_edit',
+  0.0,
+  -135.0,
+  '{}',
+  NOW(),
+  NOW()
+) ON CONFLICT (id) DO NOTHING;
+
+INSERT INTO image_positions (
+  id, positionable_type, positionable_id, context,
+  x_position, y_position, style_overrides,
+  created_at, updated_at
+) VALUES (
+  '74e48a6f-d360-44f1-884a-71e872b9dcaa',
+  'Character',
+  '8d1afe00-b16f-4698-95f3-64fc2e997f9e',
+  'desktop_edit',
+  0.0,
+  -154.0,
+  '{}',
+  NOW(),
+  NOW()
+) ON CONFLICT (id) DO NOTHING;
+
+INSERT INTO image_positions (
+  id, positionable_type, positionable_id, context,
+  x_position, y_position, style_overrides,
+  created_at, updated_at
+) VALUES (
+  'e1887558-c881-4a32-844e-aa2fc7a6b51a',
+  'Character',
+  'f64b9dc7-e53c-4fdd-8eeb-6480451df853',
+  'desktop_edit',
+  0.0,
+  -202.0,
+  '{}',
+  NOW(),
+  NOW()
+) ON CONFLICT (id) DO NOTHING;
+
+INSERT INTO image_positions (
+  id, positionable_type, positionable_id, context,
+  x_position, y_position, style_overrides,
+  created_at, updated_at
+) VALUES (
+  'd8c5f19e-5973-4ecf-bfa2-6d94e7acd038',
+  'Character',
+  '23bde1d7-2561-4418-bd1b-47920351338d',
+  'desktop_edit',
+  0.0,
+  -231.0,
+  '{}',
+  NOW(),
+  NOW()
+) ON CONFLICT (id) DO NOTHING;
+
+INSERT INTO image_positions (
+  id, positionable_type, positionable_id, context,
+  x_position, y_position, style_overrides,
+  created_at, updated_at
+) VALUES (
+  'becc445d-bbae-4073-893b-fe64fb7b1722',
+  'Character',
+  'f7d9c375-eee7-47ec-8975-90aefe08000a',
+  'desktop_edit',
+  0.0,
+  -101.0,
+  '{}',
+  NOW(),
+  NOW()
+) ON CONFLICT (id) DO NOTHING;
+
+INSERT INTO image_positions (
+  id, positionable_type, positionable_id, context,
+  x_position, y_position, style_overrides,
+  created_at, updated_at
+) VALUES (
+  'caf88f24-d921-4d0c-8d5b-0451ad2408b0',
+  'Character',
+  '317a298c-a051-46f2-9eb4-1833503fbcf6',
+  'desktop_edit',
+  0.0,
+  -136.0,
+  '{}',
+  NOW(),
+  NOW()
+) ON CONFLICT (id) DO NOTHING;
+
+INSERT INTO image_positions (
+  id, positionable_type, positionable_id, context,
+  x_position, y_position, style_overrides,
+  created_at, updated_at
+) VALUES (
+  '93dfbe22-eeb1-455c-8582-ebb134cbcfcc',
+  'Character',
+  '5c1abd1d-aa9a-449c-87ac-c06b7795d94e',
+  'desktop_edit',
+  0.0,
+  -90.0,
+  '{}',
+  NOW(),
+  NOW()
+) ON CONFLICT (id) DO NOTHING;
+
+INSERT INTO image_positions (
+  id, positionable_type, positionable_id, context,
+  x_position, y_position, style_overrides,
+  created_at, updated_at
+) VALUES (
+  '9110f0d1-3cfd-46a1-ab37-ad1e88c48205',
+  'Character',
+  '8b42e03c-2609-4ab1-85ec-47075a0b19c7',
+  'desktop_edit',
+  0.0,
+  -107.0,
+  '{}',
+  NOW(),
+  NOW()
+) ON CONFLICT (id) DO NOTHING;
+
+INSERT INTO image_positions (
+  id, positionable_type, positionable_id, context,
+  x_position, y_position, style_overrides,
+  created_at, updated_at
+) VALUES (
+  '512e22a5-0bd5-449e-9cbe-81c1a9361e5d',
+  'Character',
+  '3c01197d-52a0-4b2e-8f5d-377186b36537',
+  'desktop_edit',
+  0.0,
+  -96.0,
+  '{}',
+  NOW(),
+  NOW()
+) ON CONFLICT (id) DO NOTHING;
+
+INSERT INTO image_positions (
+  id, positionable_type, positionable_id, context,
+  x_position, y_position, style_overrides,
+  created_at, updated_at
+) VALUES (
+  '7ed00ab9-441c-4174-8caf-7ab5ea00e528',
+  'Character',
+  'cfde27ab-7dfd-4f38-98ee-2eccc631be14',
+  'desktop_edit',
+  0.0,
+  -138.0,
+  '{}',
+  NOW(),
+  NOW()
+) ON CONFLICT (id) DO NOTHING;
+
+INSERT INTO image_positions (
+  id, positionable_type, positionable_id, context,
+  x_position, y_position, style_overrides,
+  created_at, updated_at
+) VALUES (
+  '4588bf81-c900-4126-acd4-976f434d85be',
+  'Character',
+  'dd07a0f2-0148-4c14-ab0f-f383557214ee',
+  'desktop_edit',
+  0.0,
+  -216.0,
+  '{}',
+  NOW(),
+  NOW()
+) ON CONFLICT (id) DO NOTHING;
+
+INSERT INTO image_positions (
+  id, positionable_type, positionable_id, context,
+  x_position, y_position, style_overrides,
+  created_at, updated_at
+) VALUES (
+  '43b7b878-94e7-4901-8f02-9af91635972d',
+  'Character',
+  'd02c57aa-9e16-4aa7-9217-c161cea860d0',
+  'desktop_edit',
+  0.0,
+  -219.0,
+  '{}',
+  NOW(),
+  NOW()
+) ON CONFLICT (id) DO NOTHING;
+
+INSERT INTO image_positions (
+  id, positionable_type, positionable_id, context,
+  x_position, y_position, style_overrides,
+  created_at, updated_at
+) VALUES (
+  '4358827b-6f5d-43d5-93c1-76fe1f6af3d9',
+  'Character',
+  'cb78b93b-fea2-4f30-ad1f-9b69761a5da5',
+  'desktop_edit',
+  0.0,
+  -163.0,
+  '{}',
+  NOW(),
+  NOW()
+) ON CONFLICT (id) DO NOTHING;
+
+INSERT INTO image_positions (
+  id, positionable_type, positionable_id, context,
+  x_position, y_position, style_overrides,
+  created_at, updated_at
+) VALUES (
+  'e8384731-62a4-4d6e-b388-00e452e965ff',
+  'Character',
+  '46001c17-943e-47ed-bfed-40be516d6c3c',
+  'desktop_edit',
+  0.0,
+  -148.0,
+  '{}',
+  NOW(),
+  NOW()
+) ON CONFLICT (id) DO NOTHING;
+
+INSERT INTO image_positions (
+  id, positionable_type, positionable_id, context,
+  x_position, y_position, style_overrides,
+  created_at, updated_at
+) VALUES (
+  '5e1156f6-8abb-430a-acfd-5a2e6e4f2490',
+  'Character',
+  'fbb2e188-9d06-4987-ba1b-a489280cce5e',
+  'desktop_edit',
+  0.0,
+  -137.0,
+  '{}',
+  NOW(),
+  NOW()
+) ON CONFLICT (id) DO NOTHING;
+
+INSERT INTO image_positions (
+  id, positionable_type, positionable_id, context,
+  x_position, y_position, style_overrides,
+  created_at, updated_at
+) VALUES (
+  '23d4612b-4345-40c6-b5e8-dbd09a4e4a8e',
+  'Character',
+  '8cef368d-9101-4b92-89c1-dc5c7965d333',
+  'desktop_edit',
+  0.0,
+  -120.0,
+  '{}',
+  NOW(),
+  NOW()
+) ON CONFLICT (id) DO NOTHING;
+
+INSERT INTO image_positions (
+  id, positionable_type, positionable_id, context,
+  x_position, y_position, style_overrides,
+  created_at, updated_at
+) VALUES (
+  '9b3eb33c-d7f0-4be5-a3c2-9586b7ea2c50',
+  'Character',
+  '8e9477c6-b93a-499e-876c-ebf14427d6a8',
+  'desktop_edit',
+  0.0,
+  -220.0,
+  '{}',
+  NOW(),
+  NOW()
+) ON CONFLICT (id) DO NOTHING;
+
+INSERT INTO image_positions (
+  id, positionable_type, positionable_id, context,
+  x_position, y_position, style_overrides,
+  created_at, updated_at
+) VALUES (
+  'e9416f3d-393e-49b5-aa0e-134384a47e02',
+  'Character',
+  'd9ad1bc8-db91-43ba-8371-fe883ab72aa3',
+  'desktop_edit',
+  0.0,
+  -144.0,
+  '{}',
+  NOW(),
+  NOW()
+) ON CONFLICT (id) DO NOTHING;
+
+INSERT INTO image_positions (
+  id, positionable_type, positionable_id, context,
+  x_position, y_position, style_overrides,
+  created_at, updated_at
+) VALUES (
+  'b72b0c01-1a24-4c12-9a3f-755c6e60a2aa',
+  'Character',
+  'bcf03792-c296-48d8-baa8-d96261089571',
+  'desktop_edit',
+  0.0,
+  -244.0,
+  '{}',
+  NOW(),
+  NOW()
+) ON CONFLICT (id) DO NOTHING;
+
+INSERT INTO image_positions (
+  id, positionable_type, positionable_id, context,
+  x_position, y_position, style_overrides,
+  created_at, updated_at
+) VALUES (
+  '5ce3caf3-bfad-43d1-bf72-0dbff6ca642b',
+  'Character',
+  'df233719-e808-4146-aa94-c76efa1d9db4',
+  'desktop_edit',
+  0.0,
+  -148.0,
+  '{}',
+  NOW(),
+  NOW()
+) ON CONFLICT (id) DO NOTHING;
+
+INSERT INTO image_positions (
+  id, positionable_type, positionable_id, context,
+  x_position, y_position, style_overrides,
+  created_at, updated_at
+) VALUES (
+  'e938a4df-0cb7-4747-8541-92ccde6a9453',
+  'Character',
+  '4c5cae19-e0fc-423c-8133-513e8416d423',
+  'desktop_edit',
+  0.0,
+  -106.0,
+  '{}',
+  NOW(),
+  NOW()
+) ON CONFLICT (id) DO NOTHING;
+
+INSERT INTO image_positions (
+  id, positionable_type, positionable_id, context,
+  x_position, y_position, style_overrides,
+  created_at, updated_at
+) VALUES (
+  '67c9cf47-fed8-41d7-9633-cf90b95d5943',
+  'Character',
+  'bf96d7dd-e1df-4532-813c-255d943cea91',
+  'desktop_edit',
+  0.0,
+  -133.0,
+  '{}',
+  NOW(),
+  NOW()
+) ON CONFLICT (id) DO NOTHING;
+
+INSERT INTO image_positions (
+  id, positionable_type, positionable_id, context,
+  x_position, y_position, style_overrides,
+  created_at, updated_at
+) VALUES (
+  '99ed73c8-7cdf-4d72-803f-6d0e6e01c131',
+  'Character',
+  'e95d3487-5ef2-478c-8035-b878c455e463',
+  'desktop_edit',
+  0.0,
+  -110.0,
+  '{}',
+  NOW(),
+  NOW()
+) ON CONFLICT (id) DO NOTHING;
+
+INSERT INTO image_positions (
+  id, positionable_type, positionable_id, context,
+  x_position, y_position, style_overrides,
+  created_at, updated_at
+) VALUES (
+  'eaeca885-d04a-4b7d-a9c7-45022b3fe679',
+  'Character',
+  'bbc04a45-4523-400b-ac21-89754a0e7440',
+  'desktop_edit',
+  0.0,
+  -204.0,
+  '{}',
+  NOW(),
+  NOW()
+) ON CONFLICT (id) DO NOTHING;
+
+INSERT INTO image_positions (
+  id, positionable_type, positionable_id, context,
+  x_position, y_position, style_overrides,
+  created_at, updated_at
+) VALUES (
+  '7f2d27e2-037e-44d3-9cfd-6c47d46620cf',
+  'Character',
+  '670f4efe-30d5-4d40-8a98-3b10e0b937e6',
+  'desktop_edit',
+  0.0,
+  -135.0,
+  '{}',
+  NOW(),
+  NOW()
+) ON CONFLICT (id) DO NOTHING;
+
+INSERT INTO image_positions (
+  id, positionable_type, positionable_id, context,
+  x_position, y_position, style_overrides,
+  created_at, updated_at
+) VALUES (
+  '8535168b-9fe9-4244-848e-9e420f2836f9',
+  'Character',
+  '92783b56-c474-412d-95ca-9b23ee3f0b97',
+  'desktop_edit',
+  0.0,
+  -131.0,
+  '{}',
+  NOW(),
+  NOW()
+) ON CONFLICT (id) DO NOTHING;
+
+INSERT INTO image_positions (
+  id, positionable_type, positionable_id, context,
+  x_position, y_position, style_overrides,
+  created_at, updated_at
+) VALUES (
+  'c5c4633b-435d-4337-9562-c6073155b660',
+  'Character',
+  '2c2efc13-84ce-45d5-9549-b5b058b2ebe0',
+  'desktop_edit',
+  0.0,
+  -174.0,
+  '{}',
+  NOW(),
+  NOW()
+) ON CONFLICT (id) DO NOTHING;
+
+INSERT INTO image_positions (
+  id, positionable_type, positionable_id, context,
+  x_position, y_position, style_overrides,
+  created_at, updated_at
+) VALUES (
+  '4fea6102-0d33-4222-a2b7-393947c22995',
+  'Character',
+  'b1103cf5-a767-4ee3-aa18-4d914ec74f28',
+  'desktop_edit',
+  0.0,
+  -250.0,
+  '{}',
+  NOW(),
+  NOW()
+) ON CONFLICT (id) DO NOTHING;
+
+INSERT INTO image_positions (
+  id, positionable_type, positionable_id, context,
+  x_position, y_position, style_overrides,
+  created_at, updated_at
+) VALUES (
+  '091c295f-a56a-4772-9da2-fd3500c84781',
+  'Character',
+  'bd661084-c670-4910-b568-3a2962a621e5',
+  'desktop_edit',
+  0.0,
+  -264.0,
+  '{}',
+  NOW(),
+  NOW()
+) ON CONFLICT (id) DO NOTHING;
+
+INSERT INTO image_positions (
+  id, positionable_type, positionable_id, context,
+  x_position, y_position, style_overrides,
+  created_at, updated_at
+) VALUES (
+  '3e9011dd-80ac-4ce2-8f76-5095d271096b',
+  'Faction',
+  'd12ebf38-6bf4-485d-ab01-36e71e99306a',
+  'desktop_entity',
+  0.0,
+  -150.0,
+  '{}',
+  NOW(),
+  NOW()
+) ON CONFLICT (id) DO NOTHING;
+
+INSERT INTO image_positions (
+  id, positionable_type, positionable_id, context,
+  x_position, y_position, style_overrides,
+  created_at, updated_at
+) VALUES (
+  'ec2d82a4-a047-4a19-9b56-b6071142ebb6',
+  'Faction',
+  '9afef0d9-233c-4696-b237-aed0515e0500',
+  'desktop_entity',
+  0.0,
+  -46.0,
+  '{}',
+  NOW(),
+  NOW()
+) ON CONFLICT (id) DO NOTHING;
+
+INSERT INTO image_positions (
+  id, positionable_type, positionable_id, context,
+  x_position, y_position, style_overrides,
+  created_at, updated_at
+) VALUES (
+  '338bb83f-fd4f-4308-9b82-ae6261b7bc03',
+  'Faction',
+  '50a7bc5c-ca36-48b7-a17b-5698c2e1958e',
+  'desktop_entity',
+  0.0,
+  -276.0,
+  '{}',
+  NOW(),
+  NOW()
+) ON CONFLICT (id) DO NOTHING;
+
+INSERT INTO image_positions (
+  id, positionable_type, positionable_id, context,
+  x_position, y_position, style_overrides,
+  created_at, updated_at
+) VALUES (
+  'd4b2755c-9f06-4df5-b982-00746a913e0d',
+  'Faction',
+  '8a2a13dc-447f-4e71-98fd-732c8d65be78',
+  'desktop_entity',
+  0.0,
+  -47.0,
+  '{}',
+  NOW(),
+  NOW()
+) ON CONFLICT (id) DO NOTHING;
+
+INSERT INTO image_positions (
+  id, positionable_type, positionable_id, context,
+  x_position, y_position, style_overrides,
+  created_at, updated_at
+) VALUES (
+  '3ced78ed-c84c-489b-aaa5-dcc4c4fa7906',
+  'Character',
+  '67f709a8-521f-48b5-a3d6-cee40868236a',
+  'desktop_edit',
+  0.0,
+  -108.0,
+  '{}',
+  NOW(),
+  NOW()
+) ON CONFLICT (id) DO NOTHING;
+
+INSERT INTO image_positions (
+  id, positionable_type, positionable_id, context,
+  x_position, y_position, style_overrides,
+  created_at, updated_at
+) VALUES (
+  '3e702810-6585-4b0c-bd5f-5b0f632d46ba',
+  'Character',
+  'f0310e8e-871f-46c5-8497-f9e484824281',
+  'desktop_edit',
+  0.0,
+  -212.0,
+  '{}',
+  NOW(),
+  NOW()
+) ON CONFLICT (id) DO NOTHING;
+
+INSERT INTO image_positions (
+  id, positionable_type, positionable_id, context,
+  x_position, y_position, style_overrides,
+  created_at, updated_at
+) VALUES (
+  '5b6db8cd-ea84-4d66-830d-96344d1be103',
+  'Faction',
+  'f9c89687-9813-4c50-98fb-ceecfcc5e335',
+  'desktop_entity',
+  0.0,
+  -331.0,
+  '{}',
+  NOW(),
+  NOW()
+) ON CONFLICT (id) DO NOTHING;
+
+INSERT INTO image_positions (
+  id, positionable_type, positionable_id, context,
+  x_position, y_position, style_overrides,
+  created_at, updated_at
+) VALUES (
+  '725bef74-869c-4795-ad92-720fba18a873',
+  'Faction',
+  '6bc3abe7-2890-432f-a397-89c763f54d18',
+  'desktop_entity',
+  0.0,
+  -259.0,
+  '{}',
+  NOW(),
+  NOW()
+) ON CONFLICT (id) DO NOTHING;
+
+INSERT INTO image_positions (
+  id, positionable_type, positionable_id, context,
+  x_position, y_position, style_overrides,
+  created_at, updated_at
+) VALUES (
+  '6ce66614-5820-4c99-a728-a350fe586596',
+  'Character',
+  'aaf89162-4329-4924-9141-dd8ba02c13a8',
+  'desktop_edit',
+  0.0,
+  -148.0,
+  '{}',
+  NOW(),
+  NOW()
+) ON CONFLICT (id) DO NOTHING;
+
+INSERT INTO image_positions (
+  id, positionable_type, positionable_id, context,
+  x_position, y_position, style_overrides,
+  created_at, updated_at
+) VALUES (
+  'a6a31f7e-8358-4c74-8dad-9318f82008a2',
+  'Character',
+  '7a367c9d-ad7f-4bc8-9050-30a58a9e4e99',
+  'desktop_edit',
+  0.0,
+  -189.0,
+  '{}',
+  NOW(),
+  NOW()
+) ON CONFLICT (id) DO NOTHING;
+
+INSERT INTO image_positions (
+  id, positionable_type, positionable_id, context,
+  x_position, y_position, style_overrides,
+  created_at, updated_at
+) VALUES (
+  '22ffb046-43da-40a6-98e7-2fea50ce93f4',
+  'Character',
+  '3947d2d8-163a-4bdd-83e8-0de8f751e861',
+  'desktop_edit',
+  0.0,
+  -183.0,
+  '{}',
+  NOW(),
+  NOW()
+) ON CONFLICT (id) DO NOTHING;
+
+INSERT INTO image_positions (
+  id, positionable_type, positionable_id, context,
+  x_position, y_position, style_overrides,
+  created_at, updated_at
+) VALUES (
+  'c3eef46b-d1f7-4dac-8bc4-1a94884a68ef',
+  'Faction',
+  'c2c5b7cc-0c64-4866-97c1-b1c9b0e8c457',
+  'desktop_entity',
+  0.0,
+  -215.0,
+  '{}',
+  NOW(),
+  NOW()
+) ON CONFLICT (id) DO NOTHING;
+
+INSERT INTO image_positions (
+  id, positionable_type, positionable_id, context,
+  x_position, y_position, style_overrides,
+  created_at, updated_at
+) VALUES (
+  '05ff6b4a-a25f-4981-8088-344b01e63cdd',
+  'Faction',
+  'f1b59811-a684-4d3f-a07b-4fcafc79eb7d',
+  'desktop_entity',
+  0.0,
+  -183.0,
+  '{}',
+  NOW(),
+  NOW()
+) ON CONFLICT (id) DO NOTHING;
+
+INSERT INTO image_positions (
+  id, positionable_type, positionable_id, context,
+  x_position, y_position, style_overrides,
+  created_at, updated_at
+) VALUES (
+  '212786af-6567-4c50-8608-0947825b527c',
+  'Faction',
+  'ce40d0a1-ed7c-4122-a219-996e46425115',
+  'desktop_entity',
+  0.0,
+  -240.0,
+  '{}',
+  NOW(),
+  NOW()
+) ON CONFLICT (id) DO NOTHING;
+
+INSERT INTO image_positions (
+  id, positionable_type, positionable_id, context,
+  x_position, y_position, style_overrides,
+  created_at, updated_at
+) VALUES (
+  '1e55785d-78b0-41df-a405-2c096b4cb338',
+  'Faction',
+  '954edb9f-afd2-4df8-985d-6756594d0d94',
+  'desktop_entity',
+  0.0,
+  -236.0,
+  '{}',
+  NOW(),
+  NOW()
+) ON CONFLICT (id) DO NOTHING;
+
+INSERT INTO image_positions (
+  id, positionable_type, positionable_id, context,
+  x_position, y_position, style_overrides,
+  created_at, updated_at
+) VALUES (
+  '46dd0523-85c4-40ba-9c87-070e509a2c05',
+  'Faction',
+  'c52de513-622e-4bda-a88e-cec2a5c13ddb',
+  'desktop_entity',
+  0.0,
+  -222.0,
+  '{}',
+  NOW(),
+  NOW()
+) ON CONFLICT (id) DO NOTHING;
+
+INSERT INTO image_positions (
+  id, positionable_type, positionable_id, context,
+  x_position, y_position, style_overrides,
+  created_at, updated_at
+) VALUES (
+  'dad11a40-07fe-4a20-91fb-f637b4f84f8b',
+  'Faction',
+  'c44f7eaf-425b-497f-b278-92a3bc612e55',
+  'desktop_entity',
+  0.0,
+  -128.0,
+  '{}',
   NOW(),
   NOW()
 ) ON CONFLICT (id) DO NOTHING;
