@@ -1,0 +1,374 @@
+namespace :template do
+  desc "Export master template campaign and all associations to SQL file"
+  task export: :environment do
+    exporter = TemplateExporter.new
+    exporter.export
+  end
+end
+
+class TemplateExporter
+  def initialize
+    @export_dir = Rails.root.join('db', 'exports')
+    @timestamp = Time.current.strftime('%Y%m%d_%H%M%S')
+    @filename = "master_template_export_#{@timestamp}.sql"
+    @filepath = @export_dir.join(@filename)
+    @sql_statements = []
+  end
+
+  def export
+    Rails.logger.info "Starting master template export..."
+    
+    # Find master template
+    @master_template = Campaign.find_by(is_master_template: true)
+    raise "No master template campaign found. Please ensure a campaign exists with is_master_template: true" unless @master_template
+    
+    # Ensure export directory exists
+    FileUtils.mkdir_p(@export_dir)
+    
+    # Start transaction
+    @sql_statements << "BEGIN;"
+    
+    # Export in dependency order
+    export_campaign
+    export_base_entities
+    export_factions
+    export_characters
+    export_vehicles
+    export_sites
+    export_parties
+    export_junctures
+    export_schticks
+    export_weapons
+    export_join_tables
+    
+    # End transaction
+    @sql_statements << "COMMIT;"
+    
+    # Write to file
+    File.write(@filepath, @sql_statements.join("\n\n") + "\n")
+    
+    Rails.logger.info "Export completed: #{@filepath}"
+    puts "Master template exported successfully to: #{@filepath}"
+  end
+
+  private
+
+  def export_campaign
+    Rails.logger.info "Exporting campaign: #{@master_template.name}"
+    
+    sql = <<~SQL
+      INSERT INTO campaigns (
+        id, name, description, is_master_template, active,
+        created_at, updated_at
+      ) VALUES (
+        '#{@master_template.id}',
+        #{quote(@master_template.name)},
+        #{quote(@master_template.description)},
+        true,
+        true,
+        NOW(),
+        NOW()
+      ) ON CONFLICT (id) DO NOTHING;
+    SQL
+    
+    @sql_statements << sql.strip
+  end
+
+  def export_base_entities
+    # Export any standalone schticks and weapons (not tied to specific characters)
+    export_archetype_schticks
+    export_archetype_weapons
+  end
+
+  def export_archetype_schticks
+    schticks = @master_template.schticks
+    return if schticks.empty?
+    
+    Rails.logger.info "Exporting #{schticks.count} archetype schticks"
+    
+    schticks.each do |schtick|
+      sql = <<~SQL
+        INSERT INTO schticks (
+          id, campaign_id, name, description, category,
+          created_at, updated_at
+        ) VALUES (
+          '#{schtick.id}',
+          '#{@master_template.id}',
+          #{quote(schtick.name)},
+          #{quote(schtick.description)},
+          #{quote(schtick.category)},
+          NOW(),
+          NOW()
+        ) ON CONFLICT (id) DO NOTHING;
+      SQL
+      
+      @sql_statements << sql.strip
+    end
+  end
+
+  def export_archetype_weapons
+    weapons = @master_template.weapons
+    return if weapons.empty?
+    
+    Rails.logger.info "Exporting #{weapons.count} archetype weapons"
+    
+    weapons.each do |weapon|
+      sql = <<~SQL
+        INSERT INTO weapons (
+          id, campaign_id, name, damage, concealment, reload_value,
+          created_at, updated_at
+        ) VALUES (
+          '#{weapon.id}',
+          '#{@master_template.id}',
+          #{quote(weapon.name)},
+          #{weapon.damage || 'NULL'},
+          #{weapon.concealment || 'NULL'},
+          #{weapon.reload_value || 'NULL'},
+          NOW(),
+          NOW()
+        ) ON CONFLICT (id) DO NOTHING;
+      SQL
+      
+      @sql_statements << sql.strip
+    end
+  end
+
+  def export_factions
+    factions = @master_template.factions
+    return if factions.empty?
+    
+    Rails.logger.info "Exporting #{factions.count} factions"
+    
+    factions.each do |faction|
+      sql = <<~SQL
+        INSERT INTO factions (
+          id, campaign_id, name, description,
+          image_url, active,
+          created_at, updated_at
+        ) VALUES (
+          '#{faction.id}',
+          '#{@master_template.id}',
+          #{quote(faction.name)},
+          #{quote(faction.description)},
+          #{quote(faction.image_url)},
+          #{faction.active},
+          NOW(),
+          NOW()
+        ) ON CONFLICT (id) DO NOTHING;
+      SQL
+      
+      @sql_statements << sql.strip
+    end
+  end
+
+  def export_characters
+    characters = @master_template.characters
+    return if characters.empty?
+    
+    Rails.logger.info "Exporting #{characters.count} characters"
+    
+    characters.each do |character|
+      sql = <<~SQL
+        INSERT INTO characters (
+          id, campaign_id, name, description,
+          image_url, action_values, skills, active,
+          faction_id, created_at, updated_at
+        ) VALUES (
+          '#{character.id}',
+          '#{@master_template.id}',
+          #{quote(character.name)},
+          #{quote(character.description.to_json)},
+          #{quote(character.image_url)},
+          #{quote(character.action_values.to_json)},
+          #{quote(character.skills.to_json)},
+          #{character.active},
+          #{character.faction_id ? "'#{character.faction_id}'" : 'NULL'},
+          NOW(),
+          NOW()
+        ) ON CONFLICT (id) DO NOTHING;
+      SQL
+      
+      @sql_statements << sql.strip
+    end
+  end
+
+  def export_vehicles
+    vehicles = @master_template.vehicles
+    return if vehicles.empty?
+    
+    Rails.logger.info "Exporting #{vehicles.count} vehicles"
+    
+    vehicles.each do |vehicle|
+      sql = <<~SQL
+        INSERT INTO vehicles (
+          id, campaign_id, name, action_values,
+          image_url, active, faction_id,
+          created_at, updated_at
+        ) VALUES (
+          '#{vehicle.id}',
+          '#{@master_template.id}',
+          #{quote(vehicle.name)},
+          #{quote(vehicle.action_values.to_json)},
+          #{quote(vehicle.image_url)},
+          #{vehicle.active},
+          #{vehicle.faction_id ? "'#{vehicle.faction_id}'" : 'NULL'},
+          NOW(),
+          NOW()
+        ) ON CONFLICT (id) DO NOTHING;
+      SQL
+      
+      @sql_statements << sql.strip
+    end
+  end
+
+  def export_sites
+    sites = @master_template.sites
+    return if sites.empty?
+    
+    Rails.logger.info "Exporting #{sites.count} sites"
+    
+    sites.each do |site|
+      sql = <<~SQL
+        INSERT INTO sites (
+          id, campaign_id, name, description, active,
+          faction_id, juncture_id,
+          created_at, updated_at
+        ) VALUES (
+          '#{site.id}',
+          '#{@master_template.id}',
+          #{quote(site.name)},
+          #{quote(site.description)},
+          #{site.active},
+          #{site.faction_id ? "'#{site.faction_id}'" : 'NULL'},
+          #{site.juncture_id ? "'#{site.juncture_id}'" : 'NULL'},
+          NOW(),
+          NOW()
+        ) ON CONFLICT (id) DO NOTHING;
+      SQL
+      
+      @sql_statements << sql.strip
+    end
+  end
+
+  def export_parties
+    parties = @master_template.parties
+    return if parties.empty?
+    
+    Rails.logger.info "Exporting #{parties.count} parties"
+    
+    parties.each do |party|
+      sql = <<~SQL
+        INSERT INTO parties (
+          id, campaign_id, name, description,
+          created_at, updated_at
+        ) VALUES (
+          '#{party.id}',
+          '#{@master_template.id}',
+          #{quote(party.name)},
+          #{quote(party.description)},
+          NOW(),
+          NOW()
+        ) ON CONFLICT (id) DO NOTHING;
+      SQL
+      
+      @sql_statements << sql.strip
+    end
+  end
+
+  def export_junctures
+    junctures = @master_template.junctures
+    return if junctures.empty?
+    
+    Rails.logger.info "Exporting #{junctures.count} junctures"
+    
+    junctures.each do |juncture|
+      sql = <<~SQL
+        INSERT INTO junctures (
+          id, campaign_id, faction_id, name, description,
+          active, created_at, updated_at
+        ) VALUES (
+          '#{juncture.id}',
+          '#{@master_template.id}',
+          #{juncture.faction_id ? "'#{juncture.faction_id}'" : 'NULL'},
+          #{quote(juncture.name)},
+          #{quote(juncture.description)},
+          #{juncture.active},
+          NOW(),
+          NOW()
+        ) ON CONFLICT (id) DO NOTHING;
+      SQL
+      
+      @sql_statements << sql.strip
+    end
+  end
+
+  def export_schticks
+    # Schticks are already exported in export_archetype_schticks
+    return
+  end
+
+  def export_weapons
+    # Weapons are already exported in export_archetype_weapons
+    return
+  end
+
+  def export_join_tables
+    export_character_schticks
+    export_carries
+    # Note: memberships are for party-character relationships, not exported here
+  end
+
+  def export_character_schticks
+    character_schticks = CharacterSchtick.joins(:character).where(characters: { campaign_id: @master_template.id })
+    return if character_schticks.empty?
+    
+    Rails.logger.info "Exporting #{character_schticks.count} character_schticks associations"
+    
+    character_schticks.each do |cs|
+      sql = <<~SQL
+        INSERT INTO character_schticks (
+          character_id, schtick_id,
+          created_at, updated_at
+        ) VALUES (
+          '#{cs.character_id}',
+          '#{cs.schtick_id}',
+          NOW(),
+          NOW()
+        ) ON CONFLICT (character_id, schtick_id) DO NOTHING;
+      SQL
+      
+      @sql_statements << sql.strip
+    end
+  end
+
+  def export_carries
+    carries = Carry.joins(:character).where(characters: { campaign_id: @master_template.id })
+    return if carries.empty?
+    
+    Rails.logger.info "Exporting #{carries.count} carries associations"
+    
+    carries.each do |carry|
+      sql = <<~SQL
+        INSERT INTO carries (
+          id, character_id, weapon_id,
+          created_at, updated_at
+        ) VALUES (
+          '#{carry.id}',
+          '#{carry.character_id}',
+          '#{carry.weapon_id}',
+          NOW(),
+          NOW()
+        ) ON CONFLICT (id) DO NOTHING;
+      SQL
+      
+      @sql_statements << sql.strip
+    end
+  end
+
+  # Memberships are for party-character relationships, not character-faction
+
+  def quote(value)
+    return 'NULL' if value.nil?
+    "'#{value.to_s.gsub("'", "''")}'"
+  end
+end
