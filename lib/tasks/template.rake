@@ -47,7 +47,7 @@ class TemplateExporter
     export_weapons
     export_join_tables
     export_image_positions
-    export_active_storage_attachments
+    export_active_storage_blobs_and_attachments
     
     # End transaction
     @sql_statements << "COMMIT;"
@@ -386,36 +386,59 @@ class TemplateExporter
 
   # Memberships are for party-character relationships, not character-faction
 
-  def export_active_storage_attachments
+  def export_active_storage_blobs_and_attachments
     # Get all Active Storage attachments for entities in this campaign
     entity_ids = []
     entity_ids.concat(@master_template.characters.pluck(:id))
     entity_ids.concat(@master_template.vehicles.pluck(:id))
     entity_ids.concat(@master_template.factions.pluck(:id))
     entity_ids.concat(@master_template.sites.pluck(:id))
+    entity_ids.concat(@master_template.junctures.pluck(:id))
+    entity_ids.concat(@master_template.parties.pluck(:id))
+    entity_ids << @master_template.id # Include campaign itself
     
     return if entity_ids.empty?
     
     attachments = ActiveStorage::Attachment.where(
-      record_type: ['Character', 'Vehicle', 'Faction', 'Site'],
+      record_type: ['Campaign', 'Character', 'Vehicle', 'Faction', 'Site', 'Juncture', 'Party'],
       record_id: entity_ids,
       name: 'image'
     )
     
     return if attachments.empty?
     
-    Rails.logger.info "Exporting #{attachments.count} active storage attachments"
+    Rails.logger.info "Exporting #{attachments.count} active storage attachments with blobs"
     
-    # Add comment explaining these need to be re-attached
-    @sql_statements << "-- Note: Active Storage attachments need to be recreated in production"
-    @sql_statements << "-- The following attachment records are for reference only"
+    # First, export the blobs
+    blob_ids = attachments.pluck(:blob_id).uniq
+    blobs = ActiveStorage::Blob.where(id: blob_ids)
     
-    attachments.each do |attachment|
-      blob = attachment.blob
+    Rails.logger.info "Exporting #{blobs.count} active storage blobs"
+    
+    blobs.each do |blob|
       sql = <<~SQL
-        -- Attachment for #{attachment.record_type} #{attachment.record_id}
-        -- Original filename: #{blob.filename}
-        -- ImageKit URL would be computed from metadata
+        INSERT INTO active_storage_blobs (
+          id, key, filename, content_type, metadata, 
+          service_name, byte_size, checksum, created_at
+        ) VALUES (
+          '#{blob.id}',
+          #{quote(blob.key)},
+          #{quote(blob.filename.to_s)},
+          #{quote(blob.content_type)},
+          #{quote(blob.metadata.to_json)},
+          #{quote(blob.service_name)},
+          #{blob.byte_size},
+          #{quote(blob.checksum)},
+          NOW()
+        ) ON CONFLICT (id) DO NOTHING;
+      SQL
+      
+      @sql_statements << sql.strip
+    end
+    
+    # Then export the attachments
+    attachments.each do |attachment|
+      sql = <<~SQL
         INSERT INTO active_storage_attachments (
           id, name, record_type, record_id, blob_id,
           created_at
