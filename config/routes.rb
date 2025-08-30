@@ -2,6 +2,22 @@ Rails.application.routes.draw do
   # Health check endpoint for Fly.io (must be public/unauthenticated)
   get '/health', to: 'health#show'
   
+  # Temporary debug endpoints
+  get '/debug/test_job', to: proc { |env| 
+    TestJob.perform_later("Debug test at #{Time.current}")
+    [200, {'Content-Type' => 'application/json'}, ['{"status":"Job enqueued"}']]
+  }
+  
+  get '/debug/seed_status', to: proc { |env|
+    master = Campaign.find_by(is_master_template: true)
+    latest = Campaign.order(created_at: :desc).limit(5)
+    result = {
+      master_template: master ? { name: master.name, id: master.id, characters: master.characters.count } : nil,
+      latest_campaigns: latest.map { |c| { name: c.name, seeded_at: c.seeded_at, characters: c.characters.count } }
+    }
+    [200, {'Content-Type' => 'application/json'}, [result.to_json]]
+  }
+  
   # Mount ActionCable for WebSocket support
   mount ActionCable.server => '/cable'
   
