@@ -28,7 +28,13 @@ RSpec.describe 'template:export import validation', type: :task do
   end
 
   describe 'exported SQL can be imported' do
-    let!(:user) { User.create!(email: "gamemaster@example.com", first_name: "Game", last_name: "Master", confirmed_at: Time.now) }
+    let!(:user) do
+      User.find_or_create_by!(email: "gamemaster@example.com") do |u|
+        u.first_name = "Game"
+        u.last_name = "Master"
+        u.confirmed_at = Time.now
+      end
+    end
     
     let(:master_template) do
       Campaign.create!(
