@@ -39,8 +39,8 @@ class CampaignSeederService
       # Disable broadcasts during bulk seeding operations
       Thread.current[:disable_broadcasts] = true
       
-      # Process in smaller transactions to avoid connection timeouts
-      begin
+      # Use a transaction but with proper connection handling
+      ActiveRecord::Base.transaction do
         # Copy schticks and weapons first so they exist when characters reference them
         Rails.logger.info "Starting schtick duplication..."
         duplicate_schticks(source_campaign, target_campaign)
