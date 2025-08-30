@@ -161,7 +161,13 @@ RSpec.describe 'template:export import validation', type: :task do
     end
 
     it 'preserves UUIDs for all entities' do
-      # Setup test data
+      # Setup test data - clear in correct order
+      CharacterSchtick.destroy_all
+      Carry.destroy_all
+      Character.destroy_all
+      Schtick.destroy_all
+      Weapon.destroy_all
+      Faction.destroy_all
       Campaign.where(is_master_template: true).destroy_all
       master_template
       
@@ -208,7 +214,13 @@ RSpec.describe 'template:export import validation', type: :task do
     end
 
     it 'handles special characters in text fields' do
-      # Setup test data
+      # Setup test data - clear in correct order to avoid FK violations
+      CharacterSchtick.destroy_all
+      Carry.destroy_all
+      Character.destroy_all
+      Schtick.destroy_all
+      Weapon.destroy_all
+      Faction.destroy_all
       Campaign.where(is_master_template: true).destroy_all
       master_template
       
