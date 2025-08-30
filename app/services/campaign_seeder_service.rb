@@ -39,23 +39,35 @@ class CampaignSeederService
       # Disable broadcasts during bulk seeding operations
       Thread.current[:disable_broadcasts] = true
       
-      ActiveRecord::Base.transaction do
+      # Process in smaller transactions to avoid connection timeouts
+      begin
         # Copy schticks and weapons first so they exist when characters reference them
+        Rails.logger.info "Starting schtick duplication..."
         duplicate_schticks(source_campaign, target_campaign)
+        
+        Rails.logger.info "Starting weapon duplication..."
         duplicate_weapons(source_campaign, target_campaign)
         
         # Copy factions before junctures since junctures reference factions
+        Rails.logger.info "Starting faction duplication..."
         duplicate_factions(source_campaign, target_campaign)
+        
+        Rails.logger.info "Starting juncture duplication..."
         duplicate_junctures(source_campaign, target_campaign)
         
         # Copy characters and vehicles last so they can reference the duplicated entities
+        Rails.logger.info "Starting character duplication..."
         duplicate_characters(source_campaign, target_campaign)
+        
+        Rails.logger.info "Starting vehicle duplication..."
         duplicate_vehicles(source_campaign, target_campaign)
         
         # Copy non-template characters from Master Campaign (if it exists)
+        Rails.logger.info "Copying master campaign characters..."
         copy_master_campaign_characters(target_campaign)
         
         # Copy the campaign's own image positions
+        Rails.logger.info "Copying image positions..."
         copy_image_positions(source_campaign, target_campaign)
         
         # Copy the campaign's main image
@@ -197,8 +209,8 @@ class CampaignSeederService
       original_to_new_mapping = {}
       duplicated_schticks = []
       
-      # Process schticks in batches to prevent connection timeouts
-      batch_size = 10
+      # Process schticks in smaller batches to prevent connection timeouts
+      batch_size = 5
       schticks.find_in_batches(batch_size: batch_size).with_index do |batch, batch_index|
         Rails.logger.info "Processing schtick batch #{batch_index + 1} (#{batch.size} items)"
         
@@ -226,6 +238,16 @@ class CampaignSeederService
             if e.message.include?("connection") || e.message.include?("closed")
               Rails.logger.warn "Connection lost, reconnecting and retrying schtick: #{schtick.name}"
               ActiveRecord::Base.connection.reconnect!
+              retry
+            else
+              raise
+            end
+          rescue NoMethodError => e
+            if e.message.include?("async_exec") && e.message.include?("nil")
+              Rails.logger.warn "Database connection nil, reconnecting and retrying schtick: #{schtick.name}"
+              ActiveRecord::Base.clear_active_connections!
+              ActiveRecord::Base.connection.reconnect!
+              sleep(1)
               retry
             else
               raise

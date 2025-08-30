@@ -18,6 +18,9 @@ class CampaignSeederJob < ApplicationJob
   def perform(campaign_id)
     Rails.logger.info "[CampaignSeederJob] STARTING - Received campaign_id: #{campaign_id}"
     
+    # Ensure connection is active
+    ActiveRecord::Base.connection.verify!
+    
     campaign = Campaign.find(campaign_id)
     Rails.logger.info "[CampaignSeederJob] Found campaign: #{campaign.name} (ID: #{campaign_id})"
     
