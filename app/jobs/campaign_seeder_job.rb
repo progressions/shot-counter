@@ -1,5 +1,5 @@
 class CampaignSeederJob < ApplicationJob
-  queue_as :critical
+  queue_as :default
   
   # Increase retry attempts for network/connection issues
   retry_on ActiveRecord::StatementInvalid, wait: 5.seconds, attempts: 10
