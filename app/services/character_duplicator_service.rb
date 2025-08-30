@@ -5,6 +5,7 @@ module CharacterDuplicatorService
       @duplicated_character = Character.new(attributes.except("id", "created_at", "updated_at", "user_id", "campaign_id", "juncture_id", "faction_id"))
       # Use the target campaign if provided, otherwise fall back to the source character's campaign
       @duplicated_character.campaign = target_campaign || character.campaign
+      @duplicated_character.campaign_id = (target_campaign || character.campaign).id  # Explicitly set campaign_id
       @duplicated_character.user = user
       @duplicated_character = set_unique_name(@duplicated_character)
       

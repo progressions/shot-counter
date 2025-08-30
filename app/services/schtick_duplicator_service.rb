@@ -4,7 +4,10 @@ module SchtickDuplicatorService
       attributes = schtick.attributes
       @duplicated_schtick = Schtick.new(attributes.except("id", "created_at", "updated_at", "campaign_id", "prerequisite_id"))
       @duplicated_schtick.campaign = target_campaign
+      @duplicated_schtick.campaign_id = target_campaign.id  # Explicitly set campaign_id
+      Rails.logger.info "[SchtickDuplicator] Setting campaign_id to #{target_campaign.id} for schtick #{@duplicated_schtick.name}"
       @duplicated_schtick = set_unique_name(@duplicated_schtick)
+      Rails.logger.info "[SchtickDuplicator] After set_unique_name, campaign_id is #{@duplicated_schtick.campaign_id}"
       
       # Handle prerequisite relationships after all schticks are created
       # Store the original prerequisite info for later linking

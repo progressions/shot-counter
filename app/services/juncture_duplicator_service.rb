@@ -4,6 +4,7 @@ module JunctureDuplicatorService
       attributes = juncture.attributes
       @duplicated_juncture = Juncture.new(attributes.except("id", "created_at", "updated_at", "campaign_id", "faction_id"))
       @duplicated_juncture.campaign = target_campaign
+      @duplicated_juncture.campaign_id = target_campaign.id  # Explicitly set campaign_id
       @duplicated_juncture = set_unique_name(@duplicated_juncture)
       
       # Handle faction relationship if it exists and mapping is provided

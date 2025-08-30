@@ -4,6 +4,7 @@ module VehicleDuplicatorService
       attributes = vehicle.attributes
       duplicated_vehicle = Vehicle.new(attributes.except("id", "created_at", "updated_at", "user_id", "campaign_id"))
       duplicated_vehicle.campaign = target_campaign
+      duplicated_vehicle.campaign_id = target_campaign.id  # Explicitly set campaign_id
       duplicated_vehicle.user = user
       duplicated_vehicle = set_unique_name(duplicated_vehicle)
       

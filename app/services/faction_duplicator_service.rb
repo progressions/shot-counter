@@ -4,6 +4,7 @@ module FactionDuplicatorService
       attributes = faction.attributes
       @duplicated_faction = Faction.new(attributes.except("id", "created_at", "updated_at", "campaign_id"))
       @duplicated_faction.campaign = target_campaign
+      @duplicated_faction.campaign_id = target_campaign.id  # Explicitly set campaign_id
       @duplicated_faction = set_unique_name(@duplicated_faction)
       
       # Store reference to source faction for image position copying

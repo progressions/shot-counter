@@ -4,6 +4,7 @@ module WeaponDuplicatorService
       attributes = weapon.attributes
       @duplicated_weapon = Weapon.new(attributes.except("id", "created_at", "updated_at", "campaign_id"))
       @duplicated_weapon.campaign = target_campaign
+      @duplicated_weapon.campaign_id = target_campaign.id  # Explicitly set campaign_id
       @duplicated_weapon = set_unique_name(@duplicated_weapon)
       
       # Store reference to source weapon for image position copying
