@@ -97,7 +97,11 @@ class TemplateExporter
     
     Rails.logger.info "Exporting #{schticks.count} archetype schticks"
     
-    schticks.each do |schtick|
+    # Sort schticks in dependency order using topological sort
+    sorted_schticks = topological_sort_schticks(schticks)
+    
+    # Export all schticks in proper order
+    sorted_schticks.each do |schtick|
       sql = <<~SQL
         INSERT INTO schticks (
           id, campaign_id, name, description, category,
@@ -549,6 +553,33 @@ class TemplateExporter
   def quote(value)
     return 'NULL' if value.nil?
     "'#{value.to_s.gsub("'", "''")}'"
+  end
+  
+  def topological_sort_schticks(schticks)
+    # Build a hash for quick lookup
+    schticks_by_id = schticks.index_by(&:id)
+    
+    # Track visited and sorted schticks
+    visited = Set.new
+    sorted = []
+    
+    # Depth-first search to sort dependencies
+    visit = lambda do |schtick|
+      return if visited.include?(schtick.id)
+      visited.add(schtick.id)
+      
+      # Visit prerequisite first if it exists and is in our set
+      if schtick.prerequisite_id && schticks_by_id[schtick.prerequisite_id]
+        visit.call(schticks_by_id[schtick.prerequisite_id])
+      end
+      
+      sorted << schtick
+    end
+    
+    # Visit all schticks
+    schticks.each { |schtick| visit.call(schtick) }
+    
+    sorted
   end
 end
 
