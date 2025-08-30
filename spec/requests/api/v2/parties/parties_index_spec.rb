@@ -381,4 +381,62 @@ RSpec.describe "Api::V2::Parties", type: :request do
       expect(body["factions"]).to eq([])
     end
   end
+
+  describe "IDs filtering and caching" do
+    it "filters by comma-separated ids" do
+      get "/api/v2/parties", params: { ids: "#{@dragons_party.id},#{@ascended_party.id}" }, headers: @headers
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["parties"].map { |p| p["name"] }).to contain_exactly("Dragons Party", "Ascended Party")
+    end
+
+    it "filters by array of ids" do
+      get "/api/v2/parties", params: { ids: [@dragons_party.id] }, headers: @headers
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["parties"].map { |p| p["name"] }).to eq(["Dragons Party"])
+    end
+
+    it "returns empty array when ids parameter is empty string" do
+      get "/api/v2/parties", params: { ids: "" }, headers: @headers
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["parties"]).to eq([])
+    end
+
+    it "returns empty array when ids array is empty" do
+      get "/api/v2/parties", params: { ids: [] }, headers: @headers
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["parties"]).to eq([])
+    end
+
+    it "filters by single id in array" do
+      get "/api/v2/parties", params: { ids: [@dragons_party.id] }, headers: @headers
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["parties"].length).to eq(1)
+      expect(body["parties"][0]["name"]).to eq("Dragons Party")
+    end
+
+    it "returns empty array when ids contain non-existent ids" do
+      get "/api/v2/parties", params: { ids: ["non-existent-id-1", "non-existent-id-2"] }, headers: @headers
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["parties"]).to eq([])
+    end
+
+    it "caches results with different ids separately" do
+      # First request
+      get "/api/v2/parties", params: { ids: [@dragons_party.id] }, headers: @headers
+      body1 = JSON.parse(response.body)
+      
+      # Second request with different ids should not return cached result from first
+      get "/api/v2/parties", params: { ids: [@ascended_party.id] }, headers: @headers
+      body2 = JSON.parse(response.body)
+      
+      expect(body1["parties"][0]["name"]).to eq("Dragons Party")
+      expect(body2["parties"][0]["name"]).to eq("Ascended Party")
+    end
+  end
 end

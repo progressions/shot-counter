@@ -37,9 +37,7 @@ class Api::V2::WeaponsController < ApplicationController
 
     # Apply filters
     query = query.where(id: params["id"]) if params["id"].present?
-    if params.key?("ids")
-      query = params["ids"].blank? ? query.where(id: nil) : query.where(id: params["ids"].split(","))
-    end
+    query = apply_ids_filter(query, params["ids"]) if params.key?("ids")
     query = query.where("weapons.name ILIKE ?", "%#{params['search']}%") if params["search"].present?
     query = query.where(params["category"] == "__NONE__" ? "weapons.category IS NULL" : "weapons.category = ?", params["category"]) if params["category"].present?
     query = query.where(params["juncture"] == "__NONE__" ? "weapons.juncture IS NULL" : "weapons.juncture = ?", params["juncture"]) if params["juncture"].present?
@@ -61,6 +59,8 @@ class Api::V2::WeaponsController < ApplicationController
       sort_order,
       page,
       per_page,
+      params["id"],
+      format_ids_for_cache(params["ids"]),
       params["search"],
       params["user_id"],
       params["category"],

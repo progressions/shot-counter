@@ -155,4 +155,62 @@ RSpec.describe "Api::V2::Campaigns", type: :request do
       end
     end
   end
+
+  describe "IDs filtering and caching" do
+    it "filters by comma-separated ids" do
+      get "/api/v2/campaigns", params: { ids: "#{@campaign.id},#{@other_campaign.id}" }, headers: @gamemaster_headers
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["campaigns"].map { |c| c["name"] }).to contain_exactly("Adventure", "Quest")
+    end
+
+    it "filters by array of ids" do
+      get "/api/v2/campaigns", params: { ids: [@campaign.id] }, headers: @gamemaster_headers
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["campaigns"].map { |c| c["name"] }).to eq(["Adventure"])
+    end
+
+    it "returns empty array when ids parameter is empty string" do
+      get "/api/v2/campaigns", params: { ids: "" }, headers: @gamemaster_headers
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["campaigns"]).to eq([])
+    end
+
+    it "returns empty array when ids array is empty" do
+      get "/api/v2/campaigns", params: { ids: [] }, headers: @gamemaster_headers
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["campaigns"]).to eq([])
+    end
+
+    it "filters by single id in array" do
+      get "/api/v2/campaigns", params: { ids: [@campaign.id] }, headers: @gamemaster_headers
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["campaigns"].length).to eq(1)
+      expect(body["campaigns"][0]["name"]).to eq("Adventure")
+    end
+
+    it "returns empty array when ids contain non-existent ids" do
+      get "/api/v2/campaigns", params: { ids: ["non-existent-id-1", "non-existent-id-2"] }, headers: @gamemaster_headers
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["campaigns"]).to eq([])
+    end
+
+    it "caches results with different ids separately" do
+      # First request
+      get "/api/v2/campaigns", params: { ids: [@campaign.id] }, headers: @gamemaster_headers
+      body1 = JSON.parse(response.body)
+      
+      # Second request with different ids should not return cached result from first
+      get "/api/v2/campaigns", params: { ids: [@other_campaign.id] }, headers: @gamemaster_headers
+      body2 = JSON.parse(response.body)
+      
+      expect(body1["campaigns"][0]["name"]).to eq("Adventure")
+      expect(body2["campaigns"][0]["name"]).to eq("Quest")
+    end
+  end
 end

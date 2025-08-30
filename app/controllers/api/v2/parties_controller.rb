@@ -34,9 +34,7 @@ class Api::V2::PartiesController < ApplicationController
 
     # Apply filters
     query = query.where(id: params["id"]) if params["id"].present?
-    if params.key?("ids")
-      query = params["ids"].blank? ? query.where(id: nil) : query.where(id: params["ids"].split(","))
-    end
+    query = apply_ids_filter(query, params["ids"]) if params.key?("ids")
     query = query.where(params["faction_id"] == "__NONE__" ? "parties.faction_id IS NULL" : "parties.faction_id = ?", params["faction_id"]) if params["faction_id"].present?
     query = query.where(params["juncture_id"] == "__NONE__" ? "parties.juncture_id IS NULL" : "parties.juncture_id = ?", params["juncture_id"]) if params["juncture_id"].present?
     query = query.where("parties.name ILIKE ?", "%#{params['search']}%") if params["search"].present?
@@ -59,6 +57,8 @@ class Api::V2::PartiesController < ApplicationController
       sort_order,
       page,
       per_page,
+      params["id"],
+      format_ids_for_cache(params["ids"]),
       params["party_id"],
       params["search"],
       params["faction_id"],

@@ -31,9 +31,7 @@ class Api::V2::UsersController < ApplicationController
     query = User.select(selects).includes(includes)
     # Apply filters
     query = query.where(id: params["id"]) if params["id"].present?
-    if params.key?("ids")
-      query = params["ids"].blank? ? query.where(id: nil) : query.where(id: params["ids"].split(","))
-    end
+    query = apply_ids_filter(query, params["ids"]) if params.key?("ids")
     query = query.where("users.first_name ILIKE ? OR users.last_name ILIKE ?", "%#{params['search']}%", "%#{params['search']}%") if params["search"].present?
     query = query.where("users.email ILIKE ?", "%#{params['email']}%") if params["email"].present?
     query = query.where(apply_visibility_filter)
@@ -60,6 +58,8 @@ class Api::V2::UsersController < ApplicationController
       sort_order,
       page,
       per_page,
+      params["id"],
+      format_ids_for_cache(params["ids"]),
       params["id"],
       params["email"],
       params["search"],

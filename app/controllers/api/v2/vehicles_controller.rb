@@ -28,9 +28,7 @@ class Api::V2::VehiclesController < ApplicationController
 
     # Apply filters
     query = query.where(id: params["id"]) if params["id"].present?
-    if params.key?("ids")
-      query = params["ids"].blank? ? query.where(id: nil) : query.where(id: params["ids"].split(","))
-    end
+    query = apply_ids_filter(query, params["ids"]) if params.key?("ids")
     query = query.where(params["faction_id"] == "__NONE__" ? "vehicles.faction_id IS NULL" : "vehicles.faction_id = ?", params["faction_id"]) if params["faction_id"].present?
     query = query.where(params["juncture_id"] == "__NONE__" ? "vehicles.juncture_id IS NULL" : "vehicles.juncture_id = ?", params["juncture_id"]) if params["juncture_id"].present?
     query = query.where(user_id: params["user_id"]) if params["user_id"].present?
@@ -61,6 +59,8 @@ class Api::V2::VehiclesController < ApplicationController
       sort_order,
       page,
       per_page,
+      params["id"],
+      format_ids_for_cache(params["ids"]),
       params["site_id"],
       params["fight_id"],
       params["party_id"],

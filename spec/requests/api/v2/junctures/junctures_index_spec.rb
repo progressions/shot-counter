@@ -361,4 +361,62 @@ RSpec.describe "Api::V2::Junctures", type: :request do
       expect(body["factions"]).to eq([])
     end
   end
+
+  describe "IDs filtering and caching" do
+    it "filters by comma-separated ids" do
+      get "/api/v2/junctures", params: { ids: "#{@modern.id},#{@ancient.id}" }, headers: @headers
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["junctures"].map { |j| j["name"] }).to contain_exactly("Modern", "Ancient")
+    end
+
+    it "filters by array of ids" do
+      get "/api/v2/junctures", params: { ids: [@modern.id] }, headers: @headers
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["junctures"].map { |j| j["name"] }).to eq(["Modern"])
+    end
+
+    it "returns empty array when ids parameter is empty string" do
+      get "/api/v2/junctures", params: { ids: "" }, headers: @headers
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["junctures"]).to eq([])
+    end
+
+    it "returns empty array when ids array is empty" do
+      get "/api/v2/junctures", params: { ids: [] }, headers: @headers
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["junctures"]).to eq([])
+    end
+
+    it "filters by single id in array" do
+      get "/api/v2/junctures", params: { ids: [@modern.id] }, headers: @headers
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["junctures"].length).to eq(1)
+      expect(body["junctures"][0]["name"]).to eq("Modern")
+    end
+
+    it "returns empty array when ids contain non-existent ids" do
+      get "/api/v2/junctures", params: { ids: ["non-existent-id-1", "non-existent-id-2"] }, headers: @headers
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["junctures"]).to eq([])
+    end
+
+    it "caches results with different ids separately" do
+      # First request
+      get "/api/v2/junctures", params: { ids: [@modern.id] }, headers: @headers
+      body1 = JSON.parse(response.body)
+      
+      # Second request with different ids should not return cached result from first
+      get "/api/v2/junctures", params: { ids: [@ancient.id] }, headers: @headers
+      body2 = JSON.parse(response.body)
+      
+      expect(body1["junctures"][0]["name"]).to eq("Modern")
+      expect(body2["junctures"][0]["name"]).to eq("Ancient")
+    end
+  end
 end

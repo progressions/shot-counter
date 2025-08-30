@@ -91,4 +91,40 @@ class ApplicationController < ActionController::API
       Rails.logger.warn "Cache delete_matched not supported or failed: #{e.message}"
     end
   end
+
+  protected
+  
+  # Helper method to handle ids parameter that can be either an array or comma-separated string
+  def parse_ids_param(ids_param)
+    return [] if ids_param.blank?
+    
+    if ids_param.is_a?(Array)
+      ids_param
+    elsif ids_param.is_a?(String)
+      ids_param.split(",")
+    else
+      []
+    end
+  end
+  
+  # Apply ids filter to a query, handling both array and string formats
+  def apply_ids_filter(query, ids_param)
+    # If ids_param is explicitly passed (even as empty string), apply the filter
+    # If it's nil (not passed at all), return query unchanged
+    return query if ids_param.nil?
+    
+    ids_array = parse_ids_param(ids_param)
+    ids_array.empty? ? query.none : query.where(id: ids_array)
+  end
+  
+  # Format ids parameter for cache key - ensures consistent caching
+  def format_ids_for_cache(ids_param)
+    return nil if ids_param.blank?
+    
+    ids_array = parse_ids_param(ids_param)
+    return nil if ids_array.empty?
+    
+    # Sort to ensure consistent cache keys
+    ids_array.sort.join(",")
+  end
 end
