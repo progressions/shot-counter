@@ -123,6 +123,7 @@ RSpec.describe 'template:export import validation', type: :task do
 
     it 'supports idempotent imports (can be run multiple times)' do
       # Setup test data
+      Character.destroy_all
       Campaign.where(is_master_template: true).destroy_all
       master_template
       
