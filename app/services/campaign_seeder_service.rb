@@ -123,20 +123,47 @@ class CampaignSeederService
       characters = source_campaign.characters.where(is_template: true)
       
       Rails.logger.info "Duplicating #{characters.count} characters"
-
-      characters.each do |character|
-        # Pass the target_campaign as the third parameter so it uses the correct campaign for name checking
-        duplicated_character = CharacterDuplicatorService.duplicate_character(character, target_campaign.user, target_campaign)
+      
+      # Process characters in batches
+      batch_size = 5  # Characters are complex with many associations, use smaller batch
+      character_count = 0
+      
+      characters.find_in_batches(batch_size: batch_size).with_index do |batch, batch_index|
+        Rails.logger.info "Processing character batch #{batch_index + 1} (#{batch.size} items)"
         
-        if duplicated_character.save
-          # Apply associations after the character is saved and has an ID
-          # This also copies image positions
-          CharacterDuplicatorService.apply_associations(duplicated_character)
+        batch.each do |character|
+          # Ensure connection is active
+          ActiveRecord::Base.connection.verify!
+          character_count += 1
           
-          Rails.logger.info "Duplicated character: #{duplicated_character.name}"
-        else
-          Rails.logger.error "Failed to duplicate character #{character.name}: #{duplicated_character.errors.full_messages.join(', ')}"
-          raise ActiveRecord::RecordInvalid, duplicated_character
+          begin
+            # Pass the target_campaign as the third parameter so it uses the correct campaign for name checking
+            duplicated_character = CharacterDuplicatorService.duplicate_character(character, target_campaign.user, target_campaign)
+            
+            if duplicated_character.save
+              # Apply associations after the character is saved and has an ID
+              # This also copies image positions
+              CharacterDuplicatorService.apply_associations(duplicated_character)
+              
+              Rails.logger.info "Duplicated character #{character_count}/#{characters.count}: #{duplicated_character.name}"
+            else
+              Rails.logger.error "Failed to duplicate character #{character.name}: #{duplicated_character.errors.full_messages.join(', ')}"
+              raise ActiveRecord::RecordInvalid, duplicated_character
+            end
+          rescue ActiveRecord::StatementInvalid => e
+            if e.message.include?("connection") || e.message.include?("closed")
+              Rails.logger.warn "Connection lost, reconnecting and retrying character: #{character.name}"
+              ActiveRecord::Base.connection.reconnect!
+              retry
+            else
+              raise
+            end
+          end
+        end
+        
+        # Pause between batches
+        if batch_index < (characters.count.to_f / batch_size).ceil - 1
+          sleep(0.5)
         end
       end
     end
@@ -169,26 +196,55 @@ class CampaignSeederService
       # Keep track of original to new mapping for prerequisites
       original_to_new_mapping = {}
       duplicated_schticks = []
-
-      schticks.each do |schtick|
-        duplicated_schtick = SchtickDuplicatorService.duplicate_schtick(schtick, target_campaign)
+      
+      # Process schticks in batches to prevent connection timeouts
+      batch_size = 10
+      schticks.find_in_batches(batch_size: batch_size).with_index do |batch, batch_index|
+        Rails.logger.info "Processing schtick batch #{batch_index + 1} (#{batch.size} items)"
         
-        if duplicated_schtick.save
-          # Track the mapping for prerequisite linking
-          original_to_new_mapping[schtick.id] = duplicated_schtick
-          duplicated_schticks << duplicated_schtick
+        batch.each_with_index do |schtick, index|
+          # Ensure connection is active before each schtick
+          ActiveRecord::Base.connection.verify!
           
-          # Apply associations including image positions
-          SchtickDuplicatorService.apply_associations(duplicated_schtick)
+          begin
+            duplicated_schtick = SchtickDuplicatorService.duplicate_schtick(schtick, target_campaign)
+            
+            if duplicated_schtick.save
+              # Track the mapping for prerequisite linking
+              original_to_new_mapping[schtick.id] = duplicated_schtick
+              duplicated_schticks << duplicated_schtick
+              
+              # Apply associations including image positions
+              SchtickDuplicatorService.apply_associations(duplicated_schtick)
+              
+              Rails.logger.info "Duplicated schtick #{(batch_index * batch_size) + index + 1}/#{schticks.count}: #{duplicated_schtick.name}"
+            else
+              Rails.logger.error "Failed to duplicate schtick #{schtick.name}: #{duplicated_schtick.errors.full_messages.join(', ')}"
+              raise ActiveRecord::RecordInvalid, duplicated_schtick
+            end
+          rescue ActiveRecord::StatementInvalid => e
+            if e.message.include?("connection") || e.message.include?("closed")
+              Rails.logger.warn "Connection lost, reconnecting and retrying schtick: #{schtick.name}"
+              ActiveRecord::Base.connection.reconnect!
+              retry
+            else
+              raise
+            end
+          end
           
-          Rails.logger.info "Duplicated schtick: #{duplicated_schtick.name}"
-        else
-          Rails.logger.error "Failed to duplicate schtick #{schtick.name}: #{duplicated_schtick.errors.full_messages.join(', ')}"
-          raise ActiveRecord::RecordInvalid, duplicated_schtick
+          # Add small delay between schticks to prevent overwhelming the connection
+          sleep(0.1) if index > 0 && index % 5 == 0
+        end
+        
+        # Longer pause between batches
+        if batch_index < (schticks.count.to_f / batch_size).ceil - 1
+          Rails.logger.info "Pausing between batches to maintain connection stability..."
+          sleep(1)
         end
       end
       
       # Now link all the prerequisites after all schticks are created
+      Rails.logger.info "Linking prerequisites for #{duplicated_schticks.count} duplicated schticks..."
       SchtickDuplicatorService.link_prerequisites(duplicated_schticks, original_to_new_mapping)
       Rails.logger.info "Linked prerequisites for duplicated schticks"
     end
@@ -197,18 +253,42 @@ class CampaignSeederService
       weapons = source_campaign.weapons
       
       Rails.logger.info "Duplicating #{weapons.count} weapons"
-
-      weapons.each do |weapon|
-        duplicated_weapon = WeaponDuplicatorService.duplicate_weapon(weapon, target_campaign)
+      
+      # Process weapons in batches to prevent connection timeouts
+      batch_size = 20  # Weapons are simpler than schticks, can use larger batch
+      weapons.find_in_batches(batch_size: batch_size).with_index do |batch, batch_index|
+        Rails.logger.info "Processing weapon batch #{batch_index + 1} (#{batch.size} items)"
         
-        if duplicated_weapon.save
-          # Apply associations including image positions
-          WeaponDuplicatorService.apply_associations(duplicated_weapon)
+        batch.each_with_index do |weapon, index|
+          # Ensure connection is active
+          ActiveRecord::Base.connection.verify!
           
-          Rails.logger.info "Duplicated weapon: #{duplicated_weapon.name}"
-        else
-          Rails.logger.error "Failed to duplicate weapon #{weapon.name}: #{duplicated_weapon.errors.full_messages.join(', ')}"
-          raise ActiveRecord::RecordInvalid, duplicated_weapon
+          begin
+            duplicated_weapon = WeaponDuplicatorService.duplicate_weapon(weapon, target_campaign)
+            
+            if duplicated_weapon.save
+              # Apply associations including image positions
+              WeaponDuplicatorService.apply_associations(duplicated_weapon)
+              
+              Rails.logger.info "Duplicated weapon #{(batch_index * batch_size) + index + 1}/#{weapons.count}: #{duplicated_weapon.name}"
+            else
+              Rails.logger.error "Failed to duplicate weapon #{weapon.name}: #{duplicated_weapon.errors.full_messages.join(', ')}"
+              raise ActiveRecord::RecordInvalid, duplicated_weapon
+            end
+          rescue ActiveRecord::StatementInvalid => e
+            if e.message.include?("connection") || e.message.include?("closed")
+              Rails.logger.warn "Connection lost, reconnecting and retrying weapon: #{weapon.name}"
+              ActiveRecord::Base.connection.reconnect!
+              retry
+            else
+              raise
+            end
+          end
+        end
+        
+        # Pause between batches if more to come
+        if batch_index < (weapons.count.to_f / batch_size).ceil - 1
+          sleep(0.5)
         end
       end
     end

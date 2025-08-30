@@ -1,5 +1,19 @@
 class CampaignSeederJob < ApplicationJob
-  queue_as :default
+  queue_as :critical
+  
+  # Increase retry attempts for network/connection issues
+  retry_on ActiveRecord::StatementInvalid, wait: 5.seconds, attempts: 10
+  retry_on ActiveRecord::ConnectionNotEstablished, wait: 5.seconds, attempts: 10
+  
+  # Don't retry on data integrity issues - these need manual intervention
+  discard_on ActiveRecord::RecordNotUnique do |job, error|
+    if error.message.include?("active_storage_blobs_pkey") || error.message.include?("active_storage_attachments_pkey")
+      Rails.logger.error "[CRITICAL] Campaign seeding failed due to Active Storage ID conflict!"
+      campaign_id = job.arguments.first
+      campaign = Campaign.find_by(id: campaign_id)
+      AdminMailer.blob_sequence_error(campaign, error.message).deliver_later if campaign
+    end
+  end
 
   def perform(campaign_id)
     Rails.logger.info "[CampaignSeederJob] STARTING - Received campaign_id: #{campaign_id}"

@@ -20,7 +20,21 @@ module SchtickDuplicatorService
         begin
           # Handle ImageKit download - force read as string
           downloaded = schtick.image.blob.download
-          image_data = downloaded.is_a?(String) ? downloaded : downloaded.read
+          
+          # Handle ImageKit IKFile objects
+          if downloaded.class.name == 'ImageKiIo::ActiveStorage::IKFile'
+            Rails.logger.info "ImageKit IKFile detected for schtick #{schtick.name}, fetching via URL..."
+            require 'net/http'
+            uri = URI(downloaded.instance_variable_get(:@identifier)['url'])
+            image_data = Net::HTTP.get(uri)
+          elsif downloaded.is_a?(String)
+            image_data = downloaded
+          elsif downloaded.respond_to?(:read)
+            image_data = downloaded.read
+          else
+            Rails.logger.warn "Unknown download object type for schtick #{schtick.name}: #{downloaded.class}"
+            next
+          end
           
           @duplicated_schtick.image.attach(
             io: StringIO.new(image_data),
