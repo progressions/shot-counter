@@ -151,7 +151,9 @@ RSpec.describe 'template:export import validation', type: :task do
       
       # Import the SQL twice
       ActiveRecord::Base.connection.execute(sql_content)
+      ActiveRecord::Base.connection.reconnect!
       ActiveRecord::Base.connection.execute(sql_content)
+      ActiveRecord::Base.connection.reconnect!
       
       # Verify no duplicates were created
       expect(Campaign.where(is_master_template: true).count).to eq(1)
