@@ -33,7 +33,7 @@ module SchtickDuplicatorService
             image_data = downloaded.read
           else
             Rails.logger.warn "Unknown download object type for schtick #{schtick.name}: #{downloaded.class}"
-            next
+            return @duplicated_schtick
           end
           
           @duplicated_schtick.image.attach(
