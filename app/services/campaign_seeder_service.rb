@@ -32,6 +32,9 @@ class CampaignSeederService
       return false unless source_campaign.persisted? && target_campaign.persisted?
 
       Rails.logger.info "Copying content from campaign #{source_campaign.name} to #{target_campaign.name}"
+      
+      # Check and fix blob sequence if needed (preventive measure)
+      fix_blob_sequence_if_needed
 
       # Disable broadcasts during bulk seeding operations
       Thread.current[:disable_broadcasts] = true
@@ -310,6 +313,27 @@ class CampaignSeederService
       rescue => e
         Rails.logger.error "Failed to copy campaign image: #{e.class} - #{e.message}"
       end
+    end
+    
+    def fix_blob_sequence_if_needed
+      # Check if there's a potential sequence issue
+      max_id = ActiveStorage::Blob.maximum(:id) || 0
+      sequence_value = ActiveRecord::Base.connection.execute(
+        "SELECT last_value FROM active_storage_blobs_id_seq"
+      ).first['last_value'].to_i
+      
+      if sequence_value <= max_id
+        Rails.logger.warn "[CampaignSeederService] Blob sequence out of sync! Sequence: #{sequence_value}, Max ID: #{max_id}"
+        next_id = max_id + 1
+        
+        ActiveRecord::Base.connection.execute(
+          "SELECT setval('active_storage_blobs_id_seq', #{next_id}, false)"
+        )
+        
+        Rails.logger.info "[CampaignSeederService] Fixed blob sequence. Next ID will be: #{next_id}"
+      end
+    rescue => e
+      Rails.logger.error "[CampaignSeederService] Failed to check/fix blob sequence: #{e.message}"
     end
   end
 end
