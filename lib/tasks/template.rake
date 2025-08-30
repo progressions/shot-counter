@@ -388,22 +388,29 @@ class TemplateExporter
 
   def export_active_storage_blobs_and_attachments
     # Get all Active Storage attachments for entities in this campaign
-    entity_ids = []
-    entity_ids.concat(@master_template.characters.pluck(:id))
-    entity_ids.concat(@master_template.vehicles.pluck(:id))
-    entity_ids.concat(@master_template.factions.pluck(:id))
-    entity_ids.concat(@master_template.sites.pluck(:id))
-    entity_ids.concat(@master_template.junctures.pluck(:id))
-    entity_ids.concat(@master_template.parties.pluck(:id))
-    entity_ids << @master_template.id # Include campaign itself
+    # Build a hash of entity types to their IDs
+    entities_by_type = {
+      'Campaign' => [@master_template.id],
+      'Character' => @master_template.characters.pluck(:id),
+      'Vehicle' => @master_template.vehicles.pluck(:id),
+      'Faction' => @master_template.factions.pluck(:id),
+      'Site' => @master_template.sites.pluck(:id),
+      'Juncture' => @master_template.junctures.pluck(:id),
+      'Party' => @master_template.parties.pluck(:id),
+      'Schtick' => @master_template.schticks.pluck(:id),
+      'Weapon' => @master_template.weapons.pluck(:id)
+    }
     
-    return if entity_ids.empty?
+    # Build WHERE conditions for each entity type
+    conditions = entities_by_type.map do |type, ids|
+      next if ids.empty?
+      "(record_type = '#{type}' AND record_id IN (#{ids.map { |id| "'#{id}'" }.join(',')}))"
+    end.compact
     
-    attachments = ActiveStorage::Attachment.where(
-      record_type: ['Campaign', 'Character', 'Vehicle', 'Faction', 'Site', 'Juncture', 'Party'],
-      record_id: entity_ids,
-      name: 'image'
-    )
+    return if conditions.empty?
+    
+    # Get all attachments for all entity types
+    attachments = ActiveStorage::Attachment.where(conditions.join(' OR ')).where(name: 'image')
     
     return if attachments.empty?
     
@@ -458,29 +465,43 @@ class TemplateExporter
 
   def export_image_positions
     # Get all image positions for entities in this campaign
-    entity_ids = []
     entity_types = []
     
     # Collect all entity IDs and types
     @master_template.characters.pluck(:id).each do |id|
-      entity_ids << id
       entity_types << ['Character', id]
     end
     
     @master_template.vehicles.pluck(:id).each do |id|
-      entity_ids << id
       entity_types << ['Vehicle', id]
     end
     
     @master_template.factions.pluck(:id).each do |id|
-      entity_ids << id
       entity_types << ['Faction', id]
     end
     
     @master_template.sites.pluck(:id).each do |id|
-      entity_ids << id
       entity_types << ['Site', id]
     end
+    
+    @master_template.junctures.pluck(:id).each do |id|
+      entity_types << ['Juncture', id]
+    end
+    
+    @master_template.parties.pluck(:id).each do |id|
+      entity_types << ['Party', id]
+    end
+    
+    @master_template.schticks.pluck(:id).each do |id|
+      entity_types << ['Schtick', id]
+    end
+    
+    @master_template.weapons.pluck(:id).each do |id|
+      entity_types << ['Weapon', id]
+    end
+    
+    # Include campaign itself
+    entity_types << ['Campaign', @master_template.id]
     
     return if entity_types.empty?
     
