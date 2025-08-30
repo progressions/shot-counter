@@ -95,6 +95,8 @@ RSpec.describe 'template:export import validation', type: :task do
       
       # Import the SQL
       ActiveRecord::Base.connection.execute(sql_content)
+      # Reset connection state after executing raw SQL with transactions
+      ActiveRecord::Base.connection.reconnect!
       
       # Verify data was imported correctly
       imported_campaign = Campaign.find_by(is_master_template: true)
@@ -182,6 +184,8 @@ RSpec.describe 'template:export import validation', type: :task do
       
       # Import the SQL
       ActiveRecord::Base.connection.execute(sql_content)
+      # Reset connection state after executing raw SQL with transactions
+      ActiveRecord::Base.connection.reconnect!
       
       # Verify UUIDs were preserved
       expect(Campaign.find_by(id: original_campaign_id)).to be_present
@@ -221,6 +225,8 @@ RSpec.describe 'template:export import validation', type: :task do
       
       # Import the SQL
       ActiveRecord::Base.connection.execute(sql_content)
+      # Reset connection state after executing raw SQL with transactions
+      ActiveRecord::Base.connection.reconnect!
       
       # Verify special characters were preserved
       imported_character = Character.find_by(id: character.id)
