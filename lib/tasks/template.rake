@@ -41,6 +41,7 @@ class TemplateExporter
     export_weapons
     export_join_tables
     export_image_positions
+    export_active_storage_attachments
     
     # End transaction
     @sql_statements << "COMMIT;"
@@ -144,7 +145,11 @@ class TemplateExporter
     Rails.logger.info "Exporting #{factions.count} factions"
     
     factions.each do |faction|
+      # Include image URL as comment for reference
+      image_comment = faction.image_url ? "-- Image URL: #{faction.image_url}" : "-- No image attached"
+      
       sql = <<~SQL
+        #{image_comment}
         INSERT INTO factions (
           id, campaign_id, name, description,
           active, created_at, updated_at
@@ -170,17 +175,20 @@ class TemplateExporter
     Rails.logger.info "Exporting #{characters.count} characters"
     
     characters.each do |character|
+      # Include image URL as comment for reference
+      image_comment = character.image_url ? "-- Image URL: #{character.image_url}" : "-- No image attached"
+      
       sql = <<~SQL
+        #{image_comment}
         INSERT INTO characters (
           id, campaign_id, name, description,
-          image_url, action_values, skills, active,
+          action_values, skills, active,
           faction_id, created_at, updated_at
         ) VALUES (
           '#{character.id}',
           '#{@master_template.id}',
           #{quote(character.name)},
           #{quote(character.description.to_json)},
-          #{quote(character.image_url)},
           #{quote(character.action_values.to_json)},
           #{quote(character.skills.to_json)},
           #{character.active},
@@ -201,17 +209,20 @@ class TemplateExporter
     Rails.logger.info "Exporting #{vehicles.count} vehicles"
     
     vehicles.each do |vehicle|
+      # Include image URL as comment for reference
+      image_comment = vehicle.image_url ? "-- Image URL: #{vehicle.image_url}" : "-- No image attached"
+      
       sql = <<~SQL
+        #{image_comment}
         INSERT INTO vehicles (
           id, campaign_id, name, action_values,
-          image_url, active, faction_id,
+          active, faction_id,
           created_at, updated_at
         ) VALUES (
           '#{vehicle.id}',
           '#{@master_template.id}',
           #{quote(vehicle.name)},
           #{quote(vehicle.action_values.to_json)},
-          #{quote(vehicle.image_url)},
           #{vehicle.active},
           #{vehicle.faction_id ? "'#{vehicle.faction_id}'" : 'NULL'},
           NOW(),
@@ -368,6 +379,53 @@ class TemplateExporter
   end
 
   # Memberships are for party-character relationships, not character-faction
+
+  def export_active_storage_attachments
+    # Get all Active Storage attachments for entities in this campaign
+    entity_ids = []
+    entity_ids.concat(@master_template.characters.pluck(:id))
+    entity_ids.concat(@master_template.vehicles.pluck(:id))
+    entity_ids.concat(@master_template.factions.pluck(:id))
+    entity_ids.concat(@master_template.sites.pluck(:id))
+    
+    return if entity_ids.empty?
+    
+    attachments = ActiveStorage::Attachment.where(
+      record_type: ['Character', 'Vehicle', 'Faction', 'Site'],
+      record_id: entity_ids,
+      name: 'image'
+    )
+    
+    return if attachments.empty?
+    
+    Rails.logger.info "Exporting #{attachments.count} active storage attachments"
+    
+    # Add comment explaining these need to be re-attached
+    @sql_statements << "-- Note: Active Storage attachments need to be recreated in production"
+    @sql_statements << "-- The following attachment records are for reference only"
+    
+    attachments.each do |attachment|
+      blob = attachment.blob
+      sql = <<~SQL
+        -- Attachment for #{attachment.record_type} #{attachment.record_id}
+        -- Original filename: #{blob.filename}
+        -- ImageKit URL would be computed from metadata
+        INSERT INTO active_storage_attachments (
+          id, name, record_type, record_id, blob_id,
+          created_at
+        ) VALUES (
+          '#{attachment.id}',
+          #{quote(attachment.name)},
+          #{quote(attachment.record_type)},
+          '#{attachment.record_id}',
+          '#{attachment.blob_id}',
+          NOW()
+        ) ON CONFLICT (id) DO NOTHING;
+      SQL
+      
+      @sql_statements << sql.strip
+    end
+  end
 
   def export_image_positions
     # Get all image positions for entities in this campaign
