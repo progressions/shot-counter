@@ -101,6 +101,7 @@ class TemplateExporter
       sql = <<~SQL
         INSERT INTO schticks (
           id, campaign_id, name, description, category,
+          path, prerequisite_id, color, bonus,
           created_at, updated_at
         ) VALUES (
           '#{schtick.id}',
@@ -108,6 +109,10 @@ class TemplateExporter
           #{quote(schtick.name)},
           #{quote(schtick.description)},
           #{quote(schtick.category)},
+          #{quote(schtick.path)},
+          #{schtick.prerequisite_id ? "'#{schtick.prerequisite_id}'" : 'NULL'},
+          #{quote(schtick.color)},
+          #{schtick.bonus.nil? ? 'NULL' : schtick.bonus},
           NOW(),
           NOW()
         ) ON CONFLICT (id) DO NOTHING;
@@ -126,15 +131,19 @@ class TemplateExporter
     weapons.each do |weapon|
       sql = <<~SQL
         INSERT INTO weapons (
-          id, campaign_id, name, damage, concealment, reload_value,
+          id, campaign_id, name, description, damage, concealment, reload_value,
+          juncture, mook_bonus,
           created_at, updated_at
         ) VALUES (
           '#{weapon.id}',
           '#{@master_template.id}',
           #{quote(weapon.name)},
+          #{quote(weapon.description)},
           #{weapon.damage || 'NULL'},
           #{weapon.concealment || 'NULL'},
           #{weapon.reload_value || 'NULL'},
+          #{quote(weapon.juncture)},
+          #{weapon.mook_bonus || 0},
           NOW(),
           NOW()
         ) ON CONFLICT (id) DO NOTHING;
