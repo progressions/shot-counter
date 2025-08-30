@@ -64,9 +64,7 @@ class Api::V2::CampaignsController < ApplicationController
     
     # Apply filters before select
     query = query.where(id: params["id"]) if params["id"].present?
-    if params.key?("ids")
-      query = params["ids"].blank? ? query.where(id: nil) : query.where(id: params["ids"].split(","))
-    end
+    query = apply_ids_filter(query, params["ids"]) if params.key?("ids")
     query = query.where("campaigns.name ILIKE ?", "%#{params['search']}%") if params["search"].present?
     query = query.where(apply_visibility_filter)
     Rails.logger.info "   Applied visibility filter: #{params['visibility'] || 'visible'}"
@@ -83,6 +81,8 @@ class Api::V2::CampaignsController < ApplicationController
       sort_order,
       page,
       per_page,
+      params["id"],
+      format_ids_for_cache(params["ids"]),
       params["search"],
       params["autocomplete"],
       params["character_id"],

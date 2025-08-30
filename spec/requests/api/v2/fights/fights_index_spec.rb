@@ -359,4 +359,62 @@ RSpec.describe "Api::V2::Fights", type: :request do
       expect(vehicle_names).to include("Tank")
     end
   end
+
+  describe "IDs filtering and caching" do
+    it "filters by comma-separated ids" do
+      get "/api/v2/fights", params: { ids: "#{@brawl.id},#{@skirmish.id}" }, headers: @headers
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["fights"].map { |f| f["name"] }).to contain_exactly("Big Brawl", "Small Skirmish")
+    end
+
+    it "filters by array of ids" do
+      get "/api/v2/fights", params: { ids: [@brawl.id] }, headers: @headers
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["fights"].map { |f| f["name"] }).to eq(["Big Brawl"])
+    end
+
+    it "returns empty array when ids parameter is empty string" do
+      get "/api/v2/fights", params: { ids: "" }, headers: @headers
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["fights"]).to eq([])
+    end
+
+    it "returns empty array when ids array is empty" do
+      get "/api/v2/fights", params: { ids: [] }, headers: @headers
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["fights"]).to eq([])
+    end
+
+    it "filters by single id in array" do
+      get "/api/v2/fights", params: { ids: [@brawl.id] }, headers: @headers
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["fights"].length).to eq(1)
+      expect(body["fights"][0]["name"]).to eq("Big Brawl")
+    end
+
+    it "returns empty array when ids contain non-existent ids" do
+      get "/api/v2/fights", params: { ids: ["non-existent-id-1", "non-existent-id-2"] }, headers: @headers
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["fights"]).to eq([])
+    end
+
+    it "caches results with different ids separately" do
+      # First request
+      get "/api/v2/fights", params: { ids: [@brawl.id] }, headers: @headers
+      body1 = JSON.parse(response.body)
+      
+      # Second request with different ids should not return cached result from first
+      get "/api/v2/fights", params: { ids: [@skirmish.id] }, headers: @headers
+      body2 = JSON.parse(response.body)
+      
+      expect(body1["fights"][0]["name"]).to eq("Big Brawl")
+      expect(body2["fights"][0]["name"]).to eq("Small Skirmish")
+    end
+  end
 end

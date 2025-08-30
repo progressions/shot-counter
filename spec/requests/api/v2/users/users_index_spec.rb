@@ -344,4 +344,62 @@ RSpec.describe "Api::V2::Users", type: :request do
       end
     end
   end
+
+  describe "IDs filtering and caching" do
+    it "filters by comma-separated ids" do
+      get "/api/v2/users", params: { ids: "#{@gamemaster.id},#{@player.id}" }, headers: @admin_headers
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["users"].map { |u| u["email"] }).to contain_exactly("gamemaster@example.com", "player@example.com")
+    end
+
+    it "filters by array of ids" do
+      get "/api/v2/users", params: { ids: [@admin.id, @gamemaster.id] }, headers: @admin_headers
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["users"].map { |u| u["email"] }).to contain_exactly("admin@example.com", "gamemaster@example.com")
+    end
+
+    it "returns empty array when ids parameter is empty string" do
+      get "/api/v2/users", params: { ids: "" }, headers: @admin_headers
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["users"]).to eq([])
+    end
+
+    it "returns empty array when ids array is empty" do
+      get "/api/v2/users", params: { ids: [] }, headers: @admin_headers
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["users"]).to eq([])
+    end
+
+    it "filters by single id in array" do
+      get "/api/v2/users", params: { ids: [@player.id] }, headers: @admin_headers
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["users"].length).to eq(1)
+      expect(body["users"][0]["email"]).to eq("player@example.com")
+    end
+
+    it "returns empty array when ids contain non-existent ids" do
+      get "/api/v2/users", params: { ids: ["non-existent-id-1", "non-existent-id-2"] }, headers: @admin_headers
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["users"]).to eq([])
+    end
+
+    it "caches results with different ids separately" do
+      # First request
+      get "/api/v2/users", params: { ids: [@gamemaster.id] }, headers: @admin_headers
+      body1 = JSON.parse(response.body)
+      
+      # Second request with different ids should not return cached result from first
+      get "/api/v2/users", params: { ids: [@player.id] }, headers: @admin_headers
+      body2 = JSON.parse(response.body)
+      
+      expect(body1["users"][0]["email"]).to eq("gamemaster@example.com")
+      expect(body2["users"][0]["email"]).to eq("player@example.com")
+    end
+  end
 end

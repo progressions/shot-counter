@@ -80,21 +80,6 @@ RSpec.describe "Api::V2::Weapons", type: :request do
         "total_count" => 0
       })
     end
-    it "returns empty array when ids is explicitly empty" do
-      get "/api/v2/weapons", params: { ids: "" }, headers: @headers
-      expect(response).to have_http_status(:success)
-      body = JSON.parse(response.body)
-      expect(body["weapons"]).to eq([])
-      expect(body["categories"]).to eq([])
-      expect(body["junctures"]).to eq([])
-      expect(body["meta"]).to eq({
-        "current_page" => 1,
-        "next_page" => nil,
-        "prev_page" => nil,
-        "total_pages" => 0,
-        "total_count" => 0
-      })
-    end
     it "filters by comma-separated ids" do
       get "/api/v2/weapons", params: { ids: "#{@beretta.id},#{@sword.id}" }, headers: @headers
       expect(response).to have_http_status(:success)
@@ -107,6 +92,34 @@ RSpec.describe "Api::V2::Weapons", type: :request do
         "total_pages" => 1,
         "total_count" => 2
       )
+    end
+    it "filters by array of ids" do
+      get "/api/v2/weapons", params: { ids: [@beretta.id, @sword.id] }, headers: @headers
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["weapons"].map { |w| w["name"] }).to eq(["Sword", "Beretta 92FS"])
+      expect(body["categories"]).to eq(["Melee", "Ranged"])
+      expect(body["junctures"]).to eq(["Ancient", "Modern"])
+      expect(body["meta"]).to include(
+        "current_page" => 1,
+        "total_pages" => 1,
+        "total_count" => 2
+      )
+    end
+    it "returns empty array when ids array is empty" do
+      get "/api/v2/weapons", params: { ids: [] }, headers: @headers
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["weapons"]).to eq([])
+      expect(body["categories"]).to eq([])
+      expect(body["junctures"]).to eq([])
+      expect(body["meta"]).to eq({
+        "current_page" => 1,
+        "next_page" => nil,
+        "prev_page" => nil,
+        "total_pages" => 0,
+        "total_count" => 0
+      })
     end
     it "sorts by created_at ascending" do
       get "/api/v2/weapons", params: { sort: "created_at", order: "asc" }, headers: @headers
@@ -337,6 +350,36 @@ RSpec.describe "Api::V2::Weapons", type: :request do
       body = JSON.parse(response.body)
       expect(body["weapons"].map { |w| w["name"] }).to include("Hidden Blade")
       expect(body["weapons"].length).to eq(6)
+    end
+  end
+
+  describe "IDs filtering and caching" do
+    it "filters by single id in array" do
+      get "/api/v2/weapons", params: { ids: [@beretta.id] }, headers: @headers
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["weapons"].length).to eq(1)
+      expect(body["weapons"][0]["name"]).to eq("Beretta 92FS")
+    end
+
+    it "returns empty array when ids contain non-existent ids" do
+      get "/api/v2/weapons", params: { ids: ["non-existent-id-1", "non-existent-id-2"] }, headers: @headers
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["weapons"]).to eq([])
+    end
+
+    it "caches results with different ids separately" do
+      # First request
+      get "/api/v2/weapons", params: { ids: [@beretta.id] }, headers: @headers
+      body1 = JSON.parse(response.body)
+      
+      # Second request with different ids should not return cached result from first
+      get "/api/v2/weapons", params: { ids: [@sword.id] }, headers: @headers
+      body2 = JSON.parse(response.body)
+      
+      expect(body1["weapons"][0]["name"]).to eq("Beretta 92FS")
+      expect(body2["weapons"][0]["name"]).to eq("Sword")
     end
   end
 end

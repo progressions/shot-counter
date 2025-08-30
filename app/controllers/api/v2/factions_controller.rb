@@ -30,9 +30,7 @@ class Api::V2::FactionsController < ApplicationController
 
     # Apply filters
     query = query.where(id: params["id"]) if params["id"].present?
-    if params.key?("ids")
-      query = params["ids"].blank? ? query.where(id: nil) : query.where(id: params["ids"].split(","))
-    end
+    query = apply_ids_filter(query, params["ids"]) if params.key?("ids")
     query = query.where("factions.name ILIKE ?", "%#{params['search']}%") if params["search"].present?
     query = query.where(apply_visibility_filter)
     # Join associations
@@ -54,6 +52,8 @@ class Api::V2::FactionsController < ApplicationController
       sort_order,
       page,
       per_page,
+      params["id"],
+      format_ids_for_cache(params["ids"]),
       params["search"],
       params["juncture_id"],
       params["autocomplete"],

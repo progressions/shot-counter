@@ -281,4 +281,62 @@ RSpec.describe "Api::V2::Vehicles", type: :request do
       expect(body["factions"].map { |f| f["name"] }).to eq(["The Ascended", "The Dragons"])
     end
   end
+
+  describe "IDs filtering and caching" do
+    it "filters by comma-separated ids" do
+      get "/api/v2/vehicles", params: { ids: "#{@car.id},#{@tank.id}" }, headers: @headers
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["vehicles"].map { |v| v["name"] }).to contain_exactly("Car", "Tank")
+    end
+
+    it "filters by array of ids" do
+      get "/api/v2/vehicles", params: { ids: [@bike.id, @plane.id] }, headers: @headers
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["vehicles"].map { |v| v["name"] }).to contain_exactly("Bike", "Plane")
+    end
+
+    it "returns empty array when ids parameter is empty string" do
+      get "/api/v2/vehicles", params: { ids: "" }, headers: @headers
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["vehicles"]).to eq([])
+    end
+
+    it "returns empty array when ids array is empty" do
+      get "/api/v2/vehicles", params: { ids: [] }, headers: @headers
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["vehicles"]).to eq([])
+    end
+
+    it "filters by single id in array" do
+      get "/api/v2/vehicles", params: { ids: [@car.id] }, headers: @headers
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["vehicles"].length).to eq(1)
+      expect(body["vehicles"][0]["name"]).to eq("Car")
+    end
+
+    it "returns empty array when ids contain non-existent ids" do
+      get "/api/v2/vehicles", params: { ids: ["non-existent-id-1", "non-existent-id-2"] }, headers: @headers
+      expect(response).to have_http_status(:success)
+      body = JSON.parse(response.body)
+      expect(body["vehicles"]).to eq([])
+    end
+
+    it "caches results with different ids separately" do
+      # First request
+      get "/api/v2/vehicles", params: { ids: [@car.id] }, headers: @headers
+      body1 = JSON.parse(response.body)
+      
+      # Second request with different ids should not return cached result from first
+      get "/api/v2/vehicles", params: { ids: [@bike.id] }, headers: @headers
+      body2 = JSON.parse(response.body)
+      
+      expect(body1["vehicles"][0]["name"]).to eq("Car")
+      expect(body2["vehicles"][0]["name"]).to eq("Bike")
+    end
+  end
 end

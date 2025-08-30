@@ -33,9 +33,7 @@ class Api::V2::SchticksController < ApplicationController
 
     # Apply filters
     query = query.where(id: params["id"]) if params["id"].present?
-    if params.key?("ids")
-      query = params["ids"].blank? ? query.where(id: nil) : query.where(id: params["ids"].split(","))
-    end
+    query = apply_ids_filter(query, params["ids"]) if params.key?("ids")
     query = query.where("schticks.name ILIKE ?", "%#{params['search']}%") if params["search"].present?
     query = query.where(params["category"] == "__NONE__" ? "schticks.category IS NULL" : "schticks.category = ?", params["category"]) if params["category"].present?
     query = query.where(params["path"] == "__NONE__" ? "schticks.path IS NULL" : "schticks.path = ?", params["path"]) if params["path"].present?
@@ -57,6 +55,8 @@ class Api::V2::SchticksController < ApplicationController
       sort_order,
       page,
       per_page,
+      params["id"],
+      format_ids_for_cache(params["ids"]),
       params["search"],
       params["user_id"],
       params["category"],

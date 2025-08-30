@@ -36,9 +36,7 @@ class Api::V2::FightsController < ApplicationController
   query = query.where("fights.name ILIKE ?", "%#{search_param}%") if search_param
   query = query.where(apply_visibility_filter)
   query = query.where(id: params["id"]) if params["id"].present?
-  if params.key?("ids")
-    query = params["ids"].blank? ? query.where(id: nil) : query.where(id: params["ids"].split(","))
-  end
+  query = apply_ids_filter(query, params["ids"]) if params.key?("ids")
   query = query.where(started_at: nil) if params["status"] == "Unstarted"
   query = query.where.not(started_at: nil).where(ended_at: nil) if params["status"] == "Started"
   query = query.where.not(started_at: nil).where.not(ended_at: nil) if params["status"] == "Ended"
@@ -62,6 +60,8 @@ class Api::V2::FightsController < ApplicationController
     sort_order,
     page,
     per_page,
+      params["id"],
+      format_ids_for_cache(params["ids"]),
     search_param,
     params["visibility"],
     params["show_hidden"],
