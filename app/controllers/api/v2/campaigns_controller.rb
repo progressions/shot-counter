@@ -141,7 +141,11 @@ class Api::V2::CampaignsController < ApplicationController
     if @campaign.save
       # Seed the campaign with template content (unless it's a master template)
       unless @campaign.is_master_template?
-        CampaignSeederJob.perform_later(@campaign.id)
+        Rails.logger.info "[CampaignsController] Enqueueing CampaignSeederJob for campaign #{@campaign.name} (ID: #{@campaign.id})"
+        job = CampaignSeederJob.perform_later(@campaign.id)
+        Rails.logger.info "[CampaignsController] Job enqueued with ID: #{job.job_id if job.respond_to?(:job_id)}"
+      else
+        Rails.logger.info "[CampaignsController] Skipping seeding for master template campaign #{@campaign.name}"
       end
       
       # Clear cache after creating a new campaign

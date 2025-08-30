@@ -1,7 +1,10 @@
 class CampaignSeederService
   class << self
     def seed_campaign(campaign)
+      Rails.logger.info "[CampaignSeederService] Starting seed_campaign for: #{campaign.name} (ID: #{campaign.id})"
+      
       if campaign.seeded_at.present?
+        Rails.logger.info "[CampaignSeederService] Campaign already seeded, seeded_at: #{campaign.seeded_at}"
         Rails.logger.info "Campaign already seeded, seeded_at: #{campaign.seeded_at}"
         return false
       end
@@ -13,9 +16,12 @@ class CampaignSeederService
 
       master_template = Campaign.find_by(is_master_template: true)
       unless master_template
+        Rails.logger.error "[CampaignSeederService] ERROR: No master template found!"
         Rails.logger.info "No master template found"
         return false
       end
+      
+      Rails.logger.info "[CampaignSeederService] Found master template: #{master_template.name} (ID: #{master_template.id})"
 
       Rails.logger.info "Seeding campaign #{campaign.name} (ID: #{campaign.id}) from master template"
 
