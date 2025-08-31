@@ -1,5 +1,5 @@
 class CampaignSeederJob < ApplicationJob
-  queue_as :critical
+  queue_as :default
   
   # Increase retry attempts for network/connection issues
   retry_on ActiveRecord::StatementInvalid, wait: 5.seconds, attempts: 10
@@ -17,6 +17,9 @@ class CampaignSeederJob < ApplicationJob
 
   def perform(campaign_id)
     Rails.logger.info "[CampaignSeederJob] STARTING - Received campaign_id: #{campaign_id}"
+    
+    # Ensure connection is active
+    ActiveRecord::Base.connection.verify!
     
     campaign = Campaign.find(campaign_id)
     Rails.logger.info "[CampaignSeederJob] Found campaign: #{campaign.name} (ID: #{campaign_id})"
