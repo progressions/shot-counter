@@ -22,6 +22,41 @@ class Api::V2::EncountersController < ApplicationController
     end
   end
 
+  def update_combat_state
+    @shot = @fight.shots.find(params[:shot_id])
+    
+    # Update wounds and impairments based on character type
+    if @shot.character&.is_pc?
+      # For PCs, update the character record (persistent)
+      @shot.character.action_values["Wounds"] = params[:wounds] || 0
+      @shot.character.impairments = params[:impairments] || 0
+      @shot.character.save!
+    else
+      # For NPCs and vehicles, update the shot record (fight-specific)
+      @shot.count = params[:count] || 0  # Wounds for NPCs, mook count for Mooks
+      @shot.impairments = params[:impairments] || 0
+      @shot.save!
+    end
+    
+    # Log the combat event if provided
+    if params[:event].present?
+      @fight.fight_events.create!(
+        event_type: params[:event][:type] || "combat",
+        description: params[:event][:description] || "Combat state updated",
+        details: params[:event][:details] || {}
+      )
+    end
+    
+    # Touch the fight to trigger ActionCable broadcast
+    @fight.touch
+    
+    render json: @fight, serializer: EncounterSerializer
+  rescue ActiveRecord::RecordNotFound
+    render json: { error: "Shot not found" }, status: :not_found
+  rescue ActiveRecord::RecordInvalid => e
+    render json: { error: e.message }, status: :unprocessable_entity
+  end
+
   private
 
   def set_fight
@@ -30,5 +65,10 @@ class Api::V2::EncountersController < ApplicationController
 
   def shot_params
     params.require(:character).permit(:current_shot)
+  end
+  
+  def combat_state_params
+    params.permit(:shot_id, :wounds, :count, :impairments, 
+                  event: [:type, :description, details: {}])
   end
 end
