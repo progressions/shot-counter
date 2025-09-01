@@ -13,6 +13,9 @@ class Shot < ApplicationRecord
   validate :ensure_campaign
 
   def broadcast_encounter_update
+    # Skip if broadcasts are disabled (during batched updates)
+    return if Thread.current[:disable_broadcasts]
+    
     fight.broadcast_encounter_update!
   end
 

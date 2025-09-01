@@ -22,47 +22,24 @@ class Api::V2::EncountersController < ApplicationController
     end
   end
 
-  def update_combat_state
-    @shot = @fight.shots.find(params[:shot_id])
-    
-    # Update wounds and impairments based on character type
-    if @shot.character&.is_pc?
-      # For PCs, update the character record (persistent)
-      @shot.character.action_values["Wounds"] = params[:wounds] || 0
-      @shot.character.impairments = params[:impairments] || 0
-      
-      # Update Fortune points if provided
-      if params[:fortune].present?
-        @shot.character.action_values["Fortune"] = params[:fortune]
-      end
-      
-      @shot.character.save!
-    else
-      # For NPCs and vehicles, update the shot record (fight-specific)
-      @shot.count = params[:count] || 0  # Wounds for NPCs, mook count for Mooks
-      @shot.impairments = params[:impairments] || 0
-      @shot.save!
-    end
-    
-    # Log the combat event if provided
-    if params[:event].present?
-      @fight.fight_events.create!(
-        event_type: params[:event][:type] || "combat",
-        description: params[:event][:description] || "Combat state updated",
-        details: params[:event][:details] || {}
-      )
-    end
-    
-    # Touch the fight to trigger ActionCable broadcast
-    Rails.logger.info "🔄 WEBSOCKET: Touching fight #{@fight.id} to trigger broadcast"
-    @fight.touch
-    Rails.logger.info "🔄 WEBSOCKET: Fight touched, broadcasting should happen via after_update callbacks"
-    
-    render json: @fight, serializer: EncounterSerializer
-  rescue ActiveRecord::RecordNotFound
-    render json: { error: "Shot not found" }, status: :not_found
+  def apply_combat_action
+    character_updates = combat_action_params[:character_updates] || []
+
+    Rails.logger.info "🔄 BATCHED COMBAT: Applying #{character_updates.length} character updates to fight #{@fight.id}"
+
+    result = CombatActionService.apply_combat_action(@fight, character_updates)
+
+    render json: result, serializer: EncounterSerializer
+  rescue ActiveRecord::RecordNotFound => e
+    render json: { error: "Resource not found: #{e.message}" }, status: :not_found
   rescue ActiveRecord::RecordInvalid => e
     render json: { error: e.message }, status: :unprocessable_entity
+  rescue ArgumentError => e
+    render json: { error: e.message }, status: :bad_request
+  rescue StandardError => e
+    Rails.logger.error "Error applying combat action: #{e.message}"
+    Rails.logger.error e.backtrace.join("\n")
+    render json: { error: "Failed to apply combat action" }, status: :internal_server_error
   end
 
   private
@@ -74,9 +51,14 @@ class Api::V2::EncountersController < ApplicationController
   def shot_params
     params.require(:character).permit(:current_shot)
   end
-  
-  def combat_state_params
-    params.permit(:shot_id, :wounds, :count, :impairments, 
-                  event: [:type, :description, details: {}])
+
+  def combat_action_params
+    params.permit(character_updates: [
+      :shot_id, :character_id, :vehicle_id, :shot, :wounds, :count, 
+      :impairments, :defense,
+      action_values: {},
+      attributes: {},
+      event: [:type, :description, details: {}]
+    ])
   end
 end

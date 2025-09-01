@@ -80,6 +80,12 @@ class Fight < ApplicationRecord
   end
 
   def broadcast_encounter_update!
+    # Skip if broadcasts are disabled (during batched updates)
+    if Thread.current[:disable_broadcasts]
+      Rails.logger.info "🔄 WEBSOCKET: Broadcast disabled (batched update in progress), skipping broadcast_encounter_update!"
+      return
+    end
+    
     Rails.logger.info "🔄 WEBSOCKET: broadcast_encounter_update! called for fight #{id}"
     if started_at? && ended_at.nil?
       Rails.logger.info "🔄 WEBSOCKET: Fight is active, enqueuing BroadcastEncounterUpdateJob"
@@ -100,6 +106,12 @@ class Fight < ApplicationRecord
   end
 
   def broadcast_update
+    # Skip if broadcasts are disabled (during batched updates)
+    if Thread.current[:disable_broadcasts]
+      Rails.logger.info "🔄 WEBSOCKET: Broadcast disabled (batched update in progress), skipping broadcast_update"
+      return
+    end
+    
     channel = "fight_#{id}"
     payload = { fight: :updated }
     Rails.logger.info "Broadcasting to #{channel} with payload: #{payload.inspect}"
