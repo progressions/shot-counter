@@ -74,7 +74,12 @@ class CombatActionService
       # Update action values if provided (includes Wounds, Fortune, etc.)
       if update[:action_values].present?
         Rails.logger.info "📊 Updating PC #{character.name} action values: #{update[:action_values]}"
-        character.action_values.merge!(update[:action_values])
+        Rails.logger.info "📊 Current action_values before merge: #{character.action_values.inspect}"
+        # Must reassign to trigger Rails change tracking for JSONB columns
+        character.action_values = character.action_values.merge(update[:action_values])
+        Rails.logger.info "📊 New action_values after merge: #{character.action_values.inspect}"
+        Rails.logger.info "📊 Character changed?: #{character.changed?}"
+        Rails.logger.info "📊 Character changes: #{character.changes.inspect}"
       end
       
       # Update impairments if provided
@@ -99,7 +104,21 @@ class CombatActionService
         end
       end
       
-      character.save! if character.changed?
+      # Always save if we had any updates for this character
+      should_save = update[:action_values].present? || 
+                    update[:impairments].present? || 
+                    update[:defense].present? || 
+                    update[:attributes].present? ||
+                    character.changed?
+      
+      Rails.logger.info "📊 Should save?: #{should_save}"
+      Rails.logger.info "📊 Character before save - Wounds: #{character.action_values['Wounds']}"
+      
+      if should_save
+        character.save!
+        character.reload
+        Rails.logger.info "📊 Character saved! Wounds after save: #{character.action_values['Wounds']}"
+      end
     else
       # For NPCs, Vehicles, and Mooks, update the shot record (fight-specific)
       

@@ -166,6 +166,108 @@ RSpec.describe CombatActionService do
         expect(@boss_shot.shot).to eq(16)  # Boss only spent 2 shots
         expect(@pc_defender.action_values["Wounds"]).to eq(10)
       end
+
+      it 'updates PC wounds correctly when only passing changed fields' do
+        # This is how the frontend actually sends updates - only the changed fields
+        character_updates = [
+          {
+            shot_id: @boss_shot.id,
+            character_id: @boss.id,
+            shot: 16,  # 18 - 2 shots (boss cost)
+            event: {
+              type: "act",
+              description: "Big Bad acts (2 shots)"
+            }
+          },
+          {
+            shot_id: @pc_shot.id,
+            character_id: @pc_defender.id,
+            action_values: { "Wounds" => 8 },  # Only pass the changed field
+            impairments: 0,
+            event: {
+              type: "attack",
+              description: "Big Bad attacked Hero for 8 wounds"
+            }
+          }
+        ]
+        
+        CombatActionService.apply_combat_action(@fight, character_updates)
+        
+        @pc_defender.reload
+        
+        # Verify wounds were updated
+        expect(@pc_defender.action_values["Wounds"]).to eq(8)
+        # Verify other fields weren't overwritten
+        expect(@pc_defender.action_values["Type"]).to eq("PC")
+        expect(@pc_defender.action_values["Fortune"]).to eq(2)
+      end
+
+      it 'persists PC wounds to database correctly' do
+        # Start with a PC with 5 wounds
+        @pc_defender.action_values["Wounds"] = 5
+        @pc_defender.save!
+        
+        # Apply 8 more wounds
+        character_updates = [
+          {
+            shot_id: @pc_shot.id,
+            character_id: @pc_defender.id,
+            action_values: { "Wounds" => 13 },  # 5 + 8 = 13
+            impairments: 1,
+            event: {
+              type: "attack",
+              description: "Big Bad attacked Hero for 8 wounds"
+            }
+          }
+        ]
+        
+        CombatActionService.apply_combat_action(@fight, character_updates)
+        
+        # Reload from database to ensure persistence
+        @pc_defender.reload
+        expect(@pc_defender.action_values["Wounds"]).to eq(13)
+        expect(@pc_defender.impairments).to eq(1)
+        
+        # Double-check by fetching fresh from database
+        fresh_character = Character.find(@pc_defender.id)
+        expect(fresh_character.action_values["Wounds"]).to eq(13)
+        expect(fresh_character.impairments).to eq(1)
+      end
+
+      it 'fails to update PC wounds when action_values contains serialized string keys' do
+        # This test replicates the actual bug - when the frontend sends the update
+        # the action_values might come through as string-keyed hash from JSON parsing
+        
+        # Start with a PC with 0 wounds (like Penelope had)
+        expect(@pc_defender.action_values["Wounds"]).to eq(0)
+        
+        # Simulate what happens when JSON is parsed - string keys
+        character_updates = [
+          {
+            "shot_id" => @pc_shot.id.to_s,
+            "character_id" => @pc_defender.id.to_s,
+            "action_values" => { "Wounds" => 8 },
+            "impairments" => 0,
+            "event" => {
+              "type" => "attack",
+              "description" => "Attacker attacked Hero for 8 wounds"
+            }
+          }
+        ]
+        
+        # Use string keys to access the params like the controller would
+        updates_with_indifferent_access = character_updates.map(&:with_indifferent_access)
+        
+        CombatActionService.apply_combat_action(@fight, updates_with_indifferent_access)
+        
+        # Reload and check - this should show the wounds were applied
+        @pc_defender.reload
+        expect(@pc_defender.action_values["Wounds"]).to eq(8)
+        
+        # Also verify the change was actually persisted in the database
+        fresh_from_db = Character.find(@pc_defender.id)
+        expect(fresh_from_db.action_values["Wounds"]).to eq(8)
+      end
     end
     
     context 'Defense actions' do
