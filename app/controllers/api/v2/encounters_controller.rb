@@ -48,7 +48,9 @@ class Api::V2::EncountersController < ApplicationController
     end
     
     # Touch the fight to trigger ActionCable broadcast
+    Rails.logger.info "🔄 WEBSOCKET: Touching fight #{@fight.id} to trigger broadcast"
     @fight.touch
+    Rails.logger.info "🔄 WEBSOCKET: Fight touched, broadcasting should happen via after_update callbacks"
     
     render json: @fight, serializer: EncounterSerializer
   rescue ActiveRecord::RecordNotFound

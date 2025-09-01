@@ -80,8 +80,12 @@ class Fight < ApplicationRecord
   end
 
   def broadcast_encounter_update!
+    Rails.logger.info "🔄 WEBSOCKET: broadcast_encounter_update! called for fight #{id}"
     if started_at? && ended_at.nil?
+      Rails.logger.info "🔄 WEBSOCKET: Fight is active, enqueuing BroadcastEncounterUpdateJob"
       BroadcastEncounterUpdateJob.perform_later(id)
+    else
+      Rails.logger.info "🔄 WEBSOCKET: Fight is not active (started_at: #{started_at}, ended_at: #{ended_at}), skipping broadcast"
     end
   end
 
