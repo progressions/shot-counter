@@ -30,6 +30,12 @@ class Api::V2::EncountersController < ApplicationController
       # For PCs, update the character record (persistent)
       @shot.character.action_values["Wounds"] = params[:wounds] || 0
       @shot.character.impairments = params[:impairments] || 0
+      
+      # Update Fortune points if provided
+      if params[:fortune].present?
+        @shot.character.action_values["Fortune"] = params[:fortune]
+      end
+      
       @shot.character.save!
     else
       # For NPCs and vehicles, update the shot record (fight-specific)
