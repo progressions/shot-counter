@@ -91,11 +91,28 @@ RSpec.describe 'template:export', type: :task do
       end
 
       it 'creates an export file in db/exports directory' do
-        expect {
-          Rake::Task['template:export'].invoke
-        }.to change {
-          Dir[Rails.root.join('db', 'exports', '*.sql')].count
-        }.by(1)
+        # Get initial files before running the export
+        initial_files = Dir[Rails.root.join('db', 'exports', '*.sql')].to_set
+        
+        Rake::Task['template:export'].invoke
+        
+        # Get files after export
+        final_files = Dir[Rails.root.join('db', 'exports', '*.sql')].to_set
+        
+        # Find new files created by this test
+        new_files = final_files - initial_files
+        
+        # Should have exactly one new file
+        expect(new_files.size).to eq(1)
+        
+        # Verify the new file was just created and has expected content
+        new_file = new_files.first
+        expect(File.exist?(new_file)).to be true
+        expect(File.mtime(new_file)).to be > 5.seconds.ago
+        
+        # Verify it contains template data
+        content = File.read(new_file)
+        expect(content).to include('Master Template Campaign')
       end
 
       it 'includes the master template campaign in the export' do
@@ -199,15 +216,22 @@ RSpec.describe 'template:export', type: :task do
       end
 
       it 'creates file with timestamp in filename' do
-        # Clean up any existing export files first
-        FileUtils.rm_f(Dir[Rails.root.join('db', 'exports', '*.sql')])
+        # Get initial files before running export
+        initial_files = Dir[Rails.root.join('db', 'exports', 'master_template_export_*.sql')].to_set
         
         Rake::Task['template:export'].invoke
         
-        export_files = Dir[Rails.root.join('db', 'exports', 'master_template_export_*.sql')]
-        expect(export_files.count).to eq(1)
+        # Get files after export
+        final_files = Dir[Rails.root.join('db', 'exports', 'master_template_export_*.sql')].to_set
         
-        filename = File.basename(export_files.first)
+        # Find new files created by this test
+        new_files = final_files - initial_files
+        
+        # Should have exactly one new file
+        expect(new_files.size).to eq(1)
+        
+        # Verify filename format
+        filename = File.basename(new_files.first)
         expect(filename).to match(/master_template_export_\d{8}_\d{6}\.sql/)
       end
 
