@@ -79,7 +79,7 @@ RSpec.describe Fight, type: :model do
     fight.shots.create!(character: brick, shot: 12)
     fight.shots.create!(character: thunder_king, shot: 12)
 
-    expected = [[12, ["Thunder King", "Ugly Shing", "Brick Manly", "Hitman", "Jawbuster", "Ninja"]]]
+    expected = [[12, ["Thunder King", "Ugly Shing", "Brick Manly", "Jawbuster", "Hitman", "Ninja"]]]
     expect(fight.shot_order.map { |shot, chars| [shot, chars.map { |c| c[:name] }] }).to eq(expected)
   end
 

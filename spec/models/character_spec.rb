@@ -128,36 +128,36 @@ RSpec.describe Character, type: :model do
       it "returns 0 for a Character, 0 for an Uber-Boss, inverse of speed, and name" do
         brick.action_values["Speed"] = 6
         brick.action_values["Type"] = "Uber-Boss"
-        expect(brick.sort_order).to eq([0, 0, -6, "Brick Manly"])
+        expect(brick.sort_order).to eq([0, 0, -6, "brick manly"])
       end
 
-      it "returns 0 for a Character, 1 for a PC, inverse of speed, and name" do
+      it "returns 0 for a Character, 2 for a PC, inverse of speed, and name" do
         brick.action_values["Speed"] = 6
-        expect(brick.sort_order).to eq([0, 2, -6, "Brick Manly"])
+        expect(brick.sort_order).to eq([0, 2, -6, "brick manly"])
       end
 
-      it "returns 0 for a Character, 2 for a Boss, inverse of speed, and name" do
+      it "returns 0 for a Character, 1 for a Boss, inverse of speed, and name" do
         brick.action_values["Speed"] = 6
         brick.action_values["Type"] = "Boss"
-        expect(brick.sort_order).to eq([0, 1, -6, "Brick Manly"])
+        expect(brick.sort_order).to eq([0, 1, -6, "brick manly"])
       end
 
-      it "returns 0 for a Character, 3 for a Featured Foe, inverse of speed, and name" do
+      it "returns 0 for a Character, 4 for a Featured Foe, inverse of speed, and name" do
         brick.action_values["Speed"] = 6
         brick.action_values["Type"] = "Featured Foe"
-        expect(brick.sort_order).to eq([0, 3, -6, "Brick Manly"])
+        expect(brick.sort_order).to eq([0, 4, -6, "brick manly"])
       end
 
-      it "returns 0 for a Character, 4 for an Ally, inverse of speed, and name" do
+      it "returns 0 for a Character, 3 for an Ally, inverse of speed, and name" do
         brick.action_values["Speed"] = 6
         brick.action_values["Type"] = "Ally"
-        expect(brick.sort_order).to eq([0, 4, -6, "Brick Manly"])
+        expect(brick.sort_order).to eq([0, 3, -6, "brick manly"])
       end
 
       it "returns 0 for a Character, 5 for a Mook, inverse of speed, and name" do
         brick.action_values["Speed"] = 6
         brick.action_values["Type"] = "Mook"
-        expect(brick.sort_order).to eq([0, 5, -6, "Brick Manly"])
+        expect(brick.sort_order).to eq([0, 5, -6, "brick manly"])
       end
     end
 
