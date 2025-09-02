@@ -86,6 +86,11 @@ class Api::V1::ActorsController < ApplicationController
   def destroy
     @shot = Shot.find(params[:id])
     @shot.destroy!
+    
+    # Broadcast encounter update after removing character
+    @fight.touch
+    @fight.send(:broadcast_encounter_update!)
+    
     render :ok
   end
 
