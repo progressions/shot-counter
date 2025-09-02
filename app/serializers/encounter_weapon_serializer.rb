@@ -1,5 +1,5 @@
 class EncounterWeaponSerializer < ActiveModel::Serializer
-  attributes :id, :name, :description, :entity_class, :damage, :concealment, :reload_value
+  attributes :id, :name, :description, :entity_class, :damage, :concealment, :reload_value, :mook_bonus, :kachunk
 
   def entity_class
     object.class.name

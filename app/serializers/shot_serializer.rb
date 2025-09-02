@@ -1,5 +1,5 @@
 class ShotSerializer < ActiveModel::Serializer
-  attributes :id, :shot, :characters
+  attributes :id, :shot, :location, :characters
 
   def characters
     object[:characters].map do |character|

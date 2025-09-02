@@ -24,7 +24,7 @@ class Fight < ApplicationRecord
 
   scope :active, -> { where(active: true) }
 
-  SORT_ORDER = ["Uber-Boss", "Boss", "PC", "Featured Foe", "Ally", "Mook"]
+  SORT_ORDER = ["Uber-Boss", "Boss", "PC", "Ally", "Featured Foe", "Mook"]
   DEFAULT_SHOT_COUNT = 3
 
   def as_v1_json(args={})
@@ -80,8 +80,18 @@ class Fight < ApplicationRecord
   end
 
   def broadcast_encounter_update!
+    # Skip if broadcasts are disabled (during batched updates)
+    if Thread.current[:disable_broadcasts]
+      Rails.logger.info "🔄 WEBSOCKET: Broadcast disabled (batched update in progress), skipping broadcast_encounter_update!"
+      return
+    end
+    
+    Rails.logger.info "🔄 WEBSOCKET: broadcast_encounter_update! called for fight #{id}"
     if started_at? && ended_at.nil?
+      Rails.logger.info "🔄 WEBSOCKET: Fight is active, enqueuing BroadcastEncounterUpdateJob"
       BroadcastEncounterUpdateJob.perform_later(id)
+    else
+      Rails.logger.info "🔄 WEBSOCKET: Fight is not active (started_at: #{started_at}, ended_at: #{ended_at}), skipping broadcast"
     end
   end
 
@@ -96,6 +106,12 @@ class Fight < ApplicationRecord
   end
 
   def broadcast_update
+    # Skip if broadcasts are disabled (during batched updates)
+    if Thread.current[:disable_broadcasts]
+      Rails.logger.info "🔄 WEBSOCKET: Broadcast disabled (batched update in progress), skipping broadcast_update"
+      return
+    end
+    
     channel = "fight_#{id}"
     payload = { fight: :updated }
     Rails.logger.info "Broadcasting to #{channel} with payload: #{payload.inspect}"

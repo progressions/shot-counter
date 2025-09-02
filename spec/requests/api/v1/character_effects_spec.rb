@@ -57,7 +57,7 @@ RSpec.describe "CharacterEffects", type: :request do
       expect(mook.reload.character_effects).to be_empty
     end
 
-    it "returns an error if there's no character_id" do
+    it "returns an error if there's no shot_id" do
       post "/api/v1/fights/#{@fight.id}/character_effects", headers: @headers, params: {
         character_effect: {
           name: "Bonus",
@@ -65,12 +65,12 @@ RSpec.describe "CharacterEffects", type: :request do
       }
       expect(response).to have_http_status(400)
       body = JSON.parse(response.body)
-      expect(body["character"]).to eq(["must be present if vehicle is not set"])
-      expect(body["vehicle"]).to eq(["must be present if character is not set"])
+      expect(body["error"]).to eq("Shot not found")
+      expect(body["shot_id"]).to be_nil
       expect(CharacterEffect.count).to eq(0)
     end
 
-    it "returns an error if the character isn't in the fight" do
+    it "returns an error if the shot isn't found" do
       @space = @campaign.fights.create!(name: "Space")
       post "/api/v1/fights/#{@fight.id}/character_effects", headers: @headers, params: {
         character_effect: {
@@ -80,11 +80,11 @@ RSpec.describe "CharacterEffects", type: :request do
       }
       expect(response).to have_http_status(400)
       body = JSON.parse(response.body)
-      expect(body["character"]).to eq(["must be present if vehicle is not set"])
+      expect(body["error"]).to eq("Shot not found")
       expect(CharacterEffect.count).to eq(0)
     end
 
-    it "returns an error if the vehicle isn't in the fight" do
+    it "returns an error if the shot isn't found for vehicle" do
       @space = @campaign.fights.create!(name: "Space")
       post "/api/v1/fights/#{@fight.id}/character_effects", headers: @headers, params: {
         character_effect: {
@@ -94,7 +94,7 @@ RSpec.describe "CharacterEffects", type: :request do
       }
       expect(response).to have_http_status(400)
       body = JSON.parse(response.body)
-      expect(body["vehicle"]).to eq(["must be present if character is not set"])
+      expect(body["error"]).to eq("Shot not found")
       expect(CharacterEffect.count).to eq(0)
     end
 

@@ -19,6 +19,7 @@ Rails.application.routes.draw do
     namespace :v2 do
       resources :encounters, only: [:show] do
         patch :act, on: :member, to: "encounters#act"
+        post :apply_combat_action, on: :member
       end
       resources :ai, only: [:create] do
         member do
