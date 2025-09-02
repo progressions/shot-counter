@@ -332,7 +332,7 @@ class Character < ApplicationRecord
   def sort_order(shot_id=nil)
     character_type = action_values.fetch("Type")
     speed = action_values.fetch("Speed", 0).to_i - impairments.to_i
-    [0, Fight::SORT_ORDER.index(character_type), speed * -1, name, shot_id].compact
+    [0, Fight::SORT_ORDER.index(character_type), speed * -1, name.downcase, shot_id].compact
   end
 
   def is_pc?

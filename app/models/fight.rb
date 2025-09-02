@@ -24,7 +24,7 @@ class Fight < ApplicationRecord
 
   scope :active, -> { where(active: true) }
 
-  SORT_ORDER = ["Uber-Boss", "Boss", "PC", "Featured Foe", "Ally", "Mook"]
+  SORT_ORDER = ["Uber-Boss", "Boss", "PC", "Ally", "Featured Foe", "Mook"]
   DEFAULT_SHOT_COUNT = 3
 
   def as_v1_json(args={})

@@ -6,14 +6,18 @@ class Api::V1::CharacterEffectsController < ApplicationController
   def create
     @shot = @fight.shots.find_by(id: character_effect_params[:shot_id])
     if @shot.nil?
+      Rails.logger.error "Shot not found with id: #{character_effect_params[:shot_id]} for fight: #{@fight.id}"
       render json: {
-        character: ["must be present if vehicle is not set"],
-        vehicle: ["must be present if character is not set"]
+        error: "Shot not found",
+        shot_id: character_effect_params[:shot_id],
+        fight_id: @fight.id
       }, status: 400 and return
     end
     @character_effect = @shot.character_effects.new(character_effect_params)
 
     if @character_effect.save
+      @fight.touch
+      @fight.send(:broadcast_encounter_update!)
       render json: @character_effect
     else
       render json: @character_effect.errors, status: 400
@@ -28,6 +32,8 @@ class Api::V1::CharacterEffectsController < ApplicationController
     end
 
     if @character_effect.update(character_effect_params)
+      @fight.touch
+      @fight.send(:broadcast_encounter_update!)
       render json: @character_effect
     else
       render json: @character_effect.errors, status: 400
@@ -38,6 +44,8 @@ class Api::V1::CharacterEffectsController < ApplicationController
     @character_effect = @fight.character_effects.find_by(id: params[:id])
 
     if @character_effect.destroy!
+      @fight.touch
+      @fight.send(:broadcast_encounter_update!)
       render :ok
     else
       render json: @character_effect.errors, status: 400
