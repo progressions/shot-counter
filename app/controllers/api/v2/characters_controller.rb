@@ -194,7 +194,7 @@ end
       end
     end
     
-    character_data = character_data.slice(:name, :description, :active, :character_ids, :party_ids, :site_ids, :juncture_ids, :schtick_ids, :action_values, :skills, :weapon_ids, :juncture_id, :faction_id, :wealth, :user_id)
+    character_data = character_data.slice(:name, :description, :active, :character_ids, :party_ids, :site_ids, :juncture_ids, :schtick_ids, :action_values, :skills, :weapon_ids, :juncture_id, :faction_id, :wealth, :user_id, :impairments)
 
     # Handle image attachment if present
     if params[:image].present?
