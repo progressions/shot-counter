@@ -17,6 +17,30 @@ class EncounterSerializer < ActiveModel::Serializer
     schticks = CharacterSchtick.where(character_id: character_ids).group(:character_id).pluck(:character_id, "array_agg(schtick_id::text)")
     schticks_map = schticks.to_h
     
+    # Load driver relationships - map vehicle shot_id to driver character
+    # shots.driver_id indicates "this shot has a vehicle and it's being driven by driver_id"
+    vehicle_shots_with_drivers = object.shots.where("driver_id IS NOT NULL").includes(:driver_shot => :character)
+    drivers_by_vehicle_shot_id = vehicle_shots_with_drivers.each_with_object({}) do |shot, hash|
+      if shot.driver_shot&.character
+        hash[shot.id] = {
+          character: shot.driver_shot.character,
+          shot_id: shot.driver_shot.id
+        }
+      end
+    end
+    
+    # Also map character shot_id to vehicle they're driving
+    # shots.driving_id indicates "this shot has a character and they're driving driving_id"
+    character_shots_driving = object.shots.where("driving_id IS NOT NULL").includes(:driving_shot => :vehicle)
+    vehicles_by_driver_shot_id = character_shots_driving.each_with_object({}) do |shot, hash|
+      if shot.driving_shot&.vehicle
+        hash[shot.id] = {
+          vehicle: shot.driving_shot.vehicle,
+          shot_id: shot.driving_shot.id
+        }
+      end
+    end
+    
     # Load character effects grouped by shot_id
     character_effects = CharacterEffect.where(shot_id: shot_ids)
       .select(:id, :name, :description, :severity, :action_value, :change, :shot_id, :character_id, :vehicle_id)
@@ -45,7 +69,8 @@ class EncounterSerializer < ActiveModel::Serializer
                 END,
                 'shot_id', shots.id,
                 'current_shot', shots.shot,
-                'location', shots.location
+                'location', shots.location,
+                'driving_id', shots.driving_id
               )
             ELSE NULL
           END
@@ -71,7 +96,8 @@ class EncounterSerializer < ActiveModel::Serializer
                 'action_values', vehicles.action_values,
                 'shot_id', shots.id,
                 'current_shot', shots.shot,
-                'location', shots.location
+                'location', shots.location,
+                'driver_id', shots.driver_id
               )
             ELSE NULL
           END
@@ -84,6 +110,8 @@ class EncounterSerializer < ActiveModel::Serializer
           character_id = character["id"]
           character_model = characters_by_id[character_id]
           shot_id = character["shot_id"]
+          # Get vehicle this character is driving
+          driving_info = vehicles_by_driver_shot_id[shot_id]
           # Get effects for this specific shot/character
           char_effects = effects_by_shot_id[shot_id]&.select { |e| e.character_id == character_id } || []
           character
@@ -103,10 +131,20 @@ class EncounterSerializer < ActiveModel::Serializer
                 "character_id" => e.character_id
               }
             })
+            .merge(
+              "driving" => driving_info ? {
+                "id" => driving_info[:vehicle].id,
+                "name" => driving_info[:vehicle].name,
+                "entity_class" => "Vehicle",
+                "shot_id" => driving_info[:shot_id]
+              } : nil
+            )
         end
         vehicles = (record.vehicles || []).map do |vehicle|
           vehicle_id = vehicle["id"]
           shot_id = vehicle["shot_id"]
+          # Get driver for this vehicle
+          driver_info = drivers_by_vehicle_shot_id[shot_id]
           # Get effects for this specific shot/vehicle
           vehicle_effects = effects_by_shot_id[shot_id]&.select { |e| e.vehicle_id == vehicle_id } || []
           vehicle.merge("effects" => vehicle_effects.map { |e|
@@ -118,9 +156,17 @@ class EncounterSerializer < ActiveModel::Serializer
               "action_value" => e.action_value,
               "change" => e.change,
               "shot_id" => e.shot_id,
-              "vehicle_id" => e.vehicle_id
+              "vehicle_id" => e.vehicle_id,
+              "driver_id" => e.driver_id,
             }
-          })
+          }).merge(
+            "driver" => driver_info ? {
+              "id" => driver_info[:character].id,
+              "name" => driver_info[:character].name,
+              "entity_class" => "Character",
+              "shot_id" => driver_info[:shot_id]
+            } : nil
+          )
         end
         {
           "shot" => record.shot,

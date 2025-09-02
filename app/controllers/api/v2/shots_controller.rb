@@ -5,6 +5,28 @@ class Api::V2::ShotsController < ApplicationController
   before_action :set_shot, only: [:update, :destroy]
 
   def update
+    # Handle driver linkage if updating a vehicle shot
+    if @shot.vehicle_id && params[:shot][:driver_id].present?
+      # Clear any existing driver linkage for this vehicle
+      @fight.shots.where(driving_id: @shot.id).update_all(driving_id: nil)
+      
+      # Set up new driver linkage
+      driver_shot_id = params[:shot][:driver_id]
+      if driver_shot_id.present? && driver_shot_id != ""
+        driver_shot = @fight.shots.find_by(id: driver_shot_id)
+        if driver_shot && driver_shot.character_id
+          # Link the driver shot to this vehicle
+          driver_shot.update(driving_id: @shot.id)
+        end
+      end
+    end
+    
+    # Handle clearing driver if setting to empty
+    if @shot.vehicle_id && params[:shot].key?(:driver_id) && params[:shot][:driver_id].blank?
+      # Clear any existing driver linkage for this vehicle
+      @fight.shots.where(driving_id: @shot.id).update_all(driving_id: nil)
+    end
+    
     if @shot.update(shot_params)
       # Broadcast the encounter update
       @fight.touch
@@ -37,6 +59,6 @@ class Api::V2::ShotsController < ApplicationController
   end
 
   def shot_params
-    params.require(:shot).permit(:location, :shot, :impairments, :count)
+    params.require(:shot).permit(:location, :shot, :impairments, :count, :driver_id, :driving_id)
   end
 end
