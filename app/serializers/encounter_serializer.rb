@@ -39,7 +39,10 @@ class EncounterSerializer < ActiveModel::Serializer
                 'faction_id', characters.faction_id,
                 'color', characters.color,
                 'count', shots.count,
-                'impairments', shots.impairments,
+                'impairments', CASE 
+                  WHEN characters.action_values->>'Type' = 'PC' THEN characters.impairments
+                  ELSE shots.impairments
+                END,
                 'shot_id', shots.id,
                 'current_shot', shots.shot
               )
@@ -50,7 +53,11 @@ class EncounterSerializer < ActiveModel::Serializer
               ARRAY['Uber-Boss', 'Boss', 'PC', 'Ally', 'Featured Foe', 'Mook']::text[],
               COALESCE(characters.action_values->>'Type', 'Mook')
             ),
-            (COALESCE((characters.action_values->>'Speed')::int, 0) - COALESCE(shots.impairments, 0)) DESC,
+            (COALESCE((characters.action_values->>'Speed')::int, 0) - COALESCE(
+              CASE 
+                WHEN characters.action_values->>'Type' = 'PC' THEN characters.impairments
+                ELSE shots.impairments
+              END, 0)) DESC,
             LOWER(characters.name) ASC
         ) FILTER (WHERE shots.character_id IS NOT NULL) AS characters",
         "array_agg(
