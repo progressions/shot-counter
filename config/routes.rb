@@ -97,7 +97,7 @@ Rails.application.routes.draw do
           delete :image, to: "fights#remove_image"
           patch :touch
         end
-        resources :shots, only: [:update]
+        resources :shots, only: [:update, :destroy]
       end
       post "campaigns/current", to: "campaigns#set"
       resources :campaigns do

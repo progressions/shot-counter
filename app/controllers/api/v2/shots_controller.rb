@@ -2,7 +2,7 @@ class Api::V2::ShotsController < ApplicationController
   before_action :authenticate_user!
   before_action :require_current_campaign
   before_action :set_fight
-  before_action :set_shot
+  before_action :set_shot, only: [:update, :destroy]
 
   def update
     if @shot.update(shot_params)
@@ -16,6 +16,16 @@ class Api::V2::ShotsController < ApplicationController
     end
   end
 
+  def destroy
+    @shot.destroy!
+    
+    # Broadcast encounter update after removing character/vehicle
+    @fight.touch
+    @fight.send(:broadcast_encounter_update!)
+    
+    head :no_content
+  end
+
   private
 
   def set_fight
@@ -27,6 +37,6 @@ class Api::V2::ShotsController < ApplicationController
   end
 
   def shot_params
-    params.require(:shot).permit(:location)
+    params.require(:shot).permit(:location, :shot, :impairments, :count)
   end
 end

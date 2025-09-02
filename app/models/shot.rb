@@ -64,6 +64,12 @@ class Shot < ApplicationRecord
   # must have a character or a vehicle
   validates :character, presence: true, if: -> { vehicle.nil? }
   validates :vehicle, presence: true, if: -> { character.nil? }
+  
+  # Validate shot number range (typical Feng Shui 2 range)
+  validates :shot, numericality: { greater_than_or_equal_to: -10, less_than_or_equal_to: 30 }, allow_nil: true
+  
+  # Validate impairments range
+  validates :impairments, numericality: { greater_than_or_equal_to: 0 }, allow_nil: true
 
   private
 

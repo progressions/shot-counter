@@ -96,6 +96,7 @@ class Character < ApplicationRecord
   after_update :broadcast_encounter_update
 
   validates :name, presence: true, uniqueness: { scope: :campaign_id, message: "has already been taken" }
+  validates :impairments, numericality: { greater_than_or_equal_to: 0 }, allow_nil: true
   validate :new_owner_is_campaign_member, on: :update, if: :user_id_changed?
   validate :associations_belong_to_same_campaign
 
@@ -429,6 +430,16 @@ class Character < ApplicationRecord
     
     unless campaign.users.include?(user)
       errors.add(:user_id, "must be a member of the campaign")
+    end
+  end
+
+  def validate_marks_of_death
+    marks = action_values["Marks of Death"]
+    return if marks.nil?
+    
+    marks_value = marks.to_i
+    if marks_value < 0 || marks_value > 5
+      errors.add(:base, "Marks of Death must be between 0 and 5")
     end
   end
 
