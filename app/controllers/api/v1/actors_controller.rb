@@ -25,6 +25,10 @@ class Api::V1::ActorsController < ApplicationController
     end
 
     if @shot.save
+      # Broadcast encounter update after adding character
+      @fight.touch
+      @fight.send(:broadcast_encounter_update!)
+      
       render json: @character.as_v1_json(shot: @shot)
     else
       render status: 400
@@ -86,6 +90,11 @@ class Api::V1::ActorsController < ApplicationController
   def destroy
     @shot = Shot.find(params[:id])
     @shot.destroy!
+    
+    # Broadcast encounter update after removing character
+    @fight.touch
+    @fight.send(:broadcast_encounter_update!)
+    
     render :ok
   end
 

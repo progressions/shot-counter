@@ -44,7 +44,8 @@ class EncounterSerializer < ActiveModel::Serializer
                   ELSE shots.impairments
                 END,
                 'shot_id', shots.id,
-                'current_shot', shots.shot
+                'current_shot', shots.shot,
+                'location', shots.location
               )
             ELSE NULL
           END
@@ -69,7 +70,8 @@ class EncounterSerializer < ActiveModel::Serializer
                 'entity_class', 'Vehicle',
                 'action_values', vehicles.action_values,
                 'shot_id', shots.id,
-                'current_shot', shots.shot
+                'current_shot', shots.shot,
+                'location', shots.location
               )
             ELSE NULL
           END

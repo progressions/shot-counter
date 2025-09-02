@@ -22,7 +22,10 @@ class Api::V1::DriversController < ApplicationController
     if @fight.shots.find_by(vehicle_id: @vehicle.id)
       @vehicle = DuplicateVehicleService.duplicate(@vehicle)
     end
-    @shot = @fight.shots.build(vehicle_id: @vehicle.id, shot: shot_params[:current_shot])
+    # Add vehicle with shot as null instead of 0
+    shot_value = shot_params[:current_shot].presence
+    shot_value = nil if shot_value == 0 || shot_value == "0"
+    @shot = @fight.shots.build(vehicle_id: @vehicle.id, shot: shot_value)
 
     if @vehicle.action_values["Type"] == "Mook"
       @shot.update(count: @vehicle.action_values["Chase Points"], color: vehicle_params[:color])
@@ -35,6 +38,10 @@ class Api::V1::DriversController < ApplicationController
     end
 
     if @shot.save
+      # Broadcast encounter update after adding vehicle
+      @fight.touch
+      @fight.send(:broadcast_encounter_update!)
+      
       render json: @vehicle.as_v1_json(shot: @shot)
     else
       render status: 400
@@ -102,8 +109,12 @@ class Api::V1::DriversController < ApplicationController
 
   def destroy
     @shot = Shot.find(params[:id])
-
     @shot.destroy!
+    
+    # Broadcast encounter update after removing vehicle
+    @fight.touch
+    @fight.send(:broadcast_encounter_update!)
+    
     render :ok
   end
 

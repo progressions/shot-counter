@@ -14,8 +14,24 @@ class Api::V2::EncountersController < ApplicationController
       @fight.update(action_id: params[:action_id]) # Save action_id to Fight
     end
     @shot = @fight.shots.find(params[:shot_id])
+    shot_cost = params[:shots] || Fight::DEFAULT_SHOT_COUNT
+    entity = @shot.character || @shot.vehicle
+    entity_name = entity&.name || "Unknown"
+    
     @fight.touch
-    if @shot.act!(shot_cost: params[:shots] || Fight::DEFAULT_SHOT_COUNT)
+    if @shot.act!(shot_cost: shot_cost)
+      # Create a fight event for the movement
+      @fight.fight_events.create!(
+        event_type: "movement",
+        description: "#{entity_name} spent #{shot_cost} #{shot_cost.to_i == 1 ? 'shot' : 'shots'}",
+        details: {
+          entity_id: entity&.id,
+          entity_type: entity&.class&.name,
+          shot_cost: shot_cost.to_i,
+          new_shot: @shot.shot
+        }
+      )
+      
       render json: @fight, serializer: EncounterSerializer
     else
       render json: @shot.errors, status: :bad_request
