@@ -28,9 +28,8 @@ class Api::V2::ShotsController < ApplicationController
     end
     
     if @shot.update(shot_params)
-      # Broadcast the encounter update
-      @fight.touch
-      @fight.send(:broadcast_encounter_update!)
+      # The broadcast is handled by the Shot model's after_update callback
+      # Touch is handled by belongs_to :fight, touch: true in Shot model
       
       render json: { success: true }
     else
@@ -41,9 +40,8 @@ class Api::V2::ShotsController < ApplicationController
   def destroy
     @shot.destroy!
     
-    # Broadcast encounter update after removing character/vehicle
-    @fight.touch
-    @fight.send(:broadcast_encounter_update!)
+    # The fight is touched by belongs_to :fight, touch: true in Shot model
+    # Broadcast will be handled by fight's after_touch callback
     
     head :no_content
   end

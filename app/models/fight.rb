@@ -16,6 +16,7 @@ class Fight < ApplicationRecord
   after_update :enqueue_discord_notification
   after_update :broadcast_update
   after_update :broadcast_encounter_update!
+  after_touch :broadcast_encounter_update!
 
   has_many :image_positions, as: :positionable, dependent: :destroy
 

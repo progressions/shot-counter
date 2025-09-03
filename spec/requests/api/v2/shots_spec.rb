@@ -201,8 +201,8 @@ RSpec.describe "Api::V2::Shots", type: :request do
           expect(@featured_foe_shot.location).to eq("Behind cover")
         end
         
-        it "does not affect the character's base count field" do
-          original_char_count = @boss.count
+        it "does not affect the character's base wounds field" do
+          original_wounds = @boss.action_values["Wounds"] || 0
           
           patch "/api/v2/fights/#{@fight.id}/shots/#{@boss_shot.id}", 
             params: { shot: { count: 38 } }, 
@@ -213,7 +213,7 @@ RSpec.describe "Api::V2::Shots", type: :request do
           expect(@boss_shot.count).to eq(38)
           
           @boss.reload
-          expect(@boss.count).to eq(original_char_count) # Character's count unchanged
+          expect(@boss.action_values["Wounds"]).to eq(original_wounds) # Character's wounds unchanged
         end
       end
     
