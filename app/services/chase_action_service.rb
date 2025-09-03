@@ -49,6 +49,15 @@ class ChaseActionService
     shot = @fight.shots.find_by!(vehicle_id: vehicle.id)
     vehicle_name = vehicle.name || "Unknown Vehicle"
     
+    # Handle shot cost if provided (for the driver spending shots)
+    if update[:shot_cost].present? && update[:character_id].present?
+      character_shot = @fight.shots.find_by(character_id: update[:character_id])
+      if character_shot
+        Rails.logger.info "🎲 #{character_shot.character.name} spending #{update[:shot_cost]} shots for chase action"
+        character_shot.act!(shot_cost: update[:shot_cost])
+      end
+    end
+    
     # Update action values if provided (Chase Points, Condition Points, etc.)
     if update[:action_values].present?
       Rails.logger.info "🚗 Updating vehicle #{vehicle_name} action values: #{update[:action_values]}"

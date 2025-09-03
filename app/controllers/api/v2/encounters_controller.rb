@@ -129,6 +129,8 @@ class Api::V2::EncountersController < ApplicationController
     params.permit(vehicle_updates: [
       :vehicle_id,
       :target_vehicle_id,
+      :character_id,
+      :shot_cost,
       :role,
       action_values: {},
       event: [:type, :description, details: {}]
