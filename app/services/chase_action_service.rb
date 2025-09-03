@@ -54,8 +54,10 @@ class ChaseActionService
       character_shot = @fight.shots.find_by(character_id: update[:character_id])
       if character_shot
         shot_cost = update[:shot_cost].to_i
-        new_shot_value = character_shot.shot - shot_cost
-        Rails.logger.info "🎲 #{character_shot.character.name} spending #{shot_cost} shots for chase action (#{character_shot.shot} -> #{new_shot_value})"
+        # Ensure we don't go below -10 (the minimum allowed shot value)
+        new_shot_value = [character_shot.shot - shot_cost, -10].max
+        actual_cost = character_shot.shot - new_shot_value
+        Rails.logger.info "🎲 #{character_shot.character.name} spending #{actual_cost} shots for chase action (#{character_shot.shot} -> #{new_shot_value})"
         character_shot.shot = new_shot_value
         character_shot.save!
       end
