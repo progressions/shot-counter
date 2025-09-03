@@ -61,19 +61,18 @@ class ChaseActionService
       end
     end
     
+    # Handle position update if provided (directly from update, not action_values)
+    if update[:position].present? && update[:target_vehicle_id].present?
+      Rails.logger.info "🏎️ Updating chase position to #{update[:position]}"
+      update_chase_position(vehicle, update[:target_vehicle_id], update[:position], update[:role])
+    end
+    
     # Update action values if provided (Chase Points, Condition Points, etc.)
     if update[:action_values].present?
       Rails.logger.info "🚗 Updating vehicle #{vehicle_name} action values: #{update[:action_values]}"
       
-      # Handle Position separately via ChaseRelationship
-      position_update = update[:action_values].delete("Position")
-      target_vehicle_id = update[:target_vehicle_id]
-      role = update[:role] # "pursuer" or "evader"
-      
-      # Update position in ChaseRelationship if provided
-      if position_update.present? && target_vehicle_id.present?
-        update_chase_position(vehicle, target_vehicle_id, position_update, role)
-      end
+      # Remove Position from action_values if it exists (it's handled separately)
+      update[:action_values].delete("Position")
       
       # Update the remaining vehicle's action_values (persistent)
       # Must reassign to trigger Rails change tracking for JSONB columns
