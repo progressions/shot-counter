@@ -31,9 +31,9 @@ class CombatActionService
       end
     end
     
-    # Send a single broadcast after all changes are committed
-    Rails.logger.info "🔄 BATCHED WEBSOCKET: Broadcasting single update for fight #{@fight.id} after #{@character_updates.length} character updates"
-    @fight.broadcast_encounter_update!
+    # The broadcast is handled by the fight's after_touch callback
+    # which gets triggered when we touch the fight in the transaction
+    Rails.logger.info "🔄 BATCHED WEBSOCKET: Completed #{@character_updates.length} character updates for fight #{@fight.id}"
     
     result
   end
