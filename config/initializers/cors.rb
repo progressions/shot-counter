@@ -10,7 +10,16 @@ Rails.application.config.middleware.insert_before 0, Rack::Cors do
     origins '*'
     resource '*',
       headers: :any,
-      methods: %i[get post patch put delete],
+      methods: %i[get post patch put delete options],
       expose: ['Authorization']
+  end
+  
+  # Specific configuration for WebSocket connections
+  allow do
+    origins '*'
+    resource '/cable',
+      headers: :any,
+      methods: %i[get post options],
+      credentials: true
   end
 end

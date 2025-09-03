@@ -42,6 +42,10 @@ kill_timeout = "5s"
     type = "connections"
     hard_limit = 100
     soft_limit = 80
+    
+  # Enable WebSocket support
+  [http_service.http_options]
+    h2_backend = true
   
   [[http_service.checks]]
     interval = "30s"
