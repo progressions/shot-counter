@@ -53,8 +53,11 @@ class ChaseActionService
     if update[:shot_cost].present? && update[:character_id].present?
       character_shot = @fight.shots.find_by(character_id: update[:character_id])
       if character_shot
-        Rails.logger.info "🎲 #{character_shot.character.name} spending #{update[:shot_cost]} shots for chase action"
-        character_shot.act!(shot_cost: update[:shot_cost])
+        shot_cost = update[:shot_cost].to_i
+        new_shot_value = character_shot.shot - shot_cost
+        Rails.logger.info "🎲 #{character_shot.character.name} spending #{shot_cost} shots for chase action (#{character_shot.shot} -> #{new_shot_value})"
+        character_shot.shot = new_shot_value
+        character_shot.save!
       end
     end
     
