@@ -8,6 +8,7 @@ class Shot < ApplicationRecord
 
   # Removed after_update :broadcast_encounter_update
   # The fight's after_update will handle broadcasting when it's touched
+  before_destroy :deactivate_chase_relationships_for_vehicle
   before_destroy :unlink_driver
   before_destroy :unlink_vehicle
 
@@ -92,5 +93,17 @@ class Shot < ApplicationRecord
     if (self.vehicle && self.vehicle.campaign != self.fight.campaign)
       errors.add(:vehicle, "must belong to the same campaign as its fight")
     end
+  end
+
+  private
+
+  # When a vehicle is removed from a fight, deactivate its chase relationships
+  def deactivate_chase_relationships_for_vehicle
+    return unless vehicle_id.present?
+    
+    ChaseRelationship.active
+      .where(fight: fight)
+      .where("pursuer_id = ? OR evader_id = ?", vehicle_id, vehicle_id)
+      .update_all(active: false)
   end
 end

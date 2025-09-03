@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_08_26_135332) do
+ActiveRecord::Schema[8.0].define(version: 2025_09_03_201413) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -152,6 +152,22 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_26_135332) do
     t.index ["faction_id"], name: "index_characters_on_faction_id"
     t.index ["juncture_id"], name: "index_characters_on_juncture_id"
     t.index ["user_id"], name: "index_characters_on_user_id"
+  end
+
+  create_table "chase_relationships", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "pursuer_id", null: false
+    t.uuid "evader_id", null: false
+    t.uuid "fight_id", null: false
+    t.string "position", default: "far", null: false
+    t.boolean "active", default: true, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["evader_id"], name: "index_chase_relationships_on_evader_id"
+    t.index ["fight_id"], name: "index_chase_relationships_on_fight_id"
+    t.index ["pursuer_id", "evader_id", "fight_id"], name: "unique_active_relationship", unique: true, where: "(active = true)"
+    t.index ["pursuer_id"], name: "index_chase_relationships_on_pursuer_id"
+    t.check_constraint "\"position\"::text = ANY (ARRAY['near'::character varying, 'far'::character varying]::text[])", name: "position_values"
+    t.check_constraint "pursuer_id <> evader_id", name: "different_vehicles"
   end
 
   create_table "effects", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -468,6 +484,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_26_135332) do
   add_foreign_key "characters", "factions"
   add_foreign_key "characters", "junctures"
   add_foreign_key "characters", "users"
+  add_foreign_key "chase_relationships", "fights"
+  add_foreign_key "chase_relationships", "vehicles", column: "evader_id"
+  add_foreign_key "chase_relationships", "vehicles", column: "pursuer_id"
   add_foreign_key "effects", "fights"
   add_foreign_key "effects", "users"
   add_foreign_key "factions", "campaigns"

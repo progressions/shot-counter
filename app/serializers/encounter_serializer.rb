@@ -17,6 +17,11 @@ class EncounterSerializer < ActiveModel::Serializer
     schticks = CharacterSchtick.where(character_id: character_ids).group(:character_id).pluck(:character_id, "array_agg(schtick_id::text)")
     schticks_map = schticks.to_h
     
+    # Load chase relationships for vehicles in this fight
+    chase_relationships = ChaseRelationship.active
+      .where(fight_id: object.id)
+      .includes(:pursuer, :evader)
+    
     # Load driver relationships - map vehicle shot_id to driver character
     # shots.driver_id indicates "this shot has a vehicle and it's being driven by driver_id"
     vehicle_shots_with_drivers = object.shots.where("driver_id IS NOT NULL").includes(:driver_shot => :character)
@@ -159,8 +164,23 @@ class EncounterSerializer < ActiveModel::Serializer
           driver_info = drivers_by_vehicle_shot_id[shot_id]
           # Get effects for this specific shot/vehicle
           vehicle_effects = effects_by_shot_id[shot_id]&.select { |e| e.vehicle_id == vehicle_id } || []
+          
+          # Get chase relationships for this vehicle
+          vehicle_chase_relationships = chase_relationships.select { |cr| 
+            cr.pursuer_id == vehicle_id || cr.evader_id == vehicle_id 
+          }.map { |cr|
+            {
+              "id" => cr.id,
+              "position" => cr.position,
+              "pursuer_id" => cr.pursuer_id,
+              "evader_id" => cr.evader_id,
+              "is_pursuer" => cr.pursuer_id == vehicle_id
+            }
+          }
+          
           vehicle
             .merge("image_url" => vehicle_model&.image_url)
+            .merge("chase_relationships" => vehicle_chase_relationships)
             .merge("effects" => vehicle_effects.map { |e|
             {
               "id" => e.id,

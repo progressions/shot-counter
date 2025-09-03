@@ -128,6 +128,8 @@ class Api::V2::EncountersController < ApplicationController
   def chase_action_params
     params.permit(vehicle_updates: [
       :vehicle_id,
+      :target_vehicle_id,
+      :role,
       action_values: {},
       event: [:type, :description, details: {}]
     ])

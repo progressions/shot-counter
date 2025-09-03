@@ -49,14 +49,26 @@ class ChaseActionService
     shot = @fight.shots.find_by!(vehicle_id: vehicle.id)
     vehicle_name = vehicle.name || "Unknown Vehicle"
     
-    # Update action values if provided (Position, Chase Points, Condition Points, etc.)
+    # Update action values if provided (Chase Points, Condition Points, etc.)
     if update[:action_values].present?
       Rails.logger.info "🚗 Updating vehicle #{vehicle_name} action values: #{update[:action_values]}"
       
-      # Update the vehicle's action_values (persistent)
+      # Handle Position separately via ChaseRelationship
+      position_update = update[:action_values].delete("Position")
+      target_vehicle_id = update[:target_vehicle_id]
+      role = update[:role] # "pursuer" or "evader"
+      
+      # Update position in ChaseRelationship if provided
+      if position_update.present? && target_vehicle_id.present?
+        update_chase_position(vehicle, target_vehicle_id, position_update, role)
+      end
+      
+      # Update the remaining vehicle's action_values (persistent)
       # Must reassign to trigger Rails change tracking for JSONB columns
-      vehicle.action_values = vehicle.action_values.merge(update[:action_values])
-      vehicle.save!
+      if update[:action_values].any?
+        vehicle.action_values = vehicle.action_values.merge(update[:action_values])
+        vehicle.save!
+      end
       
       Rails.logger.info "🚗 Vehicle #{vehicle_name} saved with new action values"
     end
@@ -68,6 +80,51 @@ class ChaseActionService
         event_type: update[:event][:type] || "chase",
         description: update[:event][:description] || "Chase action",
         details: update[:event][:details] || {}
+      )
+    end
+  end
+
+  def update_chase_position(vehicle, target_vehicle_id, new_position, role = nil)
+    target_vehicle = Vehicle.find(target_vehicle_id)
+    
+    # Find or create relationship between the vehicles
+    relationship = find_or_create_chase_relationship(vehicle, target_vehicle, role)
+    
+    Rails.logger.info "🏎️ Updating chase position between #{vehicle.name} and #{target_vehicle.name} to #{new_position}"
+    relationship.update!(position: new_position)
+  end
+  
+  def find_or_create_chase_relationship(vehicle1, vehicle2, vehicle1_role = nil)
+    # Check if relationship already exists (in either direction)
+    existing = ChaseRelationship.active.find_by(
+      pursuer: vehicle1, 
+      evader: vehicle2, 
+      fight: @fight
+    ) || ChaseRelationship.active.find_by(
+      pursuer: vehicle2,
+      evader: vehicle1,
+      fight: @fight
+    )
+    
+    return existing if existing
+    
+    # Create new relationship based on role
+    # If no role specified, default to vehicle1 as pursuer
+    if vehicle1_role == "evader"
+      Rails.logger.info "🎯 Creating new chase relationship: #{vehicle2.name} (pursuer) chasing #{vehicle1.name} (evader)"
+      ChaseRelationship.create!(
+        pursuer: vehicle2,
+        evader: vehicle1,
+        fight: @fight,
+        position: "far" # Default starting position
+      )
+    else # Default to vehicle1 as pursuer
+      Rails.logger.info "🎯 Creating new chase relationship: #{vehicle1.name} (pursuer) chasing #{vehicle2.name} (evader)"
+      ChaseRelationship.create!(
+        pursuer: vehicle1,
+        evader: vehicle2,
+        fight: @fight,
+        position: "far" # Default starting position
       )
     end
   end

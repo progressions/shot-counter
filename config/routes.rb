@@ -66,6 +66,7 @@ Rails.application.routes.draw do
           patch :chase_state, to: "vehicles#update_chase_state"
         end
       end
+      resources :chase_relationships
       resources :junctures do
         member do
           delete :image, to: "junctures#remove_image"
