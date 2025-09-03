@@ -65,8 +65,8 @@ class ChaseActionService
       
       # Update the remaining vehicle's action_values (persistent)
       # Must reassign to trigger Rails change tracking for JSONB columns
-      if update[:action_values].any?
-        vehicle.action_values = vehicle.action_values.merge(update[:action_values])
+      if update[:action_values].present? && update[:action_values].keys.any?
+        vehicle.action_values = vehicle.action_values.merge(update[:action_values].to_h)
         vehicle.save!
       end
       
