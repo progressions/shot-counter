@@ -20,6 +20,7 @@ Rails.application.routes.draw do
       resources :encounters, only: [:show] do
         patch :act, on: :member, to: "encounters#act"
         post :apply_combat_action, on: :member
+        post :apply_chase_action, on: :member
         patch :update_initiatives, on: :member
       end
       resources :ai, only: [:create] do
