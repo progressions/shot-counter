@@ -61,6 +61,7 @@ class EncounterSerializer < ActiveModel::Serializer
                 'name', characters.name,
                 'entity_class', 'Character',
                 'action_values', characters.action_values,
+                'skills', characters.skills,
                 'faction_id', characters.faction_id,
                 'color', characters.color,
                 'count', shots.count,

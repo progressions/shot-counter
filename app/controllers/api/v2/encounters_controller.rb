@@ -38,6 +38,33 @@ class Api::V2::EncountersController < ApplicationController
     end
   end
 
+  def update_initiatives
+    shots_data = params[:shots] || []
+    
+    Rails.logger.info "🎲 INITIATIVE UPDATE: Updating #{shots_data.length} shot values for fight #{@fight.id}"
+    
+    ActiveRecord::Base.transaction do
+      shots_data.each do |shot_data|
+        shot = @fight.shots.find(shot_data[:id])
+        shot.update!(shot: shot_data[:shot])
+        Rails.logger.info "  Updated shot #{shot.id}: #{shot.character&.name || shot.vehicle&.name} to shot #{shot_data[:shot]}"
+      end
+    end
+    
+    # Broadcast the update after all shots are updated
+    @fight.broadcast_encounter_update!
+    
+    render json: @fight, serializer: EncounterSerializer
+  rescue ActiveRecord::RecordNotFound => e
+    render json: { error: "Shot not found: #{e.message}" }, status: :not_found
+  rescue ActiveRecord::RecordInvalid => e
+    render json: { error: e.message }, status: :unprocessable_entity
+  rescue StandardError => e
+    Rails.logger.error "Error updating initiatives: #{e.message}"
+    Rails.logger.error e.backtrace.join("\n")
+    render json: { error: "Failed to update initiatives" }, status: :internal_server_error
+  end
+
   def apply_combat_action
     character_updates = combat_action_params[:character_updates] || []
 
