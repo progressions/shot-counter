@@ -266,6 +266,85 @@ RSpec.describe "Api::V2::Characters", type: :request do
       expect(@brick.parties).not_to include(party2)
     end
 
+    context "wounds and impairments" do
+      it "updates wounds for a PC using action_values" do
+        patch "/api/v2/characters/#{@brick.id}", params: { 
+          character: { 
+            action_values: { "Wounds" => 5, "Marks of Death" => 2 } 
+          } 
+        }, headers: @headers
+        
+        expect(response).to have_http_status(:success)
+        body = JSON.parse(response.body)
+        expect(body["action_values"]["Wounds"]).to eq(5)
+        expect(body["action_values"]["Marks of Death"]).to eq(2)
+        
+        @brick.reload
+        expect(@brick.action_values["Wounds"]).to eq(5)
+        expect(@brick.action_values["Marks of Death"]).to eq(2)
+      end
+
+      it "updates impairments for a PC" do
+        patch "/api/v2/characters/#{@brick.id}", params: { 
+          character: { impairments: 3 } 
+        }, headers: @headers
+        
+        expect(response).to have_http_status(:success)
+        body = JSON.parse(response.body)
+        expect(body["impairments"]).to eq(3)
+        
+        @brick.reload
+        expect(@brick.impairments).to eq(3)
+      end
+
+      it "updates marks of death for non-PCs" do
+        patch "/api/v2/characters/#{@featured_foe.id}", params: { 
+          character: { 
+            action_values: { "Marks of Death" => 3 }
+          } 
+        }, headers: @headers
+        
+        expect(response).to have_http_status(:success)
+        body = JSON.parse(response.body)
+        expect(body["action_values"]["Marks of Death"]).to eq(3)
+        
+        @featured_foe.reload
+        expect(@featured_foe.action_values["Marks of Death"]).to eq(3)
+      end
+
+      it "preserves existing action_values when updating marks of death" do
+        @boss.update!(
+          action_values: { 
+            "Type" => "Boss", 
+            "MainAttack" => "Guns",
+            "Guns" => 15,
+            "Defense" => 14
+          }
+        )
+        
+        patch "/api/v2/characters/#{@boss.id}", params: { 
+          character: { 
+            action_values: { "Marks of Death" => 1 }
+          } 
+        }, headers: @headers
+        
+        expect(response).to have_http_status(:success)
+        body = JSON.parse(response.body)
+        expect(body["action_values"]["Type"]).to eq("Boss")
+        expect(body["action_values"]["MainAttack"]).to eq("Guns")
+        expect(body["action_values"]["Guns"]).to eq(15)
+        expect(body["action_values"]["Defense"]).to eq(14)
+        expect(body["action_values"]["Marks of Death"]).to eq(1)
+        
+        @boss.reload
+        expect(@boss.action_values["Marks of Death"]).to eq(1)
+        expect(@boss.action_values["Type"]).to eq("Boss")
+      end
+
+      # Note: count and impairments for non-PCs are handled through the Shot association
+      # when the character is in a fight. See spec/requests/api/v2/shots_spec.rb
+    end
+
     context "ownership reassignment" do
       before(:each) do
         @new_owner = User.create!(email: "newowner@example.com", confirmed_at: Time.now, first_name: "New", last_name: "Owner")
