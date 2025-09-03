@@ -144,6 +144,7 @@ class EncounterSerializer < ActiveModel::Serializer
                 "name" => driving_info[:vehicle_model].name,
                 "entity_class" => "Vehicle",
                 "shot_id" => driving_info[:shot_id],
+                "driver_id" => shot_id,  # The driver_id is this character's shot_id
                 "action_values" => driving_info[:vehicle_model].action_values,
                 "image_url" => driving_info[:vehicle_model].image_url,  # This will call the model method
                 "color" => driving_info[:vehicle_model].color,
