@@ -31,8 +31,9 @@ class CombatActionService
       end
     end
     
-    # The broadcast is handled by the fight's after_touch callback
-    # which gets triggered when we touch the fight in the transaction
+    # Manually trigger the encounter broadcast since it was disabled during the transaction
+    @fight.broadcast_encounter_update!
+    
     Rails.logger.info "🔄 BATCHED WEBSOCKET: Completed #{@character_updates.length} character updates for fight #{@fight.id}"
     
     result
