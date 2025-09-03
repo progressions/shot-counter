@@ -61,6 +61,7 @@ Rails.application.routes.draw do
         get :archetypes, on: :collection, to: "vehicles#archetypes"
         member do
           delete :image, to: "vehicles#remove_image"
+          patch :chase_state, to: "vehicles#update_chase_state"
         end
       end
       resources :junctures do
@@ -97,7 +98,12 @@ Rails.application.routes.draw do
           delete :image, to: "fights#remove_image"
           patch :touch
         end
-        resources :shots, only: [:update, :destroy]
+        resources :shots, only: [:update, :destroy] do
+          member do
+            post :assign_driver
+            delete :remove_driver
+          end
+        end
       end
       post "campaigns/current", to: "campaigns#set"
       resources :campaigns do

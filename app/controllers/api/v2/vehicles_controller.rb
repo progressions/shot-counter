@@ -4,7 +4,7 @@ class Api::V2::VehiclesController < ApplicationController
   before_action :authenticate_user!
   before_action :require_current_campaign
   before_action :set_scoped_vehicles
-  before_action :set_vehicle, only: [:update, :destroy, :remove_image]
+  before_action :set_vehicle, only: [:update, :destroy, :remove_image, :update_chase_state]
 
   def index
     per_page = (params["per_page"] || 15).to_i
@@ -236,6 +236,55 @@ class Api::V2::VehiclesController < ApplicationController
       render json: @vehicle
     else
       render @vehicle.errors, status: 400
+    end
+  end
+
+  def update_chase_state
+    chase_params = params.require(:chase_state).permit(:chase_points, :condition_points, :position, :pursuer)
+    
+    # Validate position if provided
+    if chase_params[:position].present? && !["near", "far"].include?(chase_params[:position])
+      return render json: { errors: ["Position must be 'near' or 'far'"] }, status: :unprocessable_entity
+    end
+    
+    # Validate chase points if provided
+    if chase_params[:chase_points].present? && chase_params[:chase_points].to_i < 0
+      return render json: { errors: ["Chase points cannot be negative"] }, status: :unprocessable_entity
+    end
+    
+    # Validate condition points if provided
+    if chase_params[:condition_points].present? && chase_params[:condition_points].to_i < 0
+      return render json: { errors: ["Condition points cannot be negative"] }, status: :unprocessable_entity
+    end
+    
+    # Update the vehicle's action_values
+    updated_values = @vehicle.action_values.dup
+    updated_values["Chase Points"] = chase_params[:chase_points].to_i if chase_params[:chase_points].present?
+    updated_values["Condition Points"] = chase_params[:condition_points].to_i if chase_params[:condition_points].present?
+    updated_values["Position"] = chase_params[:position] if chase_params[:position].present?
+    updated_values["Pursuer"] = chase_params[:pursuer] if chase_params[:pursuer].present?
+    
+    if @vehicle.update(action_values: updated_values)
+      # Broadcast to any active fights containing this vehicle
+      @vehicle.shots.includes(:fight).each do |shot|
+        ActionCable.server.broadcast(
+          "fight_#{shot.fight_id}",
+          {
+            event: "chase_update",
+            vehicle_id: @vehicle.id,
+            chase_state: {
+              chase_points: updated_values["Chase Points"],
+              condition_points: updated_values["Condition Points"],
+              position: updated_values["Position"],
+              pursuer: updated_values["Pursuer"]
+            }
+          }
+        )
+      end
+      
+      render json: @vehicle
+    else
+      render json: { errors: @vehicle.errors }, status: :unprocessable_entity
     end
   end
 

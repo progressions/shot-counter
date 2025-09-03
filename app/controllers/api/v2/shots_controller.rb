@@ -2,7 +2,7 @@ class Api::V2::ShotsController < ApplicationController
   before_action :authenticate_user!
   before_action :require_current_campaign
   before_action :set_fight
-  before_action :set_shot, only: [:update, :destroy]
+  before_action :set_shot, only: [:update, :destroy, :assign_driver, :remove_driver]
 
   def update
     # Handle driver linkage if updating a vehicle shot
@@ -44,6 +44,65 @@ class Api::V2::ShotsController < ApplicationController
     # Broadcast will be handled by fight's after_touch callback
     
     head :no_content
+  end
+
+  def assign_driver
+    # Validate this is a vehicle shot
+    unless @shot.vehicle_id
+      return render json: { error: "Shot must contain a vehicle" }, status: :unprocessable_entity
+    end
+
+    driver_shot_id = params[:driver_shot_id]
+    driver_shot = @fight.shots.find_by(id: driver_shot_id)
+
+    # Validate driver shot exists
+    unless driver_shot
+      return render json: { error: "Driver shot not found" }, status: :not_found
+    end
+
+    # Validate driver shot contains a character
+    unless driver_shot.character_id
+      return render json: { error: "Shot must contain a character to be a driver" }, status: :unprocessable_entity
+    end
+
+    # Clear any existing driver for this vehicle
+    @fight.shots.where(driving_id: @shot.id).update_all(driving_id: nil)
+
+    # Assign the new driver
+    driver_shot.update!(driving_id: @shot.id)
+
+    # Broadcast the update
+    ActionCable.server.broadcast(
+      "fight_#{@fight.id}",
+      {
+        event: "driver_assigned",
+        vehicle_shot_id: @shot.id,
+        driver_shot_id: driver_shot.id
+      }
+    )
+
+    render json: { success: true, message: "Driver assigned successfully" }
+  end
+
+  def remove_driver
+    # Validate this is a vehicle shot
+    unless @shot.vehicle_id
+      return render json: { error: "Shot must contain a vehicle" }, status: :unprocessable_entity
+    end
+
+    # Clear any driver for this vehicle
+    @fight.shots.where(driving_id: @shot.id).update_all(driving_id: nil)
+
+    # Broadcast the update
+    ActionCable.server.broadcast(
+      "fight_#{@fight.id}",
+      {
+        event: "driver_removed",
+        vehicle_shot_id: @shot.id
+      }
+    )
+
+    render json: { success: true, message: "Driver removed successfully" }
   end
 
   private
