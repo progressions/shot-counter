@@ -6,18 +6,12 @@ class Shot < ApplicationRecord
   belongs_to :driving_shot, optional: true, class_name: "Shot", foreign_key: "driving_id"
   has_many :character_effects, dependent: :destroy
 
-  after_update :broadcast_encounter_update
+  # Removed after_update :broadcast_encounter_update
+  # The fight's after_update will handle broadcasting when it's touched
   before_destroy :unlink_driver
   before_destroy :unlink_vehicle
 
   validate :ensure_campaign
-
-  def broadcast_encounter_update
-    # Skip if broadcasts are disabled (during batched updates)
-    return if Thread.current[:disable_broadcasts]
-    
-    fight.broadcast_encounter_update!
-  end
 
   def as_v1_json(args={})
     if driving_shot.present?
