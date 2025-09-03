@@ -36,7 +36,8 @@ class EncounterSerializer < ActiveModel::Serializer
       if shot.driving_shot&.vehicle
         hash[shot.id] = {
           vehicle: shot.driving_shot.vehicle,
-          shot_id: shot.driving_shot.id
+          shot_id: shot.driving_shot.id,
+          vehicle_model: shot.driving_shot.vehicle  # Keep the actual model for image_url
         }
       end
     end
@@ -133,21 +134,33 @@ class EncounterSerializer < ActiveModel::Serializer
             })
             .merge(
               "driving" => driving_info ? {
-                "id" => driving_info[:vehicle].id,
-                "name" => driving_info[:vehicle].name,
+                "id" => driving_info[:vehicle_model].id,
+                "name" => driving_info[:vehicle_model].name,
                 "entity_class" => "Vehicle",
-                "shot_id" => driving_info[:shot_id]
+                "shot_id" => driving_info[:shot_id],
+                "action_values" => driving_info[:vehicle_model].action_values,
+                "image_url" => driving_info[:vehicle_model].image_url,  # This will call the model method
+                "color" => driving_info[:vehicle_model].color,
+                "impairments" => driving_info[:vehicle_model].impairments || 0,
+                "faction_id" => driving_info[:vehicle_model].faction_id,
+                "faction" => driving_info[:vehicle_model].faction ? { 
+                  "id" => driving_info[:vehicle_model].faction.id, 
+                  "name" => driving_info[:vehicle_model].faction.name 
+                } : nil
               } : nil
             )
         end
         vehicles = (record.vehicles || []).map do |vehicle|
           vehicle_id = vehicle["id"]
           shot_id = vehicle["shot_id"]
+          vehicle_model = vehicles_by_id[vehicle_id]
           # Get driver for this vehicle
           driver_info = drivers_by_vehicle_shot_id[shot_id]
           # Get effects for this specific shot/vehicle
           vehicle_effects = effects_by_shot_id[shot_id]&.select { |e| e.vehicle_id == vehicle_id } || []
-          vehicle.merge("effects" => vehicle_effects.map { |e|
+          vehicle
+            .merge("image_url" => vehicle_model&.image_url)
+            .merge("effects" => vehicle_effects.map { |e|
             {
               "id" => e.id,
               "name" => e.name,
