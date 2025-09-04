@@ -171,6 +171,31 @@ end
     handle_deletion_result(result)
   end
 
+  def end_fight
+    @fight = current_campaign.fights.find(params[:id])
+    
+    # Only gamemaster can end fights
+    unless current_user.gamemaster?
+      render json: { error: "Only the gamemaster can end fights" }, status: :forbidden
+      return
+    end
+    
+    if @fight.ended?
+      render json: { error: "Fight has already ended" }, status: :unprocessable_entity
+      return
+    end
+    
+    if @fight.end_fight!(notes: params[:notes])
+      render json: ActiveModelSerializers::SerializableResource.new(
+        @fight,
+        serializer: FightSerializer,
+        adapter: :attributes
+      ).serializable_hash
+    else
+      render json: { error: "Failed to end fight" }, status: :unprocessable_entity
+    end
+  end
+
   def remove_image
     @fight = current_campaign.fights.find(params[:id])
     @fight.image.purge if @fight.image.attached?
