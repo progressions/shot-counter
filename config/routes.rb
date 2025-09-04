@@ -100,6 +100,7 @@ Rails.application.routes.draw do
         member do
           delete :image, to: "fights#remove_image"
           patch :touch
+          patch :end_fight
         end
         resources :shots, only: [:update, :destroy] do
           member do
@@ -113,6 +114,7 @@ Rails.application.routes.draw do
         member do
           delete :image, to: "campaigns#remove_image"
           patch :set
+          get :current_fight
         end
       end
       resources :users do

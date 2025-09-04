@@ -240,6 +240,34 @@ class Api::V2::CampaignsController < ApplicationController
     end
   end
 
+  def current_fight
+    # Find the campaign and check authorization
+    campaign = if current_user.gamemaster?
+                 current_user.campaigns.find_by(id: params[:id])
+               elsif current_user.admin?
+                 Campaign.find_by(id: params[:id])
+               else
+                 current_user.player_campaigns.find_by(id: params[:id])
+               end
+    
+    unless campaign
+      render json: { error: "Campaign not found or unauthorized" }, status: :not_found
+      return
+    end
+    
+    current_fight = campaign.fights.ongoing.order(started_at: :desc).first
+    
+    if current_fight
+      render json: ActiveModelSerializers::SerializableResource.new(
+        current_fight,
+        serializer: FightSerializer,
+        adapter: :attributes
+      ).serializable_hash
+    else
+      head :no_content
+    end
+  end
+
   def remove_image
     unless @campaign
       render json: { error: "Record not found or unauthorized" }, status: :not_found

@@ -23,6 +23,8 @@ class Fight < ApplicationRecord
   validate :associations_belong_to_same_campaign
 
   scope :active, -> { where(active: true) }
+  scope :ongoing, -> { where.not(started_at: nil).where(ended_at: nil) }
+  scope :current, -> { ongoing.order(started_at: :desc).first }
 
   SORT_ORDER = ["Uber-Boss", "Boss", "PC", "Ally", "Featured Foe", "Mook"]
   DEFAULT_SHOT_COUNT = 3
@@ -79,6 +81,29 @@ class Fight < ApplicationRecord
       }.reject { |shot, shot_chars| shot_chars.empty? }
   end
 
+  def ongoing?
+    started_at.present? && ended_at.nil?
+  end
+
+  def ended?
+    ended_at.present?
+  end
+
+  def can_modify?
+    !ended?
+  end
+
+  def end_fight!(notes: nil)
+    return false if ended?
+    
+    transaction do
+      update!(ended_at: Time.current)
+      # Broadcast fight ended event
+      broadcast_fight_ended
+    end
+    true
+  end
+
   def broadcast_encounter_update!
     # Skip if broadcasts are disabled (during batched updates)
     if Thread.current[:disable_broadcasts]
@@ -117,6 +142,21 @@ class Fight < ApplicationRecord
     Rails.logger.info "Broadcasting to #{channel} with payload: #{payload.inspect}"
     result = ActionCable.server.broadcast(channel, payload)
     Rails.logger.info "Broadcast result: #{result.inspect} (number of subscribers)"
+  end
+
+  def broadcast_fight_ended
+    channel = "campaign_#{campaign_id}"
+    payload = { 
+      type: 'fight_ended',
+      fight_id: id,
+      fight_name: name
+    }
+    Rails.logger.info "Broadcasting fight ended to #{channel}"
+    ActionCable.server.broadcast(channel, payload)
+    
+    # Also broadcast to fight channel
+    fight_channel = "fight_#{id}"
+    ActionCable.server.broadcast(fight_channel, { fight: :ended })
   end
 
   private
