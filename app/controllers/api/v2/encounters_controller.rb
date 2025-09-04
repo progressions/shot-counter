@@ -66,11 +66,21 @@ class Api::V2::EncountersController < ApplicationController
   end
 
   def apply_combat_action
-    character_updates = combat_action_params[:character_updates] || []
-
-    Rails.logger.info "🔄 BATCHED COMBAT: Applying #{character_updates.length} character updates to fight #{@fight.id}"
-
-    result = CombatActionService.apply_combat_action(@fight, character_updates)
+    # Check if this is a boost action
+    if params[:action_type] == "boost"
+      Rails.logger.info "💪 BOOST ACTION: Processing boost for fight #{@fight.id}"
+      result = BoostService.apply_boost(
+        @fight,
+        booster_id: params[:booster_id],
+        target_id: params[:target_id],
+        boost_type: params[:boost_type],
+        use_fortune: params[:use_fortune]
+      )
+    else
+      character_updates = combat_action_params[:character_updates] || []
+      Rails.logger.info "🔄 BATCHED COMBAT: Applying #{character_updates.length} character updates to fight #{@fight.id}"
+      result = CombatActionService.apply_combat_action(@fight, character_updates)
+    end
 
     render json: result, serializer: EncounterSerializer
   rescue ActiveRecord::RecordNotFound => e
@@ -116,13 +126,16 @@ class Api::V2::EncountersController < ApplicationController
   end
 
   def combat_action_params
-    params.permit(character_updates: [
-      :shot_id, :character_id, :vehicle_id, :shot, :wounds, :count, 
-      :impairments, :defense,
-      action_values: {},
-      attributes: {},
-      event: [:type, :description, details: {}]
-    ])
+    params.permit(
+      :action_type, :booster_id, :target_id, :boost_type, :use_fortune,
+      character_updates: [
+        :shot_id, :character_id, :vehicle_id, :shot, :wounds, :count, 
+        :impairments, :defense,
+        action_values: {},
+        attributes: {},
+        event: [:type, :description, details: {}]
+      ]
+    )
   end
 
   def chase_action_params
