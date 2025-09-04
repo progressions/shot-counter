@@ -38,6 +38,33 @@ class Api::V2::EncountersController < ApplicationController
     end
   end
 
+  def update_initiatives
+    shots_data = params[:shots] || []
+    
+    Rails.logger.info "🎲 INITIATIVE UPDATE: Updating #{shots_data.length} shot values for fight #{@fight.id}"
+    
+    ActiveRecord::Base.transaction do
+      shots_data.each do |shot_data|
+        shot = @fight.shots.find(shot_data[:id])
+        shot.update!(shot: shot_data[:shot])
+        Rails.logger.info "  Updated shot #{shot.id}: #{shot.character&.name || shot.vehicle&.name} to shot #{shot_data[:shot]}"
+      end
+    end
+    
+    # Broadcast the update after all shots are updated
+    @fight.broadcast_encounter_update!
+    
+    render json: @fight, serializer: EncounterSerializer
+  rescue ActiveRecord::RecordNotFound => e
+    render json: { error: "Shot not found: #{e.message}" }, status: :not_found
+  rescue ActiveRecord::RecordInvalid => e
+    render json: { error: e.message }, status: :unprocessable_entity
+  rescue StandardError => e
+    Rails.logger.error "Error updating initiatives: #{e.message}"
+    Rails.logger.error e.backtrace.join("\n")
+    render json: { error: "Failed to update initiatives" }, status: :internal_server_error
+  end
+
   def apply_combat_action
     character_updates = combat_action_params[:character_updates] || []
 
@@ -58,6 +85,26 @@ class Api::V2::EncountersController < ApplicationController
     render json: { error: "Failed to apply combat action" }, status: :internal_server_error
   end
 
+  def apply_chase_action
+    vehicle_updates = chase_action_params[:vehicle_updates] || []
+
+    Rails.logger.info "🏎️ CHASE ACTION: Applying #{vehicle_updates.length} vehicle updates to fight #{@fight.id}"
+
+    result = ChaseActionService.apply_chase_action(@fight, vehicle_updates)
+
+    render json: result, serializer: EncounterSerializer
+  rescue ActiveRecord::RecordNotFound => e
+    render json: { error: "Resource not found: #{e.message}" }, status: :not_found
+  rescue ActiveRecord::RecordInvalid => e
+    render json: { error: e.message }, status: :unprocessable_entity
+  rescue ArgumentError => e
+    render json: { error: e.message }, status: :bad_request
+  rescue StandardError => e
+    Rails.logger.error "Error applying chase action: #{e.message}"
+    Rails.logger.error e.backtrace.join("\n")
+    render json: { error: "Failed to apply chase action" }, status: :internal_server_error
+  end
+
   private
 
   def set_fight
@@ -74,6 +121,19 @@ class Api::V2::EncountersController < ApplicationController
       :impairments, :defense,
       action_values: {},
       attributes: {},
+      event: [:type, :description, details: {}]
+    ])
+  end
+
+  def chase_action_params
+    params.permit(vehicle_updates: [
+      :vehicle_id,
+      :target_vehicle_id,
+      :character_id,
+      :shot_cost,
+      :role,
+      :position,
+      action_values: {},
       event: [:type, :description, details: {}]
     ])
   end

@@ -17,6 +17,11 @@ class EncounterSerializer < ActiveModel::Serializer
     schticks = CharacterSchtick.where(character_id: character_ids).group(:character_id).pluck(:character_id, "array_agg(schtick_id::text)")
     schticks_map = schticks.to_h
     
+    # Load chase relationships for vehicles in this fight
+    chase_relationships = ChaseRelationship.active
+      .where(fight_id: object.id)
+      .includes(:pursuer, :evader)
+    
     # Load driver relationships - map vehicle shot_id to driver character
     # shots.driver_id indicates "this shot has a vehicle and it's being driven by driver_id"
     vehicle_shots_with_drivers = object.shots.where("driver_id IS NOT NULL").includes(:driver_shot => :character)
@@ -36,7 +41,8 @@ class EncounterSerializer < ActiveModel::Serializer
       if shot.driving_shot&.vehicle
         hash[shot.id] = {
           vehicle: shot.driving_shot.vehicle,
-          shot_id: shot.driving_shot.id
+          shot_id: shot.driving_shot.id,
+          vehicle_model: shot.driving_shot.vehicle  # Keep the actual model for image_url
         }
       end
     end
@@ -60,6 +66,7 @@ class EncounterSerializer < ActiveModel::Serializer
                 'name', characters.name,
                 'entity_class', 'Character',
                 'action_values', characters.action_values,
+                'skills', characters.skills,
                 'faction_id', characters.faction_id,
                 'color', characters.color,
                 'count', shots.count,
@@ -133,21 +140,49 @@ class EncounterSerializer < ActiveModel::Serializer
             })
             .merge(
               "driving" => driving_info ? {
-                "id" => driving_info[:vehicle].id,
-                "name" => driving_info[:vehicle].name,
+                "id" => driving_info[:vehicle_model].id,
+                "name" => driving_info[:vehicle_model].name,
                 "entity_class" => "Vehicle",
-                "shot_id" => driving_info[:shot_id]
+                "shot_id" => driving_info[:shot_id],
+                "driver_id" => shot_id,  # The driver_id is this character's shot_id
+                "action_values" => driving_info[:vehicle_model].action_values,
+                "image_url" => driving_info[:vehicle_model].image_url,  # This will call the model method
+                "color" => driving_info[:vehicle_model].color,
+                "impairments" => driving_info[:vehicle_model].impairments || 0,
+                "faction_id" => driving_info[:vehicle_model].faction_id,
+                "faction" => driving_info[:vehicle_model].faction ? { 
+                  "id" => driving_info[:vehicle_model].faction.id, 
+                  "name" => driving_info[:vehicle_model].faction.name 
+                } : nil
               } : nil
             )
         end
         vehicles = (record.vehicles || []).map do |vehicle|
           vehicle_id = vehicle["id"]
           shot_id = vehicle["shot_id"]
+          vehicle_model = vehicles_by_id[vehicle_id]
           # Get driver for this vehicle
           driver_info = drivers_by_vehicle_shot_id[shot_id]
           # Get effects for this specific shot/vehicle
           vehicle_effects = effects_by_shot_id[shot_id]&.select { |e| e.vehicle_id == vehicle_id } || []
-          vehicle.merge("effects" => vehicle_effects.map { |e|
+          
+          # Get chase relationships for this vehicle
+          vehicle_chase_relationships = chase_relationships.select { |cr| 
+            cr.pursuer_id == vehicle_id || cr.evader_id == vehicle_id 
+          }.map { |cr|
+            {
+              "id" => cr.id,
+              "position" => cr.position,
+              "pursuer_id" => cr.pursuer_id,
+              "evader_id" => cr.evader_id,
+              "is_pursuer" => cr.pursuer_id == vehicle_id
+            }
+          }
+          
+          vehicle
+            .merge("image_url" => vehicle_model&.image_url)
+            .merge("chase_relationships" => vehicle_chase_relationships)
+            .merge("effects" => vehicle_effects.map { |e|
             {
               "id" => e.id,
               "name" => e.name,

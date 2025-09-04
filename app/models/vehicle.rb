@@ -12,7 +12,6 @@ class Vehicle < ApplicationRecord
     "Condition Points" => 0,
     "Chase Points" => 0,
     "Pursuer" => "true",
-    "Position" => "far",
     "Type" => "PC",
     "Archetype" => "Car",
   }
@@ -34,8 +33,10 @@ class Vehicle < ApplicationRecord
   has_many :memberships
   has_many :parties, through: :memberships
   has_many :image_positions, as: :positionable, dependent: :destroy
-
-  POSITIONS = %w(near far)
+  
+  # Chase relationships
+  has_many :pursuer_relationships, class_name: 'ChaseRelationship', foreign_key: 'pursuer_id', dependent: :destroy
+  has_many :evader_relationships, class_name: 'ChaseRelationship', foreign_key: 'evader_id', dependent: :destroy
 
   before_validation :ensure_default_description
   before_validation :ensure_default_action_values
@@ -127,6 +128,38 @@ class Vehicle < ApplicationRecord
       .character_effects
   end
 
+  # Get position relative to another vehicle in a fight
+  def position_relative_to(other_vehicle, fight)
+    # Check if this vehicle is pursuing the other
+    relationship = ChaseRelationship.active
+      .find_by(pursuer: self, evader: other_vehicle, fight: fight)
+    
+    # If not, check if the other is pursuing this vehicle
+    relationship ||= ChaseRelationship.active
+      .find_by(pursuer: other_vehicle, evader: self, fight: fight)
+    
+    relationship&.position
+  end
+
+  # Get all active chase relationships for this vehicle in a fight
+  def chase_relationships_in_fight(fight)
+    ChaseRelationship.active
+      .where(fight: fight)
+      .where('pursuer_id = ? OR evader_id = ?', id, id)
+  end
+
+  # Check if this vehicle is pursuing another in a fight
+  def pursuing?(other_vehicle, fight)
+    ChaseRelationship.active
+      .exists?(pursuer: self, evader: other_vehicle, fight: fight)
+  end
+
+  # Check if this vehicle is being pursued by another in a fight
+  def pursued_by?(other_vehicle, fight)
+    ChaseRelationship.active
+      .exists?(pursuer: other_vehicle, evader: self, fight: fight)
+  end
+
   private
 
   def ensure_default_action_values
@@ -139,12 +172,6 @@ class Vehicle < ApplicationRecord
     self.description = DEFAULT_DESCRIPTION.merge(self.description)
   end
 
-  def validate_position
-    self.action_values = DEFAULT_ACTION_VALUES.merge(self.action_values)
-    unless POSITIONS.include?(self.action_values["Position"])
-      errors.add(:base, "Position must be one of #{POSITIONS.join(', ')}")
-    end
-  end
 
   def ensure_integer_values
     DEFAULT_ACTION_VALUES.select do |key, value|

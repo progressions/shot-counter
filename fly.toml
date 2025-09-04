@@ -17,7 +17,7 @@ kill_timeout = "5s"
     SERVER_COMMAND = "bin/rails fly:server"
 
 [deploy]
-  # release_command = "bin/rails fly:release"
+  release_command = "bin/rails db:migrate"
 
 [env]
   PORT = "8080"
@@ -34,11 +34,18 @@ kill_timeout = "5s"
   auto_start_machines = true
   min_machines_running = 1
   processes = ["app"]
+  
+  [http_service.headers]
+    fly-force-instance-id = "X-Fly-Force-Instance-ID"
 
   [http_service.concurrency]
     type = "connections"
     hard_limit = 100
     soft_limit = 80
+    
+  # Enable WebSocket support
+  [http_service.http_options]
+    h2_backend = true
   
   [[http_service.checks]]
     interval = "30s"

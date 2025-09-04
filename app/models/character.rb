@@ -109,6 +109,9 @@ class Character < ApplicationRecord
   attr_accessor :attaching_image
 
   def broadcast_encounter_update
+    # Skip if broadcasts are disabled (during batched updates)
+    return if Thread.current[:disable_broadcasts]
+    
     fights.each(&:broadcast_encounter_update!)
   end
 
