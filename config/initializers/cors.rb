@@ -20,6 +20,6 @@ Rails.application.config.middleware.insert_before 0, Rack::Cors do
     resource '/cable',
       headers: :any,
       methods: %i[get post options],
-      credentials: true
+      credentials: false
   end
 end
