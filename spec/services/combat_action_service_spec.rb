@@ -1005,10 +1005,11 @@ RSpec.describe CombatActionService do
         @defender1_shot = Shot.create!(fight: @fight, character: @defender1, shot: 12)
         @defender2_shot = Shot.create!(fight: @fight, character: @defender2, shot: 10)
         
-        # Mock the broadcast method to count calls
+        # Mock the broadcast method to count calls, respecting the disable_broadcasts flag
         broadcast_count = 0
         allow(@fight).to receive(:broadcast_encounter_update!) do
-          broadcast_count += 1
+          # Only count if broadcasts are not disabled
+          broadcast_count += 1 unless Thread.current[:disable_broadcasts]
         end
         
         character_updates = [
