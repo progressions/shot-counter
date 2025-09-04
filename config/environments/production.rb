@@ -38,6 +38,7 @@ Rails.application.configure do
   config.action_cable.url = "wss://shot-counter.fly.dev/cable"
   config.action_cable.allowed_request_origins = [ 
     "https://chiwar.net", 
+    "https://next.chiwar.net",  # Production frontend domain
     "https://shot-client-next.fly.dev",
     "https://shot-counter.fly.dev",
     "http://localhost:3001"  # For local development testing against production
