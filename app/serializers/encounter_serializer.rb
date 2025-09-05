@@ -165,8 +165,8 @@ class EncounterSerializer < ActiveModel::Serializer
           vehicle_model = vehicles_by_id[vehicle_id]
           # Get the shot record for defeat calculations
           shot = shots_by_id[shot_id]
-          # was_rammed_or_damaged is included in the SQL query from shots table
-          was_rammed = vehicle["was_rammed_or_damaged"] || false
+          # was_rammed_or_damaged comes from the actual Shot object
+          was_rammed = shot&.was_rammed_or_damaged || false
           # Get driver for this vehicle
           driver_info = drivers_by_vehicle_shot_id[shot_id]
           # Get effects for this specific shot/vehicle
