@@ -61,14 +61,19 @@ class Vehicle < ApplicationRecord
         "Type" => vehicle_type(shot&.driver),
       }),
       color: shot&.color || color,
-      impairments: impairments,
+      impairments: shot&.impairments || impairments,  # Use shot's impairments if available
       category: "vehicle",
       count: shot&.count,
       shot_id: shot&.id,
       location: shot&.location,
       driver: driver_json(shot&.driver_shot),
       image_url: image_url,
-      task: task
+      task: task,
+      # Add defeat-related fields
+      was_rammed_or_damaged: shot&.was_rammed_or_damaged || false,
+      is_defeated_in_chase: defeated_in_chase?(shot),
+      defeat_type: defeat_type(shot),
+      defeat_threshold: defeat_threshold(shot)
     }
   end
 
@@ -158,6 +163,40 @@ class Vehicle < ApplicationRecord
   def pursued_by?(other_vehicle, fight)
     ChaseRelationship.active
       .exists?(pursuer: other_vehicle, evader: self, fight: fight)
+  end
+
+  # Vehicle defeat detection methods
+  def defeated_in_chase?(shot = nil)
+    chase_points = action_values.fetch("Chase Points", 0).to_i
+    chase_points >= defeat_threshold(shot)
+  end
+
+  def defeat_threshold(shot = nil)
+    # Get driver type, either from shot's driver or from vehicle's own type
+    driver_type = if shot&.driver_shot&.character
+      shot.driver_shot.character.action_values.fetch("Type", "Featured Foe")
+    else
+      vehicle_type(nil)
+    end
+
+    # Map driver type to defeat threshold based on wound thresholds
+    case driver_type
+    when "Boss", "Uber-Boss"
+      50
+    else # PC, Ally, Featured Foe, etc.
+      35
+    end
+  end
+
+  def defeat_type(shot)
+    return nil unless defeated_in_chase?(shot)
+    
+    # Check if vehicle was rammed or damaged
+    if shot&.was_rammed_or_damaged
+      "crashed"
+    else
+      "boxed_in"
+    end
   end
 
   private

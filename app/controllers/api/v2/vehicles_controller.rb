@@ -301,7 +301,7 @@ class Api::V2::VehiclesController < ApplicationController
   def vehicle_params
     params.require(:vehicle).permit(:name, :character_id, :faction_id, :defense,
       :impairments, :count, :color, :user_id, :active, :image_url, :image,
-      :action_values, :description, :task, :juncture_id, party_ids: [])
+      :description, :task, :juncture_id, party_ids: [], action_values: {})
   end
 
   def sort_order

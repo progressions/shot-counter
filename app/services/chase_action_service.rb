@@ -49,6 +49,9 @@ class ChaseActionService
     shot = @fight.shots.find_by!(vehicle_id: vehicle.id)
     vehicle_name = vehicle.name || "Unknown Vehicle"
     
+    # Track if vehicle was already defeated before this update
+    was_defeated_before = vehicle.defeated_in_chase?(shot)
+    
     # Handle shot cost if provided (for the driver spending shots)
     if update[:shot_cost].present? && update[:character_id].present?
       character_shot = @fight.shots.find_by(character_id: update[:character_id])
@@ -67,6 +70,16 @@ class ChaseActionService
     if update[:position].present? && update[:target_vehicle_id].present?
       Rails.logger.info "🏎️ Updating chase position to #{update[:position]}"
       update_chase_position(vehicle, update[:target_vehicle_id], update[:position], update[:role])
+    end
+    
+    # Check if this is a ram, sideswipe, or weapon attack
+    if update[:action_type].present?
+      action_type = update[:action_type].to_s.downcase
+      if ["ram", "sideswipe", "weapon"].include?(action_type)
+        Rails.logger.info "🚗💥 Vehicle #{vehicle_name} was #{action_type}ed - marking as damaged"
+        shot.was_rammed_or_damaged = true
+        shot.save!
+      end
     end
     
     # Update action values if provided (Chase Points, Condition Points, etc.)
@@ -110,6 +123,30 @@ class ChaseActionService
         event_type: update[:event][:type] || "chase",
         description: update[:event][:description] || "Chase action",
         details: update[:event][:details] || {}
+      )
+    end
+    
+    # Check if vehicle was defeated in this update
+    if !was_defeated_before && vehicle.defeated_in_chase?(shot)
+      defeat_message = if vehicle.defeat_type(shot) == "crashed"
+        "#{vehicle_name} has crashed!"
+      else
+        "#{vehicle_name} is boxed in!"
+      end
+      
+      Rails.logger.info "🚗💥 DEFEAT: #{defeat_message}"
+      
+      # Create fight event for defeat
+      @fight.fight_events.create!(
+        event_type: "chase_defeat",
+        description: defeat_message,
+        details: {
+          vehicle_id: vehicle.id,
+          vehicle_name: vehicle_name,
+          defeat_type: vehicle.defeat_type(shot),
+          chase_points: vehicle.action_values["Chase Points"],
+          was_rammed_or_damaged: shot.was_rammed_or_damaged
+        }
       )
     end
   end

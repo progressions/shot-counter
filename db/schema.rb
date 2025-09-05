@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_09_03_201413) do
+ActiveRecord::Schema[8.0].define(version: 2025_09_05_135419) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -356,11 +356,13 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_03_201413) do
     t.integer "impairments", default: 0
     t.uuid "driving_id"
     t.string "location"
+    t.boolean "was_rammed_or_damaged", default: false, null: false
     t.index ["character_id"], name: "index_shots_on_character_id"
     t.index ["driver_id"], name: "index_shots_on_driver_id"
     t.index ["driving_id"], name: "index_shots_on_driving_id"
     t.index ["fight_id"], name: "index_shots_on_fight_id"
     t.index ["vehicle_id"], name: "index_shots_on_vehicle_id"
+    t.index ["was_rammed_or_damaged"], name: "index_shots_on_was_rammed_or_damaged"
   end
 
   create_table "sites", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|

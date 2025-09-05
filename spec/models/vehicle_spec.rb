@@ -98,4 +98,165 @@ RSpec.describe Vehicle, type: :model do
       expect(json[:driver][:skills]).to eq({"Driving" => 13})
     end
   end
+
+  describe "defeat detection" do
+    before(:each) do
+      @vehicle = Vehicle.create!(name: "Test Car", campaign_id: @action_movie.id)
+      @fight = @action_movie.fights.create!(name: "Chase Scene")
+      @shot = @fight.shots.create!(vehicle: @vehicle, shot: 10)
+    end
+
+    describe "#defeated_in_chase?" do
+      context "with Featured Foe driver" do
+        before do
+          @driver = Character.create!(
+            name: "Driver", 
+            campaign_id: @action_movie.id,
+            action_values: { "Type" => "Featured Foe" }
+          )
+          @driver_shot = @fight.shots.create!(character: @driver, shot: 15, driving_id: @shot.id)
+          @shot.update!(driver_id: @driver_shot.id)
+        end
+
+        it "returns false when chase points are below threshold" do
+          @vehicle.action_values["Chase Points"] = 34
+          @vehicle.save!
+          expect(@vehicle.defeated_in_chase?(@shot)).to be false
+        end
+
+        it "returns true when chase points reach threshold" do
+          @vehicle.action_values["Chase Points"] = 35
+          @vehicle.save!
+          expect(@vehicle.defeated_in_chase?(@shot)).to be true
+        end
+
+        it "returns true when chase points exceed threshold" do
+          @vehicle.action_values["Chase Points"] = 40
+          @vehicle.save!
+          expect(@vehicle.defeated_in_chase?(@shot)).to be true
+        end
+      end
+
+      context "with Boss driver" do
+        before do
+          @driver = Character.create!(
+            name: "Boss Driver", 
+            campaign_id: @action_movie.id,
+            action_values: { "Type" => "Boss" }
+          )
+          @driver_shot = @fight.shots.create!(character: @driver, shot: 15, driving_id: @shot.id)
+          @shot.update!(driver_id: @driver_shot.id)
+        end
+
+        it "returns false when chase points are below boss threshold" do
+          @vehicle.action_values["Chase Points"] = 49
+          @vehicle.save!
+          expect(@vehicle.defeated_in_chase?(@shot)).to be false
+        end
+
+        it "returns true when chase points reach boss threshold" do
+          @vehicle.action_values["Chase Points"] = 50
+          @vehicle.save!
+          expect(@vehicle.defeated_in_chase?(@shot)).to be true
+        end
+      end
+
+      context "with no driver" do
+        it "uses vehicle type for threshold" do
+          @vehicle.action_values["Type"] = "Featured Foe"
+          @vehicle.action_values["Chase Points"] = 35
+          @vehicle.save!
+          expect(@vehicle.defeated_in_chase?(@shot)).to be true
+        end
+      end
+    end
+
+    describe "#defeat_threshold" do
+      it "returns 35 for Featured Foe driver" do
+        driver = Character.create!(
+          name: "Driver",
+          campaign_id: @action_movie.id,
+          action_values: { "Type" => "Featured Foe" }
+        )
+        driver_shot = @fight.shots.create!(character: driver, shot: 15, driving_id: @shot.id)
+        @shot.update!(driver_id: driver_shot.id)
+        
+        expect(@vehicle.defeat_threshold(@shot)).to eq(35)
+      end
+
+      it "returns 50 for Boss driver" do
+        driver = Character.create!(
+          name: "Boss Driver",
+          campaign_id: @action_movie.id,
+          action_values: { "Type" => "Boss" }
+        )
+        driver_shot = @fight.shots.create!(character: driver, shot: 15, driving_id: @shot.id)
+        @shot.update!(driver_id: driver_shot.id)
+        
+        expect(@vehicle.defeat_threshold(@shot)).to eq(50)
+      end
+
+      it "returns 50 for Uber-Boss driver" do
+        driver = Character.create!(
+          name: "Uber-Boss Driver",
+          campaign_id: @action_movie.id,
+          action_values: { "Type" => "Uber-Boss" }
+        )
+        driver_shot = @fight.shots.create!(character: driver, shot: 15, driving_id: @shot.id)
+        @shot.update!(driver_id: driver_shot.id)
+        
+        expect(@vehicle.defeat_threshold(@shot)).to eq(50)
+      end
+
+      it "returns 35 for PC driver" do
+        driver = Character.create!(
+          name: "Player Driver",
+          campaign_id: @action_movie.id,
+          action_values: { "Type" => "PC" }
+        )
+        driver_shot = @fight.shots.create!(character: driver, shot: 15, driving_id: @shot.id)
+        @shot.update!(driver_id: driver_shot.id)
+        
+        expect(@vehicle.defeat_threshold(@shot)).to eq(35)
+      end
+    end
+
+    describe "#defeat_type" do
+      before do
+        @vehicle.action_values["Chase Points"] = 35
+        @vehicle.save!
+      end
+
+      it "returns nil when not defeated" do
+        @vehicle.action_values["Chase Points"] = 30
+        @vehicle.save!
+        expect(@vehicle.defeat_type(@shot)).to be_nil
+      end
+
+      it "returns 'crashed' when defeated and was_rammed_or_damaged is true" do
+        @shot.update!(was_rammed_or_damaged: true)
+        expect(@vehicle.defeat_type(@shot)).to eq("crashed")
+      end
+
+      it "returns 'boxed_in' when defeated and was_rammed_or_damaged is false" do
+        @shot.update!(was_rammed_or_damaged: false)
+        expect(@vehicle.defeat_type(@shot)).to eq("boxed_in")
+      end
+    end
+
+    describe "JSON serialization with defeat info" do
+      it "includes defeat-related fields in as_v1_json" do
+        @vehicle.action_values["Chase Points"] = 40
+        @vehicle.save!
+        @shot.update!(was_rammed_or_damaged: true)
+
+        json = @vehicle.as_v1_json(shot: @shot)
+        
+        expect(json[:was_rammed_or_damaged]).to be true
+        expect(json[:is_defeated_in_chase]).to be true
+        expect(json[:defeat_type]).to eq("crashed")
+        expect(json[:defeat_threshold]).to eq(35)
+      end
+    end
+  end
 end
