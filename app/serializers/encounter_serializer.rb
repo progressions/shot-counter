@@ -12,6 +12,7 @@ class EncounterSerializer < ActiveModel::Serializer
     shot_ids = object.shots.pluck(:id).uniq.compact
     characters_by_id = Character.where(id: character_ids).index_by(&:id)
     vehicles_by_id = Vehicle.where(id: vehicle_ids).index_by(&:id)
+    shots_by_id = object.shots.where(id: shot_ids).index_by(&:id)
     carries = Carry.where(character_id: character_ids).group(:character_id).pluck(:character_id, "array_agg(weapon_id::text)")
     carries_map = carries.to_h
     schticks = CharacterSchtick.where(character_id: character_ids).group(:character_id).pluck(:character_id, "array_agg(schtick_id::text)")
@@ -161,6 +162,8 @@ class EncounterSerializer < ActiveModel::Serializer
           vehicle_id = vehicle["id"]
           shot_id = vehicle["shot_id"]
           vehicle_model = vehicles_by_id[vehicle_id]
+          # Get the shot record to check defeat status
+          shot = shots_by_id[shot_id]
           # Get driver for this vehicle
           driver_info = drivers_by_vehicle_shot_id[shot_id]
           # Get effects for this specific shot/vehicle
@@ -181,6 +184,10 @@ class EncounterSerializer < ActiveModel::Serializer
           
           vehicle
             .merge("image_url" => vehicle_model&.image_url)
+            .merge("was_rammed_or_damaged" => shot&.was_rammed_or_damaged || false)
+            .merge("is_defeated_in_chase" => vehicle_model&.defeated_in_chase?(shot) || false)
+            .merge("defeat_type" => vehicle_model&.defeat_type(shot))
+            .merge("defeat_threshold" => vehicle_model&.defeat_threshold(shot))
             .merge("chase_relationships" => vehicle_chase_relationships)
             .merge("effects" => vehicle_effects.map { |e|
             {
