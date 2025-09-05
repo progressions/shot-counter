@@ -155,7 +155,10 @@ class EncounterSerializer < ActiveModel::Serializer
                 "faction" => driving_info[:vehicle_model].faction ? { 
                   "id" => driving_info[:vehicle_model].faction.id, 
                   "name" => driving_info[:vehicle_model].faction.name 
-                } : nil
+                } : nil,
+                "was_rammed_or_damaged" => shots_by_id[driving_info[:shot_id]]&.was_rammed_or_damaged || false,
+                "is_defeated_in_chase" => driving_info[:vehicle_model]&.defeated_in_chase?(shots_by_id[driving_info[:shot_id]]) || false,
+                "defeat_type" => driving_info[:vehicle_model]&.defeat_type(shots_by_id[driving_info[:shot_id]])
               } : nil
             )
         end
@@ -187,9 +190,6 @@ class EncounterSerializer < ActiveModel::Serializer
           
           vehicle
             .merge("image_url" => vehicle_model&.image_url)
-            .merge("was_rammed_or_damaged" => was_rammed)
-            .merge("is_defeated_in_chase" => vehicle_model&.defeated_in_chase?(shot) || false)
-            .merge("defeat_type" => vehicle_model&.defeat_type(shot))
             .merge("chase_relationships" => vehicle_chase_relationships)
             .merge("effects" => vehicle_effects.map { |e|
             {
