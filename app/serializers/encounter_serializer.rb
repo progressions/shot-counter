@@ -163,10 +163,10 @@ class EncounterSerializer < ActiveModel::Serializer
           vehicle_id = vehicle["id"]
           shot_id = vehicle["shot_id"]
           vehicle_model = vehicles_by_id[vehicle_id]
-          # was_rammed_or_damaged is already in vehicle data from the query
-          was_rammed = vehicle["was_rammed_or_damaged"] || false
-          # For defeat calculations, we still need the shot record
+          # Get the shot record for defeat calculations
           shot = shots_by_id[shot_id]
+          # was_rammed_or_damaged is included in the SQL query from shots table
+          was_rammed = vehicle["was_rammed_or_damaged"] || false
           # Get driver for this vehicle
           driver_info = drivers_by_vehicle_shot_id[shot_id]
           # Get effects for this specific shot/vehicle
@@ -190,7 +190,6 @@ class EncounterSerializer < ActiveModel::Serializer
             .merge("was_rammed_or_damaged" => was_rammed)
             .merge("is_defeated_in_chase" => vehicle_model&.defeated_in_chase?(shot) || false)
             .merge("defeat_type" => vehicle_model&.defeat_type(shot))
-            .merge("defeat_threshold" => vehicle_model&.defeat_threshold(shot))
             .merge("chase_relationships" => vehicle_chase_relationships)
             .merge("effects" => vehicle_effects.map { |e|
             {
