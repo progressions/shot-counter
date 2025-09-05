@@ -157,8 +157,8 @@ class EncounterSerializer < ActiveModel::Serializer
                   "name" => driving_info[:vehicle_model].faction.name 
                 } : nil,
                 "was_rammed_or_damaged" => shots_by_id[driving_info[:shot_id]]&.was_rammed_or_damaged || false,
-                "is_defeated_in_chase" => driving_info[:vehicle_model] ? driving_info[:vehicle_model].defeated_in_chase?(shots_by_id[driving_info[:shot_id]]) : false,
-                "defeat_type" => driving_info[:vehicle_model] ? driving_info[:vehicle_model].defeat_type(shots_by_id[driving_info[:shot_id]]) : nil
+                "is_defeated_in_chase" => driving_info[:vehicle_model]&.defeated_in_chase?(shots_by_id[driving_info[:shot_id]]) || false,
+                "defeat_type" => driving_info[:vehicle_model]&.defeat_type(shots_by_id[driving_info[:shot_id]])
               } : nil
             )
         end
