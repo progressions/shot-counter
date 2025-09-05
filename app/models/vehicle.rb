@@ -43,8 +43,17 @@ class Vehicle < ApplicationRecord
   before_validation :ensure_integer_values
   before_validation :ensure_non_integer_values
 
+  after_update :broadcast_encounter_update
+
   validates :name, presence: true, uniqueness: { scope: :campaign_id }
   validate :associations_belong_to_same_campaign
+
+  def broadcast_encounter_update
+    # Skip if broadcasts are disabled (during batched updates)
+    return if Thread.current[:disable_broadcasts]
+    
+    fights.each(&:broadcast_encounter_update!)
+  end
 
   def as_v1_json(args={})
     shot = args[:shot]
