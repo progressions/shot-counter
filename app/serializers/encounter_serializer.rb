@@ -105,7 +105,8 @@ class EncounterSerializer < ActiveModel::Serializer
                 'shot_id', shots.id,
                 'current_shot', shots.shot,
                 'location', shots.location,
-                'driver_id', shots.driver_id
+                'driver_id', shots.driver_id,
+                'was_rammed_or_damaged', shots.was_rammed_or_damaged
               )
             ELSE NULL
           END
@@ -162,7 +163,9 @@ class EncounterSerializer < ActiveModel::Serializer
           vehicle_id = vehicle["id"]
           shot_id = vehicle["shot_id"]
           vehicle_model = vehicles_by_id[vehicle_id]
-          # Get the shot record to check defeat status
+          # was_rammed_or_damaged is already in vehicle data from the query
+          was_rammed = vehicle["was_rammed_or_damaged"] || false
+          # For defeat calculations, we still need the shot record
           shot = shots_by_id[shot_id]
           # Get driver for this vehicle
           driver_info = drivers_by_vehicle_shot_id[shot_id]
@@ -184,7 +187,7 @@ class EncounterSerializer < ActiveModel::Serializer
           
           vehicle
             .merge("image_url" => vehicle_model&.image_url)
-            .merge("was_rammed_or_damaged" => shot&.was_rammed_or_damaged || false)
+            .merge("was_rammed_or_damaged" => was_rammed)
             .merge("is_defeated_in_chase" => vehicle_model&.defeated_in_chase?(shot) || false)
             .merge("defeat_type" => vehicle_model&.defeat_type(shot))
             .merge("defeat_threshold" => vehicle_model&.defeat_threshold(shot))
