@@ -79,7 +79,24 @@ class ChaseActionService
       # Update the remaining vehicle's action_values (persistent)
       # Must reassign to trigger Rails change tracking for JSONB columns
       if update[:action_values].present? && update[:action_values].keys.any?
-        vehicle.action_values = vehicle.action_values.merge(update[:action_values].to_h)
+        updated_values = vehicle.action_values.dup
+        
+        # For Chase Points and Condition Points, ADD to existing values instead of replacing
+        ["Chase Points", "Condition Points"].each do |damage_type|
+          if update[:action_values][damage_type].present?
+            current_value = vehicle.action_values[damage_type] || 0
+            damage_to_add = update[:action_values][damage_type].to_i
+            updated_values[damage_type] = current_value + damage_to_add
+            Rails.logger.info "🎯 #{damage_type}: Adding #{damage_to_add} to current #{current_value} = #{updated_values[damage_type]}"
+          end
+        end
+        
+        # For other values, merge normally (replace)
+        update[:action_values].except("Chase Points", "Condition Points").each do |key, value|
+          updated_values[key] = value
+        end
+        
+        vehicle.action_values = updated_values
         vehicle.save!
       end
       
