@@ -141,25 +141,30 @@ class EncounterSerializer < ActiveModel::Serializer
               }
             })
             .merge(
-              "driving" => driving_info ? {
-                "id" => driving_info[:vehicle_model].id,
-                "name" => driving_info[:vehicle_model].name,
-                "entity_class" => "Vehicle",
-                "shot_id" => driving_info[:shot_id],
-                "driver_id" => shot_id,  # The driver_id is this character's shot_id
-                "action_values" => driving_info[:vehicle_model].action_values,
-                "image_url" => driving_info[:vehicle_model].image_url,  # This will call the model method
-                "color" => driving_info[:vehicle_model].color,
-                "impairments" => driving_info[:vehicle_model].impairments || 0,
-                "faction_id" => driving_info[:vehicle_model].faction_id,
-                "faction" => driving_info[:vehicle_model].faction ? { 
-                  "id" => driving_info[:vehicle_model].faction.id, 
-                  "name" => driving_info[:vehicle_model].faction.name 
-                } : nil,
-                "was_rammed_or_damaged" => shots_by_id[driving_info[:shot_id]]&.was_rammed_or_damaged || false,
-                "is_defeated_in_chase" => driving_info[:vehicle_model]&.defeated_in_chase?(shots_by_id[driving_info[:shot_id]]) || false,
-                "defeat_type" => driving_info[:vehicle_model]&.defeat_type(shots_by_id[driving_info[:shot_id]])
-              } : nil
+              "driving" => driving_info ? begin
+                vehicle_shot = shots_by_id[driving_info[:shot_id]]
+                vehicle_model = driving_info[:vehicle_model]
+                
+                {
+                  "id" => vehicle_model.id,
+                  "name" => vehicle_model.name,
+                  "entity_class" => "Vehicle",
+                  "shot_id" => driving_info[:shot_id],
+                  "driver_id" => shot_id,  # The driver_id is this character's shot_id
+                  "action_values" => vehicle_model.action_values,
+                  "image_url" => vehicle_model.image_url,  # This will call the model method
+                  "color" => vehicle_model.color,
+                  "impairments" => vehicle_model.impairments || 0,
+                  "faction_id" => vehicle_model.faction_id,
+                  "faction" => vehicle_model.faction ? { 
+                    "id" => vehicle_model.faction.id, 
+                    "name" => vehicle_model.faction.name 
+                  } : nil,
+                  "was_rammed_or_damaged" => vehicle_shot ? vehicle_shot.was_rammed_or_damaged : false,
+                  "is_defeated_in_chase" => vehicle_model && vehicle_shot ? vehicle_model.defeated_in_chase?(vehicle_shot) : false,
+                  "defeat_type" => vehicle_model && vehicle_shot ? vehicle_model.defeat_type(vehicle_shot) : nil
+                }
+              end : nil
             )
         end
         vehicles = (record.vehicles || []).map do |vehicle|
