@@ -187,7 +187,7 @@ class Api::V2::VehiclesController < ApplicationController
     else
       vehicle_data = vehicle_params.to_h.symbolize_keys
     end
-    vehicle_data = vehicle_data.slice(:name, :description, :active, :vehicle_ids, :party_ids, :site_ids, :juncture_id, :schtick_ids, :action_values, :faction_id)
+    vehicle_data = vehicle_data.slice(:name, :description, :active, :vehicle_ids, :party_ids, :site_ids, :juncture_id, :schtick_ids, :action_values, :faction_id, :impairments)
 
     # Handle image attachment if present
     if params[:image].present?
@@ -301,7 +301,7 @@ class Api::V2::VehiclesController < ApplicationController
   def vehicle_params
     params.require(:vehicle).permit(:name, :character_id, :faction_id, :defense,
       :impairments, :count, :color, :user_id, :active, :image_url, :image,
-      :action_values, :description, :task, :juncture_id, party_ids: [])
+      :description, :task, :juncture_id, party_ids: [], action_values: {})
   end
 
   def sort_order

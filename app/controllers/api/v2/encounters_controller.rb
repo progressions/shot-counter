@@ -146,6 +146,7 @@ class Api::V2::EncountersController < ApplicationController
       :shot_cost,
       :role,
       :position,
+      :action_type,
       action_values: {},
       event: [:type, :description, details: {}]
     ])

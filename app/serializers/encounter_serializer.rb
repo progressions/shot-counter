@@ -12,6 +12,7 @@ class EncounterSerializer < ActiveModel::Serializer
     shot_ids = object.shots.pluck(:id).uniq.compact
     characters_by_id = Character.where(id: character_ids).index_by(&:id)
     vehicles_by_id = Vehicle.where(id: vehicle_ids).index_by(&:id)
+    shots_by_id = object.shots.where(id: shot_ids).index_by(&:id)
     carries = Carry.where(character_id: character_ids).group(:character_id).pluck(:character_id, "array_agg(weapon_id::text)")
     carries_map = carries.to_h
     schticks = CharacterSchtick.where(character_id: character_ids).group(:character_id).pluck(:character_id, "array_agg(schtick_id::text)")
@@ -104,7 +105,8 @@ class EncounterSerializer < ActiveModel::Serializer
                 'shot_id', shots.id,
                 'current_shot', shots.shot,
                 'location', shots.location,
-                'driver_id', shots.driver_id
+                'driver_id', shots.driver_id,
+                'was_rammed_or_damaged', shots.was_rammed_or_damaged
               )
             ELSE NULL
           END
@@ -139,28 +141,40 @@ class EncounterSerializer < ActiveModel::Serializer
               }
             })
             .merge(
-              "driving" => driving_info ? {
-                "id" => driving_info[:vehicle_model].id,
-                "name" => driving_info[:vehicle_model].name,
-                "entity_class" => "Vehicle",
-                "shot_id" => driving_info[:shot_id],
-                "driver_id" => shot_id,  # The driver_id is this character's shot_id
-                "action_values" => driving_info[:vehicle_model].action_values,
-                "image_url" => driving_info[:vehicle_model].image_url,  # This will call the model method
-                "color" => driving_info[:vehicle_model].color,
-                "impairments" => driving_info[:vehicle_model].impairments || 0,
-                "faction_id" => driving_info[:vehicle_model].faction_id,
-                "faction" => driving_info[:vehicle_model].faction ? { 
-                  "id" => driving_info[:vehicle_model].faction.id, 
-                  "name" => driving_info[:vehicle_model].faction.name 
-                } : nil
-              } : nil
+              "driving" => driving_info ? begin
+                vehicle_shot = shots_by_id[driving_info[:shot_id]]
+                vehicle_model = driving_info[:vehicle_model]
+                
+                {
+                  "id" => vehicle_model.id,
+                  "name" => vehicle_model.name,
+                  "entity_class" => "Vehicle",
+                  "shot_id" => driving_info[:shot_id],
+                  "driver_id" => shot_id,  # The driver_id is this character's shot_id
+                  "action_values" => vehicle_model.action_values,
+                  "image_url" => vehicle_model.image_url,  # This will call the model method
+                  "color" => vehicle_model.color,
+                  "impairments" => vehicle_model.impairments || 0,
+                  "faction_id" => vehicle_model.faction_id,
+                  "faction" => vehicle_model.faction ? { 
+                    "id" => vehicle_model.faction.id, 
+                    "name" => vehicle_model.faction.name 
+                  } : nil,
+                  "was_rammed_or_damaged" => vehicle_shot ? vehicle_shot.was_rammed_or_damaged : false,
+                  "is_defeated_in_chase" => vehicle_model && vehicle_shot ? vehicle_model.defeated_in_chase?(vehicle_shot) : false,
+                  "defeat_type" => vehicle_model && vehicle_shot ? vehicle_model.defeat_type(vehicle_shot) : nil
+                }
+              end : nil
             )
         end
         vehicles = (record.vehicles || []).map do |vehicle|
           vehicle_id = vehicle["id"]
           shot_id = vehicle["shot_id"]
           vehicle_model = vehicles_by_id[vehicle_id]
+          # Get the shot record for defeat calculations
+          shot = shots_by_id[shot_id]
+          # was_rammed_or_damaged comes from the actual Shot object
+          was_rammed = shot&.was_rammed_or_damaged || false
           # Get driver for this vehicle
           driver_info = drivers_by_vehicle_shot_id[shot_id]
           # Get effects for this specific shot/vehicle
