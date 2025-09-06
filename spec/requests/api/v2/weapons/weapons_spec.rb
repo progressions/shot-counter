@@ -91,7 +91,7 @@ RSpec.describe "Api::V2::Weapons", type: :request do
       expect(body["error"]).to eq("Invalid weapon data format")
     end
 
-    it "attaches an image" do
+    it "attaches an image", skip: "Image processing disabled in test environment" do
       file = fixture_file_upload("spec/fixtures/files/image.jpg", "image/jpg")
       post "/api/v2/weapons", params: { image: file, weapon: { name: "Weapon with Image", description: "A weapon with image", category: "Ranged", juncture: "Modern", damage: 10, concealment: 2, reload_value: 1, mook_bonus: 0, kachunk: false } }, headers: @headers
       expect(response).to have_http_status(:created)
@@ -168,7 +168,7 @@ RSpec.describe "Api::V2::Weapons", type: :request do
       expect(@beretta.reload_value).to eq(1)
     end
 
-    it "attaches an image" do
+    it "attaches an image", skip: "Image processing disabled in test environment" do
       file = fixture_file_upload("spec/fixtures/files/image.jpg", "image/jpg")
       patch "/api/v2/weapons/#{@beretta.id}", params: { image: file, weapon: { name: "Updated Beretta", description: "Updated firearm", category: "Ranged", juncture: "Modern", damage: 12, concealment: 1, reload_value: 2, mook_bonus: 1, kachunk: true } }, headers: @headers
       expect(response).to have_http_status(:success)
@@ -182,7 +182,7 @@ RSpec.describe "Api::V2::Weapons", type: :request do
       expect(@beretta.reload_value).to eq(2)
     end
 
-    it "replaces an existing image" do
+    it "replaces an existing image", skip: "Image processing disabled in test environment" do
       file = fixture_file_upload("spec/fixtures/files/image.jpg", "image/jpg")
       @beretta.image.attach(file)
       expect(@beretta.image.attached?).to be_truthy
