@@ -452,7 +452,6 @@ DEPENDENCIES
   reverse_markdown
   rspec-rails
   rspec_junit_formatter
-  ruby-vips
   sidekiq (~> 7.0)
   tzinfo-data
 

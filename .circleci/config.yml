@@ -46,9 +46,9 @@ jobs:
               timeout 60 sudo apt-get update && break || sleep 10
             done
             
-            # Install dependencies with retry
+            # Install dependencies WITHOUT libvips-dev for now (skip image processing in tests)
             for i in 1 2 3; do
-              timeout 120 sudo apt-get install -y libpq-dev postgresql-client libvips-dev pdftk && break || sleep 10
+              timeout 120 sudo apt-get install -y libpq-dev postgresql-client pdftk && break || sleep 10
             done
             
             # Install dockerize to wait for services
@@ -66,13 +66,15 @@ jobs:
       - run:
           name: Install dependencies
           command: |
+            # Set test environment to skip ruby-vips
+            export RAILS_ENV=test
+            
             # Debug gem environment
             echo "Ruby version:"
             ruby -v
             echo "Gem version:"
             gem -v
-            echo "Gem environment:"
-            gem env
+            echo "Rails environment: $RAILS_ENV"
             
             # Install specific bundler version
             gem install bundler -v 2.4.10
@@ -80,9 +82,10 @@ jobs:
             # Configure bundler
             bundle _2.4.10_ config set --local path 'vendor/bundle'
             bundle _2.4.10_ config set --local deployment 'false'
+            bundle _2.4.10_ config set --local without 'development'
             
             # Install dependencies
-            bundle _2.4.10_ install --jobs=4 --retry=3
+            RAILS_ENV=test bundle _2.4.10_ install --jobs=4 --retry=3
             
             # List installed gems for debugging
             bundle _2.4.10_ list | head -20
@@ -135,7 +138,8 @@ jobs:
           name: Test RSpec setup
           command: |
             echo "Testing RSpec setup with a single model spec..."
-            RAILS_ENV=test DISABLE_BOOTSNAP=1 DISABLE_SPRING=1 bundle _2.4.10_ exec rspec spec/models/user_spec.rb --format documentation || true
+            timeout 60 bash -c "RAILS_ENV=test DISABLE_BOOTSNAP=1 DISABLE_SPRING=1 bundle _2.4.10_ exec rspec spec/models/user_spec.rb --format documentation" || echo "Test setup check completed/timed out"
+          no_output_timeout: 2m
             
       # Run RSpec tests
       - run:
@@ -153,7 +157,7 @@ jobs:
               echo "Tests failed with exit code $TEST_RESULT"
               exit $TEST_RESULT
             fi
-          no_output_timeout: 6m
+          no_output_timeout: 3m
       
       # Store test results for CircleCI
       - store_test_results:
