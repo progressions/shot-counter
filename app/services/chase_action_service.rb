@@ -90,6 +90,24 @@ class ChaseActionService
       end
     end
     
+    # Handle Fortune spending if provided
+    if update[:fortune_spent].present? && update[:fortune_spent] > 0 && update[:character_id].present?
+      character = Character.find(update[:character_id])
+      current_fortune = character.action_values["Fortune"] || 0
+      if current_fortune > 0
+        fortune_to_spend = [update[:fortune_spent].to_i, current_fortune].min
+        new_fortune = current_fortune - fortune_to_spend
+        
+        Rails.logger.info "⭐ #{character.name} spending #{fortune_to_spend} Fortune point(s) for chase action (#{current_fortune} -> #{new_fortune})"
+        
+        # Update character's Fortune value
+        updated_values = character.action_values.dup
+        updated_values["Fortune"] = new_fortune
+        character.action_values = updated_values
+        character.save!
+      end
+    end
+    
     # Handle position update if provided (directly from update, not action_values)
     if update[:position].present? && update[:target_vehicle_id].present?
       Rails.logger.info "🏎️ Updating chase position to #{update[:position]}"
