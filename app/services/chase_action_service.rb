@@ -52,6 +52,8 @@ class ChaseActionService
     # Track if vehicle was already defeated before this update
     was_defeated_before = vehicle.defeated_in_chase?(shot)
     
+    Rails.logger.info "🎯 Chase update received - shot_cost: #{update[:shot_cost].inspect}, character_id: #{update[:character_id].inspect}"
+    
     # Handle shot cost if provided (for the driver spending shots)
     if update[:shot_cost].present? && update[:character_id].present?
       character_shot = @fight.shots.find_by(character_id: update[:character_id])
@@ -63,7 +65,11 @@ class ChaseActionService
         Rails.logger.info "🎲 #{character_shot.character.name} spending #{actual_cost} shots for chase action (#{character_shot.shot} -> #{new_shot_value})"
         character_shot.shot = new_shot_value
         character_shot.save!
+      else
+        Rails.logger.warn "⚠️ Could not find shot record for character #{update[:character_id]} in fight #{@fight.id}"
       end
+    elsif update[:shot_cost].present?
+      Rails.logger.warn "⚠️ Shot cost provided (#{update[:shot_cost]}) but no character_id"
     end
     
     # Handle Fortune spending if provided
