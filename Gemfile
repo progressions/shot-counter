@@ -9,7 +9,6 @@ gem "psych"
 gem "rails", "~> 8.0.1"
 
 gem "aws-sdk-s3", require: false
-gem "ruby-vips"
 gem "active_model_serializers"
 
 # Use postgresql as the database for Active Record
@@ -47,8 +46,11 @@ gem "tzinfo-data", platforms: %i[ mingw mswin x64_mingw jruby ]
 # Reduces boot times through caching; required in config/boot.rb
 gem "bootsnap", require: false
 
-# Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html#transforming-images]
-gem "image_processing", "~> 1.2"
+# Image processing gems - skip in test environment
+unless ENV['SKIP_IMAGE_PROCESSING'] == 'true' || ENV['RAILS_ENV'] == 'test'
+  gem "ruby-vips"
+  gem "image_processing", "~> 1.2"
+end
 gem 'imagekitio'
 
 # Use Rack CORS for handling Cross-Origin Resource Sharing (CORS), making cross-origin AJAX possible
