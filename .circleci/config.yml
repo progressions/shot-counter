@@ -66,9 +66,26 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-            gem install bundler
-            bundle config set --local path 'vendor/bundle'
-            bundle install --jobs=4 --retry=3
+            # Debug gem environment
+            echo "Ruby version:"
+            ruby -v
+            echo "Gem version:"
+            gem -v
+            echo "Gem environment:"
+            gem env
+            
+            # Install specific bundler version
+            gem install bundler -v 2.4.10
+            
+            # Configure bundler
+            bundle _2.4.10_ config set --local path 'vendor/bundle'
+            bundle _2.4.10_ config set --local deployment 'false'
+            
+            # Install dependencies
+            bundle _2.4.10_ install --jobs=4 --retry=3
+            
+            # List installed gems for debugging
+            bundle _2.4.10_ list | head -20
       
       # Save cache
       - save_cache:
@@ -110,15 +127,15 @@ jobs:
       - run:
           name: Database setup
           command: |
-            RAILS_ENV=test bundle exec rails db:create
-            RAILS_ENV=test bundle exec rails db:schema:load
+            RAILS_ENV=test bundle _2.4.10_ exec rails db:create
+            RAILS_ENV=test bundle _2.4.10_ exec rails db:schema:load
             
       # Test RSpec setup first
       - run:
           name: Test RSpec setup
           command: |
             echo "Testing RSpec setup with a single model spec..."
-            RAILS_ENV=test DISABLE_BOOTSNAP=1 DISABLE_SPRING=1 bundle exec rspec spec/models/user_spec.rb --format documentation || true
+            RAILS_ENV=test DISABLE_BOOTSNAP=1 DISABLE_SPRING=1 bundle _2.4.10_ exec rspec spec/models/user_spec.rb --format documentation || true
             
       # Run RSpec tests
       - run:
@@ -126,7 +143,7 @@ jobs:
           command: |
             mkdir /tmp/test-results
             echo "Starting full RSpec test suite..."
-            RAILS_ENV=test DISABLE_BOOTSNAP=1 DISABLE_SPRING=1 bundle exec rspec \
+            RAILS_ENV=test DISABLE_BOOTSNAP=1 DISABLE_SPRING=1 bundle _2.4.10_ exec rspec \
                             --format documentation \
                             --format RspecJunitFormatter \
                             --out /tmp/test-results/rspec.xml \
