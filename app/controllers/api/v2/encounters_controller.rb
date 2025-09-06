@@ -144,6 +144,7 @@ class Api::V2::EncountersController < ApplicationController
       :target_vehicle_id,
       :character_id,
       :shot_cost,
+      :fortune_spent,
       :role,
       :position,
       :action_type,

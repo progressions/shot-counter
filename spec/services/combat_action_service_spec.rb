@@ -844,7 +844,7 @@ RSpec.describe CombatActionService do
             shot_id: @attacker_shot.id,
             character_id: @attacker.id,
             shot: 12,
-            action_values: { "Type" => "PC", "Fortune" => 2, "Wounds" => 0 },  # Spent 1 fortune
+            action_values: { "Fortune" => 2 },  # Spent 1 fortune (only send changed field)
             event: {
               type: "act",
               description: "Attacker acts with fortune (3 shots, 1 fortune)"
@@ -853,7 +853,7 @@ RSpec.describe CombatActionService do
           {
             shot_id: @defender_shot.id,
             character_id: @defender.id,
-            action_values: { "Type" => "PC", "Wounds" => 12, "Fortune" => 1 },
+            action_values: { "Wounds" => 12 },  # Only send changed field
             impairments: 0,
             event: {
               type: "attack",
@@ -869,6 +869,53 @@ RSpec.describe CombatActionService do
         
         expect(@attacker.action_values["Fortune"]).to eq(2)
         expect(@defender.action_values["Wounds"]).to eq(12)
+      end
+      
+      it 'correctly deducts fortune when PC spends fortune for attack bonus' do
+        # This test verifies the complete flow: PC starts with 3 Fortune,
+        # uses 1 Fortune for bonus attack damage, ends with 2 Fortune
+        initial_fortune = @attacker.action_values["Fortune"]
+        expect(initial_fortune).to eq(3)
+        
+        character_updates = [
+          {
+            shot_id: @attacker_shot.id,
+            character_id: @attacker.id,
+            shot: 12,  # Spends 3 shots
+            action_values: { "Fortune" => 2 },  # Reduces fortune from 3 to 2
+            event: {
+              type: "act",
+              description: "Attacker acts with fortune bonus (3 shots, 1 fortune)"
+            }
+          },
+          {
+            shot_id: @defender_shot.id,
+            character_id: @defender.id,
+            action_values: { "Wounds" => 15 },  # Higher damage due to fortune bonus
+            impairments: 0,
+            event: {
+              type: "attack",
+              description: "Attacker attacked Defender for 15 wounds (fortune +3 bonus)"
+            }
+          }
+        ]
+        
+        CombatActionService.apply_combat_action(@fight, character_updates)
+        
+        # Reload and verify
+        @attacker.reload
+        @defender.reload
+        
+        # Verify attacker's fortune was reduced
+        expect(@attacker.action_values["Fortune"]).to eq(2)
+        # Verify attacker's other values remain unchanged
+        expect(@attacker.action_values["Type"]).to eq("PC")
+        expect(@attacker.action_values["Wounds"]).to eq(0)
+        
+        # Verify defender took damage
+        expect(@defender.action_values["Wounds"]).to eq(15)
+        # Verify defender's fortune unchanged
+        expect(@defender.action_values["Fortune"]).to eq(1)
       end
       
       it 'handles defender with no fortune attempting fortune dodge' do
