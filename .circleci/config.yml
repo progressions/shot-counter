@@ -21,6 +21,8 @@ jobs:
           POSTGRES_DB: shot_server_test
           POSTGRES_PASSWORD: ""
           POSTGRES_HOST_AUTH_METHOD: trust
+      
+      - image: cimg/redis:7.0
     
     steps:
       - checkout
