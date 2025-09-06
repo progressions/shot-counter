@@ -49,7 +49,11 @@ Devise.setup do |config|
   # config.authentication_keys = [:email]
 
   config.jwt do |jwt|
-    jwt.secret = Rails.application.credentials.devise_jwt_secret_key!
+    jwt.secret = if Rails.env.test?
+      ENV['DEVISE_JWT_SECRET_KEY'] || 'test_jwt_secret_key_for_ci_environment_only'
+    else
+      Rails.application.credentials.devise_jwt_secret_key!
+    end
     jwt.dispatch_requests = [
       ['POST', %r{^/users/sign_in$}]
     ]
