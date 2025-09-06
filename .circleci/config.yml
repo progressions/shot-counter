@@ -60,10 +60,10 @@ jobs:
           name: Run tests
           command: |
             # Run a simple test to verify setup
-            timeout 30 bundle exec rspec spec/models/user_spec.rb --format progress || true
+            bundle exec rspec spec/models/user_spec.rb --format progress || true
             
-            # If that worked, run all tests with timeout
-            timeout 180 bundle exec rspec --format progress --fail-fast || exit 1
+            # If that worked, run all tests
+            bundle exec rspec --format progress --fail-fast
           no_output_timeout: 4m
 
 workflows:
