@@ -99,8 +99,12 @@ class Character < ApplicationRecord
   validates :impairments, numericality: { greater_than_or_equal_to: 0 }, allow_nil: true
   validate :new_owner_is_campaign_member, on: :update, if: :user_id_changed?
   validate :associations_belong_to_same_campaign
+  validate :valid_status_array
 
   scope :active, -> { where(active: true) }
+  scope :requiring_up_check, -> { where("status @> ?", '["up_check_required"]') }
+  scope :out_of_fight, -> { where("status @> ?", '["out_of_fight"]') }
+  scope :in_fight, -> { where.not("status @> ?", '["out_of_fight"]') }
 
   scope :by_type, -> (player_type) do
     where("action_values->>'Type' IN (?)", player_type)
@@ -351,6 +355,38 @@ class Character < ApplicationRecord
     !good_guy?
   end
 
+  # Alias for consistency with test naming
+  def pc?
+    is_pc?
+  end
+
+  # Status helper methods
+  def up_check_required?
+    status.include?("up_check_required")
+  end
+
+  def out_of_fight?
+    status.include?("out_of_fight")
+  end
+
+  def add_status(new_status)
+    update(status: (status + [new_status]).uniq)
+  end
+
+  def remove_status(status_to_remove)
+    update(status: status - [status_to_remove])
+  end
+
+  def clear_status
+    update(status: [])
+  end
+
+  def increment_marks_of_death
+    marks = action_values["Marks of Death"] || 0
+    action_values["Marks of Death"] = marks + 1
+    save
+  end
+
   def effects_for_fight(fight)
     shots
       .find_by(fight_id: fight.id)
@@ -444,6 +480,11 @@ class Character < ApplicationRecord
     if marks_value < 0 || marks_value > 5
       errors.add(:base, "Marks of Death must be between 0 and 5")
     end
+  end
+
+  def valid_status_array
+    return if status.is_a?(Array)
+    errors.add(:status, "must be an array")
   end
 
   def associations_belong_to_same_campaign

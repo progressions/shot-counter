@@ -68,9 +68,14 @@ class CombatActionService
       shot.save!
     end
     
-    # For PCs, update the character record (persistent across fights)
-    if shot.character&.is_pc?
+    # For PCs and Allies, update the character record (persistent across fights)
+    # Both PC and Ally types maintain persistent character records
+    character_type = shot.character&.action_values&.fetch("Type", nil)
+    if ["PC", "Ally"].include?(character_type)
       character = shot.character
+      
+      # Track wounds before update for threshold checking
+      old_wounds = character.action_values["Wounds"] || 0
       
       # Update action values if provided (includes Wounds, Fortune, etc.)
       if update[:action_values].present?
@@ -81,6 +86,38 @@ class CombatActionService
         Rails.logger.info "📊 New action_values after merge: #{character.action_values.inspect}"
         Rails.logger.info "📊 Character changed?: #{character.changed?}"
         Rails.logger.info "📊 Character changes: #{character.changes.inspect}"
+      end
+      
+      # Check for Up Check threshold crossing (PC/Ally only - already filtered above)
+      new_wounds = character.action_values["Wounds"] || 0
+      wound_threshold = 35  # Standard threshold for PC/Ally (Boss would be 50 but they're NPCs)
+      
+      # Check if crossing threshold from below to at/above
+      if old_wounds < wound_threshold && new_wounds >= wound_threshold
+        Rails.logger.info "⚠️ #{character.name} crossed wound threshold (#{old_wounds} -> #{new_wounds}), triggering Up Check"
+        
+        # Set up_check_required status
+        character.add_status("up_check_required")
+        
+        # Increment Marks of Death
+        marks = character.action_values["Marks of Death"] || 0
+        character.action_values = character.action_values.merge("Marks of Death" => marks + 1)
+        
+        # Create fight event
+        @fight.fight_events.create!(
+          event_type: "wound_threshold",
+          description: "#{character.name} reached wound threshold and needs an Up Check",
+          details: {
+            character_id: character.id,
+            wounds: new_wounds,
+            threshold: wound_threshold,
+            marks_of_death: marks + 1
+          }
+        )
+      elsif old_wounds >= wound_threshold && new_wounds < wound_threshold && character.up_check_required?
+        # Healed below threshold, clear up_check_required status
+        Rails.logger.info "💚 #{character.name} healed below wound threshold (#{old_wounds} -> #{new_wounds}), clearing Up Check requirement"
+        character.remove_status("up_check_required")
       end
       
       # Update impairments if provided
@@ -123,11 +160,115 @@ class CombatActionService
     else
       # For NPCs, Vehicles, and Mooks, update the shot record (fight-specific)
       
+      # Store old wounds for threshold checking
+      old_wounds = shot.count || 0
+      
       # Update wounds/count on the shot
       if update[:wounds].present? || update[:count].present?
         new_value = update[:count] || update[:wounds] || 0
         Rails.logger.info "💔 Updating NPC/Vehicle #{entity_name} wounds/count to #{new_value}"
         shot.count = new_value
+      end
+      
+      # Check for out_of_fight status for NPCs based on wound thresholds
+      if entity.is_a?(Character)
+        new_wounds = shot.count || 0
+        
+        # Determine wound threshold based on character type
+        char_type = entity.action_values["Type"]
+        wound_threshold = case char_type
+        when "Uber-Boss", "Boss"
+          50
+        when "Featured Foe"
+          25
+        when "Ally"
+          35
+        when "PC"
+          35
+        when "Mook"
+          0  # Mooks are out when count reaches 0
+        else
+          nil
+        end
+        
+        if wound_threshold
+          # For mooks, check if count is 0
+          if char_type == "Mook"
+            if new_wounds <= 0 && !entity.status&.include?("out_of_fight")
+              Rails.logger.info "💀 Mooks #{entity.name} eliminated (count: #{new_wounds})"
+              entity.add_status("out_of_fight")
+              entity.save!
+              
+              @fight.fight_events.create!(
+                event_type: "out_of_fight",
+                description: "#{entity.name} eliminated!",
+                details: {
+                  character_id: entity.id,
+                  wounds: new_wounds,
+                  character_type: char_type
+                }
+              )
+            elsif new_wounds > 0 && entity.status&.include?("out_of_fight")
+              # Revived/reinforced
+              entity.remove_status("out_of_fight")
+              entity.save!
+            end
+          else
+            # For non-mooks: simple rule - if wounds >= threshold, they're out
+            if new_wounds >= wound_threshold
+              # Boss and Uber-Boss get up_check_required instead of out_of_fight
+              if char_type == "Boss" || char_type == "Uber-Boss"
+                if !entity.status&.include?("up_check_required")
+                  Rails.logger.info "⚠️ #{entity.name} needs an Up Check! (#{new_wounds} wounds >= #{wound_threshold} threshold)"
+                  entity.add_status("up_check_required")
+                  entity.save!
+                  
+                  # Create event for Up Check needed
+                  @fight.fight_events.create!(
+                    event_type: "wound_threshold",
+                    description: "#{entity.name} needs an Up Check!",
+                    details: {
+                      character_id: entity.id,
+                      wounds: new_wounds,
+                      threshold: wound_threshold,
+                      character_type: char_type
+                    }
+                  )
+                end
+              else
+                # Non-Boss characters go straight to out_of_fight
+                if !entity.status&.include?("out_of_fight")
+                  Rails.logger.info "💀 #{entity.name} is out of the fight! (#{new_wounds} wounds >= #{wound_threshold} threshold)"
+                  entity.add_status("out_of_fight")
+                  entity.save!
+                  
+                  # Create event when going out
+                  @fight.fight_events.create!(
+                    event_type: "out_of_fight",
+                    description: "#{entity.name} is out of the fight!",
+                    details: {
+                      character_id: entity.id,
+                      wounds: new_wounds,
+                      threshold: wound_threshold,
+                      character_type: char_type
+                    }
+                  )
+                end
+              end
+            else
+              # wounds < threshold, so they should be in the fight
+              if entity.status&.include?("out_of_fight")
+                Rails.logger.info "💚 #{entity.name} is back in the fight! (#{new_wounds} wounds < #{wound_threshold} threshold)"
+                entity.remove_status("out_of_fight")
+                entity.save!
+              elsif entity.status&.include?("up_check_required")
+                Rails.logger.info "💚 #{entity.name} healed below threshold, clearing Up Check requirement (#{new_wounds} wounds < #{wound_threshold} threshold)"
+                entity.remove_status("up_check_required")
+                entity.save!
+              end
+            end
+          end
+        end
       end
       
       # Update impairments on the shot

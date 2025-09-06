@@ -194,7 +194,7 @@ end
       end
     end
     
-    character_data = character_data.slice(:name, :description, :active, :character_ids, :party_ids, :site_ids, :juncture_ids, :schtick_ids, :action_values, :skills, :weapon_ids, :juncture_id, :faction_id, :wealth, :user_id, :impairments)
+    character_data = character_data.slice(:name, :description, :active, :character_ids, :party_ids, :site_ids, :juncture_ids, :schtick_ids, :action_values, :skills, :weapon_ids, :juncture_id, :faction_id, :wealth, :user_id, :impairments, :status)
 
     # Merge action_values and skills instead of replacing them entirely
     if character_data[:action_values].present?
@@ -403,6 +403,7 @@ end
       .permit(:name, :defense, :impairments, :color, :notion_page_id,
               :user_id, :active, :faction_id, :image, :task, :juncture_id, :wealth,
               schtick_ids: [], weapon_ids: [], site_ids: [], party_ids: [],
+              status: [],
               action_values: {},
               description: Character::DEFAULT_DESCRIPTION.keys,
               schticks: [], skills: {})

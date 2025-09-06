@@ -78,7 +78,8 @@ class EncounterSerializer < ActiveModel::Serializer
                 'shot_id', shots.id,
                 'current_shot', shots.shot,
                 'location', shots.location,
-                'driving_id', shots.driving_id
+                'driving_id', shots.driving_id,
+                'status', characters.status
               )
             ELSE NULL
           END
