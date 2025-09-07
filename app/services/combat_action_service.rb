@@ -10,19 +10,19 @@ class CombatActionService
 
   def apply
     result = nil
-    
+
     ActiveRecord::Base.transaction do
       # Disable individual broadcasts during the transaction
       Thread.current[:disable_broadcasts] = true
-      
+
       begin
         @character_updates.each do |update|
           apply_character_update(update)
         end
-        
+
         # Touch the fight to update its timestamp
         @fight.touch
-        
+
         # Store the result for returning after transaction
         result = @fight
       ensure
@@ -30,12 +30,12 @@ class CombatActionService
         Thread.current[:disable_broadcasts] = false
       end
     end
-    
+
     # Manually trigger the encounter broadcast since it was disabled during the transaction
     @fight.broadcast_encounter_update!
-    
+
     Rails.logger.info "🔄 BATCHED WEBSOCKET: Completed #{@character_updates.length} character updates for fight #{@fight.id}"
-    
+
     result
   end
 
@@ -57,26 +57,26 @@ class CombatActionService
     else
       raise ArgumentError, "Must provide shot_id, character_id, or vehicle_id"
     end
-    
+
     entity = shot.character || shot.vehicle
     entity_name = entity&.name || "Unknown"
-    
+
     # Update shot position if provided
     if update[:shot].present? && shot.shot != update[:shot]
       Rails.logger.info "🎯 Moving #{entity_name} from shot #{shot.shot} to #{update[:shot]}"
       shot.shot = update[:shot]
       shot.save!
     end
-    
+
     # For PCs and Allies, update the character record (persistent across fights)
     # Both PC and Ally types maintain persistent character records
     character_type = shot.character&.action_values&.fetch("Type", nil)
     if ["PC", "Ally"].include?(character_type)
       character = shot.character
-      
+
       # Track wounds before update for threshold checking
       old_wounds = character.action_values["Wounds"] || 0
-      
+
       # Update action values if provided (includes Wounds, Fortune, etc.)
       if update[:action_values].present?
         Rails.logger.info "📊 Updating PC #{character.name} action values: #{update[:action_values]}"
@@ -87,22 +87,22 @@ class CombatActionService
         Rails.logger.info "📊 Character changed?: #{character.changed?}"
         Rails.logger.info "📊 Character changes: #{character.changes.inspect}"
       end
-      
+
       # Check for Up Check threshold crossing (PC/Ally only - already filtered above)
       new_wounds = character.action_values["Wounds"] || 0
       wound_threshold = 35  # Standard threshold for PC/Ally (Boss would be 50 but they're NPCs)
-      
+
       # Check if crossing threshold from below to at/above
-      if old_wounds < wound_threshold && new_wounds >= wound_threshold
+      if new_wounds >= wound_threshold
         Rails.logger.info "⚠️ #{character.name} crossed wound threshold (#{old_wounds} -> #{new_wounds}), triggering Up Check"
-        
+
         # Set up_check_required status
         character.add_status("up_check_required")
-        
+
         # Increment Marks of Death
         marks = character.action_values["Marks of Death"] || 0
         character.action_values = character.action_values.merge("Marks of Death" => marks + 1)
-        
+
         # Create fight event
         @fight.fight_events.create!(
           event_type: "wound_threshold",
@@ -119,19 +119,19 @@ class CombatActionService
         Rails.logger.info "💚 #{character.name} healed below wound threshold (#{old_wounds} -> #{new_wounds}), clearing Up Check requirement"
         character.remove_status("up_check_required")
       end
-      
+
       # Update impairments if provided
       if update[:impairments].present?
         Rails.logger.info "🤕 Updating PC #{character.name} impairments to #{update[:impairments]}"
         character.impairments = update[:impairments]
       end
-      
+
       # Update defense if provided
       if update[:defense].present?
         Rails.logger.info "🛡️ Updating PC #{character.name} defense to #{update[:defense]}"
-        character.defense = update[:defense]
+        character.action_values["Defense"] = update[:defense]
       end
-      
+
       # Update any other character attributes
       if update[:attributes].present?
         update[:attributes].each do |key, value|
@@ -141,17 +141,17 @@ class CombatActionService
           end
         end
       end
-      
+
       # Always save if we had any updates for this character
-      should_save = update[:action_values].present? || 
-                    update[:impairments].present? || 
-                    update[:defense].present? || 
+      should_save = update[:action_values].present? ||
+                    update[:impairments].present? ||
+                    update[:defense].present? ||
                     update[:attributes].present? ||
                     character.changed?
-      
+
       Rails.logger.info "📊 Should save?: #{should_save}"
       Rails.logger.info "📊 Character before save - Wounds: #{character.action_values['Wounds']}"
-      
+
       if should_save
         character.save!
         character.reload
@@ -159,21 +159,21 @@ class CombatActionService
       end
     else
       # For NPCs, Vehicles, and Mooks, update the shot record (fight-specific)
-      
+
       # Store old wounds for threshold checking
       old_wounds = shot.count || 0
-      
+
       # Update wounds/count on the shot
       if update[:wounds].present? || update[:count].present?
         new_value = update[:count] || update[:wounds] || 0
         Rails.logger.info "💔 Updating NPC/Vehicle #{entity_name} wounds/count to #{new_value}"
         shot.count = new_value
       end
-      
+
       # Check for out_of_fight status for NPCs based on wound thresholds
       if entity.is_a?(Character)
         new_wounds = shot.count || 0
-        
+
         # Determine wound threshold based on character type
         char_type = entity.action_values["Type"]
         wound_threshold = case char_type
@@ -190,7 +190,7 @@ class CombatActionService
         else
           nil
         end
-        
+
         if wound_threshold
           # For mooks, check if count is 0
           if char_type == "Mook"
@@ -198,7 +198,7 @@ class CombatActionService
               Rails.logger.info "💀 Mooks #{entity.name} eliminated (count: #{new_wounds})"
               entity.add_status("out_of_fight")
               entity.save!
-              
+
               @fight.fight_events.create!(
                 event_type: "out_of_fight",
                 description: "#{entity.name} eliminated!",
@@ -222,7 +222,7 @@ class CombatActionService
                   Rails.logger.info "⚠️ #{entity.name} needs an Up Check! (#{new_wounds} wounds >= #{wound_threshold} threshold)"
                   entity.add_status("up_check_required")
                   entity.save!
-                  
+
                   # Create event for Up Check needed
                   @fight.fight_events.create!(
                     event_type: "wound_threshold",
@@ -241,7 +241,7 @@ class CombatActionService
                   Rails.logger.info "💀 #{entity.name} is out of the fight! (#{new_wounds} wounds >= #{wound_threshold} threshold)"
                   entity.add_status("out_of_fight")
                   entity.save!
-                  
+
                   # Create event when going out
                   @fight.fight_events.create!(
                     event_type: "out_of_fight",
@@ -270,22 +270,16 @@ class CombatActionService
           end
         end
       end
-      
+
       # Update impairments on the shot
       if update[:impairments].present?
         Rails.logger.info "🤕 Updating NPC/Vehicle #{entity_name} impairments to #{update[:impairments]}"
         shot.impairments = update[:impairments]
       end
-      
-      # Update defense on the shot
-      if update[:defense].present?
-        Rails.logger.info "🛡️ Updating NPC/Vehicle #{entity_name} defense to #{update[:defense]}"
-        shot.defense = update[:defense]
-      end
-      
+
       shot.save! if shot.changed?
     end
-    
+
     # Log the combat event if provided
     if update[:event].present?
       Rails.logger.info "📝 Creating fight event: #{update[:event][:description]}"

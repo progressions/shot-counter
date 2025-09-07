@@ -1273,4 +1273,168 @@ RSpec.describe CombatActionService do
       end
     end
   end
+
+  describe '#apply_combat_action with multiple targets (PC and NPC)' do
+    before do
+      # Create PC attacker
+      @pc_attacker = Character.create!(
+        name: "Amelia Van Der Hauten",
+        campaign: @campaign,
+        action_values: { 
+          "Type" => "PC", 
+          "MainAttack" => "Guns", 
+          "Guns" => 14,
+          "Defense" => 14,
+          "Toughness" => 7,
+          "Fortune" => 3,
+          "Wounds" => 0 
+        },
+        impairments: 0
+      )
+      
+      # Create PC target
+      @pc_target = Character.create!(
+        name: "Agent 47",
+        campaign: @campaign,
+        action_values: { 
+          "Type" => "PC", 
+          "Defense" => 16,
+          "Toughness" => 7,
+          "Wounds" => 6  # Starting with 6 wounds
+        },
+        impairments: 0
+      )
+      
+      # Create NPC target (Featured Foe)
+      @npc_target = Character.create!(
+        name: "Scorch O'Connor",
+        campaign: @campaign,
+        action_values: { 
+          "Type" => "Featured Foe", 
+          "Defense" => 16,
+          "Toughness" => 7
+        },
+        impairments: 0
+      )
+      
+      # Create shots
+      @attacker_shot = Shot.create!(fight: @fight, character: @pc_attacker, shot: 8)
+      @pc_target_shot = Shot.create!(fight: @fight, character: @pc_target, shot: 5)
+      @npc_target_shot = Shot.create!(fight: @fight, character: @npc_target, shot: 4, count: 0)  # NPC starts with 0 wounds
+    end
+    
+    it 'correctly applies wounds to both PC and NPC targets' do
+      character_updates = [
+        {
+          shot_id: @attacker_shot.id,
+          character_id: @pc_attacker.id,
+          shot: 5,  # 8 - 3 shots
+          event: {
+            type: "act",
+            description: "Amelia Van Der Hauten acts (3 shots)",
+            details: {
+              character_id: @pc_attacker.id,
+              shot_cost: 3,
+              from_shot: 8,
+              to_shot: 5
+            }
+          }
+        },
+        {
+          shot_id: @pc_target_shot.id,
+          character_id: @pc_target.id,
+          impairments: 0,
+          action_values: { "Wounds" => 13 },  # 6 + 7 damage = 13 total wounds
+          event: {
+            type: "attack",
+            description: "Amelia Van Der Hauten attacked Agent 47 for 7 wounds",
+            details: {
+              attacker_id: @pc_attacker.id,
+              target_id: @pc_target.id,
+              damage: 7,
+              attack_value: 14,
+              defense_value: 16,
+              swerve: 7,
+              outcome: 5,
+              weapon_damage: 9,
+              shot_cost: 3,
+              stunt: false,
+              dodge: false,
+              defense_choice: "none",
+              is_mook_takedown: false
+            }
+          }
+        },
+        {
+          shot_id: @npc_target_shot.id,
+          character_id: @npc_target.id,
+          impairments: 0,
+          wounds: 7,  # NPCs use 'wounds' field which stores total in shot.count
+          event: {
+            type: "attack",
+            description: "Amelia Van Der Hauten attacked Scorch O'Connor for 7 wounds",
+            details: {
+              attacker_id: @pc_attacker.id,
+              target_id: @npc_target.id,
+              damage: 7,
+              attack_value: 14,
+              defense_value: 16,
+              swerve: 7,
+              outcome: 5,
+              weapon_damage: 9,
+              shot_cost: 3,
+              stunt: false,
+              dodge: false,
+              defense_choice: "none",
+              is_mook_takedown: false
+            }
+          }
+        }
+      ]
+      
+      CombatActionService.apply_combat_action(@fight, character_updates)
+      
+      # Verify attacker moved shots
+      @attacker_shot.reload
+      expect(@attacker_shot.shot).to eq(5)
+      
+      # Verify PC target wounds (stored in character.action_values)
+      @pc_target.reload
+      expect(@pc_target.action_values["Wounds"]).to eq(13)
+      
+      # Verify NPC target wounds (stored in shot.count)
+      @npc_target_shot.reload
+      expect(@npc_target_shot.count).to eq(7)
+      
+      # Verify events were created
+      events = @fight.fight_events.order(:created_at)
+      expect(events.count).to eq(3)
+      expect(events[0].description).to eq("Amelia Van Der Hauten acts (3 shots)")
+      expect(events[1].description).to eq("Amelia Van Der Hauten attacked Agent 47 for 7 wounds")
+      expect(events[2].description).to eq("Amelia Van Der Hauten attacked Scorch O'Connor for 7 wounds")
+    end
+    
+    it 'correctly applies wounds when NPC already has wounds' do
+      # Give NPC some starting wounds
+      @npc_target_shot.update!(count: 5)
+      
+      character_updates = [
+        {
+          shot_id: @npc_target_shot.id,
+          character_id: @npc_target.id,
+          wounds: 12,  # 5 existing + 7 damage = 12 total
+          impairments: 0,
+          event: {
+            type: "attack",
+            description: "Attack on NPC with existing wounds"
+          }
+        }
+      ]
+      
+      CombatActionService.apply_combat_action(@fight, character_updates)
+      
+      @npc_target_shot.reload
+      expect(@npc_target_shot.count).to eq(12)
+    end
+  end
 end
