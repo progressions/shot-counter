@@ -1269,7 +1269,8 @@ RSpec.describe CombatActionService do
         
         # Events
         events = @fight.fight_events.order(:created_at)
-        expect(events.count).to eq(6)
+        # Should have 8 events: 1 act, 2 dodges, 3 attacks, 1 out_of_fight, 1 wound_threshold
+        expect(events.count).to eq(8)
       end
     end
   end

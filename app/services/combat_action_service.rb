@@ -142,11 +142,28 @@ class CombatActionService
         end
       end
 
+      # Handle status updates - remove first, then add
+      if update[:remove_status].present?
+        update[:remove_status].each do |status|
+          Rails.logger.info "➖ Removing status '#{status}' from PC #{character.name}"
+          character.remove_status(status)
+        end
+      end
+
+      if update[:add_status].present?
+        update[:add_status].each do |status|
+          Rails.logger.info "➕ Adding status '#{status}' to PC #{character.name}"
+          character.add_status(status)
+        end
+      end
+
       # Always save if we had any updates for this character
       should_save = update[:action_values].present? ||
                     update[:impairments].present? ||
                     update[:defense].present? ||
                     update[:attributes].present? ||
+                    update[:remove_status].present? ||
+                    update[:add_status].present? ||
                     character.changed?
 
       Rails.logger.info "📊 Should save?: #{should_save}"
@@ -277,7 +294,24 @@ class CombatActionService
         shot.impairments = update[:impairments]
       end
 
+      # Handle status updates for NPCs/Vehicles - remove first, then add
+      if update[:remove_status].present? && entity.is_a?(Character)
+        update[:remove_status].each do |status|
+          Rails.logger.info "➖ Removing status '#{status}' from #{entity_name}"
+          entity.remove_status(status)
+        end
+      end
+
+      if update[:add_status].present? && entity.is_a?(Character)
+        update[:add_status].each do |status|
+          Rails.logger.info "➕ Adding status '#{status}' to #{entity_name}"
+          entity.add_status(status)
+        end
+      end
+
+      # Save if shot or entity changed
       shot.save! if shot.changed?
+      entity.save! if entity.is_a?(Character) && entity.changed?
     end
 
     # Log the combat event if provided
