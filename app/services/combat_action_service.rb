@@ -86,7 +86,7 @@ class CombatActionService
       character = shot.character
 
       # Track wounds before update for threshold checking
-      old_wounds = character.action_values["Wounds"] || 0
+      old_wounds = (character.action_values["Wounds"] || 0).to_i
 
       # Update action values if provided (includes Wounds, Fortune, etc.)
       if update[:action_values].present?
@@ -100,7 +100,7 @@ class CombatActionService
       end
 
       # Check for Up Check threshold crossing (PC only - Allies don't make Up Checks)
-      new_wounds = character.action_values["Wounds"] || 0
+      new_wounds = (character.action_values["Wounds"] || 0).to_i
       wound_threshold = 35  # Standard threshold for PC
 
       # Check if crossing threshold from below to at/above
@@ -194,7 +194,7 @@ class CombatActionService
       # For NPCs, Vehicles, and Mooks, update the shot record (fight-specific)
 
       # Store old wounds for threshold checking
-      old_wounds = shot.count || 0
+      old_wounds = (shot.count || 0).to_i
 
       # Update wounds/count on the shot
       if update[:wounds].present? || update[:count].present?
@@ -205,7 +205,7 @@ class CombatActionService
 
       # Check for out_of_fight status for NPCs based on wound thresholds
       if entity.is_a?(Character)
-        new_wounds = shot.count || 0
+        new_wounds = (shot.count || 0).to_i
 
         # Determine wound threshold based on character type
         char_type = entity.action_values["Type"]
