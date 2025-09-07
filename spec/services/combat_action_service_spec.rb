@@ -1438,4 +1438,72 @@ RSpec.describe CombatActionService do
       expect(@npc_target_shot.count).to eq(12)
     end
   end
+
+  describe 'shot_cost handling' do
+    before(:each) do
+      @speed_check_character = @campaign.characters.create!(
+        name: "Speed Check Character",
+        action_values: { "Type" => "PC" }
+      )
+      @speed_check_shot = @fight.shots.create!(character: @speed_check_character, shot: 15)
+    end
+
+    it 'deducts shot cost from character shot position' do
+      character_updates = [
+        {
+          character_id: @speed_check_character.id,
+          shot_cost: 3,
+          event: {
+            type: "speed_check",
+            description: "#{@speed_check_character.name} spends 3 shots on Speed Check"
+          }
+        }
+      ]
+
+      CombatActionService.apply_combat_action(@fight, character_updates)
+      
+      @speed_check_shot.reload
+      expect(@speed_check_shot.shot).to eq(12)  # 15 - 3 = 12
+    end
+
+    it 'does not go below -10 when deducting shot cost' do
+      @speed_check_shot.update!(shot: -8)
+      
+      character_updates = [
+        {
+          character_id: @speed_check_character.id,
+          shot_cost: 5,
+          event: {
+            type: "action",
+            description: "#{@speed_check_character.name} spends 5 shots"
+          }
+        }
+      ]
+
+      CombatActionService.apply_combat_action(@fight, character_updates)
+      
+      @speed_check_shot.reload
+      expect(@speed_check_shot.shot).to eq(-10)  # Capped at -10
+    end
+
+    it 'handles shot_cost and shot update separately' do
+      character_updates = [
+        {
+          character_id: @speed_check_character.id,
+          shot_cost: 3,
+          shot: 10,  # Both shot_cost and direct shot update
+          event: {
+            type: "test",
+            description: "Test both updates"
+          }
+        }
+      ]
+
+      CombatActionService.apply_combat_action(@fight, character_updates)
+      
+      @speed_check_shot.reload
+      # First shot_cost is applied (15 - 3 = 12), then shot is set to 10
+      expect(@speed_check_shot.shot).to eq(10)
+    end
+  end
 end
