@@ -68,10 +68,10 @@ class CombatActionService
       shot.save!
     end
 
-    # For PCs and Allies, update the character record (persistent across fights)
-    # Both PC and Ally types maintain persistent character records
+    # For PCs, update the character record (persistent across fights)
+    # Only PCs maintain persistent character records with wounds in action_values
     character_type = shot.character&.action_values&.fetch("Type", nil)
-    if ["PC", "Ally"].include?(character_type)
+    if character_type == "PC"
       character = shot.character
 
       # Track wounds before update for threshold checking
