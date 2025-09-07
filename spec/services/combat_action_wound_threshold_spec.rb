@@ -83,7 +83,7 @@ RSpec.describe CombatActionService, "wound threshold triggering" do
     end
     
     context "for different character types" do
-      it "triggers for Ally characters at 35 wounds" do
+      it "does not trigger for Ally characters" do
         ally = user.characters.create!(
           name: "Ally",
           campaign: campaign,
@@ -104,7 +104,7 @@ RSpec.describe CombatActionService, "wound threshold triggering" do
         CombatActionService.apply_combat_action(fight, character_updates)
         
         ally.reload
-        expect(ally.status).to include("up_check_required")
+        expect(ally.status).not_to include("up_check_required")
       end
       
       it "does not trigger for NPCs" do

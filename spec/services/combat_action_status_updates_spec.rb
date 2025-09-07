@@ -122,6 +122,7 @@ RSpec.describe CombatActionService do
         before do
           @pc_character.add_status("cheesing_it")
           @pc_character.add_status("stunned")
+          @pc_character.save
         end
 
         it 'removes a single status from the character' do
@@ -168,6 +169,7 @@ RSpec.describe CombatActionService do
         before do
           @npc_character.add_status("cheesing_it")
           @npc_character.add_status("stunned")
+          @npc_character.save
         end
 
         it 'removes a single status from the character' do          

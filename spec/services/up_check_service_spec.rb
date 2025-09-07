@@ -221,7 +221,7 @@ RSpec.describe UpCheckService do
         
         expect {
           service.apply
-        }.to raise_error(ArgumentError, /Only PCs can make Up Checks/)
+        }.to raise_error(ArgumentError, /Only PCs, Bosses, and Uber-Bosses can make Up Checks/)
       end
 
       it "raises error if character not in fight" do

@@ -139,10 +139,10 @@ class UpCheckService
     end
     
     character_type = @character.action_values["Type"]
-    valid_types = ["PC", "Ally", "Boss", "Uber-Boss"]
+    valid_types = ["PC", "Boss", "Uber-Boss"]
     
     unless valid_types.include?(character_type)
-      raise ArgumentError, "Only PCs, Allies, Bosses, and Uber-Bosses can make Up Checks"
+      raise ArgumentError, "Only PCs, Bosses, and Uber-Bosses can make Up Checks"
     end
   end
 

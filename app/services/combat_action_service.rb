@@ -88,12 +88,12 @@ class CombatActionService
         Rails.logger.info "📊 Character changes: #{character.changes.inspect}"
       end
 
-      # Check for Up Check threshold crossing (PC/Ally only - already filtered above)
+      # Check for Up Check threshold crossing (PC only - Allies don't make Up Checks)
       new_wounds = character.action_values["Wounds"] || 0
-      wound_threshold = 35  # Standard threshold for PC/Ally (Boss would be 50 but they're NPCs)
+      wound_threshold = 35  # Standard threshold for PC
 
       # Check if crossing threshold from below to at/above
-      if new_wounds >= wound_threshold
+      if old_wounds < wound_threshold && new_wounds >= wound_threshold
         Rails.logger.info "⚠️ #{character.name} crossed wound threshold (#{old_wounds} -> #{new_wounds}), triggering Up Check"
 
         # Set up_check_required status

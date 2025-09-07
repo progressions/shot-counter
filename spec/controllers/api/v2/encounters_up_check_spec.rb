@@ -201,7 +201,7 @@ RSpec.describe Api::V2::EncountersController, type: :controller do
         post :apply_combat_action, params: params
 
         expect(response).to have_http_status(:bad_request)
-        expect(JSON.parse(response.body)["error"]).to include("Only PCs can make Up Checks")
+        expect(JSON.parse(response.body)["error"]).to include("Only PCs, Bosses, and Uber-Bosses can make Up Checks")
       end
 
       it "returns error if character not in fight" do

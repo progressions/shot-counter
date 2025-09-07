@@ -61,18 +61,21 @@ RSpec.describe Character, "status management", type: :model do
   describe "#add_status" do
     it "adds a new status to the array" do
       pc_character.add_status("up_check_required")
+      pc_character.save
       expect(pc_character.reload.status).to eq(["up_check_required"])
     end
 
     it "does not duplicate existing status" do
       pc_character.update(status: ["up_check_required"])
       pc_character.add_status("up_check_required")
+      pc_character.save
       expect(pc_character.reload.status).to eq(["up_check_required"])
     end
 
     it "adds to existing statuses" do
       pc_character.update(status: ["impaired"])
       pc_character.add_status("up_check_required")
+      pc_character.save
       expect(pc_character.reload.status).to include("impaired", "up_check_required")
     end
   end
@@ -81,12 +84,14 @@ RSpec.describe Character, "status management", type: :model do
     it "removes a status from the array" do
       pc_character.update(status: ["up_check_required", "impaired"])
       pc_character.remove_status("up_check_required")
+      pc_character.save
       expect(pc_character.reload.status).to eq(["impaired"])
     end
 
     it "handles removing non-existent status gracefully" do
       pc_character.update(status: ["impaired"])
       pc_character.remove_status("up_check_required")
+      pc_character.save
       expect(pc_character.reload.status).to eq(["impaired"])
     end
   end
@@ -95,6 +100,7 @@ RSpec.describe Character, "status management", type: :model do
     it "clears all statuses" do
       pc_character.update(status: ["up_check_required", "out_of_fight", "impaired"])
       pc_character.clear_status
+      pc_character.save
       expect(pc_character.reload.status).to eq([])
     end
   end
