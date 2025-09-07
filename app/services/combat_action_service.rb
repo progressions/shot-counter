@@ -153,7 +153,9 @@ class CombatActionService
       if update[:add_status].present?
         update[:add_status].each do |status|
           Rails.logger.info "➕ Adding status '#{status}' to PC #{character.name}"
+          Rails.logger.info "📊 Current status before add: #{character.status.inspect}"
           character.add_status(status)
+          Rails.logger.info "📊 Status after add: #{character.status.inspect}"
         end
       end
 
@@ -167,12 +169,15 @@ class CombatActionService
                     character.changed?
 
       Rails.logger.info "📊 Should save?: #{should_save}"
-      Rails.logger.info "📊 Character before save - Wounds: #{character.action_values['Wounds']}"
+      Rails.logger.info "📊 Character before save - Wounds: #{character.action_values['Wounds']}, Status: #{character.status.inspect}"
 
       if should_save
+        Rails.logger.info "📊 Saving character #{character.name}..."
         character.save!
         character.reload
-        Rails.logger.info "📊 Character saved! Wounds after save: #{character.action_values['Wounds']}"
+        Rails.logger.info "📊 Character saved! Wounds after save: #{character.action_values['Wounds']}, Status: #{character.status.inspect}"
+      else
+        Rails.logger.info "📊 Not saving character - no changes detected"
       end
     else
       # For NPCs, Vehicles, and Mooks, update the shot record (fight-specific)

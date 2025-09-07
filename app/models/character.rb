@@ -362,23 +362,25 @@ class Character < ApplicationRecord
 
   # Status helper methods
   def up_check_required?
-    status.include?("up_check_required")
+    status&.include?("up_check_required") || false
   end
 
   def out_of_fight?
-    status.include?("out_of_fight")
+    status&.include?("out_of_fight") || false
   end
 
   def add_status(new_status)
-    update(status: (status + [new_status]).uniq)
+    current_status = status || []
+    self.status = (current_status + [new_status]).uniq
   end
 
   def remove_status(status_to_remove)
-    update(status: status - [status_to_remove])
+    current_status = status || []
+    self.status = current_status - [status_to_remove]
   end
 
   def clear_status
-    update(status: [])
+    self.status = []
   end
 
   def increment_marks_of_death

@@ -39,10 +39,12 @@ class UpCheckService
           # Update character status based on result
           if passed
             @character.remove_status("up_check_required")
+            @character.save!
             Rails.logger.info "✅ BOSS UP CHECK SUCCESS: #{@character.name} stays in the fight"
           else
             @character.remove_status("up_check_required")
             @character.add_status("out_of_fight")
+            @character.save!
             Rails.logger.info "❌ BOSS UP CHECK FAILED: #{@character.name} is out of the fight"
           end
           
@@ -67,10 +69,12 @@ class UpCheckService
           # Update character status based on result
           if passed
             @character.remove_status("up_check_required")
+            @character.save!
             Rails.logger.info "✅ UP CHECK SUCCESS: #{@character.name} stays in the fight"
           else
             @character.remove_status("up_check_required")
             @character.add_status("out_of_fight")
+            @character.save!
             Rails.logger.info "❌ UP CHECK FAILED: #{@character.name} is out of the fight"
           end
         end

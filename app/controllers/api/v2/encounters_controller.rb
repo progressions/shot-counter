@@ -140,6 +140,8 @@ class Api::V2::EncountersController < ApplicationController
       character_updates: [
         :shot_id, :character_id, :vehicle_id, :shot, :wounds, :count, 
         :impairments, :defense,
+        add_status: [],
+        remove_status: [],
         action_values: {},
         attributes: {},
         event: [:type, :description, details: {}]
