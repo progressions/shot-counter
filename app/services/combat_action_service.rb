@@ -61,7 +61,18 @@ class CombatActionService
     entity = shot.character || shot.vehicle
     entity_name = entity&.name || "Unknown"
 
-    # Update shot position if provided
+    # Handle shot cost if provided (character spending shots for an action)
+    if update[:shot_cost].present?
+      shot_cost = update[:shot_cost].to_i
+      # Ensure we don't go below -10 (the minimum allowed shot value)
+      new_shot_value = [shot.shot - shot_cost, -10].max
+      actual_cost = shot.shot - new_shot_value
+      Rails.logger.info "🎲 #{entity_name} spending #{actual_cost} shots (#{shot.shot} -> #{new_shot_value})"
+      shot.shot = new_shot_value
+      shot.save!
+    end
+
+    # Update shot position if provided (direct position update, not cost)
     if update[:shot].present? && shot.shot != update[:shot]
       Rails.logger.info "🎯 Moving #{entity_name} from shot #{shot.shot} to #{update[:shot]}"
       shot.shot = update[:shot]
