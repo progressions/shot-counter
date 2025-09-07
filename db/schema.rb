@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_09_05_135419) do
+ActiveRecord::Schema[8.0].define(version: 2025_09_06_201529) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -142,6 +142,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_05_135419) do
     t.uuid "juncture_id"
     t.string "wealth"
     t.boolean "is_template"
+    t.jsonb "status", default: []
     t.index "lower((name)::text)", name: "index_characters_on_lower_name"
     t.index ["action_values"], name: "index_characters_on_action_values", using: :gin
     t.index ["active"], name: "index_characters_on_active"
@@ -151,6 +152,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_05_135419) do
     t.index ["created_at"], name: "index_characters_on_created_at"
     t.index ["faction_id"], name: "index_characters_on_faction_id"
     t.index ["juncture_id"], name: "index_characters_on_juncture_id"
+    t.index ["status"], name: "index_characters_on_status", using: :gin
     t.index ["user_id"], name: "index_characters_on_user_id"
   end
 

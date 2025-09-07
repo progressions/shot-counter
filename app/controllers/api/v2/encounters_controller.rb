@@ -76,6 +76,14 @@ class Api::V2::EncountersController < ApplicationController
         boost_type: params[:boost_type],
         use_fortune: params[:use_fortune]
       )
+    elsif params[:action_type] == "up_check"
+      Rails.logger.info "🎲 UP CHECK ACTION: Processing Up Check for fight #{@fight.id}"
+      result = UpCheckService.apply_up_check(
+        fight: @fight,
+        character_id: params[:character_id],
+        swerve: params[:swerve],
+        fortune: params[:fortune] || 0
+      )
     else
       character_updates = combat_action_params[:character_updates] || []
       Rails.logger.info "🔄 BATCHED COMBAT: Applying #{character_updates.length} character updates to fight #{@fight.id}"
@@ -128,9 +136,12 @@ class Api::V2::EncountersController < ApplicationController
   def combat_action_params
     params.permit(
       :action_type, :booster_id, :target_id, :boost_type, :use_fortune,
+      :character_id, :swerve, :fortune,  # Up Check parameters
       character_updates: [
         :shot_id, :character_id, :vehicle_id, :shot, :wounds, :count, 
         :impairments, :defense,
+        add_status: [],
+        remove_status: [],
         action_values: {},
         attributes: {},
         event: [:type, :description, details: {}]

@@ -193,6 +193,9 @@ GEM
       multi_xml (>= 0.5.2)
     i18n (1.14.7)
       concurrent-ruby (~> 1.0)
+    image_processing (1.14.0)
+      mini_magick (>= 4.9.5, < 6)
+      ruby-vips (>= 2.0.17, < 3)
     imagekitio (3.1.0)
       addressable (~> 2.8)
       multipart-post (>= 2.1.0)
@@ -240,6 +243,8 @@ GEM
       logger
       mime-types-data (~> 3.2025, >= 3.2025.0507)
     mime-types-data (3.2025.0729)
+    mini_magick (5.3.0)
+      logger
     mini_mime (1.1.5)
     minitest (5.25.5)
     msgpack (1.8.0)
@@ -374,6 +379,9 @@ GEM
     rspec-support (3.13.4)
     rspec_junit_formatter (0.6.0)
       rspec-core (>= 2, < 4, != 2.12.0)
+    ruby-vips (2.2.4)
+      ffi (~> 1.12)
+      logger
     safe_shell (1.1.0)
     securerandom (0.4.1)
     sidekiq (7.3.9)
@@ -427,6 +435,7 @@ DEPENDENCIES
   discordrb!
   dockerfile-rails (>= 1.7)
   httparty
+  image_processing (~> 1.2)
   imagekitio
   kaminari
   letter_opener
@@ -443,6 +452,7 @@ DEPENDENCIES
   reverse_markdown
   rspec-rails
   rspec_junit_formatter
+  ruby-vips
   sidekiq (~> 7.0)
   tzinfo-data
 
