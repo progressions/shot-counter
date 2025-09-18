@@ -88,7 +88,8 @@ class Api::V2::CharactersController < ApplicationController
     params["template_filter"],
     params["visibility"],
     params["show_hidden"],
-    params["autocomplete"]
+    params["autocomplete"],
+    Time.now.to_i # TEMPORARY: Bust cache every request
   ].join("/")
 
   # Skip cache if cache buster is requested

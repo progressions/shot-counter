@@ -69,7 +69,8 @@ class Api::V2::WeaponsController < ApplicationController
       params["visibility"],
       params["show_hidden"],
       params["autocomplete"],
-    ].join("/")
+    Time.now.to_i # TEMPORARY: Bust cache every request
+  ].join("/")
 
     # Skip cache if cache buster is requested
     cached_result = if cache_buster_requested?
@@ -128,8 +129,9 @@ class Api::V2::WeaponsController < ApplicationController
       Weapon.cache_version_for(current_campaign.id),  # Changes when ANY weapons is created/updated/deleted
       ids.sort.join(","),
       params[:per_page] || 200,
-      params[:page] || 1
-    ].join("/")
+      params[:page] || 1,
+    Time.now.to_i # TEMPORARY: Bust cache every request
+  ].join("/")
 
     cached_response = Rails.cache.fetch(cache_key, expires_in: 12.hours) do
       weapons = current_campaign

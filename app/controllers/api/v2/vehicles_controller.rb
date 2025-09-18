@@ -71,7 +71,8 @@ class Api::V2::VehiclesController < ApplicationController
       params["juncture_id"],
       params["type"],
       params["archetype"],
-    ].join("/")
+    Time.now.to_i # TEMPORARY: Bust cache every request
+  ].join("/")
 
     # Skip cache if cache buster is requested
     cached_result = if cache_buster_requested?

@@ -89,7 +89,8 @@ class Api::V2::CampaignsController < ApplicationController
       params["vehicle_id"],
       params["visibility"],
       params["show_hidden"],
-    ].join("/")
+    Time.now.to_i # TEMPORARY: Bust cache every request
+  ].join("/")
     
     # Skip cache if cache buster is requested
     cached_result = if cache_buster_requested?
@@ -350,8 +351,9 @@ class Api::V2::CampaignsController < ApplicationController
               nil, # autocomplete
               nil, # character_id
               nil, # vehicle_id
-              show_hidden_val, # show_hidden
-            ].join("/")
+              show_hidden_val, # show_hidden,
+    Time.now.to_i # TEMPORARY: Bust cache every request
+  ].join("/")
             Rails.cache.delete(cache_key)
           end
         end

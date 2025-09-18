@@ -65,7 +65,8 @@ class Api::V2::SchticksController < ApplicationController
       params["show_hidden"],
       params["autocomplete"],
       params["path"],
-    ].join("/")
+    Time.now.to_i # TEMPORARY: Bust cache every request
+  ].join("/")
 
     # Skip cache if cache buster is requested
     cached_result = if cache_buster_requested?
@@ -136,8 +137,9 @@ class Api::V2::SchticksController < ApplicationController
       current_campaign.id,
       ids.sort.join(","),
       params["per_page"] || 200,
-      params["page"] || 1
-    ].join("/")
+      params["page"] || 1,
+    Time.now.to_i # TEMPORARY: Bust cache every request
+  ].join("/")
     cached_response = Rails.cache.fetch(cache_key, expires_in: 12.hours) do
       schticks = current_campaign
         .schticks

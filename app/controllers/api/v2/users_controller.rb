@@ -67,7 +67,8 @@ class Api::V2::UsersController < ApplicationController
       params["character_id"],
       params["visibility"],
       params["show_hidden"],
-    ].join("/")
+    Time.now.to_i # TEMPORARY: Bust cache every request
+  ].join("/")
     # Skip cache if cache buster is requested
     cached_result = if cache_buster_requested?
       Rails.logger.info "⚡ Skipping cache for users index"

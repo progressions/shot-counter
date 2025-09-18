@@ -61,7 +61,8 @@ class Api::V2::FactionsController < ApplicationController
       params["vehicle_id"],
       params["visibility"],
       params["show_hidden"],
-    ].join("/")
+    Time.now.to_i # TEMPORARY: Bust cache every request
+  ].join("/")
 
     ActiveRecord::Associations::Preloader.new(records: [current_campaign], associations: { user: [:image_attachment, :image_blob] })
 
