@@ -93,6 +93,61 @@ class Fight < ApplicationRecord
     !ended?
   end
 
+  # Custom getter to return all character IDs including duplicates
+  def character_ids
+    shots.pluck(:character_id).compact
+  end
+
+  # Custom setter to handle duplicate character IDs for mooks and featured foes
+  def character_ids=(ids)
+    return unless ids
+
+    # Get current character IDs in the fight
+    existing_character_ids = shots.pluck(:character_id).compact
+
+    # Process new IDs
+    ids_to_process = ids.map(&:to_s).compact
+
+    # Find IDs to add and remove
+    ids_to_add = ids_to_process - existing_character_ids
+    ids_to_remove = existing_character_ids - ids_to_process
+
+    # Handle duplicates - check if any IDs appear multiple times
+    duplicate_ids = ids_to_process.group_by { |id| id }.select { |_, v| v.size > 1 }.keys
+
+    # For duplicate IDs, check if they're mooks or featured foes
+    duplicate_ids.each do |char_id|
+      character = campaign.characters.find_by(id: char_id)
+      next unless character
+
+      # Only allow duplicates for mooks and featured foes
+      if character.character_type == "mook" || character.character_type == "featured_foe"
+        # Count how many instances we need
+        needed_count = ids_to_process.count(char_id)
+        current_count = existing_character_ids.count(char_id)
+
+        # Add additional shots for the extra instances
+        (needed_count - current_count).times do
+          shots.create!(character_id: char_id, shot: nil)
+        end if needed_count > current_count
+
+        # Remove extra shots if we have too many
+        if needed_count < current_count
+          excess_count = current_count - needed_count
+          shots.where(character_id: char_id).limit(excess_count).destroy_all
+        end
+      end
+    end
+
+    # Add new characters (non-duplicates)
+    ids_to_add.each do |char_id|
+      shots.create!(character_id: char_id, shot: nil)
+    end
+
+    # Remove characters that are no longer in the list
+    shots.where(character_id: ids_to_remove).destroy_all if ids_to_remove.any?
+  end
+
   def end_fight!(notes: nil)
     return false if ended?
     
