@@ -121,7 +121,9 @@ class Fight < ApplicationRecord
       next unless character
 
       # Only allow duplicates for mooks and featured foes
-      if character.character_type == "mook" || character.character_type == "featured_foe"
+      # Character type is stored in action_values["Type"]
+      char_type = character.action_values["Type"]
+      if char_type == "Mook" || char_type == "Featured Foe"
         # Count how many instances we need
         needed_count = ids_to_process.count(char_id)
         current_count = existing_character_ids.count(char_id)
