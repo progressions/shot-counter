@@ -125,12 +125,19 @@ end
       fight_data = fight_params.to_h.symbolize_keys
     end
     fight_data = fight_data.slice(:name, :sequence, :active, :archived, :description, :image, :character_ids, :vehicle_ids, :started_at, :ended_at, :season, :session)
-    @fight = current_campaign.fights.new(fight_data)
+    association_ids = fight_data.slice(:character_ids, :vehicle_ids)
+    @fight = current_campaign.fights.new(fight_data.except(:character_ids, :vehicle_ids))
     if params[:image].present?
       @fight.image.attach(params[:image])
     end
     if @fight.save
-      render json: @fight, serializer: FightSerializer, status: :created
+      apply_fight_associations(@fight, association_ids)
+
+      if @fight.errors.empty?
+        render json: @fight, serializer: FightSerializer, status: :created
+      else
+        render json: { errors: @fight.errors }, status: :unprocessable_entity
+      end
     else
       render json: { errors: @fight.errors }, status: :unprocessable_entity
     end
@@ -206,6 +213,22 @@ end
 
   def require_current_campaign
     render status: 404 unless current_campaign
+  end
+
+  def apply_fight_associations(fight, association_ids)
+    return if association_ids.blank?
+
+    Fight.transaction do
+      if association_ids[:character_ids].present?
+        fight.character_ids = association_ids[:character_ids]
+      end
+
+      if association_ids[:vehicle_ids].present?
+        fight.vehicle_ids = association_ids[:vehicle_ids]
+      end
+    end
+  rescue ActiveRecord::RecordInvalid, ActiveRecord::RecordNotFound, ActiveRecord::RecordNotSaved => e
+    fight.errors.add(:base, e.message)
   end
 
   def set_fight
