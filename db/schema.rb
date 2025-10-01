@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_09_06_201529) do
+ActiveRecord::Schema[8.0].define(version: 2025_09_28_172151) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -58,6 +58,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_06_201529) do
     t.datetime "updated_at", null: false
     t.index ["character_id"], name: "index_attunements_on_character_id"
     t.index ["site_id"], name: "index_attunements_on_site_id"
+    t.unique_constraint ["character_id", "site_id"], name: "attunements_character_id_site_id_index"
   end
 
   create_table "campaign_memberships", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -288,6 +289,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_06_201529) do
     t.index ["character_id"], name: "index_memberships_on_character_id"
     t.index ["party_id"], name: "index_memberships_on_party_id"
     t.index ["vehicle_id"], name: "index_memberships_on_vehicle_id"
+    t.unique_constraint ["party_id", "vehicle_id"], name: "memberships_party_id_vehicle_id_index"
   end
 
   create_table "onboarding_progresses", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|

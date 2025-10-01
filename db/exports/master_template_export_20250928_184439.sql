@@ -4,7 +4,7 @@ INSERT INTO campaigns (
   id, user_id, name, description, is_master_template, active,
   created_at, updated_at
 ) VALUES (
-  'f3c41e34-408a-4a6f-8af0-f7cb45b0355e',
+  'ec087f88-e2b9-4513-a9fd-cb7d989ca581',
   (SELECT id FROM users WHERE email = 'progressions@gmail.com' OR admin = true ORDER BY created_at LIMIT 1),
   'Master Template Campaign',
   NULL,
