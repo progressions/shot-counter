@@ -79,7 +79,7 @@ RSpec.describe "Api::V2::Weapons", type: :request do
 
     it "returns an error when the weapon name is missing" do
       post "/api/v2/weapons", params: { weapon: { description: "A new weapon", category: "Ranged", juncture: "Modern", damage: 10, concealment: 2, reload_value: 1, mook_bonus: 0, kachunk: false } }, headers: @headers
-      expect(response).to have_http_status(:unprocessable_entity)
+      expect(response).to have_http_status(:unprocessable_content)
       body = JSON.parse(response.body)
       expect(body["errors"]).to include("name" => ["can't be blank"])
     end
@@ -146,7 +146,7 @@ RSpec.describe "Api::V2::Weapons", type: :request do
 
     it "returns an error when the weapon name is missing" do
       patch "/api/v2/weapons/#{@beretta.id}", params: { weapon: { name: "", description: "Updated firearm", category: "Ranged", juncture: "Modern", damage: 12, concealment: 1, reload_value: 2, mook_bonus: 1, kachunk: true } }, headers: @headers
-      expect(response).to have_http_status(:unprocessable_entity)
+      expect(response).to have_http_status(:unprocessable_content)
       body = JSON.parse(response.body)
       expect(body["errors"]).to eq({ "name" => ["can't be blank"] })
       @beretta.reload

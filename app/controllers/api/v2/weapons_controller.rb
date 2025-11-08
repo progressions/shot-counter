@@ -147,7 +147,7 @@ class Api::V2::WeaponsController < ApplicationController
   end
 
   def categories
-    @categories = current_campaign.weapons.pluck(:category).uniq.compact
+    @categories = current_campaign.weapons.pluck(:category).uniq.compact.reject(&:empty?)
 
     if params[:search].present?
       @categories = @categories.select { |category| category.downcase.include?(params[:search].downcase) }
@@ -199,7 +199,7 @@ class Api::V2::WeaponsController < ApplicationController
     if @weapon.save
       render json: @weapon, status: :created
     else
-      render json: { errors: @weapon.errors }, status: :unprocessable_entity
+      render json: { errors: @weapon.errors }, status: :unprocessable_content
     end
   end
 
@@ -232,7 +232,7 @@ class Api::V2::WeaponsController < ApplicationController
     if @weapon.update(weapon_data)
       render json: @weapon.reload, serializer: WeaponSerializer, status: :ok
     else
-      render json: { errors: @weapon.errors }, status: :unprocessable_entity
+      render json: { errors: @weapon.errors }, status: :unprocessable_content
     end
   end
 

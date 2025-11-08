@@ -61,7 +61,7 @@ class Users::ConfirmationsController < Devise::ConfirmationsController
       render json: { 
         error: "Failed to confirm account",
         errors: @user.errors.full_messages 
-      }, status: :unprocessable_entity
+      }, status: :unprocessable_content
     end
   end
 
@@ -146,7 +146,7 @@ class Users::ConfirmationsController < Devise::ConfirmationsController
     else
       render json: {
         status: { message: 'User could not be created successfully', errors: resource.errors.full_messages }
-      }, status: :unprocessable_entity
+      }, status: :unprocessable_content
     end
   end
 

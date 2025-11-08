@@ -70,7 +70,7 @@ class Api::V1::JuncturesController < ApplicationController
       render json: @juncture, status: :created
     else
       binding.pry
-      render json: { errors: @juncture.errors.full_messages }, status: :unprocessable_entity
+      render json: { errors: @juncture.errors.full_messages }, status: :unprocessable_content
     end
   end
 
@@ -99,7 +99,7 @@ class Api::V1::JuncturesController < ApplicationController
     if @juncture.update(juncture_data)
       render json: @juncture
     else
-      render json: { errors: @juncture.errors.full_messages }, status: :unprocessable_entity
+      render json: { errors: @juncture.errors.full_messages }, status: :unprocessable_content
     end
   end
 
@@ -117,7 +117,7 @@ class Api::V1::JuncturesController < ApplicationController
     if @juncture.save
       render json: @juncture
     else
-      render json: { errors: @juncture.errors.full_messages }, status: :unprocessable_entity
+      render json: { errors: @juncture.errors.full_messages }, status: :unprocessable_content
     end
   end
 

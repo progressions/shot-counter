@@ -46,7 +46,7 @@ class ApplicationController < ActionController::API
     else
       # Return standardized error response with 422 status for constraint violations
       if result[:error][:error_type] == 'associations_exist'
-        render json: result[:error], status: :unprocessable_entity
+        render json: result[:error], status: :unprocessable_content
       else
         render json: result[:error], status: :bad_request
       end

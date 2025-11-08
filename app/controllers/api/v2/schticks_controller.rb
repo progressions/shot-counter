@@ -218,7 +218,7 @@ class Api::V2::SchticksController < ApplicationController
     if @schtick.save
       render json: @schtick, status: :created
     else
-      render json: { errors: @schtick.errors }, status: :unprocessable_entity
+      render json: { errors: @schtick.errors }, status: :unprocessable_content
     end
   end
 
@@ -251,7 +251,7 @@ class Api::V2::SchticksController < ApplicationController
     if @schtick.update(schtick_data)
       render json: @schtick.reload
     else
-      render json: { errors: @schtick.errors}, status: :unprocessable_entity
+      render json: { errors: @schtick.errors}, status: :unprocessable_content
     end
   end
 

@@ -140,10 +140,10 @@ end
       if @fight.errors.empty?
         render json: @fight, serializer: FightSerializer, status: :created
       else
-        render json: { errors: @fight.errors }, status: :unprocessable_entity
+        render json: { errors: @fight.errors }, status: :unprocessable_content
       end
     else
-      render json: { errors: @fight.errors }, status: :unprocessable_entity
+      render json: { errors: @fight.errors }, status: :unprocessable_content
     end
   end
 
@@ -172,7 +172,7 @@ end
     if @fight.update(fight_data)
       render json: @fight.reload, serializer: FightSerializer, status: :ok
     else
-      render json: { errors: @fight.errors }, status: :unprocessable_entity
+      render json: { errors: @fight.errors }, status: :unprocessable_content
     end
   end
 
@@ -197,7 +197,7 @@ end
     end
     
     if @fight.ended?
-      render json: { error: "Fight has already ended" }, status: :unprocessable_entity
+      render json: { error: "Fight has already ended" }, status: :unprocessable_content
       return
     end
     
@@ -208,7 +208,7 @@ end
         adapter: :attributes
       ).serializable_hash
     else
-      render json: { error: "Failed to end fight" }, status: :unprocessable_entity
+      render json: { error: "Failed to end fight" }, status: :unprocessable_content
     end
   end
 

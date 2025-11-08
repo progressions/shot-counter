@@ -69,7 +69,7 @@ RSpec.describe "Api::V2::Schticks", type: :request do
 
     it "returns an error when the schtick name is missing" do
       post "/api/v2/schticks", params: { schtick: { description: "A new ability", category: "Sorcery", path: "Fire" } }, headers: @headers
-      expect(response).to have_http_status(:unprocessable_entity)
+      expect(response).to have_http_status(:unprocessable_content)
       body = JSON.parse(response.body)
       expect(body["errors"]).to include("name" => ["can't be blank"])
     end
@@ -83,7 +83,7 @@ RSpec.describe "Api::V2::Schticks", type: :request do
 
     it "returns an error if prerequisite is not in same category and path" do
       post "/api/v2/schticks", params: { schtick: { name: "Flying Kick", description: "A new ability", category: "Sorcery", path: "Fire", prerequisite_id: @kick.id } }, headers: @headers
-      expect(response).to have_http_status(:unprocessable_entity)
+      expect(response).to have_http_status(:unprocessable_content)
       body = JSON.parse(response.body)
       expect(body["errors"]).to include("prerequisite" => ["must be in the same category and path"])
     end
@@ -127,7 +127,7 @@ RSpec.describe "Api::V2::Schticks", type: :request do
 
     it "returns an error when the schtick name is missing" do
       patch "/api/v2/schticks/#{@fireball.id}", params: { schtick: { name: "", description: "Updated ability" } }, headers: @headers
-      expect(response).to have_http_status(:unprocessable_entity)
+      expect(response).to have_http_status(:unprocessable_content)
       body = JSON.parse(response.body)
       expect(body["errors"]).to eq({ "name" => ["can't be blank"] })
       @fireball.reload

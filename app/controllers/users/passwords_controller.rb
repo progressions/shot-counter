@@ -13,7 +13,7 @@ class Users::PasswordsController < Devise::PasswordsController
       return render json: {
         error: "Invalid email format",
         field: "email"
-      }, status: :unprocessable_entity
+      }, status: :unprocessable_content
     end
 
     # Find user by email (case insensitive)
@@ -47,7 +47,7 @@ class Users::PasswordsController < Devise::PasswordsController
       return render json: {
         error: "Password must be at least 8 characters long and contain letters and numbers",
         field: "password"
-      }, status: :unprocessable_entity
+      }, status: :unprocessable_content
     end
     
     # Validate password confirmation
@@ -55,7 +55,7 @@ class Users::PasswordsController < Devise::PasswordsController
       return render json: {
         error: "Password confirmation doesn't match password",
         field: "password_confirmation"
-      }, status: :unprocessable_entity
+      }, status: :unprocessable_content
     end
 
     # Find user by token
@@ -64,7 +64,7 @@ class Users::PasswordsController < Devise::PasswordsController
     unless user
       return render json: {
         error: "Password reset token is invalid or has expired"
-      }, status: :unprocessable_entity
+      }, status: :unprocessable_content
     end
     
     # Reset password
@@ -79,7 +79,7 @@ class Users::PasswordsController < Devise::PasswordsController
       render json: {
         error: "Failed to reset password",
         errors: user.errors.full_messages
-      }, status: :unprocessable_entity
+      }, status: :unprocessable_content
     end
   end
 
@@ -155,7 +155,7 @@ class Users::PasswordsController < Devise::PasswordsController
     unless token.present?
       render json: {
         error: "Password reset token is required"
-      }, status: :unprocessable_entity
+      }, status: :unprocessable_content
       return false
     end
     
@@ -163,7 +163,7 @@ class Users::PasswordsController < Devise::PasswordsController
     unless user&.reset_password_period_valid?
       render json: {
         error: "Password reset token is invalid or has expired"
-      }, status: :unprocessable_entity
+      }, status: :unprocessable_content
       return false
     end
   end

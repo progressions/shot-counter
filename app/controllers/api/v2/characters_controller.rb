@@ -167,7 +167,7 @@ end
     if @character.save
       render json: @character, serializer: CharacterSerializer, status: :created
     else
-      render json: { errors: @character.errors }, status: :unprocessable_entity
+      render json: { errors: @character.errors }, status: :unprocessable_content
     end
   end
 
@@ -219,7 +219,7 @@ end
       SyncCharacterToNotionJob.perform_later(@character.id)
       render json: @character.reload, serializer: CharacterSerializer, status: :ok
     else
-      render json: { errors: @character.errors }, status: :unprocessable_entity
+      render json: { errors: @character.errors }, status: :unprocessable_content
     end
   end
 
@@ -257,7 +257,7 @@ end
       render json: @new_character, status: :created
     else
       Rails.logger.error("Character duplication failed: #{@new_character.errors.full_messages.join(', ')}")
-      render json: @new_character.errors, status: :unprocessable_entity
+      render json: @new_character.errors, status: :unprocessable_content
     end
   end
 
@@ -282,20 +282,20 @@ end
         render json: @character, status: :created
       else
         Rails.logger.error("Character import failed: #{@character.errors.full_messages.join(', ')}")
-        render json: @character.errors, status: :unprocessable_entity
+        render json: @character.errors, status: :unprocessable_content
       end
     else
       render json: { error: "No PDF file provided" }, status: :bad_request
     end
   rescue StandardError => e
-    render json: { error: "Failed to import character: #{e.message}" }, status: :unprocessable_entity
+    render json: { error: "Failed to import character: #{e.message}" }, status: :unprocessable_content
   end
 
   def sync
     if NotionService.update_character_from_notion(@character)
       render json: @character.reload
     else
-      render json: { error: "Notion sync failed" }, status: :unprocessable_entity
+      render json: { error: "Notion sync failed" }, status: :unprocessable_content
     end
   end
 
@@ -305,7 +305,7 @@ end
       if @character.save
         render json: @character
       else
-        render json: @character.errors, status: :unprocessable_entity
+        render json: @character.errors, status: :unprocessable_content
       end
     else
       render json: @character

@@ -61,7 +61,7 @@ module Api
             ).serializable_hash
           }, status: :created
         else
-          render json: { errors: @chase_relationship.errors }, status: :unprocessable_entity
+          render json: { errors: @chase_relationship.errors }, status: :unprocessable_content
         end
       end
 
@@ -75,7 +75,7 @@ module Api
             ).serializable_hash
           }
         else
-          render json: { errors: @chase_relationship.errors }, status: :unprocessable_entity
+          render json: { errors: @chase_relationship.errors }, status: :unprocessable_content
         end
       end
 

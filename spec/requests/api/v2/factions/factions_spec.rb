@@ -81,7 +81,7 @@ RSpec.describe "Api::V2::Factions", type: :request do
 
     it "returns an error when the faction name is missing" do
       post "/api/v2/factions", params: { faction: { description: "A new faction", character_ids: [@brick.id] } }, headers: @headers
-      expect(response).to have_http_status(:unprocessable_entity)
+      expect(response).to have_http_status(:unprocessable_content)
       body = JSON.parse(response.body)
       expect(body["errors"]).to include("name" => ["can't be blank"])
     end
@@ -147,7 +147,7 @@ RSpec.describe "Api::V2::Factions", type: :request do
 
     it "returns an error when the faction name is missing" do
       patch "/api/v2/factions/#{@dragons.id}", params: { faction: { name: "", description: "Updated heroes", character_ids: [@serena.id] } }, headers: @headers
-      expect(response).to have_http_status(:unprocessable_entity)
+      expect(response).to have_http_status(:unprocessable_content)
       body = JSON.parse(response.body)
       expect(body["errors"]).to include("name" => ["can't be blank"])
       @dragons.reload

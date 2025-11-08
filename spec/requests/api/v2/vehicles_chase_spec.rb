@@ -104,7 +104,7 @@ RSpec.describe "Api::V2::Vehicles Chase Actions", type: :request do
               params: invalid_params, 
               headers: @headers
 
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
         json = JSON.parse(response.body)
         expect(json["errors"]).to include("Position must be 'near' or 'far'")
       end
@@ -124,7 +124,7 @@ RSpec.describe "Api::V2::Vehicles Chase Actions", type: :request do
               params: invalid_params, 
               headers: @headers
 
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
         json = JSON.parse(response.body)
         expect(json["errors"]).to include("Chase points cannot be negative")
       end
@@ -218,7 +218,7 @@ RSpec.describe "Api::V2::Vehicles Chase Actions", type: :request do
              params: { driver_shot_id: empty_shot.id }, 
              headers: @headers
 
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
         json = JSON.parse(response.body)
         expect(json["error"]).to include("Shot must contain a character to be a driver")
       end

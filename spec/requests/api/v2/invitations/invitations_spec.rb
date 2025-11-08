@@ -98,7 +98,7 @@ RSpec.describe "Api::V2::Invitations", type: :request do
              params: { invitation: { email: "existing@example.com" } },
              headers: @gamemaster_headers
         
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
         body = JSON.parse(response.body)
         expect(body["errors"]["email"]).to include("has already been taken")
       end
@@ -110,7 +110,7 @@ RSpec.describe "Api::V2::Invitations", type: :request do
              params: { invitation: { email: @player.email } },
              headers: @gamemaster_headers
         
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
         body = JSON.parse(response.body)
         expect(body["errors"]["email"]).to include("is already a player")
       end
@@ -120,7 +120,7 @@ RSpec.describe "Api::V2::Invitations", type: :request do
              params: { invitation: { email: @gamemaster.email } },
              headers: @gamemaster_headers
         
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
         body = JSON.parse(response.body)
         expect(body["errors"]["email"]).to include("is the gamemaster")
       end
@@ -130,7 +130,7 @@ RSpec.describe "Api::V2::Invitations", type: :request do
              params: { invitation: { email: "invalid-email" } },
              headers: @gamemaster_headers
         
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
         body = JSON.parse(response.body)
         expect(body["errors"]["email"]).to include("is invalid")
       end
@@ -140,7 +140,7 @@ RSpec.describe "Api::V2::Invitations", type: :request do
              params: { invitation: {} },
              headers: @gamemaster_headers
         
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
         body = JSON.parse(response.body)
         expect(body["errors"]["email"]).to include("must be present if maximum_count is not set")
       end
@@ -444,7 +444,7 @@ RSpec.describe "Api::V2::Invitations", type: :request do
                password_confirmation: "password123"
              }
         
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
         body = JSON.parse(response.body)
         expect(body["error"]).to eq("User already exists for this email address")
         expect(body["has_account"]).to be true
@@ -583,7 +583,7 @@ RSpec.describe "Api::V2::Invitations", type: :request do
         post "/api/v2/invitations/#{@invitation.id}/redeem",
              headers: @player_headers
         
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
         body = JSON.parse(response.body)
         expect(body["errors"]["user"]).to include("has already been taken")
         

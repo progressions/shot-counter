@@ -76,7 +76,7 @@ RSpec.describe "Api::V2::Users", type: :request do
 
       it "returns an error when email is missing" do
         post "/api/v2/users", params: { user: { first_name: "New", last_name: "User", admin: false, gamemaster: false } }, headers: @admin_headers
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
         body = JSON.parse(response.body)
         expect(body["errors"]).to include({ "email" => ["is invalid"] })
       end
@@ -199,7 +199,7 @@ RSpec.describe "Api::V2::Users", type: :request do
 
       it "returns an error when email is invalid" do
         patch "/api/v2/users/#{@player.id}", params: { user: { email: "invalid", first_name: "Updated", last_name: "Player" } }, headers: @admin_headers
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
         body = JSON.parse(response.body)
         expect(body["errors"]).to include({ "email" => ["is invalid"] })
         @player.reload
@@ -295,7 +295,7 @@ RSpec.describe "Api::V2::Users", type: :request do
         it "rejects invalid email format" do
           original_email = @player.email
           patch "/api/v2/users/#{@player.id}", params: { user: { email: "invalid-email" } }, headers: @admin_headers
-          expect(response).to have_http_status(:unprocessable_entity)
+          expect(response).to have_http_status(:unprocessable_content)
           body = JSON.parse(response.body)
           expect(body["errors"]).to include({ "email" => ["is invalid"] })
           @player.reload
@@ -309,7 +309,7 @@ RSpec.describe "Api::V2::Users", type: :request do
 
           # Try to update player to use the other user's email
           patch "/api/v2/users/#{@player.id}", params: { user: { email: "other@example.com" } }, headers: @admin_headers
-          expect(response).to have_http_status(:unprocessable_entity)
+          expect(response).to have_http_status(:unprocessable_content)
           body = JSON.parse(response.body)
           expect(body["errors"]).to include({ "email" => ["has already been taken"] })
           @player.reload

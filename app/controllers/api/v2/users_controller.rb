@@ -132,7 +132,7 @@ class Api::V2::UsersController < ApplicationController
       response.set_header("Authorization", "Bearer #{token}")
       render json: current_user, serializer: UserSerializer
     else
-      render json: { errors: current_user.errors }, status: :unprocessable_entity
+      render json: { errors: current_user.errors }, status: :unprocessable_content
     end
   end
 
@@ -156,7 +156,7 @@ class Api::V2::UsersController < ApplicationController
       response.set_header("Authorization", "Bearer #{token}")
       render json: @user, serializer: UserSerializer, status: :created
     else
-      render json: { errors: @user.errors }, status: :unprocessable_entity
+      render json: { errors: @user.errors }, status: :unprocessable_content
     end
   end
 
@@ -197,7 +197,7 @@ class Api::V2::UsersController < ApplicationController
     
     # Return errors if any validation failed
     if validation_errors.any?
-      render json: { errors: validation_errors }, status: :unprocessable_entity
+      render json: { errors: validation_errors }, status: :unprocessable_content
       return
     end
     
@@ -217,7 +217,7 @@ class Api::V2::UsersController < ApplicationController
         payload: JWT.decode(token, Rails.application.credentials.devise_jwt_secret_key!, true, algorithm: 'HS256')[0]
       }, status: :created
     else
-      render json: { errors: @user.errors }, status: :unprocessable_entity
+      render json: { errors: @user.errors }, status: :unprocessable_content
     end
   end
 
@@ -241,7 +241,7 @@ class Api::V2::UsersController < ApplicationController
       response.set_header("Authorization", "Bearer #{token}")
       render json: @user, serializer: UserSerializer
     else
-      render json: { errors: @user.errors }, status: :unprocessable_entity
+      render json: { errors: @user.errors }, status: :unprocessable_content
     end
   end
 
@@ -262,7 +262,7 @@ class Api::V2::UsersController < ApplicationController
       response.set_header("Authorization", "Bearer #{token}")
       render json: @user, serializer: UserSerializer
     else
-      render json: { errors: @user.errors }, status: :unprocessable_entity
+      render json: { errors: @user.errors }, status: :unprocessable_content
     end
   end
 

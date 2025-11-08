@@ -129,7 +129,7 @@ class Api::V2::FactionsController < ApplicationController
       clear_factions_cache
       render json: @faction, status: :created
     else
-      render json: { errors: @faction.errors }, status: :unprocessable_entity
+      render json: { errors: @faction.errors }, status: :unprocessable_content
     end
   end
 
@@ -164,7 +164,7 @@ class Api::V2::FactionsController < ApplicationController
       clear_factions_cache
       render json: @faction.reload
     else
-      render json: { errors: @faction.errors }, status: :unprocessable_entity
+      render json: { errors: @faction.errors }, status: :unprocessable_content
     end
   end
 

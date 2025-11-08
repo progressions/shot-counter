@@ -33,7 +33,7 @@ class Api::V2::ShotsController < ApplicationController
       
       render json: { success: true }
     else
-      render json: @shot.errors, status: :unprocessable_entity
+      render json: @shot.errors, status: :unprocessable_content
     end
   end
 
@@ -49,7 +49,7 @@ class Api::V2::ShotsController < ApplicationController
   def assign_driver
     # Validate this is a vehicle shot
     unless @shot.vehicle_id
-      return render json: { error: "Shot must contain a vehicle" }, status: :unprocessable_entity
+      return render json: { error: "Shot must contain a vehicle" }, status: :unprocessable_content
     end
 
     driver_shot_id = params[:driver_shot_id]
@@ -62,7 +62,7 @@ class Api::V2::ShotsController < ApplicationController
 
     # Validate driver shot contains a character
     unless driver_shot.character_id
-      return render json: { error: "Shot must contain a character to be a driver" }, status: :unprocessable_entity
+      return render json: { error: "Shot must contain a character to be a driver" }, status: :unprocessable_content
     end
 
     # Clear any existing driver for this vehicle
@@ -87,7 +87,7 @@ class Api::V2::ShotsController < ApplicationController
   def remove_driver
     # Validate this is a vehicle shot
     unless @shot.vehicle_id
-      return render json: { error: "Shot must contain a vehicle" }, status: :unprocessable_entity
+      return render json: { error: "Shot must contain a vehicle" }, status: :unprocessable_content
     end
 
     # Clear any driver for this vehicle

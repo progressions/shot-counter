@@ -58,7 +58,7 @@ class Api::V2::EncountersController < ApplicationController
   rescue ActiveRecord::RecordNotFound => e
     render json: { error: "Shot not found: #{e.message}" }, status: :not_found
   rescue ActiveRecord::RecordInvalid => e
-    render json: { error: e.message }, status: :unprocessable_entity
+    render json: { error: e.message }, status: :unprocessable_content
   rescue StandardError => e
     Rails.logger.error "Error updating initiatives: #{e.message}"
     Rails.logger.error e.backtrace.join("\n")
@@ -94,7 +94,7 @@ class Api::V2::EncountersController < ApplicationController
   rescue ActiveRecord::RecordNotFound => e
     render json: { error: "Resource not found: #{e.message}" }, status: :not_found
   rescue ActiveRecord::RecordInvalid => e
-    render json: { error: e.message }, status: :unprocessable_entity
+    render json: { error: e.message }, status: :unprocessable_content
   rescue ArgumentError => e
     render json: { error: e.message }, status: :bad_request
   rescue StandardError => e
@@ -114,7 +114,7 @@ class Api::V2::EncountersController < ApplicationController
   rescue ActiveRecord::RecordNotFound => e
     render json: { error: "Resource not found: #{e.message}" }, status: :not_found
   rescue ActiveRecord::RecordInvalid => e
-    render json: { error: e.message }, status: :unprocessable_entity
+    render json: { error: e.message }, status: :unprocessable_content
   rescue ArgumentError => e
     render json: { error: e.message }, status: :bad_request
   rescue StandardError => e

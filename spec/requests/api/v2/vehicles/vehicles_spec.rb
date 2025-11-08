@@ -48,7 +48,7 @@ RSpec.describe "Api::V2::Vehicles", type: :request do
 
     it "returns an error when the vehicle name is missing" do
       post "/api/v2/vehicles", params: { vehicle: { action_values: { "Type" => "PC" }, faction_id: @dragons.id } }, headers: @headers
-      expect(response).to have_http_status(:unprocessable_entity)
+      expect(response).to have_http_status(:unprocessable_content)
       body = JSON.parse(response.body)
       expect(body["errors"]).to include("name" => ["can't be blank"])
     end
@@ -78,7 +78,7 @@ RSpec.describe "Api::V2::Vehicles", type: :request do
 
     it "returns an error when the vehicle name is missing" do
       patch "/api/v2/vehicles/#{@car.id}", params: { vehicle: { name: "", action_values: { "Type" => "PC", "Archetype" => "Everyday Hero" } } }, headers: @headers
-      expect(response).to have_http_status(:unprocessable_entity)
+      expect(response).to have_http_status(:unprocessable_content)
       body = JSON.parse(response.body)
       expect(body["errors"]).to eq({ "name" => ["can't be blank"]})
       @car.reload
@@ -236,7 +236,7 @@ RSpec.describe "Api::V2::Vehicles", type: :request do
     it "returns an error for an invalid pdf", skip: "PDF processing disabled in test environment" do
       file = fixture_file_upload("spec/fixtures/files/invalid.pdf", "application/pdf")
       post "/api/v2/vehicles/pdf", params: { pdf_file: file }, headers: @headers
-      expect(response).to have_http_status(:unprocessable_entity)
+      expect(response).to have_http_status(:unprocessable_content)
       body = JSON.parse(response.body)
       expect(body["error"]).to eq("Failed to import vehicle: Invalid PDF: Missing required fields")
     end

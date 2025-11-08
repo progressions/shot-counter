@@ -13,7 +13,7 @@ class Api::V2::OnboardingController < ApplicationController
       render json: { 
         success: false,
         errors: e.record.errors
-      }, status: :unprocessable_entity
+      }, status: :unprocessable_content
     rescue StandardError => e
       Rails.logger.error "Failed to dismiss congratulations for user #{current_user.id}: #{e.message}"
       render json: { 
@@ -36,13 +36,13 @@ class Api::V2::OnboardingController < ApplicationController
         render json: { 
           success: false,
           errors: current_user.onboarding_progress.errors
-        }, status: :unprocessable_entity
+        }, status: :unprocessable_content
       end
     rescue ActiveRecord::RecordInvalid => e
       render json: { 
         success: false,
         errors: e.record.errors
-      }, status: :unprocessable_entity
+      }, status: :unprocessable_content
     rescue StandardError => e
       Rails.logger.error "Failed to update onboarding progress for user #{current_user.id}: #{e.message}"
       render json: { 

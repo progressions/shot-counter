@@ -66,7 +66,7 @@ RSpec.describe "Api::V2::Characters", type: :request do
 
     it "returns an error when the character name is missing" do
       post "/api/v2/characters", params: { character: { action_values: { "Type" => "PC" }, faction_id: @dragons.id } }, headers: @headers
-      expect(response).to have_http_status(:unprocessable_entity)
+      expect(response).to have_http_status(:unprocessable_content)
       body = JSON.parse(response.body)
       expect(body["errors"]).to include("name" => ["can't be blank"])
     end
@@ -96,7 +96,7 @@ RSpec.describe "Api::V2::Characters", type: :request do
 
     it "returns an error when the character name is missing" do
       patch "/api/v2/characters/#{@brick.id}", params: { character: { name: "", action_values: { "Type" => "PC", "Archetype" => "Everyday Hero" } } }, headers: @headers
-      expect(response).to have_http_status(:unprocessable_entity)
+      expect(response).to have_http_status(:unprocessable_content)
       body = JSON.parse(response.body)
       expect(body["errors"]).to eq({ "name" => ["can't be blank"]})
       @brick.reload
@@ -371,7 +371,7 @@ RSpec.describe "Api::V2::Characters", type: :request do
             params: { character: { user_id: @non_member.id } }, 
             headers: @headers
           
-          expect(response).to have_http_status(:unprocessable_entity)
+          expect(response).to have_http_status(:unprocessable_content)
           body = JSON.parse(response.body)
           expect(body["errors"]["user_id"]).to include("must be a member of the campaign")
           
@@ -549,7 +549,7 @@ RSpec.describe "Api::V2::Characters", type: :request do
     it "returns an error for an invalid pdf", skip: "PDF processing disabled in test environment" do
       file = fixture_file_upload("spec/fixtures/files/invalid.pdf", "application/pdf")
       post "/api/v2/characters/pdf", params: { pdf_file: file }, headers: @headers
-      expect(response).to have_http_status(:unprocessable_entity)
+      expect(response).to have_http_status(:unprocessable_content)
       body = JSON.parse(response.body)
       expect(body["error"]).to eq("Failed to import character: Invalid PDF: Missing required fields")
     end
@@ -572,7 +572,7 @@ RSpec.describe "Api::V2::Characters", type: :request do
       allow(NotionService).to receive(:update_character_from_notion).with(@brick).and_return(false)
       
       post "/api/v2/characters/#{@brick.id}/sync", headers: @headers
-      expect(response).to have_http_status(:unprocessable_entity)
+      expect(response).to have_http_status(:unprocessable_content)
       body = JSON.parse(response.body)
       expect(body["error"]).to eq("Notion sync failed")
     end

@@ -169,7 +169,7 @@ class Api::V2::VehiclesController < ApplicationController
     if @vehicle.save
       render json: @vehicle, serializer: VehicleSerializer, status: :created
     else
-      render json: { errors: @vehicle.errors }, status: :unprocessable_entity
+      render json: { errors: @vehicle.errors }, status: :unprocessable_content
     end
   end
 
@@ -204,7 +204,7 @@ class Api::V2::VehiclesController < ApplicationController
 
       render json: @vehicle.reload
     else
-      render json: { errors: @vehicle.errors }, status: :unprocessable_entity
+      render json: { errors: @vehicle.errors }, status: :unprocessable_content
     end
   end
 
@@ -244,17 +244,17 @@ class Api::V2::VehiclesController < ApplicationController
     
     # Validate position if provided
     if chase_params[:position].present? && !["near", "far"].include?(chase_params[:position])
-      return render json: { errors: ["Position must be 'near' or 'far'"] }, status: :unprocessable_entity
+      return render json: { errors: ["Position must be 'near' or 'far'"] }, status: :unprocessable_content
     end
     
     # Validate chase points if provided
     if chase_params[:chase_points].present? && chase_params[:chase_points].to_i < 0
-      return render json: { errors: ["Chase points cannot be negative"] }, status: :unprocessable_entity
+      return render json: { errors: ["Chase points cannot be negative"] }, status: :unprocessable_content
     end
     
     # Validate condition points if provided
     if chase_params[:condition_points].present? && chase_params[:condition_points].to_i < 0
-      return render json: { errors: ["Condition points cannot be negative"] }, status: :unprocessable_entity
+      return render json: { errors: ["Condition points cannot be negative"] }, status: :unprocessable_content
     end
     
     # Update the vehicle's action_values
@@ -284,7 +284,7 @@ class Api::V2::VehiclesController < ApplicationController
       
       render json: @vehicle
     else
-      render json: { errors: @vehicle.errors }, status: :unprocessable_entity
+      render json: { errors: @vehicle.errors }, status: :unprocessable_content
     end
   end
 

@@ -77,7 +77,7 @@ RSpec.describe "Api::V2::Junctures", type: :request do
 
     it "returns an error when the juncture name is missing" do
       post "/api/v2/junctures", params: { juncture: { description: "A new era", faction_id: @dragons.id, active: true, character_ids: [@brick.id] } }, headers: @headers
-      expect(response).to have_http_status(:unprocessable_entity)
+      expect(response).to have_http_status(:unprocessable_content)
       body = JSON.parse(response.body)
       expect(body["errors"]).to include("name" => ["can't be blank"])
     end
@@ -133,7 +133,7 @@ RSpec.describe "Api::V2::Junctures", type: :request do
 
     it "returns an error when the juncture name is missing" do
       patch "/api/v2/junctures/#{@modern.id}", params: { juncture: { name: "", description: "Updated modern world", faction_id: @ascended.id, active: true } }, headers: @headers
-      expect(response).to have_http_status(:unprocessable_entity)
+      expect(response).to have_http_status(:unprocessable_content)
       body = JSON.parse(response.body)
       expect(body["errors"]).to include("name" => ["can't be blank"])
       @modern.reload

@@ -88,7 +88,7 @@ class Api::V1::CharactersController < ApplicationController
         render json: @character, status: :created
       else
         Rails.logger.error("Character import failed: #{@character.errors.full_messages.join(', ')}")
-        render json: @character.errors, status: :unprocessable_entity
+        render json: @character.errors, status: :unprocessable_content
       end
     else
       @character = Character.new

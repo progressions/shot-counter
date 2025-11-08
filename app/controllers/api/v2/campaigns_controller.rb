@@ -152,7 +152,7 @@ class Api::V2::CampaignsController < ApplicationController
       clear_campaign_cache_for_user(current_user)
       render json: @campaign, status: :created
     else
-      render json: { errors: @campaign.errors }, status: :unprocessable_entity
+      render json: { errors: @campaign.errors }, status: :unprocessable_content
     end
   end
 
@@ -181,7 +181,7 @@ class Api::V2::CampaignsController < ApplicationController
       clear_campaign_cache_for_user(current_user)
       render json: @campaign
     else
-      render json: { errors: @campaign.errors }, status: :unprocessable_entity
+      render json: { errors: @campaign.errors }, status: :unprocessable_content
     end
   end
 
@@ -277,7 +277,7 @@ class Api::V2::CampaignsController < ApplicationController
     if @campaign.save
       render json: @campaign
     else
-      render json: { errors: @campaign.errors }, status: :unprocessable_entity
+      render json: { errors: @campaign.errors }, status: :unprocessable_content
     end
   end
 

@@ -10,7 +10,7 @@ class Api::V1::LocationsController < ApplicationController
     if @shot.save
       render json: @shot.location, status: :created
     else
-      render json: @shot.errors, status: :unprocessable_entity
+      render json: @shot.errors, status: :unprocessable_content
     end
   end
 

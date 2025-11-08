@@ -38,7 +38,7 @@ class Api::V2::InvitationsController < ApplicationController
       ).serializable_hash
       render json: invitation_data, status: :created
     else
-      render json: { errors: @invitation.errors.as_json }, status: :unprocessable_entity
+      render json: { errors: @invitation.errors.as_json }, status: :unprocessable_content
     end
   end
   
@@ -116,7 +116,7 @@ class Api::V2::InvitationsController < ApplicationController
         message: "Successfully joined #{@invitation.campaign.name}!"
       }, status: :created
     else
-      render json: { errors: membership.errors.as_json }, status: :unprocessable_entity
+      render json: { errors: membership.errors.as_json }, status: :unprocessable_content
     end
   end
   
@@ -128,7 +128,7 @@ class Api::V2::InvitationsController < ApplicationController
       return render json: { 
         error: "User already exists for this email address",
         has_account: true
-      }, status: :unprocessable_entity
+      }, status: :unprocessable_content
     end
     
     # Validate email matches invitation
@@ -136,7 +136,7 @@ class Api::V2::InvitationsController < ApplicationController
       return render json: { 
         error: "Email must match invitation email",
         invitation_email: @invitation.email
-      }, status: :unprocessable_entity
+      }, status: :unprocessable_content
     end
 
     # Additional security validations
@@ -144,14 +144,14 @@ class Api::V2::InvitationsController < ApplicationController
       return render json: { 
         error: "Invalid email format",
         field: "email"
-      }, status: :unprocessable_entity
+      }, status: :unprocessable_content
     end
 
     unless valid_password?(params[:password])
       return render json: { 
         error: "Password must be at least 8 characters long and contain letters and numbers",
         field: "password"
-      }, status: :unprocessable_entity
+      }, status: :unprocessable_content
     end
     
     # Create new user
@@ -177,7 +177,7 @@ class Api::V2::InvitationsController < ApplicationController
         }
       }, status: :created
     else
-      render json: { errors: user.errors.as_json }, status: :unprocessable_entity
+      render json: { errors: user.errors.as_json }, status: :unprocessable_content
     end
   end
   

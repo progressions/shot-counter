@@ -147,7 +147,7 @@ class Api::V2::JuncturesController < ApplicationController
     if @juncture.save
       render json: @juncture, status: :created
     else
-      render json: { errors: @juncture.errors }, status: :unprocessable_entity
+      render json: { errors: @juncture.errors }, status: :unprocessable_content
     end
   end
 
@@ -176,7 +176,7 @@ class Api::V2::JuncturesController < ApplicationController
     if @juncture.update(juncture_data)
       render json: @juncture.reload
     else
-      render json: { errors: @juncture.errors }, status: :unprocessable_entity
+      render json: { errors: @juncture.errors }, status: :unprocessable_content
     end
   end
 
@@ -194,7 +194,7 @@ class Api::V2::JuncturesController < ApplicationController
     if @juncture.save
       render json: @juncture
     else
-      render json: { errors: @juncture.errors }, status: :unprocessable_entity
+      render json: { errors: @juncture.errors }, status: :unprocessable_content
     end
   end
 

@@ -148,7 +148,7 @@ class Api::V2::SitesController < ApplicationController
     if @site.save
       render json: @site, status: :created
     else
-      render json: { errors: @site.errors }, status: :unprocessable_entity
+      render json: { errors: @site.errors }, status: :unprocessable_content
     end
   end
 
@@ -181,7 +181,7 @@ class Api::V2::SitesController < ApplicationController
     if @site.update(site_data)
       render json: @site.reload
     else
-      render json: { errors: @site.errors }, status: :unprocessable_entity
+      render json: { errors: @site.errors }, status: :unprocessable_content
     end
   end
 

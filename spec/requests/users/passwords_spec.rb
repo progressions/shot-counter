@@ -36,7 +36,7 @@ RSpec.describe "Users::Passwords", type: :request do
       it "rejects obviously invalid email" do
         post "/users/password", params: { user: { email: "invalid-email" } }
         
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
         expect(JSON.parse(response.body)["error"]).to eq("Invalid email format")
         expect(JSON.parse(response.body)["field"]).to eq("email")
       end
@@ -45,7 +45,7 @@ RSpec.describe "Users::Passwords", type: :request do
         long_email = "#{'a' * 250}@example.com"
         post "/users/password", params: { user: { email: long_email } }
         
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
         expect(JSON.parse(response.body)["error"]).to eq("Invalid email format")
       end
     end
@@ -121,7 +121,7 @@ RSpec.describe "Users::Passwords", type: :request do
           }
         }
         
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
         expect(JSON.parse(response.body)["error"]).to eq("Password reset token is invalid or has expired")
       end
     end
@@ -136,7 +136,7 @@ RSpec.describe "Users::Passwords", type: :request do
           }
         }
         
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
         expect(JSON.parse(response.body)["error"]).to include("at least 8 characters")
         expect(JSON.parse(response.body)["field"]).to eq("password")
       end
@@ -150,7 +150,7 @@ RSpec.describe "Users::Passwords", type: :request do
           }
         }
         
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
         expect(JSON.parse(response.body)["error"]).to include("contain letters and numbers")
       end
 
@@ -163,7 +163,7 @@ RSpec.describe "Users::Passwords", type: :request do
           }
         }
         
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
         expect(JSON.parse(response.body)["error"]).to include("contain letters and numbers")
       end
     end
@@ -178,7 +178,7 @@ RSpec.describe "Users::Passwords", type: :request do
           }
         }
         
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
         expect(JSON.parse(response.body)["error"]).to eq("Password confirmation doesn't match password")
         expect(JSON.parse(response.body)["field"]).to eq("password_confirmation")
       end

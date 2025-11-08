@@ -70,7 +70,7 @@ RSpec.describe "Api::V2::Fights", type: :request do
 
       it "returns an error when name is missing" do
         post "/api/v2/fights", params: { fight: { description: "A new battle", season: 3, session: 4 } }, headers: @gamemaster_headers
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
         body = JSON.parse(response.body)
         expect(body["errors"]).to include("name" => ["can't be blank"])
       end
@@ -151,7 +151,7 @@ RSpec.describe "Api::V2::Fights", type: :request do
 
       it "returns an error when name is missing" do
         patch "/api/v2/fights/#{@brawl.id}", params: { fight: { name: "", description: "Updated fight", season: 4, session: 5 } }, headers: @gamemaster_headers
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
         body = JSON.parse(response.body)
         expect(body["errors"]).to include("name" => ["can't be blank"])
         @brawl.reload

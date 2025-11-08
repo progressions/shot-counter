@@ -131,7 +131,7 @@ RSpec.describe Api::V2::ChaseRelationshipsController, type: :controller do
           }
         }
         
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
         json = JSON.parse(response.body)
         expect(json['errors']).to include('evader_id')
       end
@@ -147,7 +147,7 @@ RSpec.describe Api::V2::ChaseRelationshipsController, type: :controller do
           }
         }
         
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
       end
     end
 
@@ -216,7 +216,7 @@ RSpec.describe Api::V2::ChaseRelationshipsController, type: :controller do
           }
         }
         
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
       end
     end
   end

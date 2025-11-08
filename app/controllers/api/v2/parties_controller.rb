@@ -154,7 +154,7 @@ class Api::V2::PartiesController < ApplicationController
       clear_parties_cache
       render json: @party, serializer: PartySerializer, status: :created
     else
-      render json: { errors: @party.errors }, status: :unprocessable_entity
+      render json: { errors: @party.errors }, status: :unprocessable_content
     end
   end
 
@@ -185,7 +185,7 @@ class Api::V2::PartiesController < ApplicationController
       clear_parties_cache
       render json: @party.reload
     else
-      render json: { errors: @party.errors }, status: :unprocessable_entity
+      render json: { errors: @party.errors }, status: :unprocessable_content
     end
   end
 

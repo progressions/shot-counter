@@ -89,7 +89,7 @@ RSpec.describe "Api::V2::Users Profile", type: :request do
             params: { user: { email: "invalid-email" } }, 
             headers: @headers
 
-      expect(response).to have_http_status(:unprocessable_entity)
+      expect(response).to have_http_status(:unprocessable_content)
       
       body = JSON.parse(response.body)
       expect(body["errors"]).to be_present

@@ -62,7 +62,7 @@ class Api::V1::FightsController < ApplicationController
     if @fight.save
       render json: @fight, status: :created
     else
-      render json: { errors: @fight.errors.full_messages }, status: :unprocessable_entity
+      render json: { errors: @fight.errors.full_messages }, status: :unprocessable_content
     end
   end
 
@@ -91,7 +91,7 @@ class Api::V1::FightsController < ApplicationController
     if @fight.update(fight_data)
       render json: @fight
     else
-      render json: { errors: @fight.errors.full_messages }, status: :unprocessable_entity
+      render json: { errors: @fight.errors.full_messages }, status: :unprocessable_content
     end
   end
 

@@ -15,7 +15,7 @@ class Api::V1::FightEventsController < ApplicationController
 
       render json: event, status: :created
     else
-      render json: event.errors, status: :unprocessable_entity
+      render json: event.errors, status: :unprocessable_content
     end
   end
 

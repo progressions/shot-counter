@@ -123,7 +123,7 @@ RSpec.describe "Api::V1::Factions", type: :request do
 
     it "returns unprocessable entity for invalid params" do
       post "/api/v1/factions", params: { faction: { name: "" } }, headers: headers
-      expect(response).to have_http_status(:unprocessable_entity)
+      expect(response).to have_http_status(:unprocessable_content)
       body = JSON.parse(response.body)
       expect(body["errors"]).to include("Name can't be blank")
     end
@@ -147,7 +147,7 @@ RSpec.describe "Api::V1::Factions", type: :request do
 
     it "returns unprocessable entity for invalid params" do
       patch "/api/v1/factions/#{faction.id}", params: { faction: { name: "" } }, headers: headers
-      expect(response).to have_http_status(:unprocessable_entity)
+      expect(response).to have_http_status(:unprocessable_content)
       body = JSON.parse(response.body)
       expect(body["errors"]).to include("Name can't be blank")
     end

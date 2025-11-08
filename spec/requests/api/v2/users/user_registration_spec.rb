@@ -64,7 +64,7 @@ RSpec.describe "Api::V2::Users Registration", type: :request do
       it "returns errors for missing required fields" do
         post "/api/v2/users/register", params: { user: { email: "" } }
 
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
         body = JSON.parse(response.body)
         expect(body["errors"]).to have_key("email")
         expect(body["errors"]).to have_key("password")
@@ -77,7 +77,7 @@ RSpec.describe "Api::V2::Users Registration", type: :request do
         
         post "/api/v2/users/register", params: { user: invalid_attributes }
 
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
         body = JSON.parse(response.body)
         expect(body["errors"]["email"]).to include("is invalid")
       end
@@ -88,7 +88,7 @@ RSpec.describe "Api::V2::Users Registration", type: :request do
 
         post "/api/v2/users/register", params: { user: valid_attributes }
 
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
         body = JSON.parse(response.body)
         expect(body["errors"]["email"]).to include("has already been taken")
       end
@@ -98,7 +98,7 @@ RSpec.describe "Api::V2::Users Registration", type: :request do
 
         post "/api/v2/users/register", params: { user: invalid_attributes }
 
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
         body = JSON.parse(response.body)
         expect(body["errors"]["password_confirmation"]).to include("doesn't match Password")
       end
@@ -111,7 +111,7 @@ RSpec.describe "Api::V2::Users Registration", type: :request do
 
         post "/api/v2/users/register", params: { user: invalid_attributes }
 
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
         body = JSON.parse(response.body)
         expect(body["errors"]["password"]).to include("is too short (minimum is 8 characters)")
       end
@@ -121,7 +121,7 @@ RSpec.describe "Api::V2::Users Registration", type: :request do
 
         post "/api/v2/users/register", params: { user: invalid_attributes }
 
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
         body = JSON.parse(response.body)
         expect(body["errors"]["first_name"]).to include("can't be blank")
       end
@@ -131,7 +131,7 @@ RSpec.describe "Api::V2::Users Registration", type: :request do
 
         post "/api/v2/users/register", params: { user: invalid_attributes }
 
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
         body = JSON.parse(response.body)
         expect(body["errors"]["last_name"]).to include("can't be blank")
       end

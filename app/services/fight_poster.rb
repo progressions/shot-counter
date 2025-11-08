@@ -151,7 +151,7 @@ TEXT
     end
 
     def clean_markup_string(str)
-      str.gsub(/\[@([^]\]]+)\]\(\/[^)]+\)/, '\1')
+      str.gsub(/\[@([^\]]+)\]\(\/[^)]+\)/, '\1')
     end
   end
 end

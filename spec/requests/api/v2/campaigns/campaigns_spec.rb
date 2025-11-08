@@ -80,7 +80,7 @@ RSpec.describe "Api::V2::Campaigns", type: :request do
 
       it "returns an error when name is missing" do
         post "/api/v2/campaigns", params: { campaign: { description: "A new adventure", active: true, user_ids: [@player.id] } }, headers: @gamemaster_headers
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
         body = JSON.parse(response.body)
         expect(body["errors"]).to include({ "name" => ["can't be blank"] })
       end
@@ -198,7 +198,7 @@ RSpec.describe "Api::V2::Campaigns", type: :request do
 
       it "returns an error when name is missing" do
         patch "/api/v2/campaigns/#{@campaign.id}", params: { campaign: { name: "", description: "Updated adventure" } }, headers: @gamemaster_headers
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
         body = JSON.parse(response.body)
         expect(body["errors"]).to include({ "name" => ["can't be blank"] })
         @campaign.reload
@@ -294,7 +294,7 @@ RSpec.describe "Api::V2::Campaigns", type: :request do
 
       it "returns a unified error response for a campaign with associations" do
         delete "/api/v2/campaigns/#{@other_campaign.id}", headers: @gamemaster_headers
-        expect(response).to have_http_status(:unprocessable_entity)
+        expect(response).to have_http_status(:unprocessable_content)
         body = JSON.parse(response.body)
         expect(body["error_type"]).to eq("associations_exist")
         expect(body["entity_type"]).to eq("campaign")

@@ -11,7 +11,7 @@ class Api::V2::ImagePositionsController < ApplicationController
     if image_position.save
       render json: image_position, status: :created
     else
-      render json: image_position.errors, status: :unprocessable_entity
+      render json: image_position.errors, status: :unprocessable_content
     end
   end
 
@@ -20,7 +20,7 @@ class Api::V2::ImagePositionsController < ApplicationController
     if image_position.update(image_position_params.except(:positionable_type, :positionable_id))
       render json: image_position, status: :ok
     else
-      render json: image_position.errors, status: :unprocessable_entity
+      render json: image_position.errors, status: :unprocessable_content
     end
   end
 
