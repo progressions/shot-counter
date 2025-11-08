@@ -142,7 +142,8 @@ class Api::V2::SchticksController < ApplicationController
       schticks = current_campaign
         .schticks
         .where(id: ids)
-        .select(:id, :name, :description, :image_url, :category, :path)
+        .select(:id, :name, :description, :category, :path)
+        .includes(image_attachment: :blob)
       schticks = paginate(schticks, per_page: (params[:per_page] || 200), page: (params[:page] || 1))
       {
         schticks: ActiveModelSerializers::SerializableResource.new(schticks, each_serializer: EncounterSchtickSerializer).serializable_hash,

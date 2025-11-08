@@ -15,7 +15,6 @@ class Api::V2::VehiclesController < ApplicationController
       .select(
         "vehicles.id",
         "vehicles.name",
-        "vehicles.image_url",
         "vehicles.faction_id",
         "vehicles.action_values",
         "vehicles.description",

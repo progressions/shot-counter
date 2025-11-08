@@ -135,7 +135,8 @@ class Api::V2::WeaponsController < ApplicationController
       weapons = current_campaign
         .weapons
         .where(id: ids)
-        .select(:id, :name, :description, :image_url, :damage, :concealment, :reload_value, :mook_bonus, :kachunk, "LOWER(weapons.name) as lower_name")
+        .select(:id, :name, :description, :damage, :concealment, :reload_value, :mook_bonus, :kachunk, "LOWER(weapons.name) as lower_name")
+        .includes(image_attachment: :blob)
       weapons = paginate(weapons, per_page: (params[:per_page] || 200), page: (params[:page] || 1))
 
       {
