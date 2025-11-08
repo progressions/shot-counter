@@ -17,8 +17,16 @@ RSpec.describe 'template:export', type: :task do
 
   before(:each) do
     DatabaseCleaner.start
+    # Use tmp directory for test exports to avoid polluting the repo
+    allow_any_instance_of(TemplateExporter).to receive(:initialize).and_wrap_original do |method, *args|
+      method.call(*args)
+      instance = method.receiver
+      instance.instance_variable_set(:@export_dir, Rails.root.join('tmp', 'exports'))
+      timestamp = instance.instance_variable_get(:@timestamp)
+      instance.instance_variable_set(:@filepath, Rails.root.join('tmp', 'exports', "master_template_export_#{timestamp}.sql"))
+    end
     # Clean up any existing export files - use shell glob to remove all SQL files
-    Dir[Rails.root.join('db', 'exports', '*.sql')].each { |f| File.delete(f) }
+    Dir[Rails.root.join('tmp', 'exports', '*.sql')].each { |f| File.delete(f) }
     # Clear the rake task to allow it to be invoked multiple times
     Rake::Task['template:export'].reenable if Rake::Task.task_defined?('template:export')
   end
@@ -90,14 +98,14 @@ RSpec.describe 'template:export', type: :task do
         master_template.reload
       end
 
-      it 'creates an export file in db/exports directory' do
+      it 'creates an export file in tmp/exports directory' do
         # Get initial files before running the export
-        initial_files = Dir[Rails.root.join('db', 'exports', '*.sql')].to_set
+        initial_files = Dir[Rails.root.join('tmp', 'exports', '*.sql')].to_set
         
         Rake::Task['template:export'].invoke
         
         # Get files after export
-        final_files = Dir[Rails.root.join('db', 'exports', '*.sql')].to_set
+        final_files = Dir[Rails.root.join('tmp', 'exports', '*.sql')].to_set
         
         # Find new files created by this test
         new_files = final_files - initial_files
@@ -118,7 +126,7 @@ RSpec.describe 'template:export', type: :task do
       it 'includes the master template campaign in the export' do
         Rake::Task['template:export'].invoke
         
-        export_files = Dir[Rails.root.join('db', 'exports', '*.sql')].sort
+        export_files = Dir[Rails.root.join('tmp', 'exports', '*.sql')].sort
         export_file = export_files.last
         content = File.read(export_file)
         
@@ -140,7 +148,7 @@ RSpec.describe 'template:export', type: :task do
         Rake::Task['template:export'].invoke
         
         # Get the most recent export file
-        export_files = Dir[Rails.root.join('db', 'exports', '*.sql')].sort
+        export_files = Dir[Rails.root.join('tmp', 'exports', '*.sql')].sort
         export_file = export_files.last
         content = File.read(export_file)
         
@@ -153,7 +161,7 @@ RSpec.describe 'template:export', type: :task do
         Rake::Task['template:export'].invoke
         
         # Get the most recent export file
-        export_files = Dir[Rails.root.join('db', 'exports', '*.sql')].sort
+        export_files = Dir[Rails.root.join('tmp', 'exports', '*.sql')].sort
         export_file = export_files.last
         content = File.read(export_file)
         
@@ -183,7 +191,7 @@ RSpec.describe 'template:export', type: :task do
         Rake::Task['template:export'].invoke
         
         # Get the most recent export file
-        export_files = Dir[Rails.root.join('db', 'exports', '*.sql')].sort
+        export_files = Dir[Rails.root.join('tmp', 'exports', '*.sql')].sort
         export_file = export_files.last
         content = File.read(export_file)
         
@@ -197,7 +205,7 @@ RSpec.describe 'template:export', type: :task do
       it 'wraps all statements in a transaction' do
         Rake::Task['template:export'].invoke
         
-        export_files = Dir[Rails.root.join('db', 'exports', '*.sql')].sort
+        export_files = Dir[Rails.root.join('tmp', 'exports', '*.sql')].sort
         export_file = export_files.last
         content = File.read(export_file)
         
@@ -208,7 +216,7 @@ RSpec.describe 'template:export', type: :task do
       it 'uses ON CONFLICT DO NOTHING for idempotent imports' do
         Rake::Task['template:export'].invoke
         
-        export_files = Dir[Rails.root.join('db', 'exports', '*.sql')].sort
+        export_files = Dir[Rails.root.join('tmp', 'exports', '*.sql')].sort
         export_file = export_files.last
         content = File.read(export_file)
         
@@ -217,12 +225,12 @@ RSpec.describe 'template:export', type: :task do
 
       it 'creates file with timestamp in filename' do
         # Get initial files before running export
-        initial_files = Dir[Rails.root.join('db', 'exports', 'master_template_export_*.sql')].to_set
+        initial_files = Dir[Rails.root.join('tmp', 'exports', 'master_template_export_*.sql')].to_set
         
         Rake::Task['template:export'].invoke
         
         # Get files after export
-        final_files = Dir[Rails.root.join('db', 'exports', 'master_template_export_*.sql')].to_set
+        final_files = Dir[Rails.root.join('tmp', 'exports', 'master_template_export_*.sql')].to_set
         
         # Find new files created by this test
         new_files = final_files - initial_files
@@ -238,7 +246,7 @@ RSpec.describe 'template:export', type: :task do
       it 'exports in correct dependency order' do
         Rake::Task['template:export'].invoke
         
-        export_files = Dir[Rails.root.join('db', 'exports', '*.sql')].sort
+        export_files = Dir[Rails.root.join('tmp', 'exports', '*.sql')].sort
         export_file = export_files.last
         content = File.read(export_file)
         
@@ -258,7 +266,7 @@ RSpec.describe 'template:export', type: :task do
         
         Rake::Task['template:export'].invoke
         
-        export_files = Dir[Rails.root.join('db', 'exports', '*.sql')].sort
+        export_files = Dir[Rails.root.join('tmp', 'exports', '*.sql')].sort
         export_file = export_files.last
         content = File.read(export_file)
         
@@ -275,18 +283,18 @@ RSpec.describe 'template:export', type: :task do
       end
     end
 
-    context 'when db/exports directory does not exist' do
+    context 'when tmp/exports directory does not exist' do
       before do
-        FileUtils.rm_rf(Rails.root.join('db', 'exports'))
+        FileUtils.rm_rf(Rails.root.join('tmp', 'exports'))
         master_template
       end
 
       it 'creates the directory automatically' do
-        expect(Dir.exist?(Rails.root.join('db', 'exports'))).to be false
+        expect(Dir.exist?(Rails.root.join('tmp', 'exports'))).to be false
         
         Rake::Task['template:export'].invoke
         
-        expect(Dir.exist?(Rails.root.join('db', 'exports'))).to be true
+        expect(Dir.exist?(Rails.root.join('tmp', 'exports'))).to be true
       end
     end
 
