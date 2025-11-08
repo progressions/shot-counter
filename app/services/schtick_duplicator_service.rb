@@ -8,39 +8,17 @@ module SchtickDuplicatorService
       Rails.logger.info "[SchtickDuplicator] Setting campaign_id to #{target_campaign.id} for schtick #{@duplicated_schtick.name}"
       @duplicated_schtick = set_unique_name(@duplicated_schtick)
       Rails.logger.info "[SchtickDuplicator] After set_unique_name, campaign_id is #{@duplicated_schtick.campaign_id}"
-      
+
       # Handle prerequisite relationships after all schticks are created
       # Store the original prerequisite info for later linking
       @duplicated_schtick.instance_variable_set(:@original_prerequisite, schtick.prerequisite)
-      
+
       # Store reference to source schtick for image position copying
       @duplicated_schtick.instance_variable_set(:@source_schtick, schtick)
-      
-      if schtick.image.attached?
+
+      if schtick.image_url.present?
         begin
-          # Handle ImageKit download - force read as string
-          downloaded = schtick.image.blob.download
-          
-          # Handle ImageKit IKFile objects
-          if downloaded.class.name == 'ImageKiIo::ActiveStorage::IKFile'
-            Rails.logger.info "ImageKit IKFile detected for schtick #{schtick.name}, fetching via URL..."
-            require 'net/http'
-            uri = URI(downloaded.instance_variable_get(:@identifier)['url'])
-            image_data = Net::HTTP.get(uri)
-          elsif downloaded.is_a?(String)
-            image_data = downloaded
-          elsif downloaded.respond_to?(:read)
-            image_data = downloaded.read
-          else
-            Rails.logger.warn "Unknown download object type for schtick #{schtick.name}: #{downloaded.class}"
-            return @duplicated_schtick
-          end
-          
-          @duplicated_schtick.image.attach(
-            io: StringIO.new(image_data),
-            filename: schtick.image.blob.filename,
-            content_type: schtick.image.blob.content_type
-          )
+          ImageKitImporter.call(source_url: schtick.image_url, attachable: @duplicated_schtick)
         rescue => e
           Rails.logger.warn "Failed to duplicate image for schtick #{schtick.name}: #{e.message}"
         end
@@ -61,10 +39,10 @@ module SchtickDuplicatorService
         end
       end
     end
-    
+
     def apply_associations(duplicated_schtick)
       return unless duplicated_schtick.persisted?
-      
+
       # Copy image positions from source schtick if we have a reference to it
       if duplicated_schtick.instance_variable_defined?(:@source_schtick)
         copy_image_positions(duplicated_schtick.instance_variable_get(:@source_schtick), duplicated_schtick)
@@ -91,10 +69,10 @@ module SchtickDuplicatorService
 
       schtick
     end
-    
+
     def copy_image_positions(source_entity, target_entity)
       return unless source_entity.respond_to?(:image_positions)
-      
+
       source_entity.image_positions.each do |position|
         ImagePosition.create!(
           positionable: target_entity,
