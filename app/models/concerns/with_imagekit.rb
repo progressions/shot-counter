@@ -12,13 +12,14 @@ module WithImagekit
 
     cache_key = "image_url/#{self.class.name}/#{id}/#{image.attachment.id}"
     Rails.cache.fetch(cache_key, expires_in: 1.hour) do
-      metadata_name = image.blob.metadata["name"]
-      if metadata_name.blank?
-        Rails.logger.warn("ImageKit metadata 'name' missing for #{self.class.name}##{id}, using filename")
-        # Use the blob filename as fallback but construct proper ImageKit URL
-        "https://ik.imagekit.io/#{Rails.application.credentials.imagekit.id}/chi-war-#{Rails.env}/#{image.blob.filename}"
-      else
-        "https://ik.imagekit.io/#{Rails.application.credentials.imagekit.id}/chi-war-#{Rails.env}/#{metadata_name}"
+      metadata = image.blob.metadata || {}
+      legacy_url = metadata["url"].presence || metadata[:url].presence
+      next legacy_url if legacy_url.present?
+
+      begin
+        image.blob.service_url
+      rescue NotImplementedError, NoMethodError
+        blob_url_fallback
       end
     rescue StandardError => e
       Rails.logger.error("ImageKit URL generation failed for #{self.class.name}##{id}: #{e.message}")
@@ -31,6 +32,27 @@ module WithImagekit
   end
 
   private
+
+  def blob_url_fallback
+    configured_options = Rails.configuration.x.try(:active_storage_url_options)
+    url_options = (configured_options || {}).symbolize_keys
+    url_options[:host] ||= "localhost"
+    url_options[:protocol] ||= "http"
+
+    if url_options[:port].blank?
+      url_options[:port] =
+        if Rails.env.production?
+          nil
+        else
+          3000
+        end
+    end
+
+    Rails.application.routes.url_helpers.rails_blob_url(image, **url_options.compact)
+  rescue StandardError => e
+    Rails.logger.warn("Fallback blob URL generation failed for #{self.class.name}##{id}: #{e.message}") if defined?(Rails)
+    nil
+  end
 
   def clear_image_url_cache
     if saved_changes.key?("image_attachment_id") && image.attached?

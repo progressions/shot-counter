@@ -128,7 +128,11 @@ end
     association_ids = fight_data.slice(:character_ids, :vehicle_ids)
     @fight = current_campaign.fights.new(fight_data.except(:character_ids, :vehicle_ids))
     if params[:image].present?
-      @fight.image.attach(params[:image])
+      begin
+        @fight.image.attach(params[:image])
+      rescue StandardError => e
+        Rails.logger.error("Error uploading fight image to ImageKit: #{e.message}")
+      end
     end
     if @fight.save
       apply_fight_associations(@fight, association_ids)
@@ -157,8 +161,13 @@ end
     end
     fight_data = fight_data.slice(:name, :sequence, :active, :archived, :description, :character_ids, :vehicle_ids, :started_at, :ended_at, :season, :session)
     if params[:image].present?
-      @fight.image.purge if @fight.image.attached?
-      @fight.image.attach(params[:image])
+      begin
+        previous_attachment = @fight.image.attachment if @fight.image.attached?
+        @fight.image.attach(params[:image])
+        previous_attachment&.purge
+      rescue StandardError => e
+        Rails.logger.error("Error uploading fight image to ImageKit: #{e.message}")
+      end
     end
     if @fight.update(fight_data)
       render json: @fight.reload, serializer: FightSerializer, status: :ok

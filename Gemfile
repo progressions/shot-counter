@@ -51,7 +51,7 @@ unless ENV['SKIP_IMAGE_PROCESSING'] == 'true' || ENV['RAILS_ENV'] == 'test'
   gem "ruby-vips"
   gem "image_processing", "~> 1.2"
 end
-gem 'imagekitio'
+gem 'imagekitio-rails'
 
 # Use Rack CORS for handling Cross-Origin Resource Sharing (CORS), making cross-origin AJAX possible
 gem "rack-cors"
