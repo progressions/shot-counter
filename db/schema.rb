@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_09_28_172151) do
+ActiveRecord::Schema[8.0].define(version: 2025_11_08_195927) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -135,7 +135,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_28_172151) do
     t.jsonb "description"
     t.jsonb "skills"
     t.uuid "faction_id"
-    t.string "image_url"
     t.boolean "task"
     t.uuid "notion_page_id"
     t.datetime "last_synced_to_notion_at"
@@ -333,7 +332,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_28_172151) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "color"
-    t.string "image_url"
     t.boolean "bonus"
     t.jsonb "archetypes"
     t.string "name"
@@ -432,7 +430,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_28_172151) do
     t.uuid "campaign_id"
     t.boolean "active", default: true, null: false
     t.uuid "faction_id"
-    t.string "image_url"
     t.boolean "task"
     t.uuid "notion_page_id"
     t.datetime "last_synced_to_notion_at"
@@ -462,7 +459,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_09_28_172151) do
     t.integer "mook_bonus", default: 0, null: false
     t.string "category"
     t.boolean "kachunk"
-    t.string "image_url"
     t.boolean "active", default: true, null: false
     t.index "lower((name)::text)", name: "index_weapons_on_lower_name"
     t.index ["active"], name: "index_weapons_on_active"
