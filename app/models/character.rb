@@ -183,7 +183,6 @@ class Character < ApplicationRecord
       shot_id: vehicle_shot&.id,
       id: vehicle.id,
       name: vehicle.name,
-      shot_id: vehicle_shot&.id,
       action_values: vehicle.action_values.slice("Acceleration"),
     }
   end

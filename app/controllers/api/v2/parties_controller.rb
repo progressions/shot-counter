@@ -24,8 +24,7 @@ class Api::V2::PartiesController < ApplicationController
       image_attachment: :blob,
       faction: { image_attachment: :blob },
       juncture: { image_attachment: :blob },
-      memberships: { character: { image_attachment: :blob } },
-      memberships: { vehicle: { image_attachment: :blob } },
+      memberships: { character: { image_attachment: :blob }, vehicle: { image_attachment: :blob } },
     ]
     query = current_campaign
       .parties
