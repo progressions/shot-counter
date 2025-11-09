@@ -14,7 +14,7 @@ end
 
 class TemplateExporter
   def initialize
-    @export_dir = Rails.root.join('db', 'exports')
+    @export_dir = Rails.env.test? ? Pathname.new(Rails.root.join('tmp', 'exports')) : Rails.root.join('db', 'exports')
     @timestamp = Time.current.strftime('%Y%m%d_%H%M%S')
     @filename = "master_template_export_#{@timestamp}.sql"
     @filepath = @export_dir.join(@filename)

@@ -17,14 +17,6 @@ RSpec.describe 'template:export', type: :task do
 
   before(:each) do
     DatabaseCleaner.start
-    # Use tmp directory for test exports to avoid polluting the repo
-    allow_any_instance_of(TemplateExporter).to receive(:initialize).and_wrap_original do |method, *args|
-      method.call(*args)
-      instance = method.receiver
-      instance.instance_variable_set(:@export_dir, Rails.root.join('tmp', 'exports'))
-      timestamp = instance.instance_variable_get(:@timestamp)
-      instance.instance_variable_set(:@filepath, Rails.root.join('tmp', 'exports', "master_template_export_#{timestamp}.sql"))
-    end
     # Clean up any existing export files - use shell glob to remove all SQL files
     Dir[Rails.root.join('tmp', 'exports', '*.sql')].each { |f| File.delete(f) }
     # Clear the rake task to allow it to be invoked multiple times
