@@ -41,11 +41,15 @@ class Campaign < ApplicationRecord
     id
   end
 
+  def self.master_template
+    find_by(is_master_template: true)
+  end
+
   private
 
   def only_one_master_template
     return unless is_master_template?
-    
+
     existing_master = Campaign.where(is_master_template: true).where.not(id: id)
     if existing_master.exists?
       errors.add(:is_master_template, "can only be true for one campaign at a time")
