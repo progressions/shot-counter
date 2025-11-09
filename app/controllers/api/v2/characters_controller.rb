@@ -35,7 +35,13 @@ class Api::V2::CharactersController < ApplicationController
     .select(selects)
     .includes(includes)
     .where(apply_visibility_filter)
-    
+
+  # Add faction join if sorting by faction
+  query = query.left_outer_joins(:faction) if params["sort"] == "faction"
+
+  # Add juncture join if sorting by juncture
+  query = query.left_outer_joins(:juncture) if params["sort"] == "juncture"
+
   # Apply template filtering with security enforcement
   # Support both new template_filter parameter and legacy is_template parameter
   if params["template_filter"].present?
@@ -417,6 +423,14 @@ end
       "LOWER(COALESCE(action_values->>'Type', '')) #{order}, LOWER(characters.name), characters.id"
     elsif sort == "archetype"
       "LOWER(COALESCE(action_values->>'Archetype', '')) #{order}, LOWER(characters.name), characters.id"
+    elsif sort == "faction"
+      # Join with factions table to sort by faction name
+      # Characters without factions will appear last in ASC, first in DESC
+      "LOWER(COALESCE(factions.name, '#{order == 'ASC' ? 'zzz' : ''}')) #{order}, LOWER(characters.name), characters.id"
+    elsif sort == "juncture"
+      # Join with junctures table to sort by juncture name
+      # Characters without junctures will appear last in ASC, first in DESC
+      "LOWER(COALESCE(junctures.name, '#{order == 'ASC' ? 'zzz' : ''}')) #{order}, LOWER(characters.name), characters.id"
     elsif sort == "name"
       "LOWER(characters.name) #{order}, characters.id"
     elsif sort == "created_at"
