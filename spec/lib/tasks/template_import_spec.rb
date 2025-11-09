@@ -18,7 +18,8 @@ RSpec.describe 'template:export import validation', type: :task do
   before(:each) do
     DatabaseCleaner.start
     # Clean up any existing export files
-    Dir[Rails.root.join('db', 'exports', '*.sql')].each { |f| File.delete(f) }
+    export_dir = Rails.env.test? ? Rails.root.join('tmp', 'exports') : Rails.root.join('db', 'exports')
+    Dir[export_dir.join('*.sql')].each { |f| File.delete(f) }
     # Clear the rake task to allow it to be invoked multiple times
     Rake::Task['template:export'].reenable if Rake::Task.task_defined?('template:export')
   end
@@ -79,9 +80,10 @@ RSpec.describe 'template:export import validation', type: :task do
       
       # Export the data
       Rake::Task['template:export'].invoke
-      
+
       # Get the exported SQL file
-      export_files = Dir[Rails.root.join('db', 'exports', '*.sql')].sort
+      export_dir = Rails.env.test? ? Rails.root.join('tmp', 'exports') : Rails.root.join('db', 'exports')
+      export_files = Dir[export_dir.join('*.sql')].sort
       export_file = export_files.last
       expect(export_file).to be_present
       
@@ -142,7 +144,8 @@ RSpec.describe 'template:export import validation', type: :task do
       Rake::Task['template:export'].invoke
       
       # Get the exported SQL file
-      export_files = Dir[Rails.root.join('db', 'exports', '*.sql')].sort
+      export_dir = Rails.env.test? ? Rails.root.join('tmp', 'exports') : Rails.root.join('db', 'exports')
+      export_files = Dir[export_dir.join('*.sql')].sort
       export_file = export_files.last
       sql_content = File.read(export_file)
       
@@ -190,7 +193,8 @@ RSpec.describe 'template:export import validation', type: :task do
       Rake::Task['template:export'].invoke
       
       # Get the exported SQL file
-      export_files = Dir[Rails.root.join('db', 'exports', '*.sql')].sort
+      export_dir = Rails.env.test? ? Rails.root.join('tmp', 'exports') : Rails.root.join('db', 'exports')
+      export_files = Dir[export_dir.join('*.sql')].sort
       export_file = export_files.last
       sql_content = File.read(export_file)
       
@@ -238,7 +242,8 @@ RSpec.describe 'template:export import validation', type: :task do
       Rake::Task['template:export'].invoke
       
       # Get the exported SQL file
-      export_files = Dir[Rails.root.join('db', 'exports', '*.sql')].sort
+      export_dir = Rails.env.test? ? Rails.root.join('tmp', 'exports') : Rails.root.join('db', 'exports')
+      export_files = Dir[export_dir.join('*.sql')].sort
       export_file = export_files.last
       sql_content = File.read(export_file)
       

@@ -120,8 +120,9 @@ RSpec.describe 'template:import', type: :task do
     context 'when no export files exist' do
       it 'raises an error with helpful message' do
         # Clear all export files
-        Dir[Rails.root.join('db', 'exports', '*.sql')].each { |f| File.delete(f) }
-        
+        export_dir = Rails.env.test? ? Rails.root.join('tmp', 'exports') : Rails.root.join('db', 'exports')
+        Dir[export_dir.join('*.sql')].each { |f| File.delete(f) }
+
         expect { Rake::Task['template:import'].invoke }.to raise_error(/No export files found/)
       end
     end

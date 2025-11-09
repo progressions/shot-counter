@@ -585,7 +585,7 @@ end
 
 class TemplateImporter
   def initialize
-    @export_dir = Rails.root.join('db', 'exports')
+    @export_dir = Rails.env.test? ? Pathname.new(Rails.root.join('tmp', 'exports')) : Rails.root.join('db', 'exports')
   end
   
   def import
