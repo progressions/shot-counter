@@ -168,7 +168,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_11_08_195927) do
     t.index ["fight_id"], name: "index_chase_relationships_on_fight_id"
     t.index ["pursuer_id", "evader_id", "fight_id"], name: "unique_active_relationship", unique: true, where: "(active = true)"
     t.index ["pursuer_id"], name: "index_chase_relationships_on_pursuer_id"
-    t.check_constraint "\"position\"::text = ANY (ARRAY['near'::character varying, 'far'::character varying]::text[])", name: "position_values"
+    t.check_constraint "\"position\"::text = ANY (ARRAY['near'::character varying::text, 'far'::character varying::text])", name: "position_values"
     t.check_constraint "pursuer_id <> evader_id", name: "different_vehicles"
   end
 
