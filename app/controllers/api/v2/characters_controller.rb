@@ -329,14 +329,14 @@ end
   private
 
   def apply_template_filter(filter_param)
-    # Only admin users and gamemasters can access templates
-    # Regular players should never see templates
-    if !current_user.admin? && !current_user.gamemaster?
-      # Non-gamemaster users always get non-templates only
+    # Only admin users can access templates
+    # Gamemasters and regular players should never see templates
+    if !current_user.admin?
+      # Non-admin users always get non-templates only
       return { is_template: [false, nil] }
     end
 
-    # Admin users and gamemasters can use template filtering
+    # Admin users can use template filtering
     case filter_param
     when "templates"
       { is_template: true }
