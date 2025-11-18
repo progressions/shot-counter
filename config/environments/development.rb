@@ -68,6 +68,9 @@ Rails.application.configure do
   # Highlight code that triggered database queries in logs.
   config.active_record.verbose_query_logs = true
 
+  # Use inline job processing in development for immediate WebSocket broadcasts
+  config.active_job.queue_adapter = :inline
+
   config.after_initialize do
     Bullet.enable = true
     Bullet.rails_logger = true

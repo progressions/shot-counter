@@ -10,6 +10,7 @@ module Broadcastable
 
   def broadcast_campaign_update
     return if Thread.current[:disable_broadcasts]
+    Rails.logger.info "🔄 Broadcastable: #{self.class.name} (ID: #{id}) triggering campaign update broadcast"
     BroadcastCampaignUpdateJob.perform_later(self.class.name, id)
   end
 
