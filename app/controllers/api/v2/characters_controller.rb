@@ -102,11 +102,11 @@ class Api::V2::CharactersController < ApplicationController
   cached_result = if cache_buster_requested?
     Rails.logger.info "⚡ Skipping cache for characters index"
     characters = query.order(Arel.sql(sort_order))
-    characters = paginate(characters, per_page: per_page, page: page)
     factions = Faction.where(id: characters.map(&:faction_id).uniq.compact)
                       .select("factions.id", "factions.name")
                       .order("LOWER(factions.name) ASC")
     archetypes = characters.map { |c| c.action_values["Archetype"] }.compact.uniq.reject(&:blank?).sort
+    characters = paginate(characters, per_page: per_page, page: page)
     {
       "characters" => ActiveModelSerializers::SerializableResource.new(
         characters,
@@ -124,11 +124,11 @@ class Api::V2::CharactersController < ApplicationController
   else
     Rails.cache.fetch(cache_key, expires_in: 5.minutes) do
       characters = query.order(Arel.sql(sort_order))
-      characters = paginate(characters, per_page: per_page, page: page)
       factions = Faction.where(id: characters.map(&:faction_id).uniq.compact)
                         .select("factions.id", "factions.name")
                         .order("LOWER(factions.name) ASC")
       archetypes = characters.map { |c| c.action_values["Archetype"] }.compact.uniq.reject(&:blank?).sort
+      characters = paginate(characters, per_page: per_page, page: page)
       {
         "characters" => ActiveModelSerializers::SerializableResource.new(
           characters,
