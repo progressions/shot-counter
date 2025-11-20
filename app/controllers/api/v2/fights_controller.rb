@@ -75,9 +75,8 @@ class Api::V2::FightsController < ApplicationController
     params["session"],
     params["autocomplete"],
   ].join("/")
-  # Skip cache if cache buster is requested
-  cached_result = if cache_buster_requested?
-    Rails.logger.info "⚡ Skipping cache for fights index"
+  # Always use cache - if we just busted it, this will miss and regenerate
+  cached_result = Rails.cache.fetch(cache_key, expires_in: 5.minutes) do
     fights = query.order(Arel.sql(sort_order)).distinct
     seasons = query.select("fights.season").distinct.pluck(:season).compact.uniq
     fights = paginate(fights, per_page: per_page, page: page)
@@ -90,21 +89,6 @@ class Api::V2::FightsController < ApplicationController
       "seasons" => seasons,
       "meta" => pagination_meta(fights)
     }
-  else
-    Rails.cache.fetch(cache_key, expires_in: 5.minutes) do
-      fights = query.order(Arel.sql(sort_order)).distinct
-      seasons = query.select("fights.season").distinct.pluck(:season).compact.uniq
-      fights = paginate(fights, per_page: per_page, page: page)
-      {
-        "fights" => ActiveModelSerializers::SerializableResource.new(
-          fights,
-          each_serializer: params[:autocomplete] ? FightLiteSerializer : FightIndexLiteSerializer,
-          adapter: :attributes
-        ).serializable_hash,
-        "seasons" => seasons,
-        "meta" => pagination_meta(fights)
-      }
-    end
   end
   render json: cached_result
 end

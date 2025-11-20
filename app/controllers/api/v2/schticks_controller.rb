@@ -67,9 +67,8 @@ class Api::V2::SchticksController < ApplicationController
       params["path"],
     ].join("/")
 
-    # Skip cache if cache buster is requested
-    cached_result = if cache_buster_requested?
-      Rails.logger.info "⚡ Skipping cache for schticks index"
+    # Always use cache - if we just busted it, this will miss and regenerate
+    cached_result = Rails.cache.fetch(cache_key, expires_in: 5.minutes) do
       schticks = query.order(Arel.sql(sort_order))
 
       # Get categories without applying full sort_order
@@ -92,31 +91,6 @@ class Api::V2::SchticksController < ApplicationController
         "paths" => paths,
         "meta" => pagination_meta(schticks)
       }
-    else
-      Rails.cache.fetch(cache_key, expires_in: 5.minutes) do
-        schticks = query.order(Arel.sql(sort_order))
-
-        # Get categories without applying full sort_order
-        categories_query = query.select("schticks.category").distinct
-        categories = categories_query.pluck(:category).uniq.compact.sort
-
-        # Get paths without applying full sort_order
-        paths_query = query.select("schticks.path").distinct
-        paths = paths_query.pluck(:path).uniq.compact.sort
-
-        schticks = paginate(schticks, per_page: per_page, page: page)
-
-        {
-          "schticks" => ActiveModelSerializers::SerializableResource.new(
-            schticks,
-            each_serializer: params[:autocomplete] ? SchtickAutocompleteSerializer : SchtickIndexLiteSerializer,
-            adapter: :attributes
-          ).serializable_hash,
-          "categories" => categories,
-          "paths" => paths,
-          "meta" => pagination_meta(schticks)
-        }
-      end
     end
     render json: cached_result
   end

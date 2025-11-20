@@ -98,9 +98,8 @@ class Api::V2::CharactersController < ApplicationController
     params["autocomplete"]
   ].join("/")
 
-  # Skip cache if cache buster is requested
-  cached_result = if cache_buster_requested?
-    Rails.logger.info "⚡ Skipping cache for characters index"
+  # Always use cache - if we just busted it, this will miss and regenerate
+  cached_result = Rails.cache.fetch(cache_key, expires_in: 5.minutes) do
     characters = query.order(Arel.sql(sort_order))
     factions = Faction.where(id: characters.map(&:faction_id).uniq.compact)
                       .select("factions.id", "factions.name")
@@ -121,29 +120,6 @@ class Api::V2::CharactersController < ApplicationController
       "archetypes" => archetypes,
       "meta" => pagination_meta(characters)
     }
-  else
-    Rails.cache.fetch(cache_key, expires_in: 5.minutes) do
-      characters = query.order(Arel.sql(sort_order))
-      factions = Faction.where(id: characters.map(&:faction_id).uniq.compact)
-                        .select("factions.id", "factions.name")
-                        .order("LOWER(factions.name) ASC")
-      archetypes = characters.map { |c| c.action_values["Archetype"] }.compact.uniq.reject(&:blank?).sort
-      characters = paginate(characters, per_page: per_page, page: page)
-      {
-        "characters" => ActiveModelSerializers::SerializableResource.new(
-          characters,
-          each_serializer: params[:autocomplete] ? CharacterAutocompleteSerializer : CharacterIndexLiteSerializer,
-          adapter: :attributes
-        ).serializable_hash,
-        "factions" => ActiveModelSerializers::SerializableResource.new(
-          factions,
-          each_serializer: FactionLiteSerializer,
-          adapter: :attributes
-        ).serializable_hash,
-        "archetypes" => archetypes,
-        "meta" => pagination_meta(characters)
-      }
-    end
   end
 
   render json: cached_result
