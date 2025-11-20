@@ -72,9 +72,8 @@ class Api::V2::VehiclesController < ApplicationController
       params["archetype"],
     ].join("/")
 
-    # Skip cache if cache buster is requested
-    cached_result = if cache_buster_requested?
-      Rails.logger.info "⚡ Skipping cache for vehicles index"
+    # Always use cache - if we just busted it, this will miss and regenerate
+    cached_result = Rails.cache.fetch(cache_key, expires_in: 5.minutes) do
       vehicles = query
         .order(Arel.sql(sort_order))
 
@@ -105,39 +104,6 @@ class Api::V2::VehiclesController < ApplicationController
         "types" => types,
         "meta" => pagination_meta(vehicles)
       }
-    else
-      Rails.cache.fetch(cache_key, expires_in: 5.minutes) do
-        vehicles = query
-          .order(Arel.sql(sort_order))
-
-        # Fetch factions
-        faction_ids = vehicles.pluck(:faction_id).uniq.compact
-        factions = Faction.where(id: faction_ids)
-                          .select("factions.id", "factions.name")
-                          .order("LOWER(factions.name) ASC")
-
-        # Archetypes
-        archetypes = vehicles.map { |c| c.action_values["Archetype"] }.compact.uniq.sort
-        types = vehicles.map { |c| c.action_values["Type"] }.compact.uniq.sort
-
-        vehicles = paginate(vehicles, per_page: per_page, page: page)
-
-        {
-          "vehicles" => ActiveModelSerializers::SerializableResource.new(
-            vehicles,
-            each_serializer: params[:autocomplete] ? VehicleLiteSerializer : VehicleIndexSerializer,
-            adapter: :attributes
-          ).serializable_hash,
-          "factions" => ActiveModelSerializers::SerializableResource.new(
-            factions,
-            each_serializer: FactionLiteSerializer,
-            adapter: :attributes
-          ).serializable_hash,
-          "archetypes" => archetypes,
-          "types" => types,
-          "meta" => pagination_meta(vehicles)
-        }
-      end
     end
 
     render json: cached_result

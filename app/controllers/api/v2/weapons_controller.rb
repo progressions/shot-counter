@@ -71,9 +71,8 @@ class Api::V2::WeaponsController < ApplicationController
       params["autocomplete"],
     ].join("/")
 
-    # Skip cache if cache buster is requested
-    cached_result = if cache_buster_requested?
-      Rails.logger.info "⚡ Skipping cache for weapons index"
+    # Always use cache - if we just busted it, this will miss and regenerate
+    cached_result = Rails.cache.fetch(cache_key, expires_in: 5.minutes) do
       weapons = query.order(Arel.sql(sort_order))
 
       categories = weapons.pluck(:category).uniq.compact.reject(&:empty?).sort
@@ -91,26 +90,6 @@ class Api::V2::WeaponsController < ApplicationController
         "junctures" => junctures,
         "meta" => pagination_meta(weapons)
       }
-    else
-      Rails.cache.fetch(cache_key, expires_in: 5.minutes) do
-        weapons = query.order(Arel.sql(sort_order))
-
-        categories = weapons.pluck(:category).uniq.compact.reject(&:empty?).sort
-        junctures = weapons.pluck(:juncture).uniq.compact.reject(&:empty?).sort
-
-        weapons = paginate(weapons, per_page: per_page, page: page)
-
-        {
-          "weapons" => ActiveModelSerializers::SerializableResource.new(
-            weapons,
-            each_serializer: params[:autocomplete] ? WeaponAutocompleteSerializer : WeaponIndexSerializer,
-            adapter: :attributes
-          ).serializable_hash,
-          "categories" => categories,
-          "junctures" => junctures,
-          "meta" => pagination_meta(weapons)
-        }
-      end
     end
     render json: cached_result
   end

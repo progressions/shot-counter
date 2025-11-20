@@ -65,9 +65,8 @@ class Api::V2::FactionsController < ApplicationController
 
     ActiveRecord::Associations::Preloader.new(records: [current_campaign], associations: { user: [:image_attachment, :image_blob] })
 
-    # Skip cache if cache buster is requested
-    cached_result = if cache_buster_requested?
-      Rails.logger.info "⚡ Skipping cache for factions index"
+    # Always use cache - if we just busted it, this will miss and regenerate
+    cached_result = Rails.cache.fetch(cache_key, expires_in: 5.minutes) do
       factions = query.order(Arel.sql(sort_order))
       factions = paginate(factions, per_page: per_page, page: page)
 
@@ -79,20 +78,6 @@ class Api::V2::FactionsController < ApplicationController
         ).serializable_hash,
         "meta" => pagination_meta(factions)
       }
-    else
-      Rails.cache.fetch(cache_key, expires_in: 5.minutes) do
-        factions = query.order(Arel.sql(sort_order))
-        factions = paginate(factions, per_page: per_page, page: page)
-
-        {
-          "factions" => ActiveModelSerializers::SerializableResource.new(
-            factions,
-            each_serializer: params[:autocomplete] ? FactionAutocompleteSerializer : FactionIndexSerializer,
-            adapter: :attributes
-          ).serializable_hash,
-          "meta" => pagination_meta(factions)
-        }
-      end
     end
     render json: cached_result
   end

@@ -70,17 +70,16 @@ class Api::V2::PartiesController < ApplicationController
 
     ActiveRecord::Associations::Preloader.new(records: [current_campaign], associations: { user: [:image_attachment, :image_blob] })
 
-    # Skip cache if cache buster is requested
-    cached_result = if cache_buster_requested?
-      Rails.logger.info "⚡ Skipping cache for parties index"
+    # Always use cache - if we just busted it, this will miss and regenerate
+    cached_result = Rails.cache.fetch(cache_key, expires_in: 5.minutes) do
       parties = query.order(Arel.sql(sort_order))
-      parties = paginate(parties, per_page: per_page, page: page)
-      # Fetch factions
+      # Fetch factions from all parties before pagination
       faction_ids = parties.pluck(:faction_id).uniq.compact
       factions = Faction.where(id: faction_ids)
                         .select("factions.id", "factions.name")
                         .order("LOWER(factions.name) ASC")
-      # Archetypes
+      # Now paginate for the party results
+      parties = paginate(parties, per_page: per_page, page: page)
       {
         "parties" => ActiveModelSerializers::SerializableResource.new(
           parties,
@@ -94,30 +93,6 @@ class Api::V2::PartiesController < ApplicationController
         ).serializable_hash,
         "meta" => pagination_meta(parties)
       }
-    else
-      Rails.cache.fetch(cache_key, expires_in: 5.minutes) do
-        parties = query.order(Arel.sql(sort_order))
-        parties = paginate(parties, per_page: per_page, page: page)
-        # Fetch factions
-        faction_ids = parties.pluck(:faction_id).uniq.compact
-        factions = Faction.where(id: faction_ids)
-                          .select("factions.id", "factions.name")
-                          .order("LOWER(factions.name) ASC")
-        # Archetypes
-        {
-          "parties" => ActiveModelSerializers::SerializableResource.new(
-            parties,
-            each_serializer: params[:autocomplete] ? PartyAutocompleteSerializer : PartyIndexSerializer,
-            adapter: :attributes
-          ).serializable_hash,
-          "factions" => ActiveModelSerializers::SerializableResource.new(
-            factions,
-            each_serializer: FactionLiteSerializer,
-            adapter: :attributes
-          ).serializable_hash,
-          "meta" => pagination_meta(parties)
-        }
-      end
     end
     render json: cached_result
   end
