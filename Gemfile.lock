@@ -239,6 +239,10 @@ GEM
       net-imap
       net-pop
       net-smtp
+    mailgun-ruby (1.4.0)
+      faraday (~> 2.1)
+      faraday-multipart (~> 1.1.0)
+      mini_mime
     marcel (1.1.0)
     method_source (1.1.0)
     mime-types (3.7.0)
@@ -444,6 +448,7 @@ DEPENDENCIES
   imagekitio-rails
   kaminari
   letter_opener
+  mailgun-ruby (~> 1.2)
   notion-ruby-client
   pdf-forms
   pg (~> 1.1)

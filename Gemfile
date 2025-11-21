@@ -61,6 +61,9 @@ gem "discordrb", github: "shardlab/discordrb"
 gem "kaminari"
 gem "api-pagination"
 
+# Mailgun email delivery
+gem "mailgun-ruby", "~> 1.2"
+
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[ mri mingw x64_mingw ]
