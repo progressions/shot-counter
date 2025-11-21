@@ -44,6 +44,7 @@ Rails.application.routes.draw do
       resources :characters do
         get :names, on: :collection, to: "characters#autocomplete"
         post :pdf, on: :collection, to: "characters#import"
+        resources :advancements, only: [:index, :create, :show, :update, :destroy]
         member do
           delete :image, to: "characters#remove_image"
           post :sync
