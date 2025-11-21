@@ -86,8 +86,8 @@ Rails.application.configure do
   # email setup - using Mailgun
   config.action_mailer.delivery_method = :mailgun
   config.action_mailer.mailgun_settings = {
-    api_key: Rails.application.credentials.mailgun[:api_key],
-    domain: Rails.application.credentials.mailgun[:domain]
+    api_key: Rails.application.credentials.dig(:mailgun, :api_key),
+    domain: Rails.application.credentials.dig(:mailgun, :domain)
   }
   config.action_mailer.default_url_options = { host: 'chiwar.net', protocol: 'https' }
   config.action_mailer.perform_deliveries = true
