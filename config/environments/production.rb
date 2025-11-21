@@ -83,17 +83,11 @@ Rails.application.configure do
     protocol: "https",
   }
 
-  # email setup
-  config.action_mailer.delivery_method = :smtp
-  config.action_mailer.smtp_settings = {
-    address: 'smtp.office365.com',
-    port: 587,
-    domain: 'chiwar.net',
-    user_name: Rails.application.credentials.smtp.user_name,
-    password: Rails.application.credentials.smtp.password,
-    authentication: 'login',
-    enable_starttls_auto: true,
-    openssl_verify_mode: 'none' # Temporary for testing (see below)
+  # email setup - using Mailgun
+  config.action_mailer.delivery_method = :mailgun
+  config.action_mailer.mailgun_settings = {
+    api_key: Rails.application.credentials.mailgun[:api_key],
+    domain: Rails.application.credentials.mailgun[:domain]
   }
   config.action_mailer.default_url_options = { host: 'chiwar.net', protocol: 'https' }
   config.action_mailer.perform_deliveries = true
