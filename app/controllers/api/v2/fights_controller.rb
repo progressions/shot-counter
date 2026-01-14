@@ -20,6 +20,7 @@ class Api::V2::FightsController < ApplicationController
     "fights.active",
     "fights.season",
     "fights.session",
+    "fights.at_a_glance",
     "LOWER(fights.name) AS name_lower",
   ]
   query = current_campaign
@@ -34,6 +35,7 @@ class Api::V2::FightsController < ApplicationController
   # Apply filters
   search_param = params["search"].presence
   query = query.where("fights.name ILIKE ?", "%#{search_param}%") if search_param
+  query = query.where(at_a_glance: true) if params["at_a_glance"] == "true"
   query = query.where(apply_visibility_filter)
   query = query.where(id: params["id"]) if params["id"].present?
   query = apply_ids_filter(query, params["ids"]) if params.key?("ids")
@@ -63,6 +65,7 @@ class Api::V2::FightsController < ApplicationController
       params["id"],
       format_ids_for_cache(params["ids"]),
     search_param,
+    params["at_a_glance"],
     params["visibility"],
     params["show_hidden"],
     params["character_id"],
@@ -108,7 +111,7 @@ end
     else
       fight_data = fight_params.to_h.symbolize_keys
     end
-    fight_data = fight_data.slice(:name, :sequence, :active, :archived, :description, :image, :character_ids, :vehicle_ids, :started_at, :ended_at, :season, :session)
+    fight_data = fight_data.slice(:name, :sequence, :active, :at_a_glance, :archived, :description, :image, :character_ids, :vehicle_ids, :started_at, :ended_at, :season, :session)
     association_ids = fight_data.slice(:character_ids, :vehicle_ids)
     @fight = current_campaign.fights.new(fight_data.except(:character_ids, :vehicle_ids))
     if params[:image].present?
@@ -234,7 +237,7 @@ end
   end
 
   def fight_params
-    params.require(:fight).permit(:name, :sequence, :active, :archived, :description, :image, :started_at, :ended_at, :season, :session, character_ids: [], vehicle_ids: [])
+    params.require(:fight).permit(:name, :sequence, :active, :at_a_glance, :archived, :description, :image, :started_at, :ended_at, :season, :session, character_ids: [], vehicle_ids: [])
   end
 
   def sort_order
@@ -254,6 +257,8 @@ end
       "fights.season #{order}, fights.session #{order}, LOWER(fights.name)"
     elsif sort == "session"
       "fights.session #{order}, LOWER(fights.name)"
+    elsif sort == "at_a_glance"
+      "fights.at_a_glance #{order}, LOWER(fights.name)"
     else
       "fights.created_at DESC, fights.id"
     end

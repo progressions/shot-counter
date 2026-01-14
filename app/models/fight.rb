@@ -36,6 +36,7 @@ class Fight < ApplicationRecord
       description: description,
       gamemaster: campaign.user,
       active: active,
+      at_a_glance: at_a_glance,
       created_at: created_at,
       updated_at: updated_at,
       shot_order: shot_order,
